@@ -4,6 +4,7 @@ from django.db import connection
 from django.db.utils import DatabaseError
 from django.core.management.base import BaseCommand, CommandError
 from decimal import Decimal
+from django.template.defaultfilters import slugify
 
 from open_ricostruzione import utils
 from open_ricostruzione.models import *
@@ -97,6 +98,7 @@ class Command(BaseCommand):
             riepilogo_importi=r['riepilogo_importi'].replace(',','.')
             progetto, created = Progetto.objects.get_or_create(
                 id_progetto = r['id_progetto'],
+                id_padre__isnull = True,
 
                 defaults={
                     'id_progetto': r['id_progetto'],
@@ -112,6 +114,10 @@ class Command(BaseCommand):
                 self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
             else:
                 self.logger.debug("%s: progetto trovato e non duplicato: %s" % (c, progetto))
+
+            myslug = progetto.denominazione[:50] + progetto.id_progetto
+            progetto.slug = slugify(myslug)
+            progetto.save()
 
             c += 1
 
@@ -130,12 +136,20 @@ class Command(BaseCommand):
             self.logger.info("Analizzando record:id_padre %s id_figlio %s" % ( r['id_padre'],r['id_figlio']))
             r['importo_previsto']=r['importo_previsto'].replace('$','')
             r['riepilogo_importi']=r['riepilogo_importi'].replace(',','.')
+            try:
+                padre = Progetto.objects.get(id_progetto=r['id_padre'])
+            except ObjectDoesNotExist:
+                self.logger.info("Record padre con id: %s non esiste" % ( r['id_padre']))
+                continue
+
             progetto, created = Progetto.objects.get_or_create(
                 id_progetto = r['id_figlio'],
                 id_padre = r['id_padre'],
+
                 defaults={
                     'id_progetto': r['id_figlio'],
                     'id_padre': r['id_padre'],
+                    'parent': padre,
                     'tipologia': r['tipologia'],
                     'denominazione': strip_tags(r['denominazione']),
                     'importo_previsto': r['importo_previsto'],

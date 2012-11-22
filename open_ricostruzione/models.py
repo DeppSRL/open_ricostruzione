@@ -7,8 +7,8 @@ class Comune(models.Model):
     cod_comune = models.CharField(max_length=10)
     cod_provincia = models.CharField(max_length=3)
     denominazione = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255)
     iban = models.CharField(max_length=30, null=True, blank=True)
+    slug = models.SlugField(max_length=60)
 
     def __unicode__(self):
         return u"%s (%s)" % (self.denominazione, self.cod_comune)
@@ -19,7 +19,6 @@ class Comune(models.Model):
 
 class Progetto(models.Model):
 
-#
 #- ID progetto
 #- Denominazione
 #- Denominazione Comune
@@ -34,7 +33,6 @@ class Progetto(models.Model):
 #- Ulteriori informazioni
 #- Riepilogo Importi
 #- Stato avanzamento lavori (testo)
-#
 #- Tipologia
 
     id_progetto = models.CharField(max_length=6)
@@ -44,6 +42,8 @@ class Progetto(models.Model):
     importo_previsto = models.TextField(max_length=4096)
     riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
     denominazione = models.TextField(max_length=4096)
+    slug = models.SlugField(max_length=60)
+    parent = models.ForeignKey('Progetto', null=True)
 
     def __unicode__(self):
         return u"%s (ID: %s, TIPOLOGIA:%s)" % (self.denominazione, self.id, self.tipologia)
@@ -66,3 +66,5 @@ class Donazione(models.Model):
 
     class Meta:
         verbose_name_plural = u'Donazioni'
+
+
