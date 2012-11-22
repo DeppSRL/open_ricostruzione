@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import connection
 from django.db.utils import DatabaseError
 from django.core.management.base import BaseCommand, CommandError
+from decimal import Decimal
 
 from open_ricostruzione import utils
 from open_ricostruzione.models import *
@@ -20,15 +21,12 @@ class MLStripper(HTMLParser):
     def handle_data(self, d):
         self.fed.append(d)
     def get_data(self):
-        return ''.join(self.fed)
+        return ' '.join(self.fed)
 
 def strip_tags(html):
     s = MLStripper()
     s.feed(html)
     return s.get_data()
-
-
-
 
 class Command(BaseCommand):
 
@@ -95,6 +93,8 @@ class Command(BaseCommand):
             created = False
             comune = Comune.objects.get(cod_comune=r['istat'])
             self.logger.info("%s: Analizzando record: %s" % ( r['istat'],r['id_progetto']))
+            importo_previsto=r['importo_previsto'].replace('$','')
+            riepilogo_importi=r['riepilogo_importi'].replace(',','.')
             progetto, created = Progetto.objects.get_or_create(
                 id_progetto = r['id_progetto'],
 
@@ -103,6 +103,8 @@ class Command(BaseCommand):
                     'tipologia': r['tipologia'],
                     'comune': comune,
                     'denominazione': strip_tags(r['denominazione']),
+                    'importo_previsto': importo_previsto,
+                    'riepilogo_importi': Decimal(riepilogo_importi),
                     }
             )
 
@@ -123,18 +125,21 @@ class Command(BaseCommand):
         #id_figlio	id_padre	tipologia	denominazione	epoca	ubicazione	cenni_storici	stato_attuale	interventi_previsti	tempistica_prevista	importo_previsto	riepilogo_importi	ulteriori_informazioni	data_inserimento	utente	confermato
         #Attualmente importo: id_figlio	id_padre	tipologia	denominazione, stato_attuale	interventi_previsti	tempistica_prevista, importo_previsto	riepilogo_importi,
 
-
             created = False
-            comune = Comune.objects.get(cod_comune=r['istat'])
-            self.logger.info("%s: Analizzando record: %s" % ( r['istat'],r['id_progetto']))
+
+            self.logger.info("Analizzando record:id_padre %s id_figlio %s" % ( r['id_padre'],r['id_figlio']))
+            r['importo_previsto']=r['importo_previsto'].replace('$','')
+            r['riepilogo_importi']=r['riepilogo_importi'].replace(',','.')
             progetto, created = Progetto.objects.get_or_create(
                 id_progetto = r['id_figlio'],
-
+                id_padre = r['id_padre'],
                 defaults={
                     'id_progetto': r['id_figlio'],
                     'id_padre': r['id_padre'],
                     'tipologia': r['tipologia'],
                     'denominazione': strip_tags(r['denominazione']),
+                    'importo_previsto': r['importo_previsto'],
+                    'riepilogo_importi': Decimal(r['riepilogo_importi']),
                     }
             )
 
@@ -200,6 +205,7 @@ class Command(BaseCommand):
 
             comune = Comune.objects.get(cod_comune=r['istat'])
             data = datetime.strptime(r['data_c'], "%d/%m/%Y")
+            r['importo'] = r['importo'].replace(',','.')
 
             donazione, created = Donazione.objects.get_or_create(
                 id_donazione = r['id_flusso'],
@@ -211,7 +217,7 @@ class Command(BaseCommand):
                     'tipologia': r['tipologia_c'],
                     'data': data,
                     'avvenuto': r['avvenuto'],
-                    'importo': r['importo'],
+                    'importo': Decimal(r['importo']),
                     'confermato': r['confermato'],
                     }
             )

@@ -1,5 +1,6 @@
 from django.db import models
-import decimal
+
+
 
 class Comune(models.Model):
     tipo_territorio = models.CharField(max_length=2)
@@ -39,10 +40,9 @@ class Progetto(models.Model):
     id_progetto = models.CharField(max_length=6)
     id_padre = models.CharField(max_length=6, blank=True, null=True)
     tipologia = models.SmallIntegerField()
-    comune = models.ForeignKey('Comune')
-    importo_previsto = models.DecimalField(decimal_places=2, max_digits=9, default=0.00, null=True, blank=True)
-    riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=9, default=0.00, null=True, blank=True)
-
+    comune = models.ForeignKey('Comune', null=True)
+    importo_previsto = models.TextField(max_length=4096)
+    riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
     denominazione = models.TextField(max_length=4096)
 
     def __unicode__(self):
@@ -58,7 +58,7 @@ class Donazione(models.Model):
     tipologia = models.SmallIntegerField()
     data = models.DateField()
     avvenuto = models.BooleanField()
-    importo = models.DecimalField(decimal_places=2, max_digits=9, default=0.00, null=True, blank=True)
+    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
     confermato = models.BooleanField()
 
     def __unicode__(self):
