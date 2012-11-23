@@ -114,10 +114,12 @@ class Command(BaseCommand):
 
 #           aggiunge ubicazione, tempi di realizzazione, stato attuale, tempistica, interventi previsti
             progetto.ubicazione = r['ubicazione']
-            progetto.ubicazione = r['tempistica_prevista']
-            progetto.ubicazione = r['ubicazione']
-            progetto.ubicazione = r['ubicazione']
-            progetto.ubicazione = r['ubicazione']
+            progetto.tempi_di_realizzazione = r['tempistica_prevista']
+            progetto.stato_attuale = r['stato_attuale']
+            progetto.interventi_previsti = r['interventi_previsti']
+            progetto.epoca = r['epoca']
+            progetto.cenni_storici = r['cenni_storici']
+            progetto.ulteriori_info = r['ulteriori_informazioni']
 
 #           aggiunge lo slug
             myslug = progetto.denominazione[:50] + progetto.id_progetto
@@ -167,6 +169,15 @@ class Command(BaseCommand):
             else:
                 self.logger.debug("%s: progetto trovato e non duplicato: %s" % (c, progetto))
 
+#           aggiunge ubicazione, tempi di realizzazione, stato attuale, tempistica, interventi previsti
+            progetto.ubicazione = r['ubicazione']
+            progetto.tempi_di_realizzazione = r['tempistica_prevista']
+            progetto.stato_attuale = r['stato_attuale']
+            progetto.interventi_previsti = r['interventi_previsti']
+            progetto.epoca = r['epoca']
+            progetto.cenni_storici = r['cenni_storici']
+            progetto.ulteriori_info = r['ulteriori_informazioni']
+#           aggiunge slug
             myslug = progetto.denominazione[:50] + progetto.id_progetto
             progetto.slug = slugify(myslug)
             progetto.save()

@@ -32,7 +32,6 @@ class Progetto(models.Model):
     ubicazione = models.CharField(max_length=500)
     tempi_di_realizzazione = models.TextField()
     stato_attuale = models.TextField()
-    tempistica_prevista = models.TextField()
     interventi_previsti = models.TextField()
     epoca = models.TextField()
     cenni_storici = models.TextField()
