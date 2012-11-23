@@ -44,14 +44,13 @@
 
         <div class="span3 " >
             <a href="/">
-                <img src="{{ STATIC_URL }}\img\logo_white.png" />
+                <img src="{{ STATIC_URL }}\img\logo_white.jpg" />
             </a>
         </div>
         <div class="span4">
             <form class="form-search content">
                 <div class="input-append">
-
-                    <input id="progetti" name="comune" type="text" class="input-large search-query" placeholder="Cerca fra i progetti">
+                    <input id="progetti" name="progetto" type="text" class="input-large search-query" placeholder="Cerca fra i progetti">
                     <button type="submit" class="btn add-in"><i class="icon-search"></i></button>
                 </div>
             </form>
@@ -59,15 +58,15 @@
         </div><!--/span-->
 
         <div class="span2">
-            <a href="/classifiche">
-                Classifiche
-            </a>
+        {% block support %}
+
+            Supporta questo progetto!<br/>
+            Codice IBAN: IT 39 N 00000000000000001<br/>
+            Codice swift: TESTTESTTEST<BR/>
+
+        {% endblock %}
         </div><!--/span-->
-        <div class="span2">
-            <a href="/community">
-                Community
-            </a>
-        </div><!--/span-->
+
     </div>
 </div>
 <!-- /HEADER -->
@@ -81,26 +80,26 @@
 
 <!-- FOOTER -->
 <div class="container">
-    <div class="row footer">
+    <footer>
+        <div class="row footer">
 
-        <div class="span3" >
-            <a href="/">
-                <img src="{{ STATIC_URL }}\img\logo_white.png" />
-            </a>
+            <div class="span3" >
+
+            </div>
+            <div class="span4">
+                <p>
+
+                </p>
+            </div><!--/span-->
+
+            <div class="span2">
+                Contatti
+            </div><!--/span-->
+            <div class="span2">
+
+            </div><!--/span-->
         </div>
-        <div class="span4">
-            <p>
-
-            </p>
-        </div><!--/span-->
-
-        <div class="span2">
-            Contatti
-        </div><!--/span-->
-        <div class="span2">
-
-        </div><!--/span-->
-    </div>
+    </footer>
 </div>
 <!-- /FOOTER -->
 
@@ -116,37 +115,31 @@
     var chart1; // globally available
 
     $(document).ready(function() {
-        $('#comune').focus(function(){
-            if ($(this)._cleared) return;
-            $(this).val('');
-            $(this)._cleared = true;
-        });
-
-        $('#comune-confronto').focus(function(){
+        $('#progetto').focus(function(){
             if ($(this)._cleared) return;
             $(this).val('');
             $(this)._cleared = true;
         });
 
 
-        $( "#comune" ).autocomplete({
+        $( "#progetto" ).autocomplete({
             source: function( request, response ) {
-                $.getJSON(
-                       "http://openbilanci.it/OpenBilancioWS/comunibyname.json",
-                        {'name': request.term },
-                        function( data ) {
-                            response( $.map( data.comuniByName.comune, function( item ) {
-                                return {
-                                    label: item.comunedeno,
-                                    value: item.comune
-                                }
-                            }));
-                        }
-                );
+{#                $.getJSON(#}
+{#                       "insertapicallhere",#}
+{#                        {'name': request.term },#}
+{#                        function( data ) {#}
+{#                            response( $.map( data.comuniByName.comune, function( item ) {#}
+{#                                return {#}
+{#                                    label: item.comunedeno,#}
+{#                                    value: item.comune#}
+{#                                }#}
+{#                            }));#}
+{#                        }#}
+{#                );#}
             },
             minLength: 4,
             select: function( event, ui ) {
-                window.location.href = "../comune/"+ ui.item.label;
+                window.location.href = "../progetto/"+ ui.item.label;
             },
             open: function() {
                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
@@ -156,32 +149,6 @@
             }
         }).css('z-index', 10000);
 
-        $( "#comune-confronto" ).autocomplete({
-            source: function( request, response ) {
-                $.getJSON(
-                        "http://openbilanci.it/OpenBilancioWS/comunibyname.json",
-                        {'name': request.term },
-                        function( data ) {
-                            response( $.map( data.comuniByName.comune, function( item ) {
-                                return {
-                                    label: item.comunedeno,
-                                    value: item.comune
-                                }
-                            }));
-                        }
-                );
-            },
-            minLength: 4,
-            select: function( event, ui ) {
-                ;//window.location.href = "confronto/"+ ui.item.value;
-            },
-            open: function() {
-                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-            },
-            close: function() {
-                $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-            }
-        }).css('z-index', 10000);
 
         /*    HIGH CHARTS*/
         chart1 = new Highcharts.Chart({

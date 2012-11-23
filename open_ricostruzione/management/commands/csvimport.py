@@ -162,6 +162,10 @@ class Command(BaseCommand):
             else:
                 self.logger.debug("%s: progetto trovato e non duplicato: %s" % (c, progetto))
 
+            myslug = progetto.denominazione[:50] + progetto.id_progetto
+            progetto.slug = slugify(myslug)
+            progetto.save()
+
             c += 1
 
 

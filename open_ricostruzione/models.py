@@ -46,7 +46,7 @@ class Progetto(models.Model):
     parent = models.ForeignKey('Progetto', null=True)
 
     def __unicode__(self):
-        return u"%s (ID: %s, TIPOLOGIA:%s)" % (self.denominazione, self.id, self.tipologia)
+        return u"%s (ID: %s, TIPOLOGIA:%s, PADRE: %s)" % (self.denominazione, self.id, self.tipologia, self.parent_id)
 
     class Meta:
         verbose_name_plural = u'Progetti'

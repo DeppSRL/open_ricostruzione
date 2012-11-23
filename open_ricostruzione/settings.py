@@ -1,4 +1,5 @@
 # Django settings for open_ricostruzione project.
+import django.conf.global_settings as DEFAULT_SETTINGS
 import os
 
 DEBUG = True
@@ -109,7 +110,14 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-)
+    os.path.join(PROJECT_ROOT, 'templates'),
+    )
+
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
+    'open_ricostruzione.context_processor.main_settings',
+    'django.core.context_processors.request',
+    )
+
 
 INSTALLED_APPS = (
     'django.contrib.auth',

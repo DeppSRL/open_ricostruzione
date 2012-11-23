@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', HomeView.as_view(), name='home'),
     # url(r'^open_ricostruzione/', include('open_ricostruzione.foo.urls')),
-    url(r'^progetto/(?P<pk>\d+)$', ProgettoView.as_view(), name="progetto_detail"),
+    url(r'^progetto/(?P<slug>[-\w]+)$', ProgettoView.as_view(), name="progetto_detail"),
     url(r'^comune/(?P<slug>[-\w]+)$', ComuneView.as_view(), name="comune_detail"),
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
