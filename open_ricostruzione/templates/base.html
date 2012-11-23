@@ -39,8 +39,8 @@
 <body>
 
 <!-- HEADER -->
-<div class="container">
-    <div class="row header">
+<div class="container header">
+    <div class="row ">
 
         <div class="span3 " >
             <a href="/">
@@ -48,23 +48,46 @@
             </a>
         </div>
         <div class="span4">
+            {% block support %}
+
+                Supporta questo progetto!<br/>
+                Codice IBAN: IT 39 N 00000000000000001<br/>
+                Codice swift: TESTTESTTEST<BR/>
+
+            {% endblock %}
+        </div><!--/span-->
+    </div>
+    <div class="row" id="navbar">
+
+        <div class="span8">
+            <ul>
+                <li>
+                    <a href="#">
+                        Progetti
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        Donazioni
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        Comuni
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+
+        <div class="span4">
             <form class="form-search content">
                 <div class="input-append">
                     <input id="progetti" name="progetto" type="text" class="input-large search-query" placeholder="Cerca fra i progetti">
                     <button type="submit" class="btn add-in"><i class="icon-search"></i></button>
                 </div>
             </form>
-
-        </div><!--/span-->
-
-        <div class="span2">
-        {% block support %}
-
-            Supporta questo progetto!<br/>
-            Codice IBAN: IT 39 N 00000000000000001<br/>
-            Codice swift: TESTTESTTEST<BR/>
-
-        {% endblock %}
         </div><!--/span-->
 
     </div>
