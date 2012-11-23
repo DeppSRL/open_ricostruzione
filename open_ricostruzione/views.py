@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView, DetailView
+from django.db.models.aggregates import Count, Sum
 from open_ricostruzione.models import *
 
 class HomeView(TemplateView):
@@ -18,7 +19,7 @@ class ProgettoView(DetailView):
         if iban_comune:
             context['iban'] = iban_comune
 
-
+#        mancano le donazioni perche' ci mancano i le relazioni fra donazioni e progetti
 
         return context
 
@@ -28,6 +29,7 @@ class ComuneView(DetailView):
     template_name = 'comune.html'
 
     def get_context_data(self, **kwargs ):
-
+        c = self.object()
         context = super(ComuneView, self).get_context_data(**kwargs)
+
         return context
