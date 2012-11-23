@@ -10,9 +10,17 @@ class ProgettoView(DetailView):
     template_name = 'progetto.html'
 
     def get_context_data(self, **kwargs ):
+        p = self.get_object()
+        context = super(ProgettoView, self).get_context_data(**kwargs)
 
-        self.context = super(ProgettoView, self).get_context_data(**kwargs)
-        return self.context
+        context['comune_nome'] = p.comune.denominazione
+        iban_comune =  Progetto.objects.get(pk = p.pk).comune.iban
+        if iban_comune:
+            context['iban'] = iban_comune
+
+
+
+        return context
 
 class ComuneView(DetailView):
     model = Comune
@@ -21,5 +29,5 @@ class ComuneView(DetailView):
 
     def get_context_data(self, **kwargs ):
 
-        self.context = super(ComuneView, self).get_context_data(**kwargs)
-        return self.context
+        context = super(ComuneView, self).get_context_data(**kwargs)
+        return context

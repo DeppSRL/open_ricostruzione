@@ -1,3 +1,21 @@
 {% extends "base.html" %}
 
-{{ progetto.pk }}
+{% block title %}Progetto{% endblock %}
+
+{% block support %}
+    {% if iban %}
+        Supporta questo progetto!<br/>
+        Codice IBAN: {{ iban }}<br/>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <pre>
+        progetto.pk:{{ progetto.pk }}
+        denominazione: {{ progetto.denominazione}}
+        comune_nome: {{ comune_nome }}
+        categoria: {{ progetto.tipologia }}
+        importo previsto (testo): {{ progetto.importo_previsto }}
+        importo totale (numero): {{ progetto.riepilogo_importi }}
+    </pre>
+{% endblock %}

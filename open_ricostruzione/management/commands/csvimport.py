@@ -88,9 +88,6 @@ class Command(BaseCommand):
         #               tempistica prevista, importo previsto, riepilogo importi, ulteriori informazioni,
         #               data inserimento, utente, confermato, multiplo,
 
-        #               Attualmente importo: id progetto, tipologia, codice comune , denominazione, importo_previsto, riepilogo_importi
-
-
             created = False
             comune = Comune.objects.get(cod_comune=r['istat'])
             self.logger.info("%s: Analizzando record: %s" % ( r['istat'],r['id_progetto']))
@@ -115,6 +112,14 @@ class Command(BaseCommand):
             else:
                 self.logger.debug("%s: progetto trovato e non duplicato: %s" % (c, progetto))
 
+#           aggiunge ubicazione, tempi di realizzazione, stato attuale, tempistica, interventi previsti
+            progetto.ubicazione = r['ubicazione']
+            progetto.ubicazione = r['tempistica_prevista']
+            progetto.ubicazione = r['ubicazione']
+            progetto.ubicazione = r['ubicazione']
+            progetto.ubicazione = r['ubicazione']
+
+#           aggiunge lo slug
             myslug = progetto.denominazione[:50] + progetto.id_progetto
             progetto.slug = slugify(myslug)
             progetto.save()
