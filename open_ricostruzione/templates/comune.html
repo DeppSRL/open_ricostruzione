@@ -1,3 +1,15 @@
 {% extends "base.html" %}
+{% block title %}Comune di {{ comune.denominazione }}{% endblock %}
 
-{{ comune.denominazione}}
+{% block content %}
+    <pre>
+        comune.pk:{{ comune.pk }}
+        denominazione: {{ comune.denominazione}}
+        tot_donazioni: {{ tot_donazioni }}
+        donazioni: {{ donazioni }}
+        iban: {{ iban }}
+        top 10 progetti: {{ projects }}
+        dati progetti per categorie: {{ progetti_categorie }}
+        dati donazioni per tipologia soggetto: {{ donazioni_categorie }}
+    </pre>
+{% endblock %}
