@@ -49,8 +49,11 @@
             series: [{
             name: 'Donazioni',
             data:
+                    [
+                    {% for d in donazioni%}
 
-
+                    {% endfor %}
+                    ]
                     [1, 0, 4, 1, 0, 4, 1, 0]
             } ]
             });

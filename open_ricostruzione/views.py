@@ -84,7 +84,7 @@ class DonazioneView(TemplateView):
             context['tot_progetti'] = tot_progetti
 
         #tutte le donazioni nel tempo
-        donazioni =  Donazione.objects.all().filter(confermato = True)
+        donazioni =  Donazione.objects.all().filter(confermato = True).order_by('-data')
         if donazioni:
             context['donazioni'] = donazioni
 
@@ -92,7 +92,7 @@ class DonazioneView(TemplateView):
         context['donazioni_categorie'] =\
             Donazione.objects.all().\
             filter(confermato = True).values('tipologia').\
-            annotate(somma_categoria = Sum('importo'))
+            annotate(somma_categoria = Sum('importo')).order_by('tipologia')
 
 
         return context
