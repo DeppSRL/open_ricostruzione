@@ -18,6 +18,10 @@ class Comune(models.Model):
         verbose_name_plural = u'Comuni'
 
 
+class TipologiaProgetto(models.Model):
+    codice = models.SmallIntegerField()
+    denominazione = models.CharField(max_length=255)
+
 class Progetto(models.Model):
 
     id_progetto = models.CharField(max_length=6)
