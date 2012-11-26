@@ -131,7 +131,6 @@
 <script src="{{ STATIC_URL }}js/jquery-ui-1.9.1.custom.min.js" type="text/javascript" ></script>
 
 <script type="text/javascript">
-    var chart1; // globally available
 
     $(document).ready(function() {
         $('#progetto').focus(function(){
@@ -168,51 +167,17 @@
             }
         }).css('z-index', 10000);
 
-
-        /*    HIGH CHARTS*/
-        chart1 = new Highcharts.Chart({
-            chart: {
-                renderTo: 'container',
-                type: 'line',
-                plotBackgroundColor: '#fbfec5'
-            },
-            title: {
-                text: ''
-            },
-            tooltip: {
-                formatter: function() {
-                    return '<b>'+ this.series.name +'</b><br/>'+
-                            this.x +': '+ this.y +' Euro';
-                }
-            },
-            xAxis: {
-                categories: ['2003', '2004','2005','2006','2007','2008','2009','2010'],
-
-                plotLines: [{
-
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            yAxis: {
-                title: {
-                    text: 'Milioni di Euro'
-                }
-            },
-            series: [{
-                name: 'Preventivo',
-                data: [1, 0, 4, 1, 0, 4, 1, 0]
-            }, {
-                name: 'Consuntivo',
-                data: [5, 7, 3, 5, 7, 3, 5, 7]
-            },
-                {
-                name: 'Media',
-                data: [2, 1, 6, 2, 1, 6, 2, 1]
-                }]
-        });
     });
 </script>
+
+{#/*    HIGH CHARTS*/#}
+{% block grafici %}
+
+{% endblock %}
+{#/*  END  HIGH CHARTS*/#}
+
+
+
 
 </body>
 </html>

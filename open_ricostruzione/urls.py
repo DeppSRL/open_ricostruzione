@@ -12,6 +12,8 @@ urlpatterns = patterns('',
     # url(r'^open_ricostruzione/', include('open_ricostruzione.foo.urls')),
     url(r'^progetto/(?P<slug>[-\w]+)$', ProgettoView.as_view(), name="progetto_detail"),
     url(r'^comune/(?P<slug>[-\w]+)$', ComuneView.as_view(), name="comune_detail"),
+    url(r'^donazioni/$', DonazioneView.as_view(), name="donazioni"),
+
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

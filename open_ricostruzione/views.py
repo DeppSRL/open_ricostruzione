@@ -32,6 +32,9 @@ class ComuneView(DetailView):
         c = self.get_object()
         context = super(ComuneView, self).get_context_data(**kwargs)
 
+        # importi progetti totale
+        tot_progetti = Progetto.objects.filter(comune=c).aggregate(s=Sum('riepilogo_importi')).values()
+
         # donazioni per il comune considerato
         tot_donazioni = Donazione.objects.filter(comune=c).aggregate(s=Sum('importo')).values()
         if tot_donazioni:
@@ -60,6 +63,36 @@ class ComuneView(DetailView):
         if projects:
             context['projects'] = projects
 
+        return context
+
+class DonazioneView(TemplateView):
+
+    template_name = "donazioni.html"
+
+
+    def get_context_data(self, **kwargs):
+        context = super(DonazioneView, self).get_context_data(**kwargs)
+
+        # donazioni totali
+        tot_donazioni = Donazione.objects.all().aggregate(s=Sum('importo')).values()
+        if tot_donazioni:
+            context['tot_donazioni']= tot_donazioni
+
+        # importi progetti totale
+        tot_progetti = Progetto.objects.all().aggregate(s=Sum('riepilogo_importi')).values()
+        if tot_progetti:
+            context['tot_progetti'] = tot_progetti
+
+        #tutte le donazioni nel tempo
+        donazioni =  Donazione.objects.all().filter(confermato = True)
+        if donazioni:
+            context['donazioni'] = donazioni
+
+        #donazioni per categoria
+        context['donazioni_categorie'] =\
+            Donazione.objects.all().\
+            filter(confermato = True).values('tipologia').\
+            annotate(somma_categoria = Sum('importo'))
 
 
         return context

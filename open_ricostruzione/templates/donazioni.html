@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Donazioni{% endblock %}
+
+{% block content %}
+    <pre>
+    totale donazioni: {{ tot_donazioni }}
+    danno totale: {{ tot_progetti }}
+    tutte le donazioni: {{ donazioni }}
+    donazioni per categoria: {{ donazioni_categorie }}
+    </pre>
+
+    <div id="container"></div>
+{% endblock %}
+
+
+{% block grafici %}
+    <script>
+        var chart1; // globally available
+        $(document).ready(function() {
+            chart1 = new Highcharts.Chart({
+            chart: {
+            renderTo: 'container',
+            type: 'line',
+            plotBackgroundColor: '#fbfec5'
+            },
+            title: {
+            text: ''
+            },
+            tooltip: {
+            formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            this.x +': '+ this.y +' Euro';
+            }
+            },
+            xAxis: {
+            categories: ['2003', '2004','2005','2006','2007','2008','2009','2010'],
+
+            plotLines: [{
+
+            width: 1,
+            color: '#808080'
+            }]
+            },
+            yAxis: {
+            title: {
+            text: 'Euro'
+            }
+            },
+            series: [{
+            name: 'Donazioni',
+            data:
+
+
+                    [1, 0, 4, 1, 0, 4, 1, 0]
+            } ]
+            });
+        });
+    </script>
+{% endblock %}
