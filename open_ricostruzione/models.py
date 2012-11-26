@@ -19,8 +19,14 @@ class Comune(models.Model):
 
 
 class TipologiaProgetto(models.Model):
-    codice = models.SmallIntegerField()
+    codice = models.SmallIntegerField(null=True, blank=True)
     denominazione = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return u"%s - %s" % (self.codice, self.denominazione)
+
+    class Meta:
+        verbose_name_plural = u'Tipologia Progetti'
 
 class Progetto(models.Model):
 
