@@ -9,18 +9,39 @@ body{
 }
 
 .header{
-
-  padding-top: @margin-double;
-
-  #navbar{
-    background-color: #7b7979;
-    color: white;
-    a{
-      color:white;
-    }
+  margin-top: @margin-double;
+  .row{
     .navbar-inner{
-      background-color: #7b7979;
-      color: white;
+      border-radius: 0;
+      padding-left: 38px;
+
+      .search-query{
+        width: 400px;
+        height: 20px;
+        padding-bottom: 5px;
+        padding-left: 5px;
+        border-radius: 0;
+      }
+    }
+  }
+  #logo_header{
+    padding-left: @margin-double;
+    padding-bottom: @margin-double;
+  }
+  #appello{
+    background-color: #dcf930;
+    color: black;
+    .iban{
+        .title{
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        .number{
+          background-color: white;
+          color: black;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
     }
   }
 }

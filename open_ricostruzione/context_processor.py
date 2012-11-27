@@ -6,23 +6,9 @@ from django.db.models import Count
 def main_settings(request):
     territori=[]
 
+#prende la lista di tutti i comuni con almeno un progetto ordinati per provincia
     territori = Territorio.objects.filter(tipo_territorio = "C").\
                     annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia")
-#    for p in Territorio.objects.filter(tipo_territorio="P").order_by("denominazione"):
-#
-#        active_comuni=[]
-#        for c in p.get_comuni_with_progetti():
-#
-#            active_comuni.append({
-#                'nome':c.denominazione,
-#                'slug':c.slug,
-#            })
-#
-#        territori.append({
-#            'nome': p.denominazione,
-#            'comuni': active_comuni,
-#            })
-#
 
     return {
         "DEBUG": settings.DEBUG,

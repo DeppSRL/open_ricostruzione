@@ -41,15 +41,22 @@
 <!-- HEADER -->
 <div class="container header">
     <div class="row ">
-
-        <div class="span6 " >
+        <div class="span7" id="logo_header" >
             <a href="/">
                 <img src="{{ STATIC_URL }}\img\logo_white.png" />
             </a>
         </div>
-        <div class="span4">
+        <div class="span4" id="appello">
             {% block support %}
-
+                Aiutaci a ricostruire!<br/>
+                <div class="iban">
+                    <div class="title">Codice Iban</div>
+                    <div class="number">it876543456786543</div>
+                </div>
+                <div class="iban">
+                    <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
+                    <div class="number">unicritm10j3</div>
+                </div>
             {% endblock %}
         </div><!--/span-->
     </div>
@@ -78,10 +85,16 @@
                                 {% regroup territori by get_provincia as group %}
                                     {% for g in group|dictsort:"grouper.denominazione" %}
                                         <li class="dropdown-submenu">
-                                            {{ g.grouper.denominazione|title }}
+                                            <a>
+                                                {{ g.grouper.denominazione|title }}
+                                            </a>
                                             <ul class="dropdown-menu">
                                                 {% for item in g.list|dictsort:"denominazione"%}
-                                                    <li>{{ item.denominazione }}</li>
+                                                    <li>
+                                                        <a href="../comune/{{ item.slug }}">
+                                                            {{ item.denominazione }}
+                                                        </a>
+                                                    </li>
                                                 {% endfor %}
                                             </ul>
                                         </li>
@@ -96,7 +109,12 @@
                             <input type="text"
                                    class="input-medium search-query"
                                    name="q"
-                                   placeholder="Cerca tra i progetti" /><button type="submit" class="btn"><i class="icon-search"></i></button>
+                                   placeholder="Cerca tra i progetti" />
+                            <!--
+                            <button type="submit" class="btn">
+                                <i class="icon-search"></i>
+                            </button>
+                            -->
                         </div>
                     </form>
                 </div>
