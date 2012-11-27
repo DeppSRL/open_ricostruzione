@@ -9,22 +9,32 @@
     donazioni per categoria: {{ donazioni_categorie }}
     </pre>
 
-    <div id="container"></div>
+    <div id="graph-container"></div>
+    <div id="pie-container"></div>
+    <div id="lista-donazioni">
+    <pre>
+        {% for d in donazioni_tipologia %}
+           {{ d.tipologia }},{{ d.count }},nome-tipologia, {{ d.somma }}
+        {% endfor %}
+    </pre>
+    </div>
+
 {% endblock %}
 
 
 {% block grafici %}
     <script>
         var chart1; // globally available
+        var piechart;
         $(document).ready(function() {
             chart1 = new Highcharts.Chart({
             chart: {
-            renderTo: 'container',
-            type: 'line',
-            plotBackgroundColor: '#fbfec5'
+            renderTo: 'graph-container',
+                type: 'spline',
+            plotBackgroundColor: '#fff'
             },
             title: {
-            text: ''
+                text: ''
             },
             tooltip: {
             formatter: function() {
@@ -32,31 +42,83 @@
             this.x +': '+ this.y +' Euro';
             }
             },
-            xAxis: {
-            categories: ['2003', '2004','2005','2006','2007','2008','2009','2010'],
-
-            plotLines: [{
-
-            width: 1,
-            color: '#808080'
-            }]
-            },
             yAxis: {
-            title: {
-            text: 'Euro'
-            }
+                min:0,
+
+                labels: {
+                    formatter: function() {
+                        return this.value;
+                    }
+                },
+                title: {
+                    text: 'Euro'
+                }
+
+            },
+            xAxis: {
+                type: 'datetime',
+                labels:
+                {
+                    enabled: false
+                },
+
+                categories:[
+                    {% for d in donazioni %}
+                        "{{ d.data }}",
+                    {% endfor %}
+                ]
+
+
             },
             series: [{
-            name: 'Donazioni',
-            data:
-                    [
-                    {% for d in donazioni%}
-
+                name: 'Donazioni',
+                data:[
+                    {% for d in donazioni %}
+                        {{ d.importo }},
                     {% endfor %}
-                    ]
-                    [1, 0, 4, 1, 0, 4, 1, 0]
+                ]
             } ]
             });
+
+            /*PIE CHART*/
+            piechart = new Highcharts.Chart({
+                chart: {
+                    renderTo: 'pie-container',
+                    type: 'pie',
+                    plotBackgroundColor: '#fff'
+
+                },
+                title: {
+                    text: 'Donazioni ricevute per tipologia'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            connectorColor: '#000000',
+                            formatter: function() {
+                                return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Tipologia:',
+                    title: 'Donazioni per tipologia',
+                    data: [
+                        {% for d in donazioni_tipologia %}
+                            ['{{ d.tipologia }}',{{ d.somma }}],
+                        {% endfor %}
+                    ]
+                }]
+
+
         });
+
+    });
     </script>
 {% endblock %}

@@ -8,10 +8,14 @@ class ProgettoAdmin(admin.ModelAdmin):
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
 
-class ComuneAdmin(admin.ModelAdmin):
-    model = Comune
+class TerritorioAdmin(admin.ModelAdmin):
+    model = Territorio
     search_fields = ['^denominazione', ]
 
+class TipologiaProgettoAdmin(admin.ModelAdmin):
+    model = TipologiaProgetto
+
 admin.site.register(Progetto, ProgettoAdmin)
-admin.site.register(Comune, ComuneAdmin)
+admin.site.register(Territorio, TerritorioAdmin)
+admin.site.register(TipologiaProgetto, TipologiaProgettoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)

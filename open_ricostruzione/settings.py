@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'open_ricostruzione',
     'south',
+    'django_extensions',
 )
 
 

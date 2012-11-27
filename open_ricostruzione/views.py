@@ -14,51 +14,51 @@ class ProgettoView(DetailView):
         p = self.get_object()
         context = super(ProgettoView, self).get_context_data(**kwargs)
 
-        context['comune_nome'] = p.comune.denominazione
-        iban_comune =  Progetto.objects.get(pk = p.pk).comune.iban
-        if iban_comune:
-            context['iban'] = iban_comune
+        context['territorio_nome'] = p.territorio.denominazione
+        iban =  Progetto.objects.get(pk = p.pk).territorio.iban
+        if iban:
+            context['iban'] = iban
 
 #        mancano le donazioni perche' ci mancano i le relazioni fra donazioni e progetti
 
         return context
 
-class ComuneView(DetailView):
-    model = Comune
-    context_object_name = "comune"
-    template_name = 'comune.html'
+class TerritorioView(DetailView):
+    model = Territorio
+    context_object_name = "territorio"
+    template_name = 'territorio.html'
 
     def get_context_data(self, **kwargs ):
-        c = self.get_object()
-        context = super(ComuneView, self).get_context_data(**kwargs)
+        t = self.get_object()
+        context = super(TerritorioView, self).get_context_data(**kwargs)
 
         # importi progetti totale
-        tot_progetti = Progetto.objects.filter(comune=c).aggregate(s=Sum('riepilogo_importi')).values()
+        tot_progetti = Progetto.objects.filter(territorio=t).aggregate(s=Sum('riepilogo_importi')).values()
 
-        # donazioni per il comune considerato
-        tot_donazioni = Donazione.objects.filter(comune=c).aggregate(s=Sum('importo')).values()
+        # donazioni per il territorio considerato
+        tot_donazioni = Donazione.objects.filter(territorio=t).aggregate(s=Sum('importo')).values()
         if tot_donazioni:
             context['tot_donazioni']= tot_donazioni
-            context['donazioni'] = Donazione.objects.filter(comune=c)
+            context['donazioni'] = Donazione.objects.filter(territorio=t)
 
         # importi dei progetti per categorie
         context['progetti_categorie'] =  \
-            Progetto.objects.filter(comune=c).values('tipologia').\
+            Progetto.objects.filter(territorio=t).values('tipologia').\
             annotate(somma_categoria=Sum('riepilogo_importi'))
 
         # donazioni divise per tipologia cedente
         context['donazioni_categorie'] = \
-            Donazione.objects.filter( comune=c).\
+            Donazione.objects.filter( territorio=t).\
             filter(confermato = True).values('tipologia').\
             annotate(somma_categoria = Sum('importo'))
 
-        #iban comune
-        iban = Comune.objects.get(pk = c.pk).iban
+        #iban territorio
+        iban = Territorio.objects.get(pk = t.pk).iban
         if iban:
             context['iban'] = iban
 
-        #lista progetti per questo comune in ordine di costo decrescente
-        projects = Progetto.objects.filter(comune = c).order_by('-riepilogo_importi')[:10]
+        #lista progetti per questo territorio in ordine di costo decrescente
+        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
 
         if projects:
             context['projects'] = projects
@@ -84,15 +84,18 @@ class DonazioneView(TemplateView):
             context['tot_progetti'] = tot_progetti
 
         #tutte le donazioni nel tempo
-        donazioni =  Donazione.objects.all().filter(confermato = True).order_by('-data')
+        donazioni =  Donazione.objects.all().filter(confermato = True).order_by('data')
         if donazioni:
             context['donazioni'] = donazioni
+            context['donazioni_first'] = donazioni[0].data
+            n_donazioni = donazioni.count()
+            context['donazioni_last'] = donazioni[n_donazioni-1].data
 
         #donazioni per categoria
-        context['donazioni_categorie'] =\
-            Donazione.objects.all().\
-            filter(confermato = True).values('tipologia').\
-            annotate(somma_categoria = Sum('importo')).order_by('tipologia')
 
+        context['donazioni_tipologia'] =\
+            Donazione.objects.all().filter(confermato=True).values('tipologia').\
+            annotate(count=Count('tipologia')).annotate(somma = Sum('importo')).\
+            order_by('tipologia')
 
         return context

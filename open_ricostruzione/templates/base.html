@@ -53,44 +53,62 @@
             {% endblock %}
         </div><!--/span-->
     </div>
-    <div class="row" id="navbar">
+    <div class="row" id="">
+        <nav class="navbar navbar-full-width">
+            <h2 class="hidden"><a name="menu"></a>Navigazione del sito</h2>
+            <div class="navbar-inner">
+                <div class="container">
+                    <ul class="nav span6">
+                        <li class="dropdown ">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Progetti <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                {% for t in tipologie_progetti %}
+                                    <li class="submenu">
+                                        <a href="#">{{ t.denominazione }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="">
+                            <a href="../donazioni/" >Donazioni </a>
+                        </li>
+                        <li class="dropdown ">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Comuni <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                {% regroup territori by get_provincia as group %}
+                                    {% for g in group|dictsort:"grouper.denominazione" %}
+                                        <li class="dropdown-submenu">
+                                            {{ g.grouper.denominazione|title }}
+                                            <ul class="dropdown-menu">
+                                                {% for item in g.list|dictsort:"denominazione"%}
+                                                    <li>{{ item.denominazione }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% endfor %}
+                            </ul>
+                        </li>
 
-        <div class="span8">
-            <ul>
-                <li>
-                    <a href="#">
-                        Progetti
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        Donazioni
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        Comuni
-                    </a>
-                </li>
-            </ul>
-        </div>
+                    </ul>
 
-
-
-        <div class="span4">
-            <form class="form-search content">
-                <div class="input-append">
-                    <input id="progetti" name="progetto" type="text" class="input-large search-query" placeholder="Cerca fra i progetti">
-                    <button type="submit" class="btn add-in"><i class="icon-search"></i></button>
+                    <form method="get" action="/progetti/" class="navbar-search form-search pull-right">
+                        <div class="input-append">
+                            <input type="text"
+                                   class="input-medium search-query"
+                                   name="q"
+                                   placeholder="Cerca tra i progetti" /><button type="submit" class="btn"><i class="icon-search"></i></button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div><!--/span-->
-
+            </div>
+        </nav>
     </div>
 </div>
 <!-- /HEADER -->
 
 <div class="container content">
+    {{ group }}
+
     {% block content %}
 
     {% endblock %}

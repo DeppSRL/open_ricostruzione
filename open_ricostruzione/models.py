@@ -2,7 +2,7 @@ from django.db import models
 
 
 
-class Comune(models.Model):
+class Territorio(models.Model):
 
     tipo_territorio = models.CharField(max_length=2)
     cod_comune = models.CharField(max_length=10)
@@ -17,6 +17,16 @@ class Comune(models.Model):
     class Meta:
         verbose_name_plural = u'Comuni'
 
+    def get_comuni_with_progetti(self):
+        return Territorio.objects.filter(tipo_territorio="C", cod_provincia = self.cod_provincia).\
+                filter(progetto__isnull = False).\
+                order_by("denominazione").distinct()
+
+    def get_provincia(self):
+        if self.tipo_territorio != "P":
+            return Territorio.objects.get(tipo_territorio="P", cod_provincia = self.cod_provincia)
+        else:
+            return None
 
 class TipologiaProgetto(models.Model):
     codice = models.SmallIntegerField(null=True, blank=True)
@@ -33,7 +43,7 @@ class Progetto(models.Model):
     id_progetto = models.CharField(max_length=6)
     id_padre = models.CharField(max_length=6, blank=True, null=True)
     tipologia = models.SmallIntegerField()
-    comune = models.ForeignKey('Comune', null=True)
+    territorio = models.ForeignKey('Territorio', null=True)
     importo_previsto = models.TextField(max_length=4096)
     riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
     denominazione = models.TextField(max_length=4096)
@@ -56,7 +66,7 @@ class Progetto(models.Model):
 class Donazione(models.Model):
 
     id_donazione = models.CharField(max_length=6)
-    comune = models.ForeignKey('Comune')
+    territorio = models.ForeignKey('Territorio')
     denominazione = models.TextField(max_length=1000)
     tipologia = models.SmallIntegerField()
     data = models.DateField()

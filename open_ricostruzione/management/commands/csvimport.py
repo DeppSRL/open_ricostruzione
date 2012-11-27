@@ -89,7 +89,7 @@ class Command(BaseCommand):
         #               data inserimento, utente, confermato, multiplo,
 
             created = False
-            comune = Comune.objects.get(cod_comune=r['istat'])
+            territorio = Territorio.objects.get(cod_comune=r['istat'])
             self.logger.info("%s: Analizzando record: %s" % ( r['istat'],r['id_progetto']))
             importo_previsto=r['importo_previsto'].replace('$','')
             riepilogo_importi=r['riepilogo_importi'].replace(',','.')
@@ -100,7 +100,7 @@ class Command(BaseCommand):
                 defaults={
                     'id_progetto': r['id_progetto'],
                     'tipologia': r['tipologia'],
-                    'comune': comune,
+                    'territorio': territorio,
                     'denominazione': strip_tags(r['denominazione']),
                     'importo_previsto': importo_previsto,
                     'riepilogo_importi': Decimal(riepilogo_importi),
@@ -198,7 +198,7 @@ class Command(BaseCommand):
                 codice_istat = "0" + codice_istat
 
             created = False
-            comune, created = Comune.objects.get_or_create(
+            territorio, created = Territorio.objects.get_or_create(
                 cod_comune = codice_istat,
                 denominazione = r['denominazione'],
                 defaults={
@@ -211,9 +211,9 @@ class Command(BaseCommand):
             )
 
             if created:
-                self.logger.info("%s: localita' inserita: %s" % ( c, comune))
+                self.logger.info("%s: localita' inserita: %s" % ( c, territorio))
             else:
-                self.logger.debug("%s: localita' trovata e non duplicata: %s" % (c, comune))
+                self.logger.debug("%s: localita' trovata e non duplicata: %s" % (c, territorio))
 
             c += 1
 
@@ -226,7 +226,7 @@ class Command(BaseCommand):
 
     #    campi da importare:
     #    id_donazione = models.CharField(max_length=6)
-    #    comune = models.ForeignKey('Comune')
+    #    territorio = models.ForeignKey('Territorio')
     #    denominazione = models.TextField(max_length=1000)
     #    tipologia = models.SmallIntegerField()
     #    data = models.DateField()
@@ -237,7 +237,7 @@ class Command(BaseCommand):
         for r in self.unicode_reader:
             created = False
 
-            comune = Comune.objects.get(cod_comune=r['istat'])
+            territorio = Territorio.objects.get(cod_comune=r['istat'])
             data = datetime.strptime(r['data_c'], "%d/%m/%Y")
             r['importo'] = r['importo'].replace(',','.')
 
@@ -246,7 +246,7 @@ class Command(BaseCommand):
 
                 defaults={
                     'id_donazione': r['id_flusso'],
-                    'comune': comune,
+                    'territorio': territorio,
                     'denominazione': r['denominazione'],
                     'tipologia': r['tipologia_c'],
                     'data': data,
