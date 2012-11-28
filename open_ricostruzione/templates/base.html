@@ -37,92 +37,94 @@
 </head>
 
 <body>
-
+<div class="wrapper">
 <!-- HEADER -->
 <div class="container header">
     <div class="row ">
-        <div class="span7" id="logo_header" >
-            <a href="/">
-                <img src="{{ STATIC_URL }}\img\logo_white.png" />
-            </a>
-        </div>
-        <div class="span4" id="appello">
-            {% block support %}
-                Aiutaci a ricostruire!<br/>
-                <div class="iban">
-                    <div class="title">Codice Iban</div>
-                    <div class="number">it876543456786543</div>
-                </div>
-                <div class="iban">
-                    <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-                    <div class="number">unicritm10j3</div>
-                </div>
-            {% endblock %}
-        </div><!--/span-->
-    </div>
-    <div class="row" id="">
-        <nav class="navbar navbar-full-width">
-            <h2 class="hidden"><a name="menu"></a>Navigazione del sito</h2>
-            <div class="navbar-inner">
-                <div class="container">
-                    <ul class="nav span6">
-                        <li class="dropdown ">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Progetti <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                {% for t in tipologie_progetti %}
-                                    <li class="submenu">
-                                        <a href="#">{{ t.denominazione }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                        <li class="">
-                            <a href="../donazioni/" >Donazioni </a>
-                        </li>
-                        <li class="dropdown ">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Comuni <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                {% regroup territori by get_provincia as group %}
-                                    {% for g in group|dictsort:"grouper.denominazione" %}
-                                        <li class="dropdown-submenu">
-                                            <a>
-                                                {{ g.grouper.denominazione|title }}
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                {% for item in g.list|dictsort:"denominazione"%}
-                                                    <li>
-                                                        <a href="../comune/{{ item.slug }}">
-                                                            {{ item.denominazione }}
-                                                        </a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        </li>
-                                    {% endfor %}
-                            </ul>
-                        </li>
-
-                    </ul>
-
-                    <form method="get" action="/progetti/" class="navbar-search form-search pull-right">
-                        <div class="input-append">
-                            <input type="text"
-                                   class="input-medium search-query"
-                                   name="q"
-                                   placeholder="Cerca tra i progetti" />
-                            <!--
-                            <button type="submit" class="btn">
-                                <i class="icon-search"></i>
-                            </button>
-                            -->
-                        </div>
-                    </form>
-                </div>
+        <div  id="logo_header" >
+            <div class="span7" id="logo_top">
+                <img src="static/img/logo_white.png">
             </div>
-        </nav>
+            <div class="span4" id="appello">
+                {% block support %}
+                    Aiutaci a ricostruire!<br/>
+                    <div class="iban">
+                        <div class="title">Codice Iban</div>
+                        <div class="number">it876543456786543</div>
+                    </div>
+                    <div class="iban">
+                        <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
+                        <div class="number">unicritm10j3</div>
+                    </div>
+                {% endblock %}
+            </div><!--/span-->
+        </div>
     </div>
 </div>
-<!-- /HEADER -->
+
+<!-- /HEADER-->
+<!-- NAVBAR-->
+<div id="top_navbar">
+    <div class="container">
+        <div class="row" id="">
+            <div class="span6" id="navbar-span">
+                <nav class="navbar navbar-custom">
+                    <div class="navbar-inner-custom ">
+                        <ul class="nav">
+                            <li class="dropdown ">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Progetti <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    {% for t in tipologie_progetti %}
+                                        <li class="submenu">
+                                            <a href="#">{{ t.denominazione }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li class="">
+                                <a href="../donazioni/" >Donazioni </a>
+                            </li>
+                            <li class="dropdown ">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Comuni <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    {% regroup territori by get_provincia as group %}
+                                        {% for g in group|dictsort:"grouper.denominazione" %}
+                                            <li class="dropdown-submenu">
+                                                <a>
+                                                    {{ g.grouper.denominazione|title }}
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    {% for item in g.list|dictsort:"denominazione"%}
+                                                        <li>
+                                                            <a href="../comune/{{ item.slug }}">
+                                                                {{ item.denominazione }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                        {% endfor %}
+                                </ul>
+                            </li>
+
+                        </ul>
+
+                    </div>
+                </nav>
+             </div> <!--/navbar-span -->
+        <div class="offset1 span5">
+            <form method="get" action="/progetti/" class="navbar-search form-search pull-left">
+                <input type="text"
+                       class="search-query "
+                       name="q"
+                       placeholder="Cerca tra i progetti" />
+
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- /NAVBAR-->
 
 <div class="container content">
     {{ group }}
@@ -157,7 +159,7 @@
     </footer>
 </div>
 <!-- /FOOTER -->
-
+</div>
 <!-- Le javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->

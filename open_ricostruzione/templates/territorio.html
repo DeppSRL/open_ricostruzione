@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Comune di {{ comune.denominazione }}{% endblock %}
 
+{% block support %}
+    Aiutaci a ricostruire!<br/>
+    <div class="iban">
+        <div class="title">Codice Iban</div>
+        <div class="number">it876543456786543</div>
+    </div>
+    <div class="iban">
+        <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
+        <div class="number">unicritm10j3</div>
+    </div>
+{% endblock %}
+
+
 {% block content %}
     <pre>
         comune.pk:{{ comune.pk }}
