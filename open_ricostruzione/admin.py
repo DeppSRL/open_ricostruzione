@@ -7,6 +7,7 @@ class ProgettoAdmin(admin.ModelAdmin):
 
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
+    ordering = ['data']
 
 class TerritorioAdmin(admin.ModelAdmin):
     model = Territorio

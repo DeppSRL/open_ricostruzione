@@ -59,12 +59,12 @@
                 type: 'datetime',
                 labels:
                 {
-                    enabled: false
+                    enabled: true
                 },
 
                 categories:[
                     {% for d in donazioni %}
-                        "{{ d.data }}",
+                        "{{ d.month }}",
                     {% endfor %}
                 ]
 
@@ -74,7 +74,7 @@
                 name: 'Donazioni',
                 data:[
                     {% for d in donazioni %}
-                        {{ d.importo }},
+                        {{ d.d_sum|floatformat }},
                     {% endfor %}
                 ]
             } ]

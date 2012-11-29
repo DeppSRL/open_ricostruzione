@@ -75,7 +75,7 @@ class Donazione(models.Model):
     confermato = models.BooleanField()
 
     def __unicode__(self):
-        return u"%s (ID: %s, TIPOLOGIA:%s)" % (self.denominazione, self.id, self.tipologia)
+        return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
 
     class Meta:
         verbose_name_plural = u'Donazioni'

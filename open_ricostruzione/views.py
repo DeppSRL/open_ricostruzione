@@ -1,6 +1,11 @@
 from django.views.generic import TemplateView, DetailView
 from django.db.models.aggregates import Count, Sum
 from open_ricostruzione.models import *
+from django.db import connections
+import locale
+from datetime import datetime
+import time
+
 
 class HomeView(TemplateView):
     template_name = "home.html"
@@ -84,12 +89,29 @@ class DonazioneView(TemplateView):
             context['tot_progetti'] = tot_progetti
 
         #tutte le donazioni nel tempo
-        donazioni =  Donazione.objects.all().filter(confermato = True).order_by('data')
+        #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
+        # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
+
+        donazioni = Donazione.objects.\
+                        extra(select={'month': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
+                        values('month').annotate(d_sum = Sum('importo'))
+
+        for idx, val in enumerate(donazioni):
+#            converto la data nel formato  Nome mese - Anno
+            date_obj = datetime.strptime(val['month'],"%Y-%m-%d %H:%M:%S")
+            val['month']= time.strftime("%b - %Y", date_obj.timetuple())
+
+            if idx is not 0:
+                val['d_sum'] = (donazioni[idx-1]['d_sum']+ abs(val['d_sum'] - donazioni[idx-1]['d_sum']))
+
+
+
+
         if donazioni:
             context['donazioni'] = donazioni
-            context['donazioni_first'] = donazioni[0].data
+#            context['donazioni_first'] = donazioni[0].data
             n_donazioni = donazioni.count()
-            context['donazioni_last'] = donazioni[n_donazioni-1].data
+#            context['donazioni_last'] = donazioni[n_donazioni-1].data
 
         #donazioni per categoria
 
