@@ -240,7 +240,7 @@ class Command(BaseCommand):
             territorio = Territorio.objects.get(cod_comune=r['istat'])
             data = datetime.strptime(r['data_c'], "%d/%m/%Y")
             r['importo'] = r['importo'].replace(',','.')
-
+            tipologia_cedente = TipologiaCedente.objects.get(codice = r['tipologia_c'])
             donazione, created = Donazione.objects.get_or_create(
                 id_donazione = r['id_flusso'],
 
@@ -248,7 +248,7 @@ class Command(BaseCommand):
                     'id_donazione': r['id_flusso'],
                     'territorio': territorio,
                     'denominazione': r['denominazione'],
-                    'tipologia': r['tipologia_c'],
+                    'tipologia': tipologia_cedente,
                     'data': data,
                     'avvenuto': r['avvenuto'],
                     'importo': Decimal(r['importo']),

@@ -15,8 +15,16 @@ class TerritorioAdmin(admin.ModelAdmin):
 
 class TipologiaProgettoAdmin(admin.ModelAdmin):
     model = TipologiaProgetto
+    ordering = ['codice']
+
+
+class TipologiaCedenteAdmin(admin.ModelAdmin):
+    model = TipologiaCedente
+    ordering = ['codice']
+
 
 admin.site.register(Progetto, ProgettoAdmin)
 admin.site.register(Territorio, TerritorioAdmin)
 admin.site.register(TipologiaProgetto, TipologiaProgettoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)
+admin.site.register(TipologiaCedente, TipologiaCedenteAdmin)

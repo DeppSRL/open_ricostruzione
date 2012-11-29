@@ -63,12 +63,24 @@ class Progetto(models.Model):
     class Meta:
         verbose_name_plural = u'Progetti'
 
+
+class TipologiaCedente(models.Model):
+    codice = models.SmallIntegerField(null=True, blank=True)
+    denominazione = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return u"%s - %s" % (self.codice, self.denominazione)
+
+    class Meta:
+        verbose_name_plural = u'Tipologia Cedenti'
+
+
 class Donazione(models.Model):
 
     id_donazione = models.CharField(max_length=6)
     territorio = models.ForeignKey('Territorio')
     denominazione = models.TextField(max_length=1000)
-    tipologia = models.SmallIntegerField()
+    tipologia = models.ForeignKey('TipologiaCedente')
     data = models.DateField()
     avvenuto = models.BooleanField()
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
@@ -79,5 +91,4 @@ class Donazione(models.Model):
 
     class Meta:
         verbose_name_plural = u'Donazioni'
-
 

@@ -109,15 +109,11 @@ class DonazioneView(TemplateView):
 
         if donazioni:
             context['donazioni'] = donazioni
-#            context['donazioni_first'] = donazioni[0].data
-            n_donazioni = donazioni.count()
-#            context['donazioni_last'] = donazioni[n_donazioni-1].data
 
         #donazioni per categoria
 
         context['donazioni_tipologia'] =\
-            Donazione.objects.all().filter(confermato=True).values('tipologia').\
-            annotate(count=Count('tipologia')).annotate(somma = Sum('importo')).\
-            order_by('tipologia')
+            Donazione.objects.all().filter(confermato=True).values('tipologia__denominazione').\
+            annotate(count=Count('tipologia__denominazione')).annotate(somma = Sum('importo'))
 
         return context
