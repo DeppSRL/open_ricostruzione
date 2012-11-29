@@ -4,7 +4,6 @@
 
 body{
   font-family: 'Arial', sans-serif;
-  font-size: 12px;
   background-color: white;
 }
 
@@ -92,6 +91,38 @@ div.content{
 }
 
 footer{
-  min-height: 200px;
-  background-color: @footer-color;
+  #green-background{
+    min-height: 200px;
+    background-color: @footer-green;
+
+    li{
+      list-style: square;
+    }
+    a{
+      text-decoration: none;
+      color: white;
+    }
+
+    .footer{
+      padding-top: @spacing-double;
+      color:white;
+
+      .title{
+        font-family: 'Abel','sans-serif';
+        font-size: 30px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+  #gray-background{
+    min-height: 100px;
+    background-color: @footer-gray;
+    padding-top: @spacing-single;
+
+    #partners{
+      img{
+        max-height: @spacing-double;
+      }
+    }
+  }
 }

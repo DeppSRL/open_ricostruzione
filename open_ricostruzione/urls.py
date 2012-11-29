@@ -13,7 +13,11 @@ urlpatterns = patterns('',
     url(r'^progetto/(?P<slug>[-\w]+)$', ProgettoView.as_view(), name="progetto_detail"),
     url(r'^comune/(?P<slug>[-\w]+)$', TerritorioView.as_view(), name="territorio_detail"),
     url(r'^donazioni/$', DonazioneView.as_view(), name="donazioni"),
-
+    url(r'^chi-siamo/$', HomeView.as_view(), name='home'),
+    url(r'^contatti/$', HomeView.as_view(), name='home'),
+    url(r'^download/$', HomeView.as_view(), name='home'),
+    url(r'^licenza/$', HomeView.as_view(), name='home'),
+    url(r'^faq/$', HomeView.as_view(), name='home'),
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

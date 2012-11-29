@@ -43,7 +43,9 @@
     <div class="row ">
         <div  id="logo_header" >
             <div class="span7" id="logo_top">
-                <img src="static/img/logo_white.png">
+                <a href="/">
+                    <img src="../static/img/logo_white.png">
+                </a>
             </div>
             <div class="span4" id="appello">
                 {% block support %}
@@ -136,28 +138,76 @@
 
 
 <!-- FOOTER -->
-<div class="container">
-    <footer>
-        <div class="row footer">
-
-            <div class="span3" >
-
-            </div>
-            <div class="span4">
-                <p>
-
-                </p>
-            </div><!--/span-->
-
-            <div class="span2">
-                Contatti
-            </div><!--/span-->
-            <div class="span2">
-
-            </div><!--/span-->
+<footer>
+    <div id="green-background">
+        <div class="container">
+            <div class="row footer">
+                <div class="span4" >
+                    <div class="title">Questo sito</div>
+                    <div class="text">
+                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                        Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                    </div>
+                    <div class="links">
+                        <ul>
+                            <li>
+                                <a href="../chi-siamo">
+                                    Chi siamo
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../faq">
+                                    FAQ
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../contatti">
+                                    Contatti
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="span4 offset2" >
+                    <div class="title">Open Data</div>
+                    <div class="text">
+                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                        Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                    </div>
+                    <div class="links">
+                        <ul>
+                            <li>
+                               <a href="../download">
+                                   Scarica gli open data
+                               </a>
+                            </li>
+                            <li>
+                                <a href="../licenza">
+                                    Licenza di utilizzo
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div> <!--/row-->
         </div>
-    </footer>
-</div>
+    </div>
+    <div id="gray-background">
+        <div id="partners">
+            <div class="span2 offset3">
+                <img src="../static/img/wikitalia.png">
+            </div>
+            <div class="span2">
+                <img src="../static/img/cisco.png">
+            </div>
+            <div class="span2">
+                <img src="../static/img/actionaid.png">
+            </div>
+        </div>
+    </div>
+</footer>
 <!-- /FOOTER -->
 </div>
 <!-- Le javascript
