@@ -2,9 +2,12 @@ from django.views.generic import TemplateView, DetailView
 from django.db.models.aggregates import Count, Sum
 from open_ricostruzione.models import *
 from django.db import connections
-import locale
 from datetime import datetime
 import time
+from open_ricostruzione.utils.moneydate import moneyfmt, add_months
+from datetime import timedelta
+
+
 
 
 class HomeView(TemplateView):
@@ -81,39 +84,69 @@ class DonazioneView(TemplateView):
         # donazioni totali
         tot_donazioni = Donazione.objects.all().aggregate(s=Sum('importo')).values()
         if tot_donazioni:
-            context['tot_donazioni']= tot_donazioni
+            context['tot_donazioni']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         # importi progetti totale
         tot_progetti = Progetto.objects.all().aggregate(s=Sum('riepilogo_importi')).values()
         if tot_progetti:
-            context['tot_progetti'] = tot_progetti
+            context['tot_progetti'] =  moneyfmt(tot_progetti[0],2,"",".",",")
 
         #tutte le donazioni nel tempo
         #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
         # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
 
-        donazioni = Donazione.objects.\
-                        extra(select={'month': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
-                        values('month').annotate(d_sum = Sum('importo'))
+        donazioni_mese = Donazione.objects.\
+                        extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
+                        values('date').annotate(sum = Sum('importo'))
 
-        for idx, val in enumerate(donazioni):
-#            converto la data nel formato  Nome mese - Anno
-            date_obj = datetime.strptime(val['month'],"%Y-%m-%d %H:%M:%S")
-            val['month']= time.strftime("%b - %Y", date_obj.timetuple())
+        donazioni_spline =[]
+        j = 0
+
+        for idx, val in enumerate(donazioni_mese):
+##            converto la data nel formato  Nome mese - Anno
+            val_date_obj = datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+            val_date_print = time.strftime("%b - %Y", val_date_obj.timetuple())
 
             if idx is not 0:
-                val['d_sum'] = (donazioni[idx-1]['d_sum']+ abs(val['d_sum'] - donazioni[idx-1]['d_sum']))
+#                se le due date sono piu' distanti di un mese
+#                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
+#                per creare un grafico piatto
+                donazioni_date_obj = datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+                if (val_date_obj-donazioni_date_obj) > timedelta(31):
+                    n_mesi = (val_date_obj - donazioni_date_obj).days / 28
+                    for k in range(1, n_mesi):
+                        new_month_obj = add_months(donazioni_date_obj,k)
+                        new_month_print = time.strftime("%b - %Y", new_month_obj.timetuple())
+                        donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum']})
+                        j += 1
+
+#               inserisce il dato del mese corrente
+                donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum'])})
+                j += 1
+
+            else:
+                donazioni_spline.append({'month':val_date_print,'sum':val['sum']})
+                j += 1
 
 
+        if donazioni_spline:
+#            rende i numeri Decimal delle stringhe per il grafico
+#            TODO: creare i dati per le label in formato italiano
+            for value in donazioni_spline:
+                value['sum']=moneyfmt(value['sum'],2,"","",".")
 
+            context['donazioni_spline'] = donazioni_spline
 
-        if donazioni:
-            context['donazioni'] = donazioni
+        #donazioni per tipologia
+        donazioni_tipologia = Donazione.objects.all().\
+            filter(confermato=True).values('tipologia__denominazione').\
+            annotate(count=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
 
-        #donazioni per categoria
+        for idx, val in enumerate(donazioni_tipologia):
+            val['sum'] = moneyfmt(val['sum'],2,"","",",")
 
-        context['donazioni_tipologia'] =\
-            Donazione.objects.all().filter(confermato=True).values('tipologia__denominazione').\
-            annotate(count=Count('tipologia__denominazione')).annotate(somma = Sum('importo'))
+        context['donazioni_tipologia']=donazioni_tipologia
 
         return context
+
+

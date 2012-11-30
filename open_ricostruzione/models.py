@@ -58,7 +58,7 @@ class Progetto(models.Model):
     ulteriori_info = models.TextField()
 
     def __unicode__(self):
-        return u"%s (ID: %s, TIPOLOGIA:%s, PADRE: %s)" % (self.denominazione, self.id, self.tipologia, self.parent_id)
+        return u"%s (ID: %s, TIPOLOGIA:%s, PADRE: %s)" % (self.denominazione, self.id_progetto, self.tipologia, self.parent_id)
 
     class Meta:
         verbose_name_plural = u'Progetti'

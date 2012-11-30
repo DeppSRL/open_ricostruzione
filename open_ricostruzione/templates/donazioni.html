@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Donazioni{% endblock %}
 
+{% block page-title %}Donazioni{% endblock %}
+{% block stima-danno %}{{ tot_progetti }}{% endblock %}
+{% block tot-donazioni %}{{ tot_donazioni }}{% endblock %}
+
+
 {% block content %}
+    {{ block.super }}
     <pre>
-    totale donazioni: {{ tot_donazioni }}
-    danno totale: {{ tot_progetti }}
+
     tutte le donazioni: {{ donazioni }}
-    donazioni per categoria: {{ donazioni_categorie }}
+    donazionispline: {{ donazioni_spline }}
+
     </pre>
 
     <div id="graph-container"></div>
@@ -63,7 +69,7 @@
                 },
 
                 categories:[
-                    {% for d in donazioni %}
+                    {% for d in donazioni_spline %}
                         "{{ d.month }}",
                     {% endfor %}
                 ]
@@ -73,8 +79,8 @@
             series: [{
                 name: 'Donazioni',
                 data:[
-                    {% for d in donazioni %}
-                        {{ d.d_sum|floatformat }},
+                    {% for d in donazioni_spline %}
+                        {{ d.sum }},
                     {% endfor %}
                 ]
             } ]
@@ -88,6 +94,19 @@
                     plotBackgroundColor: '#fff'
 
                 },
+                tooltip: {
+                    formatter: function() {
+                        return '<div class="tooltip-box"><b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +'<small>%</small></div>';
+                    },
+                    useHTML: true,
+                    backgroundColor: '#F7F6F1',
+                    borderWidth: 0,
+                    shadow: false,
+                    style: {
+                        width: '150px',
+                        'min-height': '20px'
+                    }
+                },
                 title: {
                     text: 'Donazioni ricevute per tipologia'
                 },
@@ -99,22 +118,24 @@
                             enabled: true,
                             color: '#000000',
                             connectorColor: '#000000',
+                            percentageDecimals: 2,
                             formatter: function() {
-                                return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+                                return '<b>'+ this.point.name +'</b>: '+ this.y +' Euro';
                             }
                         }
                     }
                 },
                 series: [{
                     type: 'pie',
-                    name: 'Tipologia:',
+                    name: 'Tipologia cedente',
                     title: 'Donazioni per tipologia',
                     data: [
                         {% for d in donazioni_tipologia %}
-                            ['{{ d.tipologia }}',{{ d.somma }}],
+                            ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
                         {% endfor %}
                     ]
                 }]
+
 
 
         });

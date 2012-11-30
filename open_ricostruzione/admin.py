@@ -3,7 +3,7 @@ from open_ricostruzione.models import *
 
 class ProgettoAdmin(admin.ModelAdmin):
     model = Progetto
-    search_fields = ['^denominazione', ]
+    search_fields = ['^denominazione', 'id_progetto' ]
 
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
