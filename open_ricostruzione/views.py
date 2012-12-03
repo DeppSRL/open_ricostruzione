@@ -49,7 +49,9 @@ class TerritorioView(DetailView):
         tot_donazioni = Donazione.objects.filter(territorio=t).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
-            context['donazioni'] = Donazione.objects.filter(territorio=t)
+
+        context['donazioni_comune'] = Donazione.objects.filter(territorio=t)
+
 
         # importi dei progetti per categorie
         context['progetti_categorie'] =  \
@@ -68,10 +70,10 @@ class TerritorioView(DetailView):
             context['iban'] = iban
 
         #lista progetti per questo territorio in ordine di costo decrescente
-        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
+        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:5]
 
         if projects:
-            context['projects'] = projects
+            context['projects_top5'] = projects
 
         return context
 

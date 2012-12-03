@@ -3,28 +3,31 @@
 {% block title %}Comune di {{ territorio.denominazione }}{% endblock %}
 
 {% block support %}
-    Aiutaci a ricostruire!<br/>
-    <div class="iban">
-        <div class="title">Codice Iban</div>
-        <div class="number">IT000000000000000000000000</div>
-    </div>
-    <div class="iban">
-        <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-        <div class="number">TESTCODE3044</div>
-    </div>
+    {% if iban %}
+        Aiutaci a ricostruire!<br/>
+        <div class="iban">
+            <div class="title">Codice Iban</div>
+            <div class="number">{{ iban }}</div>
+        </div>
+        <div class="iban">
+            <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
+            <div class="number">TESTCODE3044</div>
+        </div>
+    {% endif %}
 {% endblock %}
 
-{% block breadcrumb %}{{ block.super }} &raquo; <a href="/comune/">Comune</a> &raquo; <a href="/comune/{{ territorio.slug }}">{{ territorio.denominazione }}</a>{% endblock %}
+{% block breadcrumb %}{{ block.super }} &raquo; <a href="/comune/{{ territorio.slug }}">Comune di {{ territorio.denominazione }}</a>{% endblock %}
 
 {% block content %}
     {{ block.super }}
     <pre>
         territorio.pk:{{ territorio.pk }}
         denominazione: {{ territorio.denominazione}}
-        tot_donazioni: {{ tot_donazioni|intword }}
-        donazioni: {{ donazioni }}
+        tot_donazioni: {{ tot_donazioni }}
+        donazioni: {{ donazioni_tot }}
+        donazioni_comune: {{ donazioni_comune }}
         iban: {{ iban }}
-        top 10 progetti: {{ projects }}
+        top 5 progetti: {{ projects_top5 }}
         dati progetti per categorie: {{ progetti_categorie }}
         dati donazioni per tipologia soggetto: {{ donazioni_categorie }}
     </pre>
