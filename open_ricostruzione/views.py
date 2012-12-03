@@ -41,12 +41,14 @@ class TerritorioView(DetailView):
         context = super(TerritorioView, self).get_context_data(**kwargs)
 
         # importi progetti totale
-        tot_progetti = Progetto.objects.filter(territorio=t).aggregate(s=Sum('riepilogo_importi')).values()
+        tot_danno = Progetto.objects.filter(territorio=t).aggregate(s=Sum('riepilogo_importi')).values()
+        if tot_danno[0]:
+            context['tot_danno'] = tot_danno[0]
 
         # donazioni per il territorio considerato
         tot_donazioni = Donazione.objects.filter(territorio=t).aggregate(s=Sum('importo')).values()
-        if tot_donazioni:
-            context['tot_donazioni']= tot_donazioni
+        if tot_donazioni[0]:
+            context['tot_donazioni'] = tot_donazioni[0]
             context['donazioni'] = Donazione.objects.filter(territorio=t)
 
         # importi dei progetti per categorie
@@ -87,9 +89,9 @@ class DonazioneView(TemplateView):
             context['tot_donazioni']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         # importi progetti totale
-        tot_progetti = Progetto.objects.all().aggregate(s=Sum('riepilogo_importi')).values()
-        if tot_progetti:
-            context['tot_progetti'] =  moneyfmt(tot_progetti[0],2,"",".",",")
+        tot_danno = Progetto.objects.all().aggregate(s=Sum('riepilogo_importi')).values()
+        if tot_danno:
+            context['tot_danno'] =  moneyfmt(tot_danno[0],2,"",".",",")
 
         #tutte le donazioni nel tempo
         #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni

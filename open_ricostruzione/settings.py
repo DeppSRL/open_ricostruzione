@@ -133,6 +133,7 @@ INSTALLED_APPS = (
     'open_ricostruzione',
     'south',
     'django_extensions',
+    'django.contrib.humanize',
 )
 
 

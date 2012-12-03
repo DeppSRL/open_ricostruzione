@@ -9,7 +9,11 @@
     {% endif %}
 {% endblock %}
 
+{% block breadcrumb %}{{ block.super }} &raquo; <a href="/progetto/">Progetto</a> &raquo; <a href="/progetto/{{ progetto.slug }}">{{ progetto.denominazione }}</a>{% endblock %}
+
+
 {% block content %}
+    {{ block.super }}
     <pre>
         progetto.pk:{{ progetto.pk }}
         denominazione: {{ progetto.denominazione}}

@@ -1,17 +1,19 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block title %}Donazioni{% endblock %}
 
 {% block page-title %}Donazioni{% endblock %}
-{% block stima-danno %}{{ tot_progetti }}{% endblock %}
-{% block tot-donazioni %}{{ tot_donazioni }}{% endblock %}
+{% block stima-danno %}{{ tot_danno|intword }}{% endblock %}
+{% block tot-donazioni %}{{ tot_donazioni|intword }}{% endblock %}
 
+{% block breadcrumb %}{{ block.super }} &raquo; <a href="/donazioni/">Donazioni</a>{% endblock %}
 
 {% block content %}
     {{ block.super }}
     <pre>
 
-    tutte le donazioni: {{ donazioni }}
-    donazionispline: {{ donazioni_spline }}
+    {{ tot_donazioni|intword }}
+    donazionispline: {{ donazioni_spline  }}
 
     </pre>
 

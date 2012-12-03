@@ -1,24 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Comune di {{ comune.denominazione }}{% endblock %}
+{% load humanize %}
+{% block title %}Comune di {{ territorio.denominazione }}{% endblock %}
 
 {% block support %}
     Aiutaci a ricostruire!<br/>
     <div class="iban">
         <div class="title">Codice Iban</div>
-        <div class="number">it876543456786543</div>
+        <div class="number">IT000000000000000000000000</div>
     </div>
     <div class="iban">
         <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-        <div class="number">unicritm10j3</div>
+        <div class="number">TESTCODE3044</div>
     </div>
 {% endblock %}
 
+{% block breadcrumb %}{{ block.super }} &raquo; <a href="/comune/">Comune</a> &raquo; <a href="/comune/{{ territorio.slug }}">{{ territorio.denominazione }}</a>{% endblock %}
 
 {% block content %}
+    {{ block.super }}
     <pre>
-        comune.pk:{{ comune.pk }}
-        denominazione: {{ comune.denominazione}}
-        tot_donazioni: {{ tot_donazioni }}
+        territorio.pk:{{ territorio.pk }}
+        denominazione: {{ territorio.denominazione}}
+        tot_donazioni: {{ tot_donazioni|intword }}
         donazioni: {{ donazioni }}
         iban: {{ iban }}
         top 10 progetti: {{ projects }}
