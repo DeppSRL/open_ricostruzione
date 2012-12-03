@@ -138,12 +138,15 @@
             </div>
             <div id="">{% block main-title %}{% endblock %}</div>
         </div>
-        <div class="span2 offset4">
-            stima del danno: {% block stima-danno %}{% endblock %} Euro
+        <div id="boxes">
+            <div class="span2 offset4" id="danno">
+                <div id="title">Stima del danno </div>
+                <div id="number"> {% block stima-danno %}{% endblock %} Euro
 
-        </div>
-        <div class="span2">
-            donazioni ricevute:{% block tot-donazioni %}{% endblock %} Euro
+            </div>
+            <div class="span2" id="donazioni">
+                donazioni ricevute:{% block tot-donazioni %}{% endblock %} Euro
+            </div>
         </div>
     </div>
 

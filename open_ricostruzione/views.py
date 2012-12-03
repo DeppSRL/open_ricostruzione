@@ -40,10 +40,12 @@ class TerritorioView(DetailView):
         t = self.get_object()
         context = super(TerritorioView, self).get_context_data(**kwargs)
 
+        context['sigla_provincia'] = Territorio.objects.get(tipo_territorio = 'P', cod_provincia = t.cod_provincia, cod_comune = "0").sigla_provincia
         # importi progetti totale
-        tot_danno = Progetto.objects.filter(territorio=t).aggregate(s=Sum('riepilogo_importi')).values()
-        if tot_danno[0]:
-            context['tot_danno'] = tot_danno[0]
+        stima_danno = Progetto.objects.filter(territorio=t).aggregate(s=Sum('riepilogo_importi')).values()
+        if stima_danno[0]:
+            context['stima_danno'] = stima_danno[0]
+
 
         # donazioni per il territorio considerato
         tot_donazioni = Donazione.objects.filter(territorio=t).aggregate(s=Sum('importo')).values()
