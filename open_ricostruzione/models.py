@@ -10,12 +10,13 @@ class Territorio(models.Model):
     denominazione = models.CharField(max_length=255)
     iban = models.CharField(max_length=30, null=True, blank=True)
     slug = models.SlugField(max_length=60)
+    sigla_provincia = models.CharField(max_length=3, null=True, blank=True)
 
     def __unicode__(self):
         return u"%s (%s)" % (self.denominazione, self.cod_comune)
 
     class Meta:
-        verbose_name_plural = u'Comuni'
+        verbose_name_plural = u'Territori'
 
     def get_comuni_with_progetti(self):
         return Territorio.objects.filter(tipo_territorio="C", cod_provincia = self.cod_provincia).\

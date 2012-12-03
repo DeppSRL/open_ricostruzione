@@ -18,6 +18,8 @@
 
 {% block breadcrumb %}{{ block.super }} &raquo; <a href="/comune/{{ territorio.slug }}">Comune di {{ territorio.denominazione }}</a>{% endblock %}
 
+{% block main-title %}Comune di {{ territorio.denominazione }}(PROV){% endblock %}
+
 {% block content %}
     {{ block.super }}
     <pre>
