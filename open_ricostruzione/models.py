@@ -34,7 +34,7 @@ class TipologiaProgetto(models.Model):
     denominazione = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return u"%s - %s" % (self.codice, self.denominazione)
+        return u"%s" % self.denominazione
 
     class Meta:
         verbose_name_plural = u'Tipologia Progetti'
@@ -43,7 +43,7 @@ class Progetto(models.Model):
 
     id_progetto = models.CharField(max_length=6)
     id_padre = models.CharField(max_length=6, blank=True, null=True)
-    tipologia = models.SmallIntegerField()
+    tipologia = models.ForeignKey('TipologiaProgetto', null=False)
     territorio = models.ForeignKey('Territorio', null=True)
     importo_previsto = models.TextField(max_length=4096)
     riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
@@ -59,7 +59,7 @@ class Progetto(models.Model):
     ulteriori_info = models.TextField()
 
     def __unicode__(self):
-        return u"%s (ID: %s, TIPOLOGIA:%s, PADRE: %s)" % (self.denominazione, self.id_progetto, self.tipologia, self.parent_id)
+        return u"%s ID: %s, PADRE: [%s]" % (self.denominazione, self.id_progetto,self.parent)
 
     class Meta:
         verbose_name_plural = u'Progetti'

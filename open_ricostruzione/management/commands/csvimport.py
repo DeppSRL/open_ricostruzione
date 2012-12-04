@@ -90,6 +90,7 @@ class Command(BaseCommand):
 
             created = False
             territorio = Territorio.objects.get(cod_comune=r['istat'])
+            tipologia = TipologiaProgetto.objects.get(codice=r['tipologia'])
             self.logger.info("%s: Analizzando record: %s" % ( r['istat'],r['id_progetto']))
             importo_previsto=r['importo_previsto'].replace('$','')
             riepilogo_importi=r['riepilogo_importi'].replace(',','.')
@@ -99,14 +100,14 @@ class Command(BaseCommand):
 
                 defaults={
                     'id_progetto': r['id_progetto'],
-                    'tipologia': r['tipologia'],
                     'territorio': territorio,
                     'denominazione': strip_tags(r['denominazione']),
                     'importo_previsto': importo_previsto,
                     'riepilogo_importi': Decimal(riepilogo_importi),
                     }
             )
-
+#            aggiunge la tipologia
+            progetto.tipologia = tipologia
             if created:
                 self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
             else:
@@ -148,7 +149,7 @@ class Command(BaseCommand):
             except ObjectDoesNotExist:
                 self.logger.info("Record padre con id: %s non esiste" % ( r['id_padre']))
                 continue
-
+            tipologia = TipologiaProgetto.objects.get(codice=r['tipologia'])
             progetto, created = Progetto.objects.get_or_create(
                 id_progetto = r['id_figlio'],
                 id_padre = r['id_padre'],
@@ -157,13 +158,13 @@ class Command(BaseCommand):
                     'id_progetto': r['id_figlio'],
                     'id_padre': r['id_padre'],
                     'parent': padre,
-                    'tipologia': r['tipologia'],
                     'denominazione': strip_tags(r['denominazione']),
                     'importo_previsto': r['importo_previsto'],
                     'riepilogo_importi': Decimal(r['riepilogo_importi']),
                     }
             )
-
+#            aggiunge la tipologia
+            progetto.tipologia = tipologia
             if created:
                 self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
             else:
@@ -177,6 +178,7 @@ class Command(BaseCommand):
             progetto.epoca = r['epoca']
             progetto.cenni_storici = r['cenni_storici']
             progetto.ulteriori_info = r['ulteriori_informazioni']
+
 #           aggiunge slug
             myslug = progetto.denominazione[:50] + progetto.id_progetto
             progetto.slug = slugify(myslug)
