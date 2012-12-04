@@ -46,7 +46,6 @@ class TerritorioView(DetailView):
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
 
-
         # donazioni per il territorio considerato
         tot_donazioni = Donazione.objects.filter(territorio=t).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:

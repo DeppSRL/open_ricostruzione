@@ -140,12 +140,15 @@
         </div>
         <div id="boxes">
             <div class="span2 offset4" id="danno">
-                <div id="title">Stima del danno </div>
-                <div id="number"> {% block stima-danno %}{% endblock %} Euro
-
+                <div class="title">Stima del danno </div>
+                <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
+                <div class="grandezza">{% block stima-danno-word %}{% endblock %} di Euro</div>
             </div>
             <div class="span2" id="donazioni">
-                donazioni ricevute:{% block tot-donazioni %}{% endblock %} Euro
+                <div class="title">Donazioni ricevute</div>
+                <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
+                <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} di Euro</div>
+
             </div>
         </div>
     </div>
@@ -169,6 +172,11 @@
                     </div>
                     <div class="links">
                         <ul>
+                            <li>
+                                <a href="../il-progetto">
+                                   Il Progetto
+                                </a>
+                            </li>
                             <li>
                                 <a href="../chi-siamo">
                                     Chi siamo

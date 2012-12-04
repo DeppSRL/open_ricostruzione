@@ -20,11 +20,14 @@
 
 {% block main-title %}Comune di {{ territorio.denominazione }}({{ sigla_provincia }}){% endblock %}
 
-{% block stima-danno %}{{ stima_danno|intword }}{% endblock %}
-{% block tot-donazioni %}{{ tot_donazioni|intword }}{% endblock %}
+{% block stima-danno-number %}{{ stima_danno|onlynumber }}{% endblock %}
+{% block stima-danno-word %}{{ stima_danno|onlyword }}{% endblock %}
+{% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
+{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }}{% endblock %}
 
 {% block content %}
     {{ block.super }}
+    <BR>
     <pre>
         territorio.pk:{{ territorio.pk }}
         denominazione: {{ territorio.denominazione}}
