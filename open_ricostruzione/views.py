@@ -81,7 +81,7 @@ class TerritorioView(DetailView):
         projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:5]
 
         if projects:
-            context['projects_top5'] = projects
+            context['progetti_top'] = projects
 
         return context
 

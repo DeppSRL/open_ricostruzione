@@ -91,7 +91,16 @@ div.content{
   padding-top: @spacing-single;
   min-height: 500px;
 
+  #map{
+    margin-top: @spacing-single;
+    background-color: @grayLighter;
+    width: 300px;
+    height: 300px;
+  }
+
   #boxes{
+    margin-left:0;
+
     .title{
       color:black;
       text-transform: uppercase;
@@ -162,6 +171,37 @@ div.content{
     margin-bottom: @spacing-double;
   }
   #main-content{
+    #project_list{
+      .project_row{
+        .titolo{
+          color: @project-name;
+          font-weight: bold;
+        }
+        .tipologia{
+          color: @project-category;
+
+        }
+        .box{
+          overflow:hidden;
+          .tempi{
+            float:left;
+          }
+          .importi{
+            float:right;
+            font-size: @navbar-size;
+            font-weight: bold;
+          }
+        }
+
+        .spacer{
+          clear:both;
+          margin-top: @spacing-half;
+          margin-bottom: @spacing-half;
+          border-bottom: 1px solid #b5b8b6;
+          min-height: 1px;
+        }
+      }
+    }
 
   }
 }
