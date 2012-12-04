@@ -139,6 +139,8 @@
                 {% block breadcrumb %}<a href="/">Home</a>{% endblock %}
             </div>
             <div id="main-title">{% block main-title %}{% endblock %}</div>
+            <div id="main-subtitle">{% block main-subtitle %}{% endblock %}</div>
+            <div id="main-content">{% block main-content %}{% endblock %}</div>
         </div>
         <div id="boxes">
 
@@ -147,7 +149,7 @@
                     <div class="title">Stima del danno </div>
                     <div class="box" id="danno">
                         <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
-                        <div class="grandezza">{% block stima-danno-word %}{% endblock %} di Euro</div>
+                        <div class="grandezza">{% block stima-danno-word %}{% endblock %} Euro</div>
                     </div>
                     <div class="subtitle">Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione</div>
                 {% endif %}
@@ -157,7 +159,7 @@
                     <div class="title">Donazioni ricevute</div>
                     <div class="box" id="donazioni">
                         <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
-                        <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} di Euro</div>
+                        <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} Euro</div>
                     </div>
                     <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
                 {% endif %}

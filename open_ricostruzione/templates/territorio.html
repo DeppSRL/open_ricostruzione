@@ -21,16 +21,18 @@
 {% block breadcrumb %}{{ block.super }} / <a href="/comune/{{ territorio.slug }}">Comune di {{ territorio.denominazione }}</a>{% endblock %}
 
 {% block main-title %}Comune di {{ territorio.denominazione }} ({{ sigla_provincia }}){% endblock %}
+{% block main-subtitle %}I progetti in evidenza nel Comune di {{ territorio.denominazione }} {% endblock %}
 
 {% block stima-danno-number %}{{ stima_danno|onlynumber }}{% endblock %}
-{% block stima-danno-word %}{{ stima_danno|onlyword }}{% endblock %}
+{% block stima-danno-word %}{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %}di{% endif %}{% endblock %}
 {% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
-{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }}{% endblock %}
+{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }}{% if tot_donazioni > 1000000 %}di{% endif %}{% endblock %}
 
 {% block content %}
     {{ block.super }}
     <BR>
     <pre>
+
         territorio.pk:{{ territorio.pk }}
         denominazione: {{ territorio.denominazione}}
         tot_donazioni: {{ tot_donazioni }}
