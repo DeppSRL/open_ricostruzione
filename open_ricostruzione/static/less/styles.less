@@ -77,6 +77,7 @@ body{
     padding-left: 5px;
     border-radius: 0;
     background-color: #cacccb;
+    color: black;
   }
   form.navbar-search{
     .search-query{
@@ -87,7 +88,67 @@ body{
 }
 
 div.content{
+  padding-top: @spacing-single;
   min-height: 500px;
+
+  #boxes{
+    .title{
+      color:black;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .box{
+      .number{
+        float:left;
+        height:40px;
+        width: 80px;
+        padding-top: 20px;
+        color: white;
+        text-align: center;
+        font-size: 35px;
+      }
+      .grandezza{
+        float:right;
+        height:  @spacing-double;
+        width: 80px;
+        vertical-align: middle;
+        padding-top:10px;
+        text-transform: uppercase;
+        font-size: 20px;
+      }
+    }
+    #donazioni.box {
+      .number{
+        background-image: url("../img/box_donazioni.png");
+        background-size:80px 60px;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .grandezza{
+        color: @green-color;
+      }
+    }
+    #danno.box{
+      .number{
+        background-image: url("../img/box_danno.png");
+        background-size:80px 60px;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .grandezza{
+        color: @blue-color;
+      }
+    }
+  }
+
+  #main-title{
+    padding-top: @spacing-double;
+    color: black;
+    font-family: 'Abel','sans-serif';
+    font-size: 35px;
+    margin-bottom: 10px;
+  }
 }
 
 footer{

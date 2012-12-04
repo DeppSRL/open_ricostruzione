@@ -9,7 +9,7 @@
     {% endif %}
 {% endblock %}
 
-{% block breadcrumb %}{{ block.super }} &raquo; <a href="/progetto/{{ progetto.slug }}">Progetto {{ progetto.denominazione }}</a>{% endblock %}
+{% block breadcrumb %}{{ block.super }} / <a href="/progetto/{{ progetto.slug }}">Progetto {{ progetto.denominazione }}</a>{% endblock %}
 
 
 {% block content %}

@@ -3,22 +3,24 @@
 {% block title %}Comune di {{ territorio.denominazione }}{% endblock %}
 
 {% block support %}
-    {% if iban %}
         Aiutaci a ricostruire!<br/>
         <div class="iban">
-            <div class="title">Codice Iban</div>
-            <div class="number">{{ iban }}</div>
+            {% if iban %}
+                <div class="title">Codice Iban</div>
+                <div class="number">{{ iban }}</div>
+            {% endif %}
         </div>
         <div class="iban">
-            <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-            <div class="number">TESTCODE3044</div>
+            {% if swift %}
+                <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
+                <div class="number">{{ swift }}</div>
+            {% endif %}
         </div>
-    {% endif %}
 {% endblock %}
 
-{% block breadcrumb %}{{ block.super }} &raquo; <a href="/comune/{{ territorio.slug }}">Comune di {{ territorio.denominazione }}</a>{% endblock %}
+{% block breadcrumb %}{{ block.super }} / <a href="/comune/{{ territorio.slug }}">Comune di {{ territorio.denominazione }}</a>{% endblock %}
 
-{% block main-title %}Comune di {{ territorio.denominazione }}({{ sigla_provincia }}){% endblock %}
+{% block main-title %}Comune di {{ territorio.denominazione }} ({{ sigla_provincia }}){% endblock %}
 
 {% block stima-danno-number %}{{ stima_danno|onlynumber }}{% endblock %}
 {% block stima-danno-word %}{{ stima_danno|onlyword }}{% endblock %}

@@ -48,19 +48,21 @@
                     <img src="../static/img/logo_white.png">
                 </a>
             </div>
-            <div class="span4" id="appello">
-                {% block support %}
-                    Aiutaci a ricostruire!<br/>
-                    <div class="iban">
-                        <div class="title">Codice Iban</div>
-                        <div class="number">it876543456786543</div>
-                    </div>
-                    <div class="iban">
-                        <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-                        <div class="number">unicritm10j3</div>
-                    </div>
-                {% endblock %}
-            </div><!--/span-->
+            {% if iban %}
+                <div class="span4" id="appello">
+                        {% block support %}
+                            Aiutaci a ricostruire!<br/>
+                            <div class="iban">
+                                <div class="title">Codice Iban</div>
+                                <div class="number">&nbsp;</div>
+                            </div>
+                            <div class="iban">
+                                <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
+                                <div class="number">&nbsp;</div>
+                            </div>
+                        {% endblock %}
+                </div><!--/span-->
+            {% endif %}
         </div>
     </div>
 </div>
@@ -132,22 +134,31 @@
 <div class="container content">
     {% block content %}
     <div class="row">
-        <div class="span4">
+        <div class="span6">
             <div id="breadcrumbs">
                 {% block breadcrumb %}<a href="/">Home</a>{% endblock %}
             </div>
-            <div id="">{% block main-title %}{% endblock %}</div>
+            <div id="main-title">{% block main-title %}{% endblock %}</div>
         </div>
         <div id="boxes">
-            <div class="span2 offset4" id="danno">
-                <div class="title">Stima del danno </div>
-                <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
-                <div class="grandezza">{% block stima-danno-word %}{% endblock %} di Euro</div>
+
+            <div class="span2 offset2" >
+                {%  if stima_danno %}
+                    <div class="title">Stima del danno </div>
+                    <div class="box" id="danno">
+                        <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
+                        <div class="grandezza">{% block stima-danno-word %}{% endblock %} di Euro</div>
+                    </div>
+                {% endif %}
             </div>
-            <div class="span2" id="donazioni">
-                <div class="title">Donazioni ricevute</div>
-                <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
-                <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} di Euro</div>
+            <div class="span2" >
+                {% if tot_donazioni %}
+                    <div class="title">Donazioni ricevute</div>
+                    <div class="box" id="donazioni">
+                        <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
+                        <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} di Euro</div>
+                    </div>
+                {% endif %}
 
             </div>
         </div>
