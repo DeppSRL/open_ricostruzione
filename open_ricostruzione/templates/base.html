@@ -149,6 +149,7 @@
                         <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
                         <div class="grandezza">{% block stima-danno-word %}{% endblock %} di Euro</div>
                     </div>
+                    <div class="subtitle">Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione</div>
                 {% endif %}
             </div>
             <div class="span2" >
@@ -158,6 +159,7 @@
                         <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
                         <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} di Euro</div>
                     </div>
+                    <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
                 {% endif %}
 
             </div>
