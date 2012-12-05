@@ -175,3 +175,11 @@ class DonazioneView(TemplateView):
         return context
 
 
+class TipologieProgettoView(TemplateView):
+
+    template_name = "tipologieprogetto.html"
+
+
+    def get_context_data(self, **kwargs):
+        context = super(TipologieProgettoView, self).get_context_data(**kwargs)
+        return context
