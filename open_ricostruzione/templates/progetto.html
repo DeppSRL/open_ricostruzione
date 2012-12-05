@@ -1,30 +1,139 @@
 {% extends "base.html" %}
-
+{% load humanize %}
 {% block title %}Progetto{% endblock %}
 
 {% block support %}
     {% if iban %}
-        Supporta questo progetto!<br/>
+        Supporta questo progetto!<br xmlns="http://www.w3.org/1999/html"/>
         Codice IBAN: {{ iban }}<br/>
     {% endif %}
 {% endblock %}
 
 {% block breadcrumb %}{{ block.super }} / <a href="/progetto/{{ progetto.slug }}">Progetto {{ progetto.denominazione }}</a>{% endblock %}
 
+{% block main-title %}{{ progetto.denominazione }}{% endblock %}
+{% block main-subtitle %}
+    <div>
+        {{ progetto.ubicazione }},
+        <a href="../comune/{{ progetto.territorio.slug }}">
+            Comune di {{ progetto.territorio.denominazione }}
+            ({{ progetto.territorio.get_provincia.sigla_provincia}})
+        </a>
+    </div>
+    <div>
+        <a href="../tipologie-progetti/">{{ progetto.tipologia.denominazione }}</a>
+    </div>
+{% endblock %}
 
-{% block content %}
-    {{ block.super }}
-    <pre>
-        progetto.pk:{{ progetto.pk }}
-        denominazione: {{ progetto.denominazione}}
-        comune_nome: {{ comune_nome }}
-        categoria: {{ progetto.tipologia }}
-        importo previsto (testo): {{ progetto.importo_previsto }}
-        importo totale (numero): {{ progetto.riepilogo_importi }}
-        donaz totale: {{ donazioni }}
-        epoca: {{ progetto.epoca }}
-        cenni storici: {{ progetto.cenni_storici }}
-        ulteriori info: {{ progetto.ulteriori_info }}
+{% block stima-danno-number %}{{ stima_danno|onlynumber }}{% endblock %}
+{% block stima-danno-word %}{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %}di{% endif %}{% endblock %}
+{% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
+{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }}{% if tot_donazioni > 1000000 %}di{% endif %}{% endblock %}
 
-    </pre>
+{% block map %}
+    <div id="map" class='span4'>Mappa del Comune</div>
+{% endblock %}
+
+{% block main-content %}
+    <div class="row-fluid">
+        <div id="left" class="span11">
+            <div id="project_data">
+                {% if progetto.cenni_storici %}
+                    <div class="data_row">
+                        <div class="titolo">
+                            descrizione
+                        </div>
+                        <div class="testo">
+                            {{ progetto.cenni_storici }}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if progetto.stato_attuale %}
+                    <div class="data_row">
+                        <div class="titolo">
+                           stato attuale
+                        </div>
+                        <div class="testo">
+                            {{ progetto.stato_attuale }}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if progetto.interventi_previsti %}
+                    <div class="data_row">
+                        <div class="titolo">
+                            interventi previsti
+                        </div>
+                        <div class="testo">
+                            {{ progetto.interventi_previsti }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {% if n_progetti > 10 %}
+                    <a href="#" >Vedi tutti i {{ n_progetti }} progetti</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+{% block data-content %}
+    <div class="row">
+        <div class="span12" id="tempi-realizzazione">
+{#            {% if progetto.tempi_di_realizzazione %}#}
+                <div class="data_row">
+                    <div class="titolo">
+                        tempi di realizzazione
+                    </div>
+                    <div class="testo">
+                        {{ progetto.tempi_di_realizzazione }}
+                    </div>
+                </div>
+{#            {% endif %}#}
+            {% if progetto.riepilogo_importi %}
+                <div class="data_row">
+                    <div class="titolo">
+                        importo dei lavori: {{ progetto.riepilogo_importi }} euro
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div> <!-- /row-->
+
+    {% if sottoprogetti %}
+    <div class="row">
+        <div class="span12" id="subproj">
+            <div>Componenti del progetto</div>
+
+            {% for p in sottoprogetti %}
+                <div class="accordion" id="accordion2">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{ p.pk }}">
+                                {{ p.denominazione }}
+                            </a>
+                        </div>
+                        <div id="collapse{{ p.pk }}" class="accordion-body collapse ">
+                            <div class="accordion-inner">
+                                <div class="tipologia">{{  p.tipologia }}</div>
+                                <div class="box">
+                                    <div class="tempi">Tempi di realizzazione: {{ p.tempi_di_realizzazione }}</div>
+                                    <div class="importi">{{ p.riepilogo_importi}} Euro</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+        </div>
+    </div> <!-- /row-->
+    {% endif %}
+
+
 {% endblock %}

@@ -130,7 +130,7 @@ div.content{
       .grandezza{
         float:right;
         height:  @spacing-double;
-        width: 80px;
+        width: 85px;
         vertical-align: middle;
         padding-top:10px;
         text-transform: uppercase;
@@ -170,14 +170,15 @@ div.content{
   }
 
   #main-title{
-    padding-top: @spacing-double;
+    padding-top: @spacing-single;
+    line-height: 35px;
     color: black;
     font-family: 'Abel','sans-serif';
     font-size: 35px;
     margin-bottom: 10px;
   }
   #main-subtitle{
-    margin-bottom: @spacing-double;
+    margin-bottom: @spacing-single;
   }
   #main-content{
     #project_list{
@@ -211,6 +212,19 @@ div.content{
         }
       }
     }
+  #project_data{
+    .titolo{
+      font-size: @caption-size + 2px;
+      text-transform: uppercase;
+      font-weight: bold;
+      color:black;
+      clear: both;
+    }
+    .data_row{
+      margin-top: @spacing-single;
+      margin-bottom: @spacing-single;
+    }
+  }
 
   }
   #data-content{
@@ -263,6 +277,25 @@ div.content{
           border-bottom: 1px solid #b5b8b6;
           min-height: 1px;
         }
+      }
+    }
+    #tempi-realizzazione{
+      margin-top: @spacing-single;
+      margin-bottom: @spacing-single;
+      margin-left: 0;
+      padding-top: @spacing-single;
+      padding-bottom: @spacing-single;
+      padding-left: @spacing-single;
+      min-height: 100px;
+      background-color: @tempi-realizzazione-color;
+
+      .titolo{
+        font-family: 'Arial', 'sans-serif';
+        font-size: @caption-size + 2px;
+        text-transform: uppercase;
+        font-weight: bold;
+        color:black;
+        clear: both;
       }
     }
   }

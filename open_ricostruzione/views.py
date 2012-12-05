@@ -20,6 +20,21 @@ class ProgettoView(DetailView):
         p = self.get_object()
         context = super(ProgettoView, self).get_context_data(**kwargs)
 
+        #sotto progetti
+        sottoprogetti = Progetto.objects.filter(id_padre=p.id_progetto).order_by('denominazione')
+        if sottoprogetti:
+            context['sottoprogetti']=sottoprogetti
+
+        # importi progetto
+        stima_danno = Progetto.objects.filter(id_progetto=p.id_progetto).\
+            aggregate(s=Sum('riepilogo_importi')).values()
+
+        if stima_danno[0]:
+            context['stima_danno'] = stima_danno[0]
+
+        # donazioni per il progetto
+        # mancano perche' non abbiamo i dati relativi
+
         context['territorio_nome'] = p.territorio.denominazione
         iban =  Progetto.objects.get(pk = p.pk).territorio.iban
         if iban:
@@ -92,8 +107,7 @@ class TerritorioView(DetailView):
             context['donazioni_spline'] = donazioni_spline
 
 #        ultime donazioni per il comune considerato
-        donazioni_last = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
-
+        donazioni_last = Donazione.objects.select_related().filter(territorio=t).filter(confermato=True).order_by('-data')[:3]
 
         context['donazioni_last'] = donazioni_last
         return context
