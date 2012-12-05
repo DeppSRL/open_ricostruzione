@@ -14,6 +14,9 @@ body{
    #logo_top{
      padding-top: @spacing-double;
      padding-bottom: @spacing-double;
+     a{
+       border: 0;
+     }
    }
     #appello{
       padding-left: @spacing-half;
@@ -92,10 +95,15 @@ div.content{
   min-height: 500px;
 
   #map{
+    color:black;
+    text-align: center;
+    font-family: 'Abel','sans-serif';
+    font-size: @slogan-size;
     margin-top: @spacing-single;
+    padding-top: 150px;
     background-color: @grayLighter;
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 250px;
   }
 
   #boxes{
@@ -130,7 +138,7 @@ div.content{
       }
     }
     .subtitle{
-      margin-top: 5px ;
+      padding-top: 10px ;
       font-size: @caption-size;
       line-height: @caption-size;
       text-transform: uppercase;
@@ -158,6 +166,7 @@ div.content{
         color: @blue-color;
       }
     }
+
   }
 
   #main-title{
@@ -203,6 +212,69 @@ div.content{
       }
     }
 
+  }
+  #data-content{
+    .titolo{
+      min-height: @medium-size;
+      margin-top: @spacing-single;
+      font-family: 'Abel','sans-serif';
+      font-weight: normal;
+      text-transform: uppercase;
+      font-size: @medium-size;
+    }
+    .donazioni{
+      color: @green-color;
+    }
+    .danno{
+      color: @blue-color;
+    }
+
+    .project_list{
+
+      border-top: 1px solid #b5b8b6;
+      padding-top: @spacing-half;
+
+      .project_row{
+        .titolo{
+          color: @project-name;
+          font-weight: bold;
+        }
+        .tipologia{
+          color: @project-category;
+
+        }
+        .box{
+          overflow:hidden;
+          .n_progetti{
+            color:@blue-color;
+            float:left;
+          }
+          .importo{
+            float:right;
+            font-size: @navbar-size;
+            font-weight: bold;
+          }
+        }
+
+        .spacer{
+          clear:both;
+          margin-top: @spacing-half;
+          margin-bottom: @spacing-half;
+          border-bottom: 1px solid #b5b8b6;
+          min-height: 1px;
+        }
+      }
+    }
+  }
+  #comment{
+    .titolo{
+      min-height: @medium-size;
+      margin-top: @spacing-single;
+      font-family: 'Abel','sans-serif';
+      font-weight: normal;
+      text-transform: uppercase;
+      font-size: @medium-size;
+    }
   }
 }
 

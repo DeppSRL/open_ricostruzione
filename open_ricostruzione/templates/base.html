@@ -135,7 +135,7 @@
 <!-- /NAVBAR-->
 
 <div class="container content">
-    {% block content %}
+
     <div class="row">
         <div class="span7">
             <div id="breadcrumbs">
@@ -166,12 +166,40 @@
                     <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
                 {% endif %}
             </div>
+            {% block map %}
 
-            <div id="map" class='span4'></div>
+            {% endblock %}
 
         </div>
     </div>
-    {% endblock %}
+
+    <div id="data-content">
+        {% block data-content %}
+        {% endblock %}
+    </div>
+
+
+    <div id="comment">
+        <div class="row">
+            <div class="span6">
+                {% block comment%}
+                    <form>
+                        <legend class="titolo">Commenta</legend>
+                        <div class="control-group">
+                            <div class="controls">
+                                <textarea placeholder="Inserisci il tuo commento" class="input-xlarge" id="textarea" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="">
+                            <button type="submit" disabled="true" class="btn btn-primary">Invia</button>
+                        </div>
+
+                    </form>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
 </div><!--/.container-->
 
 
@@ -303,16 +331,11 @@
 </script>
 
 
-
-
 {#/*    HIGH CHARTS*/#}
-{% block grafici %}
+{% block graph-data %}
 
 {% endblock %}
 {#/*  END  HIGH CHARTS*/#}
-
-
-
 
 </body>
 </html>

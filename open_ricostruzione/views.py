@@ -8,8 +8,6 @@ from open_ricostruzione.utils.moneydate import moneyfmt, add_months
 from datetime import timedelta
 
 
-
-
 class HomeView(TemplateView):
     template_name = "home.html"
 
@@ -60,17 +58,16 @@ class TerritorioView(DetailView):
 
         context['donazioni_comune'] = Donazione.objects.filter(territorio=t)
 
-
         # importi dei progetti per categorie
         context['progetti_categorie'] =  \
-            Progetto.objects.filter(territorio=t).values('tipologia').\
-            annotate(somma_categoria=Sum('riepilogo_importi'))
+            Progetto.objects.filter(territorio=t).values('tipologia__denominazione').\
+            annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
 
         # donazioni divise per tipologia cedente
         context['donazioni_categorie'] = \
             Donazione.objects.filter( territorio=t).\
-            filter(confermato = True).values('tipologia').\
-            annotate(somma_categoria = Sum('importo'))
+            filter(confermato = True).values('tipologia__denominazione').\
+            annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
         #iban territorio
         iban = Territorio.objects.get(pk = t.pk).iban
@@ -78,11 +75,27 @@ class TerritorioView(DetailView):
             context['iban'] = iban
 
         #lista progetti per questo territorio in ordine di costo decrescente
-        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:5]
+        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
 
         if projects:
             context['progetti_top'] = projects
 
+        donazioni_spline = t.get_spline_data()
+
+        if donazioni_spline:
+        #            rende i numeri Decimal delle stringhe per il grafico
+        #            TODO: creare i dati per le label in formato italiano
+
+            for value in donazioni_spline:
+                value['sum']=moneyfmt(value['sum'],2,"","",".")
+
+            context['donazioni_spline'] = donazioni_spline
+
+#        ultime donazioni per il comune considerato
+        donazioni_last = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
+
+
+        context['donazioni_last'] = donazioni_last
         return context
 
 class DonazioneView(TemplateView):

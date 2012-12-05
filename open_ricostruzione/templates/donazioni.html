@@ -8,7 +8,7 @@
 
 {% block breadcrumb %}{{ block.super }} &raquo; <a href="/donazioni/">Donazioni</a>{% endblock %}
 
-{% block content %}
+{% block main-content %}
     {{ block.super }}
     <pre>
 
@@ -30,7 +30,7 @@
 {% endblock %}
 
 
-{% block grafici %}
+{% block graph-data %}
     <script>
         var chart1; // globally available
         var piechart;
