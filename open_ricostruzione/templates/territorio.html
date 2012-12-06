@@ -64,67 +64,74 @@
 
 {% block data-content %}
     {% if donazioni_spline %}
-    <div class="row">
-        <div class="span12">
-            <div class="titolo">Andamento delle donazioni per il Comune di {{ territorio.denominazione }}</div>
-           <div id="time_graph">
+        <div class="row">
+            <div class="span12">
+                <div class="titolo">Andamento delle donazioni per il Comune di {{ territorio.denominazione }}</div>
+               <div id="time_graph">
 
-           </div>
+               </div>
 
-        </div><!-- /span -->
-    </div> <!-- /row -->
+            </div><!-- /span -->
+        </div> <!-- /row -->
     {% endif %}
 
     <!-- PIE CHARTS -->
     <div class="row">
         <div class="span6">
-            <div class="titolo danno"> Progetti per la ricostruzione</div>
-            <div class="subtitle">Ripartizione dei danni per categorie</div>
-            <div id="proj_pie"></div>
-            <div class="project_list">
-                {% for p in progetti_categorie %}
-                    <div class="project_row ">
-                        <div class="box">
-                            <div class="n_progetti">{{ p.c }} {{ p.tipologia__denominazione }}</div>
-                            <div class="importo">{{ p.sum|floatformat}} euro</div>
-                        </div>
-                        <div class="spacer"></div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div><!-- /span -->
-        <div class="span6">
-            <div class="titolo donazioni"> Donazioni ricevute</div>
-            <div class="subtitle">Ripartizione delle donazioni per soggetti</div>
-            <div id="don_pie"></div>
-            <div class="project_list">
-                {% for p in donazioni_categorie %}
-                    <div class="project_row ">
-                        <div class="box">
-                            <div class="n_progetti">{{ p.c }} da {{ p.tipologia__denominazione }}</div>
-                            <div class="importo">{{ p.sum|floatformat}} euro</div>
-                        </div>
-                        <div class="spacer"></div>
-                    </div>
-                {% endfor %}
-            </div>
-            <div id="don_last">
-                <div class="titolo"> Ultime donazioni</div>
-                <div class="subtitle">Ultime donazioni per il Comune di {{ territorio.denominazione }}</div>
+            {% if progetti_categorie %}
+
+                <div class="titolo danno"> Progetti per la ricostruzione</div>
+                <div class="subtitle">Ripartizione dei danni per categorie</div>
+                <div id="proj_pie"></div>
                 <div class="project_list">
-                    {% for p in donazioni_last %}
+                    {% for p in progetti_categorie %}
                         <div class="project_row ">
                             <div class="box">
-                                <div class="n_progetti">
-                                    {{ p.data }} da {{ p.tipologia.denominazione }}
-                                </div>
-                                <div class="importo">{{ p.importo|floatformat}} euro</div>
+                                <div class="n_progetti">{{ p.c }} {{ p.tipologia__denominazione }}</div>
+                                <div class="importo">{{ p.sum|floatformat}} euro</div>
                             </div>
                             <div class="spacer"></div>
                         </div>
                     {% endfor %}
                 </div>
-            </div>
+            {% endif %}
+        </div><!-- /span -->
+        <div class="span6">
+            {% if donazioni_categorie %}
+                <div class="titolo donazioni"> Donazioni ricevute</div>
+                <div class="subtitle">Ripartizione delle donazioni per soggetti</div>
+                <div id="don_pie"></div>
+                <div class="project_list">
+                    {% for p in donazioni_categorie %}
+                        <div class="project_row ">
+                            <div class="box">
+                                <div class="n_progetti">{{ p.c }} da {{ p.tipologia__denominazione }}</div>
+                                <div class="importo">{{ p.sum|floatformat}} euro</div>
+                            </div>
+                            <div class="spacer"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if donazioni_last %}
+                <div id="don_last">
+                    <div class="titolo"> Ultime donazioni</div>
+                    <div class="subtitle">Ultime donazioni per il Comune di {{ territorio.denominazione }}</div>
+                    <div class="project_list">
+                        {% for p in donazioni_last %}
+                            <div class="project_row ">
+                                <div class="box">
+                                    <div class="n_progetti">
+                                        {{ p.data }} da {{ p.tipologia.denominazione }}
+                                    </div>
+                                    <div class="importo">{{ p.importo|floatformat}} euro</div>
+                                </div>
+                                <div class="spacer"></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div><!-- /span -->
     </div> <!-- /row -->
 
@@ -137,164 +144,169 @@
         var chart1; // globally available
         var piechart1, piechart2;
         $(document).ready(function() {
-            chart1 = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'time_graph',
-                    type: 'spline',
-                    plotBackgroundColor: '#fff'
-                },
-                title: {
-                    text: ''
-                },
-                tooltip: {
-                    formatter: function() {
-                        return '<b>'+ this.series.name +'</b><br/>'+
-                                this.x +': '+ this.y +' Euro';
-                    }
-                },
-                yAxis: {
-                    min:0,
 
-                    labels: {
+            {% if donazioni_spline %}
+                {# SPLINE #}
+                chart1 = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'time_graph',
+                        type: 'spline',
+                        plotBackgroundColor: '#fff'
+                    },
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {
                         formatter: function() {
-                            return this.value;
+                            return '<b>'+ this.series.name +'</b><br/>'+
+                                    this.x +': '+ this.y +' Euro';
+                        }
+                    },
+                    yAxis: {
+                        min:0,
+
+                        labels: {
+                            formatter: function() {
+                                return this.value;
+                            }
+                        },
+                        title: {
+                            text: 'Euro'
+                        }
+
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        labels:
+                        {
+                            enabled: true
+                        },
+
+                        categories:[
+                            {% for d in donazioni_spline %}
+                                "{{ d.month }}",
+                            {% endfor %}
+                        ]
+
+
+                    },
+                    series: [{
+                        name: 'Donazioni',
+                        data:[
+                            {% for d in donazioni_spline %}
+                                {{ d.sum }},
+                            {% endfor %}
+                        ]
+                    } ]
+                });
+            {% endif %}
+
+            /*PIE CHART*/
+            {% if progetti_categorie %}
+                /*TIPOLOGIA PROGETTI */
+                piechart1 = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'proj_pie',
+                        type: 'pie',
+                        plotBackgroundColor: '#fff'
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<div class="tooltip-box"><b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +'<small>%</small></div>';
+                        },
+                        useHTML: true,
+                        backgroundColor: '#F7F6F1',
+                        borderWidth: 0,
+                        shadow: false,
+                        style: {
+                            width: '150px',
+                            'min-height': '20px'
                         }
                     },
                     title: {
-                        text: 'Euro'
-                    }
-
-                },
-                xAxis: {
-                    type: 'datetime',
-                    labels:
-                    {
-                        enabled: true
+                        text: ''
                     },
-
-                    categories:[
-                        {% for d in donazioni_spline %}
-                            "{{ d.month }}",
-                        {% endfor %}
-                    ]
-
-
-                },
-                series: [{
-                    name: 'Donazioni',
-                    data:[
-                        {% for d in donazioni_spline %}
-                            {{ d.sum }},
-                        {% endfor %}
-                    ]
-                } ]
-            });
-
-            /*PIE CHART*/
-            /*TIPOLOGIA PROGETTI */
-            piechart1 = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'proj_pie',
-                    type: 'pie',
-                    plotBackgroundColor: '#fff',
-
-
-                },
-                tooltip: {
-                    formatter: function() {
-                        return '<div class="tooltip-box"><b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +'<small>%</small></div>';
-                    },
-                    useHTML: true,
-                    backgroundColor: '#F7F6F1',
-                    borderWidth: 0,
-                    shadow: false,
-                    style: {
-                        width: '150px',
-                        'min-height': '20px'
-                    }
-                },
-                title: {
-                    text: ''
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            color: '#000000',
-                            connectorColor: '#000000',
-                            percentageDecimals: 2,
-                            formatter: function() {
-                                return '<b>'+ this.point.name +'</b>: '+ this.y +' Euro';
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                color: '#000000',
+                                connectorColor: '#000000',
+                                percentageDecimals: 2,
+                                formatter: function() {
+                                    return '<b>'+ this.point.name +'</b>: '+ this.y +' Euro';
+                                }
                             }
                         }
-                    }
-                },
-                series: [{
-                    type: 'pie',
-                    name: 'Tipologia progetto',
-                    title: 'Donazioni per tipologia',
-                    data: [
-                        {% for p in progetti_categorie %}
-                            ['{{ p.tipologia__denominazione }}',{{ p.sum }}],
-                        {% endfor %}
-                    ]
-                }]
-
-            });
-            /*TIPOLOGIA DONAZIONI */
-
-            piechart2 = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'don_pie',
-                    type: 'pie',
-                    plotBackgroundColor: '#fff'
-
-                },
-                tooltip: {
-                    formatter: function() {
-                        return '<div class="tooltip-box"><b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +'<small>%</small></div>';
                     },
-                    useHTML: true,
-                    backgroundColor: '#F7F6F1',
-                    borderWidth: 0,
-                    shadow: false,
-                    style: {
-                        width: '150px',
-                        'min-height': '20px'
-                    }
-                },
-                title: {
-                    text: ''
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            color: '#000000',
-                            connectorColor: '#000000',
-                            percentageDecimals: 2,
-                            formatter: function() {
-                                return '<b>'+ this.point.name +'</b>: '+ this.y +' Euro';
+                    series: [{
+                        type: 'pie',
+                        name: 'Tipologia progetto',
+                        title: 'Progetti per tipologia',
+                        data: [
+                            {% for p in progetti_categorie %}
+                                ['{{ p.tipologia__denominazione }}',{{ p.sum|floatformat }}],
+                            {% endfor %}
+                        ]
+                    }]
+
+                });
+            {% endif %}
+            {% if donazioni_categorie%}
+                /*CATEGORIA DONAZIONI */
+
+                piechart2 = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'don_pie',
+                        type: 'pie',
+                        plotBackgroundColor: '#fff'
+
+                    },
+                    tooltip: {
+                        formatter: function() {
+                            return '<div class="tooltip-box"><b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +'<small>%</small></div>';
+                        },
+                        useHTML: true,
+                        backgroundColor: '#F7F6F1',
+                        borderWidth: 0,
+                        shadow: false,
+                        style: {
+                            width: '150px',
+                            'min-height': '20px'
+                        }
+                    },
+                    title: {
+                        text: ''
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                color: '#000000',
+                                connectorColor: '#000000',
+                                percentageDecimals: 2,
+                                formatter: function() {
+                                    return '<b>'+ this.point.name +'</b>: '+ this.y +' Euro';
+                                }
                             }
                         }
-                    }
-                },
-                series: [{
-                    type: 'pie',
-                    name: 'Tipologia progetto',
-                    title: 'Donazioni per tipologia',
-                    data: [
-                        {% for d in donazioni_categorie %}
-                            ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
-                        {% endfor %}
-                    ]
-                }]
-            });
-
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Tipologia progetto',
+                        title: 'Donazioni per tipologia',
+                        data: [
+                            {% for d in donazioni_categorie %}
+                                ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
+                            {% endfor %}
+                        ]
+                    }]
+                });
+            {% endif %}
         });
     </script>
 {% endblock %}
