@@ -298,8 +298,34 @@ div.content{
         clear: both;
       }
     }
+    #subproj{
+      margin-left:0;
+      border-bottom: 1px solid #ccc;
+
+      .accordion{
+        .accordion-group{
+          border: 0;
+          color:black;
+          a{
+            text-decoration: none;
+            color:black;
+          }
+          .titolo{
+            text-transform: none;
+          }
+          .point{
+
+            margin-right: @spacing-half;
+          }
+          .triangle{
+            float:right;
+          }
+        }
+      }
+    }
   }
   #comment{
+
     .titolo{
       min-height: @medium-size;
       margin-top: @spacing-single;
