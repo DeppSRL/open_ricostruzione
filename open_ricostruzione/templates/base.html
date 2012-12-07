@@ -122,12 +122,14 @@
              </div> <!--/navbar-span -->
         <div class="offset1 span5">
             <form method="get" action="/progetti/" class="navbar-search form-search pull-left">
-                <input type="text"
-                       class="search-query "
-                       name="q"
-                       placeholder="Cerca tra i progetti" />
-
+                <section id="" class="ui-widget">
+                    <input type="text"
+                           class="search-query "
+                           id="progetto-search"
+                           placeholder="Cerca tra i progetti" />
+                </section>
             </form>
+
         </div>
         </div>
     </div>
@@ -298,31 +300,31 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-        $('#progetto').focus(function(){
+        $('#progetto-search').focus(function(){
             if ($(this)._cleared) return;
             $(this).val('');
             $(this)._cleared = true;
         });
 
 
-        $( "#progetto" ).autocomplete({
+        $( "#progetto-search" ).autocomplete({
             source: function( request, response ) {
-{#                $.getJSON(#}
-{#                       "insertapicallhere",#}
-{#                        {'name': request.term },#}
-{#                        function( data ) {#}
-{#                            response( $.map( data.comuniByName.comune, function( item ) {#}
-{#                                return {#}
-{#                                    label: item.comunedeno,#}
-{#                                    value: item.comune#}
-{#                                }#}
-{#                            }));#}
-{#                        }#}
-{#                );#}
+                $.getJSON(
+                       "{{ SITE_URL }}/progetti.json",
+                        {'qterm': request.term },
+                        function( data ) {
+                            response( $.map( data, function( item ) {
+                                return {
+                                    label: item.fields.denominazione,
+                                    value: item.fields.slug
+                                }
+                            }));
+                        }
+                );
             },
             minLength: 4,
             select: function( event, ui ) {
-                window.location.href = "../progetto/"+ ui.item.label;
+                window.location.href = "../progetto/"+ ui.item.value;
             },
             open: function() {
                $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );

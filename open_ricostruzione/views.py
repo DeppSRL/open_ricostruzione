@@ -1,11 +1,18 @@
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
+from open_ricostruzione import settings
 from open_ricostruzione.models import *
 from django.db import connections
 from datetime import datetime
 import time
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
 from datetime import timedelta
+import json
+from json.encoder import JSONEncoder
+from django.db.models.query import QuerySet
+from django.core.serializers import serialize
+from django.utils.functional import curry
+from django.http import HttpResponse, HttpResponseNotFound
 
 
 class HomeView(TemplateView):
@@ -43,6 +50,30 @@ class ProgettoView(DetailView):
 #        mancano le donazioni perche' ci mancano i le relazioni fra donazioni e progetti
 
         return context
+
+#    def get_queryset(self):
+#        if 'qterm' in self.request.GET:
+#            qterm = self.request.GET['qterm']
+#            return Progetto.objects.filter(denominazione__icontains=qterm)[0:50]
+#        else:
+#            return Progetto.objects.all()[0:50]
+
+class ProgettoListView(ListView):
+    model=Progetto
+    template_name = "tipologieprogetto.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProgettoListView, self).get_context_data(**kwargs)
+        context['SITE_URL'] = settings.PROJECT_ROOT
+        return context
+
+    def get_queryset(self):
+        if 'qterm' in self.request.GET:
+            qterm = self.request.GET['qterm']
+            return Progetto.objects.filter(denominazione__icontains=qterm)[0:50]
+        else:
+            return Progetto.objects.all()[0:50]
+
 
 class TerritorioView(DetailView):
     model = Territorio
@@ -204,3 +235,41 @@ class TipologieProgettoView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TipologieProgettoView, self).get_context_data(**kwargs)
         return context
+
+
+
+class DjangoJSONEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, QuerySet):
+            # `default` must return a python serializable
+            # structure, the easiest way is to load the JSON
+            # string produced by `serialize` and return it
+            return json.loads(serialize('json', obj))
+        return JSONEncoder.default(self,obj)
+dumps = curry(json.dumps, cls=DjangoJSONEncoder)
+
+class JSONResponseMixin(object):
+    def render_to_response(self, context):
+        "Returns a JSON response containing 'context' as payload"
+        return self.get_json_response(self.convert_context_to_json(context))
+
+    def get_json_response(self, content, **httpresponse_kwargs):
+        "Construct an `HttpResponse` object."
+        return HttpResponse(content,
+            content_type='application/json',
+            **httpresponse_kwargs)
+
+    def convert_context_to_json(self, context):
+        "Convert the context dictionary into a JSON object"
+        # Note: This is *EXTREMELY* naive; in reality, you'll need
+        # to do much more complex handling to ensure that arbitrary
+        # objects -- such as Django model instances or querysets
+        # -- can be serialized as JSON.
+        return dumps(context)
+
+
+class ProgettiJSONListView(JSONResponseMixin, ProgettoListView):
+    def convert_context_to_json(self, context):
+        return dumps(context['progetto_list'])
+
+
