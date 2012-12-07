@@ -77,6 +77,7 @@ class Territorio(models.Model):
 class TipologiaProgetto(models.Model):
     codice = models.SmallIntegerField(null=True, blank=True)
     denominazione = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=100)
 
     def __unicode__(self):
         return u"%s" % self.denominazione

@@ -84,7 +84,7 @@
                                 <ul class="dropdown-menu">
                                     {% for t in tipologie_progetti %}
                                         <li class="submenu">
-                                            <a href="../tipologie-progetto/">{{ t.denominazione }}</a>
+                                            <a href="../tipologie-progetto/{{ t.slug }}">{{ t.denominazione }}</a>
                                         </li>
                                     {% endfor %}
                                 </ul>
@@ -122,7 +122,7 @@
              </div> <!--/navbar-span -->
         <div class="offset1 span5">
             <form method="get" action="/progetti/" class="navbar-search form-search pull-left">
-                <section id="" class="ui-widget">
+                <section  class="ui-widget">
                     <input type="text"
                            class="search-query "
                            id="progetto-search"
@@ -139,7 +139,8 @@
 <div class="container content">
 
     <div class="row">
-        <div class="span7">
+
+        <div class="span7 ">
             <div id="breadcrumbs">
                 {% block breadcrumb %}<a href="/">Home</a>{% endblock %}
             </div>
@@ -184,27 +185,28 @@
         {% endblock %}
     </div>
 
-
-    <div id="comment">
-        <div class="row">
-            <div class="span6">
-                {% block comment%}
-                    <form>
-                        <legend class="titolo">Commenta</legend>
-                        <div class="control-group">
-                            <div class="controls">
-                                <textarea placeholder="Inserisci il tuo commento" class="input-xlarge" id="textarea" rows="3"></textarea>
+    {% block comments %}
+        <div id="comment">
+            <div class="row">
+                <div class="span6">
+                    {% block comment%}
+                        <form>
+                            <legend class="titolo">Commenta</legend>
+                            <div class="control-group">
+                                <div class="controls">
+                                    <textarea placeholder="Inserisci il tuo commento" class="input-xlarge" id="textarea" rows="3"></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="">
-                            <button type="submit" disabled="true" class="btn btn-primary">Invia</button>
-                        </div>
+                            <div class="">
+                                <button type="submit" disabled="true" class="btn btn-primary">Invia</button>
+                            </div>
 
-                    </form>
-                {% endblock %}
+                        </form>
+                    {% endblock %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endblock %}
 
 </div><!--/.container-->
 

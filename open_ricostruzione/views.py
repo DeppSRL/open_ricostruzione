@@ -18,6 +18,45 @@ from django.http import HttpResponse, HttpResponseNotFound
 class HomeView(TemplateView):
     template_name = "home.html"
 
+    def get_context_data(self, **kwargs ):
+        context={}
+
+        #numero di comuni con almeno 1 progetto attivo
+        context['n_comuni'] = Territorio.objects.filter(tipo_territorio = "C").\
+                annotate(c = Count("progetto")).filter(c__gt=0).count()
+
+        #numero progetti
+        context['n_progetti']=  Progetto.objects.filter(id_padre__isnull = True).count()
+        # importi progetti totale
+        stima_danno = Progetto.objects.filter( id_padre__isnull = True).\
+            aggregate(s=Sum('riepilogo_importi')).values()
+
+        if stima_danno[0]:
+            context['stima_danno'] = stima_danno[0]
+
+        # numero donazioni
+        context['n_donazioni'] = Donazione.objects.filter(confermato=True).count()
+        # donazioni per il territorio considerato
+        tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
+        if tot_donazioni[0]:
+            context['tot_donazioni'] = tot_donazioni[0]
+
+        context['donazioni_comune'] = Donazione.objects.all()
+
+        # importi dei progetti per categorie
+        context['progetti_categorie'] =\
+            Progetto.objects.filter( id_padre__isnull = True).values('tipologia__denominazione').\
+            annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+
+        # donazioni divise per tipologia cedente
+        context['donazioni_categorie'] =\
+        Donazione.objects.all().\
+            filter(confermato = True).values('tipologia__denominazione').\
+            annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+
+        return context
+
+
 class ProgettoView(DetailView):
     model = Progetto
     context_object_name = "progetto"
@@ -51,12 +90,7 @@ class ProgettoView(DetailView):
 
         return context
 
-#    def get_queryset(self):
-#        if 'qterm' in self.request.GET:
-#            qterm = self.request.GET['qterm']
-#            return Progetto.objects.filter(denominazione__icontains=qterm)[0:50]
-#        else:
-#            return Progetto.objects.all()[0:50]
+
 
 class ProgettoListView(ListView):
     model=Progetto
@@ -68,11 +102,22 @@ class ProgettoListView(ListView):
         return context
 
     def get_queryset(self):
+#        context = super(ProgettoListView, self).get_context_data(**kwargs)
+
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
             return Progetto.objects.filter(denominazione__icontains=qterm)[0:50]
+#        else:
+#            if self.kwargs['slug']:
+#                s = self.kwargs['slug']
+#
+#                object = TipologiaProgetto.objects.get(slug = s)
+#                context['tipologia'] = object.denominazione
+#                context['slug'] = object.slug
+#                context['project_list'] = Progetto.objects.filter(tipologia=object)
         else:
-            return Progetto.objects.all()[0:50]
+           return  Progetto.objects.all()[0:50]
+#            return context
 
 
 class TerritorioView(DetailView):
