@@ -67,7 +67,7 @@ class TerritorioView(DetailView):
         # numero donazioni
         context['n_donazioni'] = Donazione.objects.filter(territorio=t).count()
         # donazioni per il territorio considerato
-        tot_donazioni = Donazione.objects.filter(territorio=t).aggregate(s=Sum('importo')).values()
+        tot_donazioni = Donazione.objects.filter(territorio=t, confermato = True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
 
@@ -97,7 +97,7 @@ class TerritorioView(DetailView):
 
         donazioni_spline = t.get_spline_data()
 
-        if donazioni_spline:
+        if donazioni_spline and len(donazioni_spline)>1:
         #            rende i numeri Decimal delle stringhe per il grafico
         #            TODO: creare i dati per le label in formato italiano
 
@@ -107,7 +107,7 @@ class TerritorioView(DetailView):
             context['donazioni_spline'] = donazioni_spline
 
 #        ultime donazioni per il comune considerato
-        donazioni_last = Donazione.objects.select_related().filter(territorio=t).filter(confermato=True).order_by('-data')[:3]
+        donazioni_last = Donazione.objects.select_related().filter(territorio=t,confermato=True).order_by('-data')[:3]
 
         context['donazioni_last'] = donazioni_last
         return context
@@ -120,15 +120,22 @@ class DonazioneView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(DonazioneView, self).get_context_data(**kwargs)
 
-        # donazioni totali
-        tot_donazioni = Donazione.objects.all().aggregate(s=Sum('importo')).values()
-        if tot_donazioni:
-            context['tot_donazioni']= moneyfmt(tot_donazioni[0],2,"",".",",")
+        # numero donazioni
+        context['n_donazioni'] = Donazione.objects.filter(confermato = True).count()
 
+        # tutte le donazioni
+        tot_donazioni = Donazione.objects.all().aggregate(s=Sum('importo')).values()
+        if tot_donazioni[0]:
+            context['tot_donazioni'] = tot_donazioni[0]
+
+        #numero progetti
+        context['n_progetti']=  Progetto.objects.filter( id_padre__isnull = True).count()
         # importi progetti totale
-        tot_danno = Progetto.objects.all().aggregate(s=Sum('riepilogo_importi')).values()
-        if tot_danno:
-            context['tot_danno'] =  moneyfmt(tot_danno[0],2,"",".",",")
+        stima_danno = Progetto.objects.filter( id_padre__isnull = True).\
+            aggregate(s=Sum('riepilogo_importi')).values()
+
+        if stima_danno[0]:
+            context['stima_danno'] = stima_danno[0]
 
         #tutte le donazioni nel tempo
         #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
@@ -168,7 +175,7 @@ class DonazioneView(TemplateView):
                 j += 1
 
 
-        if donazioni_spline:
+        if donazioni_spline and len(donazioni_spline)>1:
 #            rende i numeri Decimal delle stringhe per il grafico
 #            TODO: creare i dati per le label in formato italiano
             for value in donazioni_spline:

@@ -26,7 +26,7 @@
 {% block stima-danno-number %}{{ stima_danno|onlynumber }}{% endblock %}
 {% block stima-danno-word %}{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %}di{% endif %}{% endblock %}
 {% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
-{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }}{% if tot_donazioni > 1000000 %}di{% endif %}{% endblock %}
+{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}di{% endif %}{% endblock %}
 
 {% block map %}
     <div id="map" class='span4'>Mappa del Comune</div>
@@ -87,7 +87,7 @@
                     {% for p in progetti_categorie %}
                         <div class="project_row ">
                             <div class="box">
-                                <div class="n_progetti">{{ p.c }} {{ p.tipologia__denominazione }}</div>
+                                <div class="n_progetti">{{ p.c }} <a href="../tipologie-progetto/">{{ p.tipologia__denominazione }}</a></div>
                                 <div class="importo">{{ p.sum|floatformat}} euro</div>
                             </div>
                             <div class="spacer"></div>
