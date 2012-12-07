@@ -236,6 +236,12 @@ div.content{
       text-transform: uppercase;
       font-size: @medium-size;
     }
+    .slogan{
+      text-transform: uppercase;
+      font-weight: bold;
+      color:black;
+      margin-top: @spacing-half;
+    }
     .donazioni{
       color: @green-color;
     }
@@ -306,6 +312,8 @@ div.content{
         .accordion-group{
           border: 0;
           color:black;
+
+
           a{
             text-decoration: none;
             color:black;
@@ -314,11 +322,36 @@ div.content{
             text-transform: none;
           }
           .point{
-
             margin-right: @spacing-half;
           }
           .triangle{
             float:right;
+          }
+          .accordion-inner{
+            background-color: @subproj-box-color;
+            a{
+              color: @blue-color;
+            }
+            .titolo{
+              margin-top:@spacing-half;
+              a{
+                color:black;
+              }
+            }
+
+            .box{
+              margin-top: @spacing-half;
+              .tempi{
+                text-transform: none;
+                font-weight: bold;
+                color:black;
+              }
+              .importi{
+                text-transform: none;
+                font-weight: bold;
+                color:black;
+              }
+            }
           }
         }
       }

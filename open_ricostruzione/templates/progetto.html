@@ -107,8 +107,8 @@
 
     {% if sottoprogetti %}
     <div class="row">
-        <div class="span7" id="subproj">
-            <div>Componenti del progetto</div>
+        <div class="span8" id="subproj">
+            <div class="slogan">Componenti del progetto</div>
 
             {% for p in sottoprogetti %}
                 <div class="accordion" id="accordion2">
@@ -120,13 +120,50 @@
                             </a>
                         </div>
                         <div id="collapse{{ p.pk }}" class="accordion-body collapse ">
-                            <div class="accordion-inner" style="background-color: #ccc;">
-                                <div class="denominazione titolo">{{  p.denominazione}}<img style="margin-left: 15px;" src="../static/img/triangle-up.png"></div>
-                                <div class="tipologia">{{  p.tipologia }}</div>
-                                <div class="descrizione">{{  p.cenni_storici}}</div>
+                            <div class="accordion-inner" >
+                                <div class="denominazione titolo">
+                                    <a class="accordion-toggle collapsed " data-toggle="collapse" data-parent="#accordion2" href="#collapse{{ p.pk }}">
+                                        {{  p.denominazione}}<img style="margin-left: 15px;" src="../static/img/triangle-up.png">
+                                    </a>
+                                </div>
+                                <div class="ubicazione">{{  p.ubicazione}}, <a href="../comune/{{ progetto.territorio.slug }}" >Comune di {{ progetto.territorio.denominazione }} ({{ progetto.territorio.get_provincia.sigla_provincia}})</a></div>
+                                <div class="tipologia"><a href="../tipologie-progetto/" >{{  p.tipologia }}</a></div>
+                                {% if  p.cenni_storici %}
+                                    <div class="descrizione">
+                                        <div class="slogan">descrizione</div>
+                                        <div class="testo">
+                                            {{  p.cenni_storici}}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if  p.stato_attuale %}
+                                    <div class="descrizione">
+                                        <div class="slogan">stato attuale</div>
+                                        <div class="testo">
+                                            {{  p.stato_attuale}}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if p.interventi_previsti %}
+                                    <div class="descrizione">
+                                        <div class="slogan">interventi previsti</div>
+                                        <div class="testo">
+                                            {{  p.interventi_previsti}}
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <div class="box">
-                                    <div class="tempi">Tempi di realizzazione: {{ p.tempi_di_realizzazione }}</div>
-                                    <div class="importi">{{ p.riepilogo_importi}} Euro</div>
+                                    {% if p.tempi_di_realizzazione %}
+                                        <div class="tempi ">
+                                            TEMPI DI REALIZZAZIONE: {{ p.tempi_di_realizzazione }}
+                                        </div>
+
+                                    {% endif %}
+                                    {% if p.riepilogo_importi %}
+                                        <div class="importi ">
+                                            IMPORTO DEI LAVORI: {{ p.riepilogo_importi}}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
