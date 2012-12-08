@@ -41,7 +41,6 @@ class HomeView(TemplateView):
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
 
-        context['donazioni_comune'] = Donazione.objects.all()
 
         # importi dei progetti per categorie
         context['progetti_categorie'] =\
@@ -155,13 +154,13 @@ class TerritorioView(DetailView):
 
 
         # numero donazioni
-        context['n_donazioni'] = Donazione.objects.filter(territorio=t).count()
+        context['n_donazioni'] = Donazione.objects.filter(confermato = True).filter(territorio=t).count()
         # donazioni per il territorio considerato
         tot_donazioni = Donazione.objects.filter(territorio=t, confermato = True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
 
-        context['donazioni_comune'] = Donazione.objects.filter(territorio=t)
+        context['donazioni_comune'] = Donazione.objects.filter(confermato = True).filter(territorio=t)
 
         #lista progetti per questo territorio in ordine di costo decrescente
         projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
@@ -213,7 +212,7 @@ class DonazioneView(TemplateView):
         context['n_donazioni'] = Donazione.objects.filter(confermato = True).count()
 
         # tutte le donazioni
-        tot_donazioni = Donazione.objects.all().aggregate(s=Sum('importo')).values()
+        tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
 
@@ -230,7 +229,7 @@ class DonazioneView(TemplateView):
         #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
         # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
 
-        donazioni_mese = Donazione.objects.\
+        donazioni_mese = Donazione.objects.filter(confermato = True).\
                         extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
                         values('date').annotate(sum = Sum('importo'))
 
