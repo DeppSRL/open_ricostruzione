@@ -7,27 +7,67 @@
 {% block stima-danno-word %}{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %} di{% endif %}{% endblock %}
 {% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
 {% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}
-
+{% block main-title %}<p style="color:#a1ba03; text-transform: uppercase;" >Donazioni</P>{% endblock %}
 {% block breadcrumb %}{{ block.super }} &raquo; <a href="/donazioni/">Donazioni</a>{% endblock %}
 
-{% block main-content %}
-    {{ block.super }}
-    <pre>
+{% block data-content %}
 
-    {{ tot_donazioni|intword }}
-    donazionispline: {{ donazioni_spline  }}
 
-    </pre>
-
-    <div id="graph-container"></div>
-    <div id="pie-container"></div>
-    <div id="lista-donazioni">
-    <pre>
-        {% for d in donazioni_tipologia %}
-           {{ d.tipologia }},{{ d.count }},nome-tipologia, {{ d.somma }}
-        {% endfor %}
-    </pre>
+    <div class="row" style="margin-top:25px;">
+        <div class="span12">
+            <img src="../static/img/home_map.jpg" />
+        </div>
     </div>
+
+    <div class="row">
+        <div class="span12">
+            <div style="margin-top:25px;margin-bottom: 12px;">Andamento nel tempo delle donazioni</div>
+            <div id="graph-container"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="span6">
+            {% if donazioni_categorie %}
+                <div class="titolo donazioni"> Donazioni ricevute</div>
+                <div class="subtitle">Ripartizione delle donazioni per soggetti</div>
+                <div id="don_pie"></div>
+                <div class="project_list">
+                    {% for p in donazioni_categorie %}
+                        <div class="project_row ">
+                            <div class="box">
+                                <div class="n_progetti">{{ p.c }} da {{ p.tipologia__denominazione }}</div>
+                                <div class="importo">{{ p.sum|floatformat}} euro</div>
+                            </div>
+                            <div class="spacer"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="span6">
+            {% if donazioni_last %}
+                <div id="don_last">
+                    <div class="titolo"> Ultime donazioni</div>
+                    <div class="subtitle">Ultime donazioni per i Comuni del cratere</div>
+                    <div class="project_list">
+                        {% for p in donazioni_last %}
+                            <div class="project_row ">
+                                <div class="box">
+                                    <div class="n_progetti">
+                                        {{ p.data }} da {{ p.tipologia.denominazione }}
+                                    </div>
+                                    <div class="importo">{{ p.importo|floatformat}} euro</div>
+                                </div>
+                                <div class="spacer"></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
 
 {% endblock %}
 
@@ -93,7 +133,7 @@
             /*PIE CHART*/
             piechart = new Highcharts.Chart({
                 chart: {
-                    renderTo: 'pie-container',
+                    renderTo: 'don_pie',
                     type: 'pie',
                     plotBackgroundColor: '#fff'
 
@@ -134,7 +174,7 @@
                     name: 'Tipologia cedente',
                     title: 'Donazioni per tipologia',
                     data: [
-                        {% for d in donazioni_tipologia %}
+                        {% for d in donazioni_categorie %}
                             ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
                         {% endfor %}
                     ]

@@ -270,14 +270,21 @@ class DonazioneView(TemplateView):
             context['donazioni_spline'] = donazioni_spline
 
         #donazioni per tipologia
-        donazioni_tipologia = Donazione.objects.all().\
+        donazioni_categorie = Donazione.objects.all().\
             filter(confermato=True).values('tipologia__denominazione').\
-            annotate(count=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
+            annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
 
-        for idx, val in enumerate(donazioni_tipologia):
-            val['sum'] = moneyfmt(val['sum'],2,"","",",")
+#        for idx, val in enumerate(donazioni_categorie):
+#            val['sum'] = moneyfmt(val['sum'],2,"","",",")
 
-        context['donazioni_tipologia']=donazioni_tipologia
+        context['donazioni_categorie']=donazioni_categorie
+
+
+        #       ultime donazioni per il comune considerato
+        donazioni_last = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
+
+
+        context['donazioni_last'] = donazioni_last
 
         return context
 
