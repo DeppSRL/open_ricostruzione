@@ -126,7 +126,7 @@
                                         {{  p.denominazione}}<img style="margin-left: 15px;" src="../static/img/triangle-up.png">
                                     </a>
                                 </div>
-                                <div class="ubicazione">{{  p.ubicazione}}, <a href="../comune/{{ progetto.territorio.slug }}" >Comune di {{ progetto.territorio.denominazione }} ({{ progetto.territorio.get_provincia.sigla_provincia}})</a></div>
+                                <div class="ubicazione">{{  p.parent.ubicazione}}, <a href="../comune/{{ progetto.territorio.slug }}" >Comune di {{ progetto.territorio.denominazione }} ({{ progetto.territorio.get_provincia.sigla_provincia}})</a></div>
                                 <div class="tipologia"><a href="../tipologie-progetto/" >{{  p.tipologia }}</a></div>
                                 {% if  p.cenni_storici %}
                                     <div class="descrizione">
