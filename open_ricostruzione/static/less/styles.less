@@ -110,6 +110,52 @@ div.content{
   padding-top: @spacing-single;
   min-height: 500px;
 
+  .evidenza{
+
+    padding-bottom: @spacing-double;
+    border-bottom:1px solid #CCC;
+
+    .titolo{
+      min-height: @medium-size;
+      margin-top: @spacing-single;
+      margin-bottom: @spacing-single;
+      font-family: 'Abel','sans-serif';
+      font-weight: normal;
+      text-transform: uppercase;
+      font-size: @medium-size;
+    }
+    .project_row{
+      .titolo{
+        color: @project-name;
+        font-weight: bold;
+      }
+      .tipologia{
+        color: @project-category;
+
+      }
+      .box{
+        overflow:hidden;
+        .n_progetti{
+          color:@blue-color;
+          float:left;
+        }
+        .importo{
+          float:right;
+          font-size: @navbar-size;
+          font-weight: bold;
+        }
+      }
+
+      .spacer{
+        clear:both;
+        margin-top: @spacing-half;
+        margin-bottom: @spacing-half;
+        border-bottom: 1px solid #b5b8b6;
+        min-height: 1px;
+      }
+    }
+
+  }
   #map{
     color:black;
     text-align: center;
@@ -159,6 +205,7 @@ div.content{
         text-transform: uppercase;
         font-size: 20px;
       }
+
     }
     .subtitle{
       padding-top: 10px ;
@@ -235,19 +282,19 @@ div.content{
         }
       }
     }
-  #project_data{
-    .titolo{
-      font-size: @caption-size + 2px;
-      text-transform: uppercase;
-      font-weight: bold;
-      color:black;
-      clear: both;
+    #project_data{
+      .titolo{
+        font-size: @caption-size + 2px;
+        text-transform: uppercase;
+        font-weight: bold;
+        color:black;
+        clear: both;
+      }
+      .data_row{
+        margin-top: @spacing-single;
+        margin-bottom: @spacing-single;
+      }
     }
-    .data_row{
-      margin-top: @spacing-single;
-      margin-bottom: @spacing-single;
-    }
-  }
 
   }
   #data-content{

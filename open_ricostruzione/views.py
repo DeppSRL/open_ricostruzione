@@ -54,6 +54,15 @@ class HomeView(TemplateView):
             filter(confermato = True).values('tipologia__denominazione').\
             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
+        #comuni oggi in evidenza
+        context['comuni_evidenza'] = Territorio.objects.filter(tipo_territorio="C").\
+            annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi"),d = Count("donazione"),d_sum=Sum("donazione")).\
+            filter(p__gt=0,d__gt=0, d_sum__gt=0).order_by('-pk')[:3]
+
+        #progetti oggi in evidenza
+        context['progetti_evidenza'] = Progetto.objects.filter(id_padre__isnull=True).order_by("-riepilogo_importi")[:3]
+
+
         return context
 
 
@@ -182,8 +191,9 @@ class TerritorioView(DetailView):
 
             context['donazioni_spline'] = donazioni_spline
 
-#        ultime donazioni per il comune considerato
+#       ultime donazioni per il comune considerato
         donazioni_last = Donazione.objects.select_related().filter(territorio=t,confermato=True).order_by('-data')[:3]
+
 
         context['donazioni_last'] = donazioni_last
         return context
