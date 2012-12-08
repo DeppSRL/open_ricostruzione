@@ -148,6 +148,11 @@ class TerritorioView(DetailView):
 
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
+            # importi dei progetti per categorie
+            context['progetti_categorie'] =\
+                Progetto.objects.filter(territorio=t).values('tipologia__denominazione').\
+                annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+
 
         # numero donazioni
         context['n_donazioni'] = Donazione.objects.filter(territorio=t).count()
@@ -158,10 +163,12 @@ class TerritorioView(DetailView):
 
         context['donazioni_comune'] = Donazione.objects.filter(territorio=t)
 
-        # importi dei progetti per categorie
-        context['progetti_categorie'] =  \
-            Progetto.objects.filter(territorio=t).values('tipologia__denominazione').\
-            annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+        #lista progetti per questo territorio in ordine di costo decrescente
+        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
+
+        if projects:
+            context['progetti_top'] = projects
+
 
         # donazioni divise per tipologia cedente
         context['donazioni_categorie'] = \
@@ -174,11 +181,7 @@ class TerritorioView(DetailView):
         if iban:
             context['iban'] = iban
 
-        #lista progetti per questo territorio in ordine di costo decrescente
-        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
 
-        if projects:
-            context['progetti_top'] = projects
 
         donazioni_spline = t.get_spline_data()
 
