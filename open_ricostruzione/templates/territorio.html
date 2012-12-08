@@ -82,7 +82,9 @@
 
                 <div class="titolo danno"> Progetti per la ricostruzione</div>
                 <div class="subtitle">Ripartizione dei danni per categorie</div>
-                <div id="proj_pie"></div>
+                {% if progetti_categorie|length > 1 %}
+                    <div id="proj_pie"></div>
+                {% endif %}
                 <div class="project_list">
                     {% for p in progetti_categorie %}
                         <div class="project_row ">
@@ -100,7 +102,9 @@
             {% if donazioni_categorie %}
                 <div class="titolo donazioni"> Donazioni ricevute</div>
                 <div class="subtitle">Ripartizione delle donazioni per soggetti</div>
-                <div id="don_pie"></div>
+                {% if donazioni_categorie|length > 1 %}
+                    <div id="don_pie"></div>
+                {% endif %}
                 <div class="project_list">
                     {% for p in donazioni_categorie %}
                         <div class="project_row ">
@@ -202,7 +206,7 @@
             {% endif %}
 
             /*PIE CHART*/
-            {% if progetti_categorie %}
+            {% if progetti_categorie|length > 1 %}
                 /*TIPOLOGIA PROGETTI */
                 piechart1 = new Highcharts.Chart({
                     chart: {
@@ -254,7 +258,7 @@
 
                 });
             {% endif %}
-            {% if donazioni_categorie%}
+            {% if donazioni_categorie|length > 1%}
                 /*CATEGORIA DONAZIONI */
 
                 piechart2 = new Highcharts.Chart({
