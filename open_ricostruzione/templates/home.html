@@ -199,7 +199,7 @@
 
                 <div class="titolo danno"> Progetti per la ricostruzione</div>
                 <div class="subtitle">Ripartizione dei danni per categorie</div>
-                <div id="proj_pie"></div>
+                <div  id="proj_pie"></div>
                 <div class="project_list">
                     {% for p in progetti_categorie %}
                         <div class="project_row ">
@@ -215,8 +215,8 @@
         </div><!-- /span -->
         <div class="span6">
             {% if donazioni_categorie %}
-                <div class="titolo donazioni"> Donazioni ricevute</div>
-                <div class="subtitle">Ripartizione delle donazioni per soggetti</div>
+                <div class="span6 titolo donazioni"> Donazioni ricevute</div>
+                <div class="span6 subtitle">Ripartizione delle donazioni per soggetti</div>
                 <div id="don_pie"></div>
                 <div class="project_list">
                     {% for p in donazioni_categorie %}
@@ -456,6 +456,7 @@
                     renderTo: 'proj_pie',
                     type: 'pie',
                     plotBackgroundColor: '#fff'
+
                 },
                 tooltip: {
                     formatter: function() {
@@ -477,8 +478,9 @@
                     pie: {
                         allowPointSelect: true,
                         cursor: 'pointer',
+
                         dataLabels: {
-                            enabled: true,
+                            enabled: false,
                             color: '#000000',
                             connectorColor: '#000000',
                             percentageDecimals: 2,
@@ -532,7 +534,7 @@
                         allowPointSelect: true,
                         cursor: 'pointer',
                         dataLabels: {
-                            enabled: true,
+                            enabled: false,
                             color: '#000000',
                             connectorColor: '#000000',
                             percentageDecimals: 2,
