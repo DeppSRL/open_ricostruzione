@@ -22,7 +22,7 @@ class HomeView(TemplateView):
         context={}
 
         #numero di comuni con almeno 1 progetto attivo
-        context['n_comuni'] = Territorio.objects.filter(tipo_territorio = "C").\
+        context['n_comuni'] = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
                 annotate(c = Count("progetto")).filter(c__gt=0).count()
 
         #numero progetti
@@ -54,7 +54,7 @@ class HomeView(TemplateView):
             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
         #comuni oggi in evidenza
-        context['comuni_evidenza'] = Territorio.objects.filter(tipo_territorio="C").\
+        context['comuni_evidenza'] = Territorio.objects.filter(tipo_territorio="C",cod_comune__in=settings.COMUNI_CRATERE).\
             annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi"),d = Count("donazione"),d_sum=Sum("donazione")).\
             filter(p__gt=0,d__gt=0, d_sum__gt=0).order_by('-pk')[:3]
 
@@ -176,11 +176,9 @@ class TerritorioView(DetailView):
             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
         #iban territorio
-        iban = Territorio.objects.get(pk = t.pk).iban
+        iban = Territorio.objects.get(cod_comune = t.cod_comune, cod_comune__in=settings.COMUNI_CRATERE).iban
         if iban:
             context['iban'] = iban
-
-
 
         donazioni_spline = t.get_spline_data()
 
@@ -194,8 +192,20 @@ class TerritorioView(DetailView):
             context['donazioni_spline'] = donazioni_spline
 
 #       ultime donazioni per il comune considerato
-        donazioni_last = Donazione.objects.select_related().filter(territorio=t,confermato=True).order_by('-data')[:3]
+#        donazioni_last = Donazione.objects.select_related().filter(territorio=t,confermato=True).order_by('-data')[:3]
+        donazioni_temp=Donazione.objects.filter(territorio=t,confermato=True).\
+            extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
+            order_by('-data')[:3]
 
+        donazioni_last =[]
+
+        for idx, val in enumerate(donazioni_temp):
+        ##            converto la data nel formato  Nome mese - Anno
+            val_date_obj = datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
+            val_date_day = time.strftime("%d", val_date_obj.timetuple()).lstrip('0')
+            val_date_month = time.strftime("%b", val_date_obj.timetuple())
+            val_date_year = time.strftime("%Y", val_date_obj.timetuple())
+            donazioni_last.append({'day':val_date_day,'month':val_date_month,'year':val_date_year,'donazione':val})
 
         context['donazioni_last'] = donazioni_last
         return context

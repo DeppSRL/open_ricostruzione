@@ -7,7 +7,7 @@ def main_settings(request):
     territori=[]
 
 #prende la lista di tutti i comuni con almeno un progetto ordinati per provincia
-    territori = Territorio.objects.filter(tipo_territorio = "C").\
+    territori = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
                     annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia")
 
     return {
