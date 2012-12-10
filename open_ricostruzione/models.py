@@ -5,6 +5,7 @@ import time
 from open_ricostruzione.utils.moneydate import add_months
 from django.db.models.aggregates import Sum
 from datetime import timedelta
+from django.utils.html import strip_tags
 
 class Territorio(models.Model):
 
@@ -139,3 +140,39 @@ class Donazione(models.Model):
     class Meta:
         verbose_name_plural = u'Donazioni'
 
+
+
+class Entry(models.Model):
+
+    title= models.CharField(max_length=255)
+    abstract=models.CharField(max_length=255)
+    author=models.CharField(max_length=255)
+    body= models.TextField()
+    published_at= models.DateTimeField(default=datetime.now())
+
+    def __unicode__(self):
+        return self.title
+
+
+    class Meta():
+        ordering= ['-published_at']
+        verbose_name= 'articolo'
+        verbose_name_plural= 'articoli'
+
+
+class Blog(object):
+
+    @staticmethod
+    def get_latest_entries(qnt=10, end_date=None, start_date=None, single=False):
+        end_date = end_date or datetime.now()
+        qnt = qnt if not single else 1
+
+        if start_date:
+            entries = Entry.objects.filter(published_at__range=(start_date, end_date))[:qnt]
+        else :
+            entries = Entry.objects.filter(published_at__lte=end_date)[:qnt]
+
+        if single :
+            return entries[0] if entries else None
+
+        return entries
