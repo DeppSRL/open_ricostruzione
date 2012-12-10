@@ -75,7 +75,7 @@
 <div id="top_navbar">
     <div class="container">
         <div class="row" id="">
-            <div class="span6" id="navbar-span">
+            <div class="span7" id="navbar-span">
                 <nav class="navbar navbar-custom">
                     <div class="navbar-inner-custom ">
                         <ul class="nav">
@@ -120,7 +120,7 @@
                     </div>
                 </nav>
              </div> <!--/navbar-span -->
-        <div class="offset1 span5">
+        <div class=" span5">
             <form method="get" action="/progetti/" class="navbar-search form-search pull-left">
                 <section  class="ui-widget">
                     <input type="text"
@@ -148,34 +148,41 @@
             <div id="main-subtitle">{% block main-subtitle %}{% endblock %}</div>
             <div id="main-content">{% block main-content %}{% endblock %}</div>
         </div>
-        <div class="span5 boxes" id="">
-            <div class="span2" >
-                {%  if stima_danno %}
-                    <div class="title">Stima del danno </div>
-                    <div class="box" id="danno">
-                        <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
-                        <div class="grandezza">{% block stima-danno-word %}{% endblock %} Euro</div>
+        <div class="span5 boxes" >
+            <div class="container">
+                <div class="row">
+                    <div class="span2" >
+                        {%  if stima_danno %}
+                            <div class="title">Stima del danno </div>
+                            <div class="box" id="danno">
+                                <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
+                                <div class="grandezza">{% block stima-danno-word %}{% endblock %} Euro</div>
+                            </div>
+                            <div class="subtitle">
+                            {% if n_progetti %}
+                                Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione
+                            {% endif %}
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="subtitle">
-                    {% if n_progetti %}
-                        Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione
-                    {% endif %}
+                    <div class="span2" >
+                        {% if tot_donazioni %}
+                            <div class="title">Donazioni ricevute</div>
+                            <div class="box" id="donazioni">
+                                <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
+                                <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} Euro</div>
+                            </div>
+                            <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
+                        {% endif %}
                     </div>
-                {% endif %}
+                </div>
             </div>
-            <div class="span2" >
-                {% if tot_donazioni %}
-                    <div class="title">Donazioni ricevute</div>
-                    <div class="box" id="donazioni">
-                        <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
-                        <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} Euro</div>
-                    </div>
-                    <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
-                {% endif %}
-            </div>
-            {% block map %}
+            <div class="row ">
 
-            {% endblock %}
+                {% block map %}
+
+                {% endblock %}
+            </div>
 
         </div>
     </div>
