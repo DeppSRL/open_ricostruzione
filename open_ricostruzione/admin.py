@@ -26,9 +26,14 @@ class EntryAdmin(admin.ModelAdmin):
     model=Entry
     ordering=['published_at']
 
+class UltimoAggiornamentoAdmin(admin.ModelAdmin):
+    model=UltimoAggiornamento
+
+
 admin.site.register(Progetto, ProgettoAdmin)
 admin.site.register(Territorio, TerritorioAdmin)
 admin.site.register(TipologiaProgetto, TipologiaProgettoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)
 admin.site.register(TipologiaCedente, TipologiaCedenteAdmin)
 admin.site.register(Entry, EntryAdmin)
+admin.site.register(UltimoAggiornamento, UltimoAggiornamentoAdmin)

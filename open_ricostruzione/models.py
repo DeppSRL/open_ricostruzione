@@ -5,7 +5,16 @@ import time
 from open_ricostruzione.utils.moneydate import add_months
 from django.db.models.aggregates import Sum
 from datetime import timedelta
-from django.utils.html import strip_tags
+from django.utils.timezone import make_aware
+
+
+class UltimoAggiornamento(models.Model):
+    data_progetti = models.DateTimeField()
+    data_donazioni = models.DateTimeField()
+
+    class Meta:
+        verbose_name_plural = u'Ultimo Aggiornamento'
+
 
 class Territorio(models.Model):
 

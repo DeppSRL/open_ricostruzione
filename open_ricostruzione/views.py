@@ -61,7 +61,7 @@ class HomeView(TemplateView):
         #progetti oggi in evidenza
         context['progetti_evidenza'] = Progetto.objects.filter(id_padre__isnull=True).order_by("-riepilogo_importi")[:3]
 
-
+        context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
         return context
 
 

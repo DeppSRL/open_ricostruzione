@@ -11,8 +11,8 @@ from open_ricostruzione.models import *
 from optparse import make_option
 import csv
 import logging
-import time
 from datetime import datetime
+from django.utils import timezone
 from HTMLParser import HTMLParser
 
 class MLStripper(HTMLParser):
@@ -66,10 +66,13 @@ class Command(BaseCommand):
 
         if options['type'] == 'proj':
             self.handle_proj(*args, **options)
+            UltimoAggiornamento.objects.all().update(data_progetti=timezone.now())
         elif options['type'] == 'subproj':
             self.handle_subproj(*args, **options)
+            UltimoAggiornamento.objects.all().update(data_progetti=timezone.now())
         elif options['type'] == 'don':
             self.handle_donation(*args, **options)
+            UltimoAggiornamento.objects.all().update(data_donazioni=timezone.now())
         elif options['type'] == 'loc':
             self.handle_localita(*args, **options)
         else:
