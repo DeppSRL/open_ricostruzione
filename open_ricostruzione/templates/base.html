@@ -136,32 +136,31 @@
 </div>
 <!-- /NAVBAR-->
 
-<div class="container content">
-
-    <div class="row">
-
-        <div class="span7 ">
-            <div id="breadcrumbs">
-                {% block breadcrumb %}<a href="/">Home</a>{% endblock %}
+<div id="top_home" class="{% block show-home %}hidden{% endblock %}">
+    <div class="container content ">
+        <div class="row">
+            <div class="span5">
+                <div class="main-content">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel arcu lacus, eget imperdiet odio. Aliquam mollis dapibus mauris ut laoreet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                    Nam vulputate bibendum mauris facilisis auctor. Vestibulum venenatis placerat sollicitudin.
+                    Integer cursus consectetur neque, ac feugiat purus scelerisque eu.
+                    Mauris volutpat leo ac lacus consequat a luctus tortor consequat.
+                    Sed aliquam tempus leo, quis placerat neque viverra at. Quisque sit amet viverra leo.
+                </div>
             </div>
-            <div id="main-title">{% block main-title %}{% endblock %}</div>
-            <div id="main-subtitle">{% block main-subtitle %}{% endblock %}</div>
-            <div id="main-content">{% block main-content %}{% endblock %}</div>
-        </div>
-        <div class="span5 boxes" >
-            <div class="container">
+            <div class="span5 offset2 boxes" id="boxes-home">
                 <div class="row">
                     <div class="span2" >
                         {%  if stima_danno %}
                             <div class="title">Stima del danno </div>
                             <div class="box" id="danno">
-                                <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
-                                <div class="grandezza">{% block stima-danno-word %}{% endblock %} Euro</div>
+                                <div class="number"> {{ stima_danno|onlynumber }}</div>
+                                <div class="grandezza">{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %}di{% endif %} Euro</div>
                             </div>
                             <div class="subtitle">
-                            {% if n_progetti %}
-                                Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione
-                            {% endif %}
+                                {% if n_progetti %}
+                                    Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione
+                                {% endif %}
                             </div>
                         {% endif %}
                     </div>
@@ -169,12 +168,59 @@
                         {% if tot_donazioni %}
                             <div class="title">Donazioni ricevute</div>
                             <div class="box" id="donazioni">
-                                <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
-                                <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} Euro</div>
+                                <div class="number">{{ tot_donazioni|onlynumber}} </div>
+                                <div class="grandezza">{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}di{% endif %} Euro</div>
                             </div>
                             <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
                         {% endif %}
+
                     </div>
+                </div>
+                <div class="row">
+                    <div class="span5 " id="aggiornamento" >
+                        Ultimo aggiornamento: 28 Novembre 2012 - {{ n_comuni }} Comuni monitorati
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container content ">
+    <div class="row {% block show-content %}{% endblock %}">
+        <div class="span7 ">
+            <div id="breadcrumbs">
+                {% block breadcrumb %}<a href="/">Home</a>{% endblock %}
+            </div>
+            <div id="main-title">{% block main-title %}{% endblock %}</div>
+            <div id="main-subtitle">{% block main-subtitle %}{% endblock %}</div>
+            <div class="main-content">{% block main-content %}{% endblock %}</div>
+        </div>
+        <div class="span5 boxes" >
+            <div class="row">
+                <div class="span2" >
+                    {%  if stima_danno %}
+                        <div class="title">Stima del danno </div>
+                        <div class="box" id="danno">
+                            <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
+                            <div class="grandezza">{% block stima-danno-word %}{% endblock %} Euro</div>
+                        </div>
+                        <div class="subtitle">
+                        {% if n_progetti %}
+                            Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione
+                        {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="span2" >
+                    {% if tot_donazioni %}
+                        <div class="title">Donazioni ricevute</div>
+                        <div class="box" id="donazioni">
+                            <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
+                            <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} Euro</div>
+                        </div>
+                        <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
+                    {% endif %}
                 </div>
             </div>
             <div class="row ">
@@ -183,7 +229,6 @@
 
                 {% endblock %}
             </div>
-
         </div>
     </div>
 
@@ -226,9 +271,9 @@
                 <div class="span4" >
                     <div class="title">Questo sito</div>
                     <div class="text">
-                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
-                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
-                        Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel arcu lacus, eget imperdiet odio. Aliquam mollis dapibus mauris ut laoreet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                        Nam vulputate bibendum mauris facilisis auctor. Vestibulum venenatis placerat sollicitudin.
+                        Integer cursus consectetur neque, ac feugiat purus scelerisque eu.
                     </div>
                     <div class="links">
                         <ul>
@@ -258,9 +303,9 @@
                 <div class="span4 offset2" >
                     <div class="title">Open Data</div>
                     <div class="text">
-                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
-                        Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,Lorem ipsum,
-                        Lorem ipsum,Lorem ipsum,Lorem ipsum,
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel arcu lacus, eget imperdiet odio. Aliquam mollis dapibus mauris ut laoreet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+                        Nam vulputate bibendum mauris facilisis auctor. Vestibulum venenatis placerat sollicitudin.
+                        Integer cursus consectetur neque, ac feugiat purus scelerisque eu.
                     </div>
                     <div class="links">
                         <ul>

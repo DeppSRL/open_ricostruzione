@@ -52,10 +52,6 @@ body{
 #top_navbar{
   background-color: @navbar-color;
 
-  #navbar-span{
-//    margin-left: @spacing-half;
-  }
-
   .navbar-custom{
     margin-bottom:0;
     font-size: @navbar-size;
@@ -118,11 +114,13 @@ div.content{
     .titolo{
       min-height: @medium-size;
       margin-top: @spacing-single;
-      margin-bottom: @spacing-single;
       font-family: 'Abel','sans-serif';
       font-weight: normal;
       text-transform: uppercase;
       font-size: @medium-size;
+    }
+    .subtitle{
+      margin-bottom: @spacing-single;
     }
     .project_row{
       .titolo{
@@ -250,7 +248,7 @@ div.content{
   #main-subtitle{
     margin-bottom: @spacing-single;
   }
-  #main-content{
+  .main-content{
     #project_list{
       .project_row{
         .titolo{
@@ -280,6 +278,7 @@ div.content{
           border-bottom: 1px solid #b5b8b6;
           min-height: 1px;
         }
+
       }
     }
     #project_data{
@@ -298,6 +297,10 @@ div.content{
 
   }
   #data-content{
+    .pie-spacer{
+      height: @spacing-half;
+      border-bottom: 4px double  #b5b8b6;
+    }
     .titolo{
       min-height: @medium-size;
       margin-top: @spacing-single;
@@ -317,6 +320,9 @@ div.content{
     }
     .danno{
       color: @blue-color;
+    }
+    .pie{
+      min-height: 350px;
     }
 
     .project_list{
@@ -352,6 +358,35 @@ div.content{
           margin-bottom: @spacing-half;
           border-bottom: 1px solid #b5b8b6;
           min-height: 1px;
+        }
+        .box_data{
+          float:left;
+          color:black;
+
+          text-transform: uppercase;
+
+          text-align: center;
+          margin-right: @spacing-half;
+          background-image: url("../img/box_data.png");
+          background-repeat: no-repeat;
+          width: 60px;
+          height: 60px;
+
+          .day{
+            font-size: 15px;
+            font-weight: bold;
+          }
+          .month{
+            font-size: 10px;
+
+
+          }
+          .year{
+            font-size: 10px;
+          }
+        }
+        .abstract{
+          float:right;
         }
       }
     }

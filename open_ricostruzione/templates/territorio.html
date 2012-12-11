@@ -132,13 +132,13 @@
                             <div class="project_row ">
                                 <div class="box">
                                     <div class="n_progetti">
-                                        <div class="" style="float:left;text-align: center;">
-                                            <div>{{ p.day}}</div>
-                                            <div>{{ p.month }}</div>
-                                            <div>{{ p.year }}</div>
+                                        <div class="box_data" >
+                                            <div class="day">{{ p.day}}</div>
+                                            <div class="month">{{ p.month }}</div>
+                                            <div class="year">{{ p.year }}</div>
                                         </div>
-                                        <div style="float:right">
-                                            da {{ p.donazione.tipologia.denominazione }}
+                                        <div class="abstract" style="color:black;">
+                                            Da <strong>{{ p.donazione.tipologia.denominazione }}</strong>
                                         </div>
                                     </div>
                                     <div class="importo">{{ p.donazione.importo|floatformat}} euro</div>
