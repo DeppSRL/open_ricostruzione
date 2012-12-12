@@ -62,6 +62,36 @@ class HomeView(TemplateView):
         context['progetti_evidenza'] = Progetto.objects.filter(id_padre__isnull=True).order_by("-riepilogo_importi")[:3]
 
         context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
+
+        #news in home page
+        news_big = Entry.objects.all().order_by('-published_at')[0]
+
+
+        ##            converto la data nel formato  Nome mese - Anno
+        context['news_big']={'day':news_big.published_at.day,
+                     'month':news_big.published_at.strftime("%B")[:3],
+                     'year':news_big.published_at.year,
+                     'title':news_big.title,
+                     'abstract':news_big.abstract,
+                     'slug':news_big.slug,
+                     'body':news_big.body,
+                     }
+
+
+        news_temp = Entry.objects.all().order_by('-published_at')[1:3]
+        news_small=[]
+        for idx, val in enumerate(news_temp):
+            news_small.append(
+                {'day':val.published_at.day,
+                 'month':val.published_at.strftime("%B")[:3],
+                 'year':val.published_at.year,
+                 'title':val.title,
+                 'abstract':val.abstract,
+                 'slug':val.slug,
+                 }
+            )
+
+        context['news_small']=news_small
         return context
 
 
@@ -202,7 +232,8 @@ class TerritorioView(DetailView):
         for idx, val in enumerate(donazioni_temp):
         ##            converto la data nel formato  Nome mese - Anno
             val_date_obj = datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
-            val_date_day = time.strftime("%d", val_date_obj.timetuple()).lstrip('0')
+#            val_date_day = time.strftime("%d", val_date_obj.timetuple()).lstrip('0')
+            val_date_day = val.data.day
             val_date_month = time.strftime("%b", val_date_obj.timetuple())
             val_date_year = time.strftime("%Y", val_date_obj.timetuple())
             donazioni_last.append({'day':val_date_day,'month':val_date_month,'year':val_date_year,'donazione':val})
@@ -299,6 +330,18 @@ class DonazioneView(TemplateView):
         context['donazioni_last'] = donazioni_last
 
         return context
+
+class EntryView(DetailView):
+    model = Entry
+    context_object_name = "entry"
+    template_name = "static.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(EntryView, self).get_context_data(**kwargs)
+        entry = self.get_object()
+
+        return context
+
 
 
 class TipologieProgettoView(TemplateView):

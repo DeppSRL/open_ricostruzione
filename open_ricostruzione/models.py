@@ -5,7 +5,7 @@ import time
 from open_ricostruzione.utils.moneydate import add_months
 from django.db.models.aggregates import Sum
 from datetime import timedelta
-from django.utils.timezone import make_aware
+from django.template.defaultfilters import slugify
 
 
 class UltimoAggiornamento(models.Model):
@@ -155,9 +155,10 @@ class Entry(models.Model):
 
     title= models.CharField(max_length=255)
     abstract=models.CharField(max_length=255)
-    author=models.CharField(max_length=255)
+    author=models.CharField(max_length=255, null=True, blank=True)
     body= models.TextField()
     published_at= models.DateTimeField(default=datetime.now())
+    slug=models.SlugField(max_length=60, blank=True)
 
     def __unicode__(self):
         return self.title
@@ -167,6 +168,19 @@ class Entry(models.Model):
         ordering= ['-published_at']
         verbose_name= 'articolo'
         verbose_name_plural= 'articoli'
+
+    def save(self):
+        super(Entry, self).save()
+
+        if self.published_at:
+            self.slug = '%s-%s%s%s-%i' % (
+                slugify(self.title), self.published_at.day,self.published_at.month,self.published_at.year, self.id
+            )
+        else:
+            self.slug = '%s-%i' % (
+                slugify(self.title), self.id
+                )
+        super(Entry, self).save()
 
 
 class Blog(object):

@@ -8,6 +8,87 @@
 {% block show-home %}visible{% endblock %}
 
 {% block data-content %}
+    <div class="container">
+        <div class="row">
+            <div class="span12 titolo "> Come procede</div>
+            <div class="span12 subtitle">Gli ultimi post dal blog di Open Ricostruzione</div>
+        </div>
+        <div class="row">
+            <div class="span12 news-spacer"></div>
+        </div>
+        <div class="row">
+            <div class="span6">
+                <div class="news_big news_list ">
+                    <div class="box">
+                        <div class="row">
+                            <div class="box_data span1" >
+                                <div class="day">{{ news_big.day}}</div>
+                                <div class="month">{{ news_big.month}}</div>
+                                <div class="year">{{ news_big.year}}</div>
+                            </div>
+                            <div class="text span5" style="color:black;">
+                                <div class="title">
+                                    <a href="../news/{{ news_big.slug }}">
+                                        {{ news_big.title }}
+                                    </a>
+                                </div>
+                                <div class="abstract">
+                                    <a href="../news/{{ news_big.slug }}">
+                                        {{ news_big.abstract }}
+                                    </a>
+                                </div>
+                                <div class="body">
+                                    {{ news_big.body|truncatechars:300 }}
+                                    <br/>
+                                    <a href="../news/{{ news_big.slug }} ">Leggi tutto</a>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="spacer"></div>
+                </div>
+            </div>
+            <div class="span6">
+                {% for n in news_small%}
+                    <div class="row">
+                        <div class="news_small news_list">
+                            <div class="box">
+                                <div class="row">
+                                    <div class="span1 box_data" >
+                                        <div class="day">{{ n.day}}</div>
+                                        <div class="month">{{ n.month }}</div>
+                                        <div class="year">{{ n.year }}</div>
+                                    </div>
+                                    <div class="text span5" style="color:black;">
+                                        <div class="title">
+                                            <a href="../news/{{ n.slug }}">
+                                                {{ n.title }}
+                                            </a>
+                                        </div>
+                                        <div class="abstract">
+                                            <a href="../news/{{ n.slug }}">
+                                                {{ n.abstract }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if forloop.counter0 == 0  %}
+                                <div class="spacer news-spacer"></div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="span12 news-spacer"></div>
+        </div>
+    </div>
+
     <div class="container" id="home-map">
         <div class="row">
             <div class="span12">

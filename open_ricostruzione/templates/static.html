@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}{{ entry.title }}{% endblock %}
+
+{% block show-content %}visible{% endblock %}
+
+{% block show-home %}hidden{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
+{% block main-title %}{{ entry.title}}{% endblock %}
+
+{% block main-subtitle %}
+
+    Pubblicato  {{ entry.published_at }}
+    {% if entry.author %}
+         da {{ entry.author }}
+    {% endif %}
+
+{% endblock %}
+
+{% block main-content %}
+    <div class="row">
+        <div class="span7">
+            {{ entry.body }}
+        </div>
+    </div>
+{% endblock %}
