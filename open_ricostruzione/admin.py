@@ -8,6 +8,7 @@ class ProgettoAdmin(admin.ModelAdmin):
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
     ordering = ['data']
+    search_fields = ['^denominazione', 'id_donazione']
 
 class TerritorioAdmin(admin.ModelAdmin):
     model = Territorio

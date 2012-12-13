@@ -270,6 +270,13 @@ class Command(BaseCommand):
                     }
             )
 
+            if r['info']:
+#                self.logger.info("r:%s" % r)
+                self.logger.info("%s: Donazione %s con info: %s" % ( c, donazione,r['info']))
+                donazione.info=r['info']
+                donazione.save()
+                self.logger.info("Donazione:%s" % donazione.detail())
+
             if created:
                 self.logger.info("%s: donazione inserita: %s" % ( c, donazione))
             else:
