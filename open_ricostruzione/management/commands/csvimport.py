@@ -41,7 +41,7 @@ class Command(BaseCommand):
         make_option('--type',
             dest='type',
             default=None,
-            help='Type of import: proj|subproj|loc|don'),
+            help='Type of import: proj|subproj|loc|don|donproj|iban'),
         )
     csv_file = ''
     encoding = 'utf8'
@@ -73,8 +73,13 @@ class Command(BaseCommand):
         elif options['type'] == 'don':
             self.handle_donation(*args, **options)
             UltimoAggiornamento.objects.all().update(data_donazioni=timezone.now())
+        elif options['type'] == 'donproj':
+            self.handle_donationproj(*args, **options)
+            UltimoAggiornamento.objects.all().update(data_donazioni=timezone.now())
         elif options['type'] == 'loc':
             self.handle_localita(*args, **options)
+        elif options['type'] == 'iban':
+            self.handle_iban(*args, **options)
         else:
             self.logger.error("Wrong type %s. Select among proj, subproj, loc and don." % options['type'])
             exit(1)
@@ -243,7 +248,11 @@ class Command(BaseCommand):
             created = False
 
             territorio = Territorio.objects.get(cod_comune=r['istat'])
-            data = datetime.strptime(r['data_c'], "%d/%m/%Y")
+            if r['data_c']:
+                data = datetime.strptime(r['data_c'], "%d/%m/%Y")
+            else:
+                data = datetime.fromtimestamp(float(r['data_inserimento']))
+
             r['importo'] = r['importo'].replace(',','.')
             tipologia_cedente = TipologiaCedente.objects.get(codice = r['tipologia_c'])
             donazione, created = Donazione.objects.get_or_create(
@@ -265,5 +274,54 @@ class Command(BaseCommand):
                 self.logger.info("%s: donazione inserita: %s" % ( c, donazione))
             else:
                 self.logger.debug("%s: donazione trovata e non duplicata: %s" % (c, donazione))
+
+            c += 1
+
+#    import relationship between donation for projects
+    def handle_donationproj(self, *args, **options):
+        c = 0
+        self.logger.info("Inizio import da %s" % self.csv_file)
+
+        #    campi da importare:
+        #   "id";"id_flusso";"id_progetto";"id_figlio"
+
+        for r in self.unicode_reader:
+            donazione =Donazione.objects.get(id_donazione=r['id_flusso'])
+            if donazione:
+
+                if r['id_figlio'] == "NULL":
+                    donazione.progetto=Progetto.objects.get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
+                else:
+                    donazione.progetto=Progetto.objects.get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
+
+                donazione.save()
+                self.logger.info("%s: donazione aggiornata: %s" % ( c, donazione))
+            else:
+                self.logger.debug("%s: donazione non trovata: %s" % (c, donazione))
+
+            c += 1
+
+
+#    import Territorio IBAN
+    def handle_iban(self, *args, **options):
+        c = 0
+        self.logger.info("Inizio import da %s" % self.csv_file)
+
+        #   campi da importare:
+        #   "id_iban";"istat";"descrizione";"riferimento";"informazioni";"data"
+
+        for r in self.unicode_reader:
+            comune=Territorio.objects.get(cod_comune=r['istat'],tipo_territorio="C")
+            if comune:
+                comune.iban = r['riferimento']
+                if "postale" in r['descrizione']:
+                    comune.tipologia_cc="P"
+                elif "bancario" in r['descrizione']:
+                    comune.tipologia_cc="B"
+
+                comune.save()
+                self.logger.info("%s: dati Comune aggiornati: %s" % ( c, comune))
+            else:
+                self.logger.debug("%s: Comune non trovato: %s" % (c, comune))
 
             c += 1

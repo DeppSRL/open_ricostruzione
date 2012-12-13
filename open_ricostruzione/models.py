@@ -23,6 +23,7 @@ class Territorio(models.Model):
     cod_provincia = models.CharField(max_length=3)
     denominazione = models.CharField(max_length=255)
     iban = models.CharField(max_length=30, null=True, blank=True)
+    tipologia_cc = models.CharField(max_length=2, null=True, blank=True)
     slug = models.SlugField(max_length=60)
     sigla_provincia = models.CharField(max_length=3, null=True, blank=True)
 
@@ -142,6 +143,7 @@ class Donazione(models.Model):
     avvenuto = models.BooleanField()
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
     confermato = models.BooleanField()
+    progetto = models.ForeignKey('Progetto')
 
     def __unicode__(self):
         return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
