@@ -1,4 +1,11 @@
 {% extends "base.html" %}
+{% load digg_paginator %}
+
+{% block css_header %}
+    {{ block.super }}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/digg_paginator.css">
+{% endblock %}
+
 {% block title %}Tipologia progetto{% endblock %}
 
 {% block breadcrumb %}{{ block.super }} / <a href="/tipologie-progetto/">Tipologia progetto</a> / <a href="/tipologie-progetto/{{ slug }}">{{ tipologia }}</a> {% endblock %}
@@ -6,7 +13,27 @@
 {% block data-content %}
     <div class="">
         <div class="container">
-            <h1>Qui compariranno i risultati della ricerca</h1><br/>
+            <h1>Risultati della ricerca</h1><br/>
+            tipologia:{{ tipologia}}, comune:{{ comune}}, progetti:{{ n_progetti }}
+
+            pageobj:{{ page_obj }}<BR>
+            paginator:{{paginator  }}<br>
+            page:{{ page }}
+
+            <br>
+            <table class="search-results table">
+                <tbody>
+                {% for result in page_obj.object_list %}
+                    <tr>
+                        <td>{{ result.denominazione|safe }}</td>
+                        <td>{{ result.tipologia.denominazione|safe }}</td>
+                        <td>{{ result.territorio.denominazione }} </td>
+                        <td>({{ result.territorio.get_provincia.sigla_provincia}})</td>
+                        <td>{{ result.riepilogo_importi|safe }} euro</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
 
 {#            <ul>#}
@@ -16,6 +43,7 @@
 {#            </ul>#}
         </div>
     </div>
+    {% digg_paginator %}
 {% endblock %}
 
 {% block comment %}

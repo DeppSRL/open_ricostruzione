@@ -11,6 +11,10 @@
     <!-- Le styles -->
     <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.9.1.custom.css" rel="stylesheet">
 
+    {% block css_header %}
+    {% endblock %}
+
+
     {% if DEBUG %}
 
         <link href="{{ STATIC_URL }}less/styles.less" rel="stylesheet/less">
@@ -48,7 +52,7 @@
         <div  id="logo_header" >
             <div class="span7" id="logo_top">
                 <a href="/">
-                    <img src="../static/img/logo_white.png">
+                    <img src="../../static/img/logo_white.png">
                 </a>
             </div>
             {% if iban %}
@@ -84,13 +88,23 @@
                                 <ul class="dropdown-menu">
                                     {% for t in tipologie_progetti %}
                                         <li class="submenu">
-                                            <a href="../tipologie-progetto/{{ t.slug }}">{{ t.denominazione }}</a>
+                                            <a href="{% url progetti-tipologia t.slug %}">{{ t.denominazione }}</a>
                                         </li>
                                     {% endfor %}
                                 </ul>
                             </li>
-                            <li class="">
-                                <a href="../donazioni/" >Donazioni </a>
+                            <li class="dropdown ">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Donazioni <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li class="submenu">
+                                        <a href="{% url donazioni-riepilogo %}">Riepilogo</a>
+                                    </li>
+                                    {% for t in tipologie_donazioni %}
+                                        <li class="submenu">
+                                            <a href="{% url donazioni-tipologia t.slug %}">{{ t.denominazione }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
                             </li>
                             <li class="dropdown ">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Comuni <b class="caret"></b></a>
@@ -336,7 +350,7 @@
 {#            <div class="span2">#}
 {#                <img src="../static/img/actionaid.png">#}
 {#            </div>#}
-            <img src="../static/img/footer.png">
+            <img src="../../static/img/footer.png">
         </div>
     </div>
 </footer>

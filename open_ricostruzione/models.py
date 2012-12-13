@@ -125,6 +125,7 @@ class Progetto(models.Model):
 class TipologiaCedente(models.Model):
     codice = models.SmallIntegerField(null=True, blank=True)
     denominazione = models.CharField(max_length=255)
+    slug=models.SlugField(max_length=60)
 
     def __unicode__(self):
         return u"%s - %s" % (self.codice, self.denominazione)
@@ -138,15 +139,21 @@ class Donazione(models.Model):
     id_donazione = models.CharField(max_length=6)
     territorio = models.ForeignKey('Territorio')
     denominazione = models.TextField(max_length=1000)
+    info = models.TextField(max_length=1000,null=True, blank=True)
+    modalita_r = models.TextField(max_length=20,null=True, blank=True)
     tipologia = models.ForeignKey('TipologiaCedente')
     data = models.DateField()
     avvenuto = models.BooleanField()
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
     confermato = models.BooleanField()
-    progetto = models.ForeignKey('Progetto')
+    progetto = models.ForeignKey('Progetto',null=True, blank=True)
 
     def __unicode__(self):
         return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
+
+    def detail(self):
+        return u"%s (ID: %s, territorio:%s, tipologia:%s, progetto:%s, avvenuto:%s, conf:%s)" % (self.denominazione, self.id, self.territorio_id, self.tipologia_id, self.progetto_id, self.avvenuto, self.confermato)
+
 
     class Meta:
         verbose_name_plural = u'Donazioni'

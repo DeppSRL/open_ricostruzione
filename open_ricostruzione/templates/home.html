@@ -22,9 +22,11 @@
                     <div class="box">
                         <div class="row">
                             <div class="box_data span1" >
-                                <div class="day">{{ news_big.day}}</div>
-                                <div class="month">{{ news_big.month}}</div>
-                                <div class="year">{{ news_big.year}}</div>
+                                <a href="../news/{{ news_big.slug }}">
+                                    <div class="day">{{ news_big.day}}</div>
+                                    <div class="month">{{ news_big.month}}</div>
+                                    <div class="year">{{ news_big.year}}</div>
+                                </a>
                             </div>
                             <div class="text span5" style="color:black;">
                                 <div class="title">
@@ -57,9 +59,11 @@
                             <div class="box">
                                 <div class="row">
                                     <div class="span1 box_data" >
-                                        <div class="day">{{ n.day}}</div>
-                                        <div class="month">{{ n.month }}</div>
-                                        <div class="year">{{ n.year }}</div>
+                                        <a href="../news/{{ n.slug }}">
+                                            <div class="day">{{ n.day}}</div>
+                                            <div class="month">{{ n.month }}</div>
+                                            <div class="year">{{ n.year }}</div>
+                                        </a>
                                     </div>
                                     <div class="text span5" style="color:black;">
                                         <div class="title">
@@ -224,7 +228,7 @@
                                 <div class="n_progetti">
                                     Concerto Campovolo
                                 </div>
-                                <div class="importo">XXXXX euro</div>
+                                <div class="importo">{{ donazioni_campovolo|floatformat }} euro</div>
                             </div>
                             <div class="spacer"></div>
                         </div>
@@ -235,7 +239,7 @@
                                 <div class="n_progetti">
                                     Ricevute tramite SMS
                                 </div>
-                                <div class="importo">XXXXX euro</div>
+                                <div class="importo">{{ donazioni_sms|floatformat }} euro</div>
                             </div>
                             <div class="spacer"></div>
                         </div>

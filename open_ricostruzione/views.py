@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
 from open_ricostruzione import settings
@@ -13,6 +14,7 @@ from django.db.models.query import QuerySet
 from django.core.serializers import serialize
 from django.utils.functional import curry
 from django.http import HttpResponse, HttpResponseNotFound
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 class HomeView(TemplateView):
@@ -92,6 +94,18 @@ class HomeView(TemplateView):
             )
 
         context['news_small']=news_small
+
+        context['donazioni_campovolo']=Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
+            confermato=True,denominazione="Emilia-Romagna",
+            info__contains="Iniziativa patrocinata dalla Regione Emilia-Romagna - Concerto Campo Volo").\
+            aggregate(sum=Sum('importo')).values()[0]
+
+        context['donazioni_sms']=Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
+            confermato=True,denominazione="Emilia-Romagna",
+            modalita_r__exact="SMS").\
+            aggregate(sum=Sum('importo')).values()[0]
+
+
         return context
 
 
@@ -343,16 +357,87 @@ class EntryView(DetailView):
         return context
 
 
-
 class TipologieProgettoView(TemplateView):
 
-    template_name = "tipologieprogetto.html"
-
+    template_name = "list.html"
+    n_progetti = 0
+    tot_danno = 0
+    tipologia = None
+    comune = None
+    progetti = None
+    page = 1
+    progetti_pagina = 5 # numero di progetti per pagina
 
     def get_context_data(self, **kwargs):
+
         context = super(TipologieProgettoView, self).get_context_data(**kwargs)
+
+        self.n_progetti = self.progetti.count()
+        self.tot_danno= self.progetti.aggregate(s=Sum('riepilogo_importi')).values()
+
+#        if kwargs['page']:
+#            self.page=kwargs['page']
+
+        if self.progetti:
+            paginator = Paginator(self.progetti, self.progetti_pagina)
+            try:
+                page_obj = paginator.page(self.page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                page_obj = paginator.page(paginator.num_pages)
+
+            context['paginator']=paginator
+            context['page_obj']=page_obj
+            context['page']=self.page
+
+        if self.n_progetti:
+            context['n_progetti']=self.n_progetti
+        if self.tot_danno:
+            context['tot_danno']=self.tot_danno
+        if self.tipologia:
+            context['tipologia']=self.tipologia
+        if self.comune:
+            context['comune']=self.comune
+
         return context
 
+class ProgettiTipologiaComune(TipologieProgettoView):
+
+    def get_context_data(self, **kwargs):
+
+        self.comune = Territorio.objects.get(slug=kwargs['comune'])
+        self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
+        self.progetti= Progetto.objects.filter(territorio=self.comune, tipologia=self.tipologia)
+        if kwargs['page']:
+            self.page=kwargs['page']
+        self.context = super(ProgettiTipologiaComune, self).get_context_data(**kwargs)
+        return self.context
+
+
+class ProgettiTipologia(TipologieProgettoView):
+
+    def get_context_data(self, **kwargs):
+
+        self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
+        self.progetti= Progetto.objects.filter(tipologia=self.tipologia)
+        self.page = self.request.GET.get('page')
+
+        self.context = super(ProgettiTipologia, self).get_context_data(**kwargs)
+        return self.context
+
+class ProgettiComune(TipologieProgettoView):
+
+    def get_context_data(self, **kwargs):
+
+        self.comune = Territorio.objects.get(slug=kwargs['comune'])
+        self.progetti= Progetto.objects.filter(tipologia=self.tipologia)
+        if kwargs['page']:
+            self.page=kwargs['page']
+        self.context = super(ProgettiComune, self).get_context_data(**kwargs)
+        return self.context
 
 
 class DjangoJSONEncoder(JSONEncoder):

@@ -1,0 +1,43 @@
+ul#pagination-digg{border:0; margin:1em 10px; padding:0; float: right}
+
+#pagination-digg li{
+    border:0;
+    padding:0;
+    list-style:none;
+    float:left;
+    display: block;
+    margin: 0;
+}
+#pagination-digg a{
+    border:solid 1px #dedede;
+    margin-right:0px;
+    font-weight: normal;
+}
+
+#pagination-digg a,
+#pagination-digg .ellipsis,
+#pagination-digg .active
+{
+    padding:0.6em 1em;
+}
+#pagination-digg .next a,
+#pagination-digg .previous a {
+}
+
+#pagination-digg .ellipsis {
+    padding: 0 1em;
+}
+#pagination-digg .active{
+    background:#EAE9E5;
+    color:black;
+    font-weight:bold;
+    border:solid 1px #0e0e0e
+}
+#pagination-digg a:link,
+#pagination-digg a:visited {
+    color:black;
+    text-decoration:none;
+}
+#pagination-digg a:hover{
+    border:solid 1px #0e0e0e
+}
