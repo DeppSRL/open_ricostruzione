@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load digg_paginator %}
+
+{% block css_header %}
+    {{ block.super }}
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/digg_paginator.css">
+{% endblock %}
+
+{% block title %}Progetti categoria {{ tipologia }}{% endblock %}
+
+
+{% block breadcrumb-class %}hidden{% endblock %}
+{% block main-title-class %}hidden{% endblock %}
+{% block main-subtitle-class %}project_list{% endblock %}
+
+{% block main-subtitle %}
+    <strong>
+        Progetti
+        {% if tipologia %}per {{tipologia}}{% endif %}{% if comune %} nel <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
+    </strong>
+    {% if n_progetti > 0 %}
+        ({{ n_progetti }} {% if n_progetti > 1 %}progetti{% else %}progetto{% endif %}
+            {% if tot_danno > 0 %} per {{ tot_danno|floatformat }} euro{% endif %})
+    {% endif %}
+{% endblock %}
+
+{% block main-content %}
+    <div class="">
+        <div class="container" id="project_list">
+
+            {% for result in page_obj.object_list %}
+                <div class="row project_row">
+                    <div class="span7 spacer" >
+                    </div>
+                </div>
+                <div class="row project_row">
+                    <div class="span5 titolo">
+                        <a href="{% url progetto_detail result.slug %}">
+                            {{ result.denominazione|safe }}
+                        </a>
+                    </div>
+                </div>
+                <div class="row project_row">
+                    <div class="span5 ">
+                        <a href="{% url territorio_detail result.territorio.slug %}" >
+                            {{ result.territorio.denominazione }}
+                        </a>
+                            ({{ result.territorio.get_provincia.sigla_provincia}}) &#126;
+                        <a href="{% url progetti-tipologia result.tipologia.slug %} " >
+                            {{ result.tipologia.denominazione|safe }}
+                        </a>
+                    </div>
+                    {% if result.riepilogo_importi > 0 %}
+                        <div class="span2 box">
+                            <div class="importi">
+                                {{ result.riepilogo_importi|safe }} euro
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        <div class="row project_row">
+            <div class="span7 spacer">
+            </div>
+        </div>
+        {% if n_pages > 1 %}
+            <div class="row" style="margin: 0 auto;">
+                <div class="span7" >
+                    {% digg_paginator %}
+                </div>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block comment %}
+
+{% endblock %}

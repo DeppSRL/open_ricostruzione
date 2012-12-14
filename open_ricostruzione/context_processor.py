@@ -13,6 +13,6 @@ def main_settings(request):
     return {
         "DEBUG": settings.DEBUG,
         "tipologie_progetti": TipologiaProgetto.objects.all().values("denominazione","slug").order_by("denominazione"),
-        "tipologie_donazioni": TipologiaCedente.objects.all().values("denominazione","slug").order_by("denominazione"),
+        "tipologie_donazioni": TipologiaCedente.objects.exclude(denominazione__iexact="Privati Cittadini").values("denominazione","slug").order_by("denominazione"),
         "territori": territori,
         }

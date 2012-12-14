@@ -357,9 +357,12 @@ class EntryView(DetailView):
         return context
 
 
+
+
+
 class TipologieProgettoView(TemplateView):
 
-    template_name = "list.html"
+    template_name = "progetti_list.html"
     n_progetti = 0
     tot_danno = 0
     tipologia = None
@@ -399,6 +402,8 @@ class TipologieProgettoView(TemplateView):
         if self.comune:
             context['comune']=self.comune
 
+        context['n_pages']=paginator._get_num_pages()
+
         return context
 
 class ProgettiTipologiaComune(TipologieProgettoView):
@@ -407,9 +412,8 @@ class ProgettiTipologiaComune(TipologieProgettoView):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= Progetto.objects.filter(territorio=self.comune, tipologia=self.tipologia)
-        if kwargs['page']:
-            self.page=kwargs['page']
+        self.progetti= Progetto.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.page = self.request.GET.get('page')
         self.context = super(ProgettiTipologiaComune, self).get_context_data(**kwargs)
         return self.context
 
@@ -419,7 +423,7 @@ class ProgettiTipologia(TipologieProgettoView):
     def get_context_data(self, **kwargs):
 
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= Progetto.objects.filter(tipologia=self.tipologia)
+        self.progetti= Progetto.objects.filter(tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
 
         self.context = super(ProgettiTipologia, self).get_context_data(**kwargs)
@@ -430,9 +434,8 @@ class ProgettiComune(TipologieProgettoView):
     def get_context_data(self, **kwargs):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
-        self.progetti= Progetto.objects.filter(tipologia=self.tipologia)
-        if kwargs['page']:
-            self.page=kwargs['page']
+        self.progetti= Progetto.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
         return self.context
 
