@@ -17,7 +17,7 @@
             {% endif %}
         {% endfor %}
         {% if has_next %}
-            <li><a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ next }}">Succ &raquo;</a></li>
+            <li ><a href="{% if get_params %}?{{ get_params }}&{% else %}?{% endif %}page={{ next }}">Succ &raquo;</a></li>
         {% endif %}
     {% endspaceless %}
 </ul>
