@@ -8,42 +8,65 @@
 
 {% block title %}Tipologia progetto{% endblock %}
 
-{% block breadcrumb %}{{ block.super }} / <a href="/tipologie-progetto/">Tipologia progetto</a> / <a href="/tipologie-progetto/{{ slug }}">{{ tipologia }}</a> {% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
+{% block main-subtitle %}
+    Progetti
+    {% if tipologia %}nella categoria {{tipologia}}{% endif %}{% if comune %} per il Comune di {{ comune }} ({{ territorio.get_provincia.sigla_provincia }}){% endif %},
+
+    {% if n_progetti > 0 %}
+    ({{ n_progetti }} progetti
+        {% if tot_danno > 0 %}
+        per {{ tot_danno|floatformat }} euro
+        {% endif %}
+    )
+    {% endif %}
+{% endblock %}
 
 {% block data-content %}
     <div class="">
         <div class="container">
-            <h1>Risultati della ricerca</h1><br/>
-            tipologia:{{ tipologia}}, comune:{{ comune}}, progetti:{{ n_progetti }}
 
-            pageobj:{{ page_obj }}<BR>
-            paginator:{{paginator  }}<br>
-            page:{{ page }}
-
-            <br>
-            <table class="search-results table">
-                <tbody>
-                {% for result in page_obj.object_list %}
-                    <tr>
-                        <td>{{ result.denominazione|safe }}</td>
-                        <td>{{ result.tipologia.denominazione|safe }}</td>
-                        <td>{{ result.territorio.denominazione }} </td>
-                        <td>({{ result.territorio.get_provincia.sigla_provincia}})</td>
-                        <td>{{ result.riepilogo_importi|safe }} euro</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-
-{#            <ul>#}
-{#                {% for progetto in project_list%}#}
-{#                    <li><a href="../progetto/{{ progetto.slug }}">{{ progetto.denominazione }}</a></li>#}
-{#                {% endfor %}#}
-{#            </ul>#}
+            {% for result in page_obj.object_list %}
+                <div class="row">
+                    <div class="span8" style="border-bottom:1px solid black;min-height: 1px;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span6">
+                        <a href="{% url progetto_detail result.slug %}">
+                            {{ result.denominazione|safe }}
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span6">
+                        <a href="{% url territorio_detail result.territorio.slug %}" >
+                            {{ result.territorio.denominazione }}
+                        </a>
+                            ({{ result.territorio.get_provincia.sigla_provincia}}) &tilde;
+                        <a href="{% url progetti-tipologia result.tipologia.slug %} " >
+                            {{ result.tipologia.denominazione|safe }}
+                        </a>
+                    </div>
+                    <div class="span2">
+                        {{ result.riepilogo_importi|safe }} euro
+                    </div>
+                </div>
+            {% endfor %}
+        <div class="row">
+            <div class="span8" style="border-bottom:1px solid black;min-height: 1px;">
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                {% digg_paginator %}
+            </div>
+        </div>
         </div>
     </div>
-    {% digg_paginator %}
+
 {% endblock %}
 
 {% block comment %}

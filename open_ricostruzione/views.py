@@ -373,10 +373,7 @@ class TipologieProgettoView(TemplateView):
         context = super(TipologieProgettoView, self).get_context_data(**kwargs)
 
         self.n_progetti = self.progetti.count()
-        self.tot_danno= self.progetti.aggregate(s=Sum('riepilogo_importi')).values()
-
-#        if kwargs['page']:
-#            self.page=kwargs['page']
+        self.tot_danno= self.progetti.aggregate(s=Sum('riepilogo_importi')).values()[0]
 
         if self.progetti:
             paginator = Paginator(self.progetti, self.progetti_pagina)
