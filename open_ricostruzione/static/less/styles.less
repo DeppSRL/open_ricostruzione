@@ -106,6 +106,37 @@ div.content{
   padding-top: @spacing-single;
   min-height: 500px;
 
+  .box_data{
+    a{
+      color: black;
+    }
+    a:hover{
+      text-decoration: none;
+    }
+    width: 60px;
+    height: 60px;
+    padding-top: 7px;
+    float:left;
+    color:black;
+    text-transform: uppercase;
+    line-height: 15px;
+    text-align: center;
+    background-image: url("../img/box_data.png");
+    background-repeat: no-repeat;
+
+
+    .day{
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .month{
+      font-size: 15px;
+    }
+    .year{
+      font-size: 13px;
+    }
+  }
+
   .evidenza{
 
     padding-bottom: @spacing-double;
@@ -311,36 +342,6 @@ div.content{
         }
       }
 
-    }
-    .box_data{
-      a{
-        color: black;
-      }
-      a:hover{
-        text-decoration: none;
-      }
-      width: 60px;
-      height: 60px;
-      padding-top: 7px;
-      float:left;
-      color:black;
-      text-transform: uppercase;
-      line-height: 15px;
-      text-align: center;
-      background-image: url("../img/box_data.png");
-      background-repeat: no-repeat;
-
-
-      .day{
-        font-size: 15px;
-        font-weight: bold;
-      }
-      .month{
-        font-size: 15px;
-      }
-      .year{
-        font-size: 13px;
-      }
     }
     .news-spacer{
       height: @spacing-half;

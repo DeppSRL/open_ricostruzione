@@ -15,6 +15,7 @@ from django.core.serializers import serialize
 from django.utils.functional import curry
 from django.http import HttpResponse, HttpResponseNotFound
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
 
 
 class HomeView(TemplateView):
@@ -69,7 +70,7 @@ class HomeView(TemplateView):
         news_big = Entry.objects.all().order_by('-published_at')[0]
 
 
-        ##            converto la data nel formato  Nome mese - Anno
+        ##   converto la data nel formato  Nome mese - Anno
         context['news_big']={'day':news_big.published_at.day,
                      'month':news_big.published_at.strftime("%B")[:3],
                      'year':news_big.published_at.year,
@@ -357,6 +358,98 @@ class EntryView(DetailView):
         return context
 
 
+class TipologieCedenteView(TemplateView):
+    template_name = "donazione_list.html"
+    n_donazioni = 0
+    tot_donazioni = 0
+    tipologia = None
+    comune = None
+    donazioni = None
+    page = 1
+    donazioni_pagina = 5 # numero di elementi per pagina
+
+    def get_context_data(self, **kwargs):
+
+        context = super(TipologieCedenteView, self).get_context_data(**kwargs)
+        paginator =None
+        self.n_donazioni = self.donazioni.count()
+        self.tot_donazioni= self.donazioni.aggregate(s=Sum('importo')).values()[0]
+#        if self.tipologia == TipologiaCedente.objects.get(slug="privati-cittadini"):
+#            return HttpResponseRedirect(reversed('home'))
+
+
+        if self.donazioni:
+
+            paginator = Paginator(self.donazioni, self.donazioni_pagina)
+            try:
+                page_obj = paginator.page(self.page)
+            except PageNotAnInteger:
+                # If page is not an integer, deliver first page.
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                # If page is out of range (e.g. 9999), deliver last page of results.
+                page_obj = paginator.page(paginator.num_pages)
+
+            donazioni_page=[]
+            for idx, val in enumerate(page_obj.object_list):
+                donazioni_page.append(
+                    {'day':val.data.day,
+                     'month':val.data.strftime("%B")[:3],
+                     'year':val.data.year,
+                     'donazione':val,
+                     }
+                )
+
+            context['donazioni_page'] = donazioni_page
+            context['paginator']=paginator
+            context['page_obj']=page_obj
+            context['page']=self.page
+
+        if self.n_donazioni:
+            context['n_donazioni']=self.n_donazioni
+        if self.tot_donazioni:
+            context['tot_donazioni']=self.tot_donazioni
+        if self.tipologia:
+            context['tipologia']=self.tipologia
+        if self.comune:
+            context['comune']=self.comune
+        if paginator:
+            context['n_pages']=paginator._get_num_pages()
+
+        return context
+
+class DonazioniTipologiaComune(TipologieCedenteView):
+
+    def get_context_data(self, **kwargs):
+
+        self.comune = Territorio.objects.get(slug=kwargs['comune'])
+        self.tipologia = TipologiaCedente.objects.get(slug=kwargs['tipologia'])
+        self.donazioni= Donazione.objects.filter(territorio_set=self.comune, tipologia=self.tipologia,confermato=True).order_by('-importo')
+        self.page = self.request.GET.get('page')
+        self.context = super(DonazioniTipologiaComune, self).get_context_data(**kwargs)
+        return self.context
+
+
+class DonazioniTipologia(TipologieCedenteView):
+
+    def get_context_data(self, **kwargs):
+
+        self.tipologia = TipologiaCedente.objects.get(slug=kwargs['tipologia'])
+        self.donazioni= Donazione.objects.filter( tipologia=self.tipologia,confermato=True).order_by('-importo')
+        self.page = self.request.GET.get('page')
+
+        self.context = super(DonazioniTipologia, self).get_context_data(**kwargs)
+        return self.context
+
+class DonazioniComune(TipologieCedenteView):
+
+    def get_context_data(self, **kwargs):
+
+        self.comune = Territorio.objects.get(slug=kwargs['comune'])
+        self.donazioni= Donazione.objects.filter(territorio_set=self.comune,confermato=True).order_by('-importo')
+        self.page = self.request.GET.get('page')
+        self.context = super(ProgettiComune, self).get_context_data(**kwargs)
+        return self.context
 
 
 
@@ -369,10 +462,10 @@ class TipologieProgettoView(TemplateView):
     comune = None
     progetti = None
     page = 1
-    progetti_pagina = 5 # numero di progetti per pagina
+    progetti_pagina = 5 # numero di elementi per pagina
 
     def get_context_data(self, **kwargs):
-
+        paginator =None
         context = super(TipologieProgettoView, self).get_context_data(**kwargs)
 
         self.n_progetti = self.progetti.count()
@@ -401,8 +494,8 @@ class TipologieProgettoView(TemplateView):
             context['tipologia']=self.tipologia
         if self.comune:
             context['comune']=self.comune
-
-        context['n_pages']=paginator._get_num_pages()
+        if paginator:
+            context['n_pages']=paginator._get_num_pages()
 
         return context
 

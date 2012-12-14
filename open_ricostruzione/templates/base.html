@@ -210,7 +210,7 @@
             <div id="main-subtitle">{% block main-subtitle %}{% endblock %}</div>
             <div class="main-content">{% block main-content %}{% endblock %}</div>
         </div>
-        <div class="span5 boxes" >
+        <div class="span5 boxes {% block boxes-class %}{% endblock %}" >
             <div class="row">
                 <div class="span2" >
                     {%  if stima_danno %}

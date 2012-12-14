@@ -12,7 +12,13 @@ def main_settings(request):
 
     return {
         "DEBUG": settings.DEBUG,
-        "tipologie_progetti": TipologiaProgetto.objects.all().values("denominazione","slug").order_by("denominazione"),
-        "tipologie_donazioni": TipologiaCedente.objects.exclude(denominazione__iexact="Privati Cittadini").values("denominazione","slug").order_by("denominazione"),
+        "tipologie_progetti": TipologiaProgetto.objects.\
+            filter(progetto__id_padre__isnull=True).\
+            annotate(c=Count('progetto')).values("denominazione","slug","c").\
+            filter(c__gt=0).order_by("denominazione"),
+        "tipologie_donazioni": TipologiaCedente.objects.\
+            exclude(denominazione__iexact="Privati Cittadini").\
+            filter(donazione__confermato=True).\
+            annotate(c=Count('donazione')).values("denominazione","slug","c").filter(c__gt=0).order_by("denominazione"),
         "territori": territori,
         }
