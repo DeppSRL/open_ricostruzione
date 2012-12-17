@@ -218,15 +218,13 @@ class ProgettoView(DetailView):
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
 
-        # donazioni per il progetto
-        # mancano perche' non abbiamo i dati relativi
 
         context['territorio_nome'] = p.territorio.denominazione
         iban =  Progetto.objects.get(pk = p.pk).territorio.iban
         if iban:
             context['iban'] = iban
 
-#        mancano le donazioni perche' ci mancano i le relazioni fra donazioni e progetti
+#       TODO: mancano le donazioni perche' ci mancano i le relazioni fra donazioni e progetti
 
         return context
 
@@ -283,6 +281,7 @@ class TerritorioView(DetailView):
             progetti_categorie_list =\
                 Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
                 annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+
             for p in progetti_categorie_list:
                 p['sum'] =moneyfmt(p['sum'] ,2,"",".",",")
 
@@ -444,7 +443,7 @@ class DonazioneView(TemplateView):
 
         if donazioni_spline and len(donazioni_spline)>1:
 #            rende i numeri Decimal delle stringhe per il grafico
-#            TODO: creare i dati per le label in formato italiano
+
             for value in donazioni_spline:
                 value['sum']=moneyfmt(value['sum'],2,"","",".")
 

@@ -132,6 +132,11 @@ class Progetto(models.Model):
     cenni_storici = models.TextField()
     ulteriori_info = models.TextField()
 
+
+#    ritorna l'importo lavori in formato italiano
+    def get_riepilogo_importi_ita(self):
+        return moneyfmt(self.riepilogo_importi,2,"",".",",")
+
     def __unicode__(self):
         return u"%s ID: %s, TIPOLOGIA: %s, PADRE: [%s]" % (self.denominazione, self.id_progetto, self.tipologia, self.parent)
 
