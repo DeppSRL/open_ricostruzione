@@ -194,7 +194,7 @@ class TerritorioView(DetailView):
             context['stima_danno'] = stima_danno[0]
             # importi dei progetti per categorie
             context['progetti_categorie'] =\
-                Progetto.objects.filter(territorio=t).values('tipologia__denominazione').\
+                Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
                 annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
 
 
@@ -217,7 +217,7 @@ class TerritorioView(DetailView):
         # donazioni divise per tipologia cedente
         context['donazioni_categorie'] = \
             Donazione.objects.filter( territorio=t).\
-            filter(confermato = True).values('tipologia__denominazione').\
+            filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
         #iban territorio
@@ -237,7 +237,7 @@ class TerritorioView(DetailView):
             context['donazioni_spline'] = donazioni_spline
 
 #       ultime donazioni per il comune considerato
-#        donazioni_last = Donazione.objects.select_related().filter(territorio=t,confermato=True).order_by('-data')[:3]
+
         donazioni_temp=Donazione.objects.filter(territorio=t,confermato=True).\
             extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
             order_by('-data')[:3]
@@ -251,7 +251,13 @@ class TerritorioView(DetailView):
             val_date_day = val.data.day
             val_date_month = time.strftime("%b", val_date_obj.timetuple())
             val_date_year = time.strftime("%Y", val_date_obj.timetuple())
-            donazioni_last.append({'day':val_date_day,'month':val_date_month,'year':val_date_year,'donazione':val})
+            donazioni_last.append({'day':val_date_day,
+                                   'month':val_date_month,
+                                   'year':val_date_year,
+                                   'tipologia':val.tipologia,
+                                   'importo':val.importo,
+                                   'slug':val.tipologia.slug
+            })
 
         context['donazioni_last'] = donazioni_last
         return context
