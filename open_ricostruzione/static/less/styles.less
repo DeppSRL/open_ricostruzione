@@ -154,6 +154,8 @@ div.content{
       margin-bottom: @spacing-single;
     }
     .project_row{
+      font-size: @navbar-size;
+
       .titolo{
         color: @project-name;
         font-weight: bold;
@@ -170,7 +172,6 @@ div.content{
         }
         .importo{
           float:right;
-          font-size: @navbar-size;
           font-weight: bold;
         }
       }
@@ -376,9 +377,12 @@ div.content{
     }
 
     .project_list{
-
+      font-size: @navbar-size;
       border-top: 1px solid #b5b8b6;
       padding-top: @spacing-half;
+      padding-left:0;
+      padding-right:0;
+
 
       .project_row{
         .titolo{
@@ -389,17 +393,17 @@ div.content{
           color: @project-category;
 
         }
+        .importo{
+          float:right;
+          font-weight: bold;
+        }
         .box{
           overflow:hidden;
           .n_progetti{
             color:@blue-color;
             float:left;
           }
-          .importo{
-            float:right;
-            font-size: @navbar-size;
-            font-weight: bold;
-          }
+
         }
 
         .spacer{
@@ -410,7 +414,7 @@ div.content{
           min-height: 1px;
         }
         .abstract{
-          float:right;
+//          float:right;
         }
       }
     }

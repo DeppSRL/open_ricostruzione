@@ -387,14 +387,14 @@ class DonazioneView(TemplateView):
 
         for idx, val in enumerate(donazioni_mese):
 ##            converto la data nel formato  Nome mese - Anno
-            val_date_obj = datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+            val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
             val_date_print = time.strftime("%b - %Y", val_date_obj.timetuple())
 
             if idx is not 0:
 #                se le due date sono piu' distanti di un mese
 #                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
 #                per creare un grafico piatto
-                donazioni_date_obj = datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+                donazioni_date_obj = datetime.datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
                 if (val_date_obj-donazioni_date_obj) > timedelta(31):
                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
                     for k in range(1, n_mesi):
