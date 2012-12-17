@@ -28,16 +28,18 @@
 
     <div class="row">
         <div class="span6">
-            {% if donazioni_categorie %}
+            {% if donazioni_categorie_list %}
                 <div class="titolo donazioni"> Donazioni ricevute</div>
                 <div class="subtitle">Ripartizione delle donazioni per soggetti</div>
-                <div id="don_pie"></div>
+                {% if donazioni_categorie_pie %}
+                    <div id="don_pie"></div>
+                {% endif %}
                 <div class="project_list">
-                    {% for p in donazioni_categorie %}
+                    {% for p in donazioni_categorie_list %}
                         <div class="project_row ">
                             <div class="box">
                                 <div class="n_progetti">{{ p.c }} da {{ p.tipologia__denominazione }}</div>
-                                <div class="importo">{{ p.sum|floatformat}} euro</div>
+                                <div class="importo">{{ p.sum}} euro</div>
                             </div>
                             <div class="spacer"></div>
                         </div>
@@ -50,16 +52,31 @@
                 <div id="don_last">
                     <div class="titolo"> Ultime donazioni</div>
                     <div class="subtitle">Ultime donazioni per i Comuni del cratere</div>
-                    <div class="project_list">
+                    <div class="container-fluid project_list">
+
                         {% for p in donazioni_last %}
-                            <div class="project_row ">
-                                <div class="box">
-                                    <div class="n_progetti">
-                                        {{ p.data }} da {{ p.tipologia.denominazione }}
+
+                            <div class="row-fluid project_row ">
+                                <div class="span2 box">
+                                    {#                                    <div class="n_progetti">#}
+                                    <div class="box_data" >
+                                        <div class="day">{{ p.day}}</div>
+                                        <div class="month">{{ p.month }}</div>
+                                        <div class="year">{{ p.year }}</div>
                                     </div>
-                                    <div class="importo">{{ p.importo|floatformat}} euro</div>
                                 </div>
-                                <div class="spacer"></div>
+
+                                <div class="span6">
+                                    <div class="abstract" style="color:black;">
+                                        Da <strong><a href="{% url donazioni-tipologia p.tipologia.slug %}">{{ p.tipologia.denominazione }}</a></strong>
+                                    </div>
+                                </div>
+                                <div class="span4">
+                                    <div class="importo">{{ p.importo}} euro</div>
+                                </div>
+                            </div>
+                            <div class="row-fluid project_row ">
+                                <div class="span12 spacer"></div>
                             </div>
                         {% endfor %}
                     </div>
@@ -88,8 +105,16 @@
             },
             tooltip: {
             formatter: function() {
-            return '<b>'+ this.series.name +'</b><br/>'+
-            this.x +': '+ this.y +' Euro';
+
+                var don_ita = new Array();
+                {% for d in donazioni_spline %}
+                    don_ita["{{ d.month }}"]="{{ d.sum_ita }}";
+                {% endfor %}
+
+
+
+                return '<b>'+ this.x  +'</b><br/>'+
+                        ''+ don_ita[this.x] +' Euro';
             }
             },
             yAxis: {
@@ -174,7 +199,7 @@
                     name: 'Tipologia cedente',
                     title: 'Donazioni per tipologia',
                     data: [
-                        {% for d in donazioni_categorie %}
+                        {% for d in donazioni_categorie_pie %}
                             ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
                         {% endfor %}
                     ]

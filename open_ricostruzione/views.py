@@ -295,10 +295,6 @@ class TerritorioView(DetailView):
 
             context['progetti_categorie_pie']=progetti_categorie_pie
 
-
-
-
-
         # numero donazioni
         context['n_donazioni'] = Donazione.objects.filter(confermato = True).filter(territorio=t).count()
         # donazioni per il territorio considerato
@@ -345,11 +341,6 @@ class TerritorioView(DetailView):
         donazioni_spline = t.get_spline_data()
 
         if donazioni_spline and len(donazioni_spline)>1:
-        #            rende i numeri Decimal delle stringhe per il grafico
-#            for value in donazioni_spline:
-#                value['sum']=moneyfmt(value['sum'],2,"","",".")
-#                value['sum_it']=moneyfmt(value['sum'],2,"",".",",")
-
             context['donazioni_spline'] = donazioni_spline
 
 #       ultime donazioni per il comune considerato
@@ -429,15 +420,15 @@ class DonazioneView(TemplateView):
                     for k in range(1, n_mesi):
                         new_month_obj = add_months(donazioni_date_obj,k)
                         new_month_print = time.strftime("%b - %Y", new_month_obj.timetuple())
-                        donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum']})
+                        donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum'],'sum_ita':None})
                         j += 1
 
 #               inserisce il dato del mese corrente
-                donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum'])})
+                donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum']),'sum_ita':None})
                 j += 1
 
             else:
-                donazioni_spline.append({'month':val_date_print,'sum':val['sum']})
+                donazioni_spline.append({'month':val_date_print,'sum':val['sum'],'sum_ita':None})
                 j += 1
 
 
@@ -445,23 +436,50 @@ class DonazioneView(TemplateView):
 #            rende i numeri Decimal delle stringhe per il grafico
 
             for value in donazioni_spline:
+                value['sum_ita']=moneyfmt(value['sum'],2,"",".",",")
                 value['sum']=moneyfmt(value['sum'],2,"","",".")
 
             context['donazioni_spline'] = donazioni_spline
 
         #donazioni per tipologia
-        donazioni_categorie = Donazione.objects.all().\
+        donazioni_categorie_list = Donazione.objects.all().\
             filter(confermato=True).values('tipologia__denominazione').\
             annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
 
-#        for idx, val in enumerate(donazioni_categorie):
-#            val['sum'] = moneyfmt(val['sum'],2,"","",",")
+        for idx, val in enumerate(donazioni_categorie_list):
+            val['sum'] = moneyfmt(val['sum'],2,"",".",",")
 
-        context['donazioni_categorie']=donazioni_categorie
+        context['donazioni_categorie_list']=donazioni_categorie_list
+
+        #donazioni per tipologia
+        donazioni_categorie_pie = Donazione.objects.all().\
+            filter(confermato=True).values('tipologia__denominazione').\
+            annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
+
+        for idx, val in enumerate(donazioni_categorie_pie):
+            val['sum'] = moneyfmt(val['sum'],2,"","",".")
+
+        context['donazioni_categorie_pie']=donazioni_categorie_pie
+
 
 
         #       ultime donazioni per il comune considerato
-        donazioni_last = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
+        donazioni_temp = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
+        donazioni_last=[]
+
+        for idx, val in enumerate(donazioni_temp):
+        ##            converto la data nel formato  Nome mese - Anno
+            val_date_day = val.data.day
+            val_date_month = time.strftime("%b", val.data.timetuple())
+            val_date_year = time.strftime("%Y", val.data.timetuple())
+            donazioni_last.append({'day':val_date_day,
+                                   'month':val_date_month,
+                                   'year':val_date_year,
+                                   'tipologia':val.tipologia,
+                                   'importo':moneyfmt(val.importo,2,"",".",","),
+                                   'slug':val.tipologia.slug
+            })
+
 
 
         context['donazioni_last'] = donazioni_last

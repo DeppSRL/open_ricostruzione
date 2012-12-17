@@ -186,15 +186,15 @@
                     tooltip: {
                         formatter: function() {
 
-                            var myArray = new Array();
+                            var don_ita = new Array();
                             {% for d in donazioni_spline %}
-                                myArray["{{ d.month }}"]="{{ d.sum_ita }}";
+                                don_ita["{{ d.month }}"]="{{ d.sum_ita }}";
                             {% endfor %}
 
 
 
                             return '<b>'+ this.x  +'</b><br/>'+
-                                    ''+ myArray[this.x] +' Euro';
+                                    ''+ don_ita[this.x] +' Euro';
                         }
                     },
                     yAxis: {
