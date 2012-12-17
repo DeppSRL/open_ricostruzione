@@ -199,14 +199,14 @@
                     <div class="titolo" > Progetti oggi in evidenza</div>
                     <div class="subtitle">Tre progetti in rilievo</div>
                     <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                        <div class="span3" style="font-weight: bold;">Comune</div>
+                        <div class="span3" style="font-weight: bold;">Progetto</div>
                         <div class="span3" style="font-weight: bold;">Tipologia</div>
                         <div class="span3" style="font-weight: bold;">Danno</div>
                     </div>
                     {% for p in progetti_evidenza %}
                         <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
                             <div class="span3" style="color: #4467af;">
-                                <a href="../comune/{{ c.slug }}">{{ p.territorio.denominazione }} ({{ p.territorio.get_provincia.sigla_provincia }})</a>
+                                <a href="{% url progetto_detail p.slug %} ">{{ p.denominazione }} </a>
                             </div>
                             <div class="span3" style=""><a href="../tipologie-progetto/">{{ p.tipologia.denominazione }}</a></div>
                             <div class="span3" style="">{{ p.riepilogo_importi }} euro</div>
