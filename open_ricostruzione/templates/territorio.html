@@ -84,20 +84,20 @@
     <!-- PIE CHARTS -->
     <div class="row">
         <div class="span6">
-            {% if progetti_categorie %}
+            {% if progetti_categorie_list %}
 
                 <div class="titolo danno"> Progetti per la ricostruzione</div>
                 <div class="subtitle">Ripartizione dei danni per categorie</div>
-                {% if progetti_categorie|length > 1 %}
+                {% if progetti_categorie_pie|length > 1 %}
                     <div id="proj_pie"></div>
                 {% endif %}
                 <div class="project_list">
-                    {% for p in progetti_categorie %}
+                    {% for p in progetti_categorie_list %}
                         {% if p.sum > 0 %}
                             <div class="project_row ">
                                 <div class="box">
                                     <div class="n_progetti">{{ p.c }} <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %}">{{ p.tipologia__denominazione }}</a></div>
-                                    <div class="importo">{{ p.sum|floatformat}} euro</div>
+                                    <div class="importo">{{ p.sum}} euro</div>
                                 </div>
                                 <div class="spacer"></div>
                             </div>
@@ -107,18 +107,18 @@
             {% endif %}
         </div><!-- /span -->
         <div class="span6">
-            {% if donazioni_categorie %}
+            {% if donazioni_categorie_list %}
                 <div class="titolo donazioni"> Donazioni ricevute</div>
                 <div class="subtitle">Ripartizione delle donazioni per soggetti</div>
-                {% if donazioni_categorie|length > 1 %}
+                {% if donazioni_categorie_pie|length > 1 %}
                     <div id="don_pie"></div>
                 {% endif %}
                 <div class="project_list">
-                    {% for p in donazioni_categorie %}
+                    {% for p in donazioni_categorie_list %}
                         <div class="project_row ">
                             <div class="box">
                                 <div class="n_progetti">{{ p.c }} da <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %} ">{{ p.tipologia__denominazione }}</a></div>
-                                <div class="importo">{{ p.sum|floatformat}} euro</div>
+                                <div class="importo">{{ p.sum}} euro</div>
                             </div>
                             <div class="spacer"></div>
                         </div>
@@ -149,7 +149,7 @@
                                     </div>
                                 </div>
                                 <div class="span4">
-                                    <div class="importo">{{ p.importo|floatformat}} euro</div>
+                                    <div class="importo">{{ p.importo}} euro</div>
                                 </div>
                             </div>
                             <div class="row-fluid project_row ">
@@ -185,8 +185,16 @@
                     },
                     tooltip: {
                         formatter: function() {
-                            return '<b>'+ this.series.name +'</b><br/>'+
-                                    this.x +': '+ this.y +' Euro';
+
+                            var myArray = new Array();
+                            {% for d in donazioni_spline %}
+                                myArray["{{ d.month }}"]="{{ d.sum_ita }}";
+                            {% endfor %}
+
+
+
+                            return '<b>'+ this.x  +'</b><br/>'+
+                                    ''+ myArray[this.x] +' Euro';
                         }
                     },
                     yAxis: {
@@ -229,7 +237,7 @@
             {% endif %}
 
             /*PIE CHART*/
-            {% if progetti_categorie|length > 1 %}
+            {% if progetti_categorie_pie|length > 1 %}
                 /*TIPOLOGIA PROGETTI */
                 piechart1 = new Highcharts.Chart({
                     chart: {
@@ -273,7 +281,7 @@
                         name: 'Tipologia progetto',
                         title: 'Progetti per tipologia',
                         data: [
-                            {% for p in progetti_categorie %}
+                            {% for p in progetti_categorie_pie %}
                                 {% if p.sum > 0 %}
                                     ['{{ p.tipologia__denominazione }}',{{ p.sum|floatformat }}],
                                 {% endif %}
@@ -283,7 +291,7 @@
 
                 });
             {% endif %}
-            {% if donazioni_categorie|length > 1%}
+            {% if donazioni_categorie_pie|length > 1%}
                 /*CATEGORIA DONAZIONI */
 
                 piechart2 = new Highcharts.Chart({
@@ -329,7 +337,7 @@
                         name: 'Tipologia progetto',
                         title: 'Donazioni per tipologia',
                         data: [
-                            {% for d in donazioni_categorie %}
+                            {% for d in donazioni_categorie_pie %}
                                 ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
                             {% endfor %}
                         ]

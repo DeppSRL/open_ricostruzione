@@ -280,9 +280,24 @@ class TerritorioView(DetailView):
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
             # importi dei progetti per categorie
-            context['progetti_categorie'] =\
+            progetti_categorie_list =\
                 Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
                 annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+            for p in progetti_categorie_list:
+                p['sum'] =moneyfmt(p['sum'] ,2,"",".",",")
+
+            context['progetti_categorie_list']=progetti_categorie_list
+
+            progetti_categorie_pie=\
+                Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
+                annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+            for p in progetti_categorie_pie:
+                p['sum'] =moneyfmt(p['sum'] ,2,"","",".")
+
+            context['progetti_categorie_pie']=progetti_categorie_pie
+
+
+
 
 
         # numero donazioni
@@ -298,14 +313,30 @@ class TerritorioView(DetailView):
         projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
 
         if projects:
+            for p in projects:
+                p.riepilogo_importi =moneyfmt( Decimal(p.riepilogo_importi),2,"",".",",")
+
             context['progetti_top'] = projects
 
 
         # donazioni divise per tipologia cedente
-        context['donazioni_categorie'] = \
+        donazioni_categorie_list = \
             Donazione.objects.filter( territorio=t).\
             filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+
+        for d in donazioni_categorie_list:
+            d['sum'] =moneyfmt(d['sum'] ,2,"",".",",")
+
+        context['donazioni_categorie_list']=donazioni_categorie_list
+
+        donazioni_categorie_pie =\
+            Donazione.objects.filter( territorio=t).\
+            filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
+            annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+
+        context['donazioni_categorie_pie']=donazioni_categorie_pie
+
 
         #iban territorio
         iban = Territorio.objects.get(cod_comune = t.cod_comune, cod_comune__in=settings.COMUNI_CRATERE).iban
@@ -316,10 +347,9 @@ class TerritorioView(DetailView):
 
         if donazioni_spline and len(donazioni_spline)>1:
         #            rende i numeri Decimal delle stringhe per il grafico
-        #            TODO: creare i dati per le label in formato italiano
-
-            for value in donazioni_spline:
-                value['sum']=moneyfmt(value['sum'],2,"","",".")
+#            for value in donazioni_spline:
+#                value['sum']=moneyfmt(value['sum'],2,"","",".")
+#                value['sum_it']=moneyfmt(value['sum'],2,"",".",",")
 
             context['donazioni_spline'] = donazioni_spline
 
@@ -342,7 +372,7 @@ class TerritorioView(DetailView):
                                    'month':val_date_month,
                                    'year':val_date_year,
                                    'tipologia':val.tipologia,
-                                   'importo':val.importo,
+                                   'importo':moneyfmt(val.importo,2,"",".",","),
                                    'slug':val.tipologia.slug
             })
 

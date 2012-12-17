@@ -1,8 +1,9 @@
+from decimal import Decimal
 from django.db import models
 from django.db import connections
 from datetime import datetime
 import time
-from open_ricostruzione.utils.moneydate import add_months
+from open_ricostruzione.utils.moneydate import moneyfmt,add_months
 from django.db.models.aggregates import Sum
 from datetime import timedelta
 from django.template.defaultfilters import slugify
@@ -72,16 +73,32 @@ class Territorio(models.Model):
                     for k in range(1, n_mesi):
                         new_month_obj = add_months(donazioni_date_obj,k)
                         new_month_print = time.strftime("%b - %Y", new_month_obj.timetuple())
-                        donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum']})
+                        donazioni_spline.append({
+                            'month':new_month_print,
+                            'sum':Decimal(donazioni_spline[j-1]['sum']),
+                            'sum_ita':None,
+                        })
                         j += 1
 
 #               inserisce il dato del mese corrente
-                donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum'])})
+                donazioni_spline.append({
+                    'month':val_date_print,
+                    'sum':Decimal(donazioni_spline[j-1]['sum'])+Decimal(val['sum']),
+                    'sum_ita':None,
+                })
                 j += 1
 
             else:
-                donazioni_spline.append({'month':val_date_print,'sum':val['sum']})
+                donazioni_spline.append({
+                    'month':val_date_print,
+                    'sum':Decimal(val['sum']),
+                    'sum_ita':None,
+                })
                 j += 1
+
+            for d in donazioni_spline:
+                d['sum']=moneyfmt(Decimal(d['sum']),2,"","",".")
+                d['sum_ita']=moneyfmt(Decimal(d['sum']),2,"",".",",")
 
         return donazioni_spline
 
