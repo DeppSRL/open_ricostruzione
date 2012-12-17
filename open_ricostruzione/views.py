@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
@@ -44,17 +45,76 @@ class HomeView(TemplateView):
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
 
+        context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
+
+        #news in home page
+        news_big = Entry.objects.all().order_by('-published_at')[0]
+
+
+        ##   converto la data nel formato  Nome mese - Anno
+        context['news_big']={'day':news_big.published_at.day,
+                             'month':news_big.published_at.strftime("%B")[:3],
+                             'year':news_big.published_at.year,
+                             'title':news_big.title,
+                             'abstract':news_big.abstract,
+                             'slug':news_big.slug,
+                             'body':news_big.body,
+                             }
+
+
+        news_temp = Entry.objects.all().order_by('-published_at')[1:3]
+        news_small=[]
+        for idx, val in enumerate(news_temp):
+            news_small.append(
+                {'day':val.published_at.day,
+                 'month':val.published_at.strftime("%B")[:3],
+                 'year':val.published_at.year,
+                 'title':val.title,
+                 'abstract':val.abstract,
+                 'slug':val.slug,
+                 }
+            )
+
+        context['news_small']=news_small
 
         # importi dei progetti per categorie
-        context['progetti_categorie'] =\
+        progetti_categorie_pie =\
             Progetto.objects.filter( id_padre__isnull = True).values('tipologia__denominazione').\
             annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
 
+        context['progetti_categorie_pie'] = progetti_categorie_pie
+
+        progetti_categorie_list =\
+            Progetto.objects.filter( id_padre__isnull = True).values('tipologia__denominazione','tipologia__slug').\
+            annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+
+
+        for value in progetti_categorie_list:
+            value['sum']=moneyfmt(value['sum'],2,"",".",",")
+
+        context['progetti_categorie_list'] =progetti_categorie_list
+
         # donazioni divise per tipologia cedente
-        context['donazioni_categorie'] =\
-        Donazione.objects.all().\
-            filter(confermato = True).values('tipologia__denominazione').\
+        donazioni_categorie_pie =\
+            Donazione.objects.all().\
+                filter(confermato = True).values('tipologia__denominazione').\
+                annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+
+        context['donazioni_categorie_pie'] = donazioni_categorie_pie
+
+
+        donazioni_categorie_list =\
+            Donazione.objects.all().\
+            filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+
+
+        for value in donazioni_categorie_list:
+            value['sum']=moneyfmt(value['sum'],2,"",".",",")
+
+        context['donazioni_categorie_list'] = donazioni_categorie_list
+
+
 
 
         #trasforma la data di oggi in timestamp come base per creare un indice randomico sulla base del giorno
@@ -82,6 +142,12 @@ class HomeView(TemplateView):
         for index in comuni_index:
             comuni_evidenza.append(comuni_considerati[index])
 
+        #humanize cifre monetarie
+        for val in comuni_evidenza:
+            val.p_sum=moneyfmt(Decimal(val.p_sum),2,"",".",",")
+            val.d_sum=moneyfmt(Decimal(val.d_sum),2,"",".",",")
+
+
         context['comuni_evidenza']=comuni_evidenza
 
         #progetti oggi in evidenza
@@ -105,51 +171,28 @@ class HomeView(TemplateView):
         for index in proj_index:
             progetti_evidenza.append(progetti_considerati[index])
 
+        #humanize cifre monetarie
+        for val in progetti_evidenza:
+            val.riepilogo_importi=moneyfmt(val.riepilogo_importi,2,"",".",",")
+
 
         context['progetti_evidenza'] =progetti_evidenza
 
-        context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
-
-        #news in home page
-        news_big = Entry.objects.all().order_by('-published_at')[0]
-
-
-        ##   converto la data nel formato  Nome mese - Anno
-        context['news_big']={'day':news_big.published_at.day,
-                     'month':news_big.published_at.strftime("%B")[:3],
-                     'year':news_big.published_at.year,
-                     'title':news_big.title,
-                     'abstract':news_big.abstract,
-                     'slug':news_big.slug,
-                     'body':news_big.body,
-                     }
-
-
-        news_temp = Entry.objects.all().order_by('-published_at')[1:3]
-        news_small=[]
-        for idx, val in enumerate(news_temp):
-            news_small.append(
-                {'day':val.published_at.day,
-                 'month':val.published_at.strftime("%B")[:3],
-                 'year':val.published_at.year,
-                 'title':val.title,
-                 'abstract':val.abstract,
-                 'slug':val.slug,
-                 }
-            )
-
-        context['news_small']=news_small
-
-        context['donazioni_campovolo']=Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
+        donazioni_campovolo=Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
             confermato=True,denominazione="Emilia-Romagna",
             info__contains="Iniziativa patrocinata dalla Regione Emilia-Romagna - Concerto Campo Volo").\
             aggregate(sum=Sum('importo')).values()[0]
 
-        context['donazioni_sms']=Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
+        donazioni_campovolo= moneyfmt(donazioni_campovolo,2,"",".",",")
+        context['donazioni_campovolo']=donazioni_campovolo
+
+        donazioni_sms = Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
             confermato=True,denominazione="Emilia-Romagna",
             modalita_r__exact="SMS").\
             aggregate(sum=Sum('importo')).values()[0]
 
+        donazioni_sms= moneyfmt(donazioni_sms,2,"",".",",")
+        context['donazioni_sms']=donazioni_sms
 
         return context
 
@@ -290,7 +333,7 @@ class TerritorioView(DetailView):
 
         for idx, val in enumerate(donazioni_temp):
         ##            converto la data nel formato  Nome mese - Anno
-            val_date_obj = datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
+            val_date_obj = datetime.datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
 #            val_date_day = time.strftime("%d", val_date_obj.timetuple()).lstrip('0')
             val_date_day = val.data.day
             val_date_month = time.strftime("%b", val_date_obj.timetuple())

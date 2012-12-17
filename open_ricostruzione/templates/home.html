@@ -105,7 +105,7 @@
         <!-- PIE CHARTS -->
         <div class="row"  >
             <div class="span6 ">
-                {% if progetti_categorie %}
+                {% if progetti_categorie_list %}
                     <div class="row-fluid">
                         <div class="span12 titolo danno"> Progetti per la ricostruzione</div>
                     </div>
@@ -113,18 +113,18 @@
                         <div class="span12 subtitle">Ripartizione dei danni per categorie</div>
                     </div>
                     <div class="row-fluid">
-                        {% if progetti_categorie|length > 1 %}
+                        {% if progetti_categorie_list|length > 1 %}
                             <div class="span12 pie" id="proj_pie"></div>
                         {% endif %}
                     </div>
                     <div class="row-fluid">
                         <div class="project_list span12">
-                            {% for p in progetti_categorie %}
+                            {% for p in progetti_categorie_list %}
                                 {% if p.sum > 0 %}
                                     <div class="project_row ">
                                         <div class="box">
-                                            <div class="n_progetti">{{ p.c }} <a href="../tipologie-progetto/">{{ p.tipologia__denominazione }}</a></div>
-                                            <div class="importo">{{ p.sum|floatformat}} euro</div>
+                                            <div class="n_progetti">{{ p.c }} <a href="{% url progetti-tipologia p.tipologia__slug %}">{{ p.tipologia__denominazione }}</a></div>
+                                            <div class="importo">{{ p.sum}} euro</div>
                                         </div>
                                         <div class="spacer"></div>
                                     </div>
@@ -135,7 +135,7 @@
                 {% endif %}
             </div><!-- /span -->
             <div class="span6 ">
-                {% if donazioni_categorie %}
+                {% if donazioni_categorie_list %}
                         <div class="row-fluid">
                             <div class="span12 titolo donazioni"> Donazioni ricevute</div>
                         </div>
@@ -143,19 +143,25 @@
                             <div class="span12 subtitle">Ripartizione delle donazioni per soggetti</div>
                         </div>
                         <div class="row-fluid">
-                            {% if donazioni_categorie|length > 1 %}
+                            {% if donazioni_categorie_pie|length > 1 %}
                                 <div class="span12 pie" id="don_pie"></div>
                             {% endif %}
                         </div>
                         <div class="row-fluid">
                             <div class="span12">
                                 <div class="project_list">
-                                    {% for p in donazioni_categorie %}
+                                    {% for p in donazioni_categorie_list %}
                                         {% if p.sum > 0 %}
                                             <div class="project_row ">
                                                 <div class="box">
-                                                    <div class="n_progetti">{{ p.c }} da {{ p.tipologia__denominazione }}</div>
-                                                    <div class="importo">{{ p.sum|floatformat}} euro</div>
+                                                    <div class="n_progetti">{{ p.c }} da
+                                                        <a href="" >
+                                                            <a href="{% url donazioni-tipologia p.tipologia__slug %}" >
+                                                                {{ p.tipologia__denominazione }}
+                                                            </a>
+                                                        </a>
+                                                    </div>
+                                                    <div class="importo">{{ p.sum}} euro</div>
                                                 </div>
                                                 <div class="spacer"></div>
                                             </div>
@@ -185,7 +191,7 @@
                             <div class="span3" style="color: #4467af;">
                                 <a href="{% url territorio_detail c.slug %}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
                             </div>
-                            <div class="span3" style="">{{ c.p_sum|floatformat:0}} euro</div>
+                            <div class="span3" style="">{{ c.p_sum}} euro</div>
                             <div class="span3" style="">{{ c.d_sum }} euro</div>
                         </div>
 
@@ -208,7 +214,7 @@
                             <div class="span3" style="color: #4467af;">
                                 <a href="{% url progetto_detail p.slug %} ">{{ p.denominazione }} </a>
                             </div>
-                            <div class="span3" style=""><a href="{% url progetti-tipologia p.tipologia.slug %}">{{ p.tipologia.denominazione }}</a></div>
+                            <div class="span3" style=""><a href="">{{ p.tipologia.denominazione }}</a></div>
                             <div class="span3" style="">{{ p.riepilogo_importi }} euro</div>
                         </div>
 
@@ -228,7 +234,7 @@
                                 <div class="n_progetti">
                                     Concerto Campovolo
                                 </div>
-                                <div class="importo">{{ donazioni_campovolo|floatformat }} euro</div>
+                                <div class="importo">{{ donazioni_campovolo }} euro</div>
                             </div>
                             <div class="spacer"></div>
                         </div>
@@ -239,7 +245,7 @@
                                 <div class="n_progetti">
                                     Ricevute tramite SMS
                                 </div>
-                                <div class="importo">{{ donazioni_sms|floatformat }} euro</div>
+                                <div class="importo">{{ donazioni_sms }} euro</div>
                             </div>
                             <div class="spacer"></div>
                         </div>
@@ -263,7 +269,7 @@
 
 
             /*PIE CHART*/
-            {% if progetti_categorie %}
+            {% if progetti_categorie_pie %}
                 /*TIPOLOGIA PROGETTI */
                 piechart1 = new Highcharts.Chart({
                     chart: {
@@ -309,7 +315,7 @@
                         name: 'Tipologia progetto',
                         title: 'Progetti per tipologia',
                         data: [
-                            {% for p in progetti_categorie %}
+                            {% for p in progetti_categorie_pie %}
                                 ['{{ p.tipologia__denominazione }}',{{ p.sum|floatformat }}],
                             {% endfor %}
                         ]
@@ -317,7 +323,7 @@
 
                 });
             {% endif %}
-            {% if donazioni_categorie%}
+            {% if donazioni_categorie_pie%}
                 /*CATEGORIA DONAZIONI */
 
                 piechart2 = new Highcharts.Chart({
@@ -363,7 +369,7 @@
                         name: 'Tipologia progetto',
                         title: 'Donazioni per tipologia',
                         data: [
-                            {% for d in donazioni_categorie %}
+                            {% for d in donazioni_categorie_pie %}
                                 ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
                             {% endfor %}
                         ]
