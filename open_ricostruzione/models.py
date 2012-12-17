@@ -173,6 +173,10 @@ class Donazione(models.Model):
     def __unicode__(self):
         return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
 
+    #    ritorna l'importo lavori in formato italiano
+    def get_importo_ita(self):
+        return moneyfmt(self.importo,2,"",".",",")
+
     def detail(self):
         return u"%s (ID: %s, territorio:%s, tipologia:%s, progetto:%s, avvenuto:%s, conf:%s)" % (self.denominazione, self.id, self.territorio_id, self.tipologia_id, self.progetto_id, self.avvenuto, self.confermato)
 

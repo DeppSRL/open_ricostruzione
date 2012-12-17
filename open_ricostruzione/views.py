@@ -245,17 +245,10 @@ class ProgettoListView(ListView):
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
             return Progetto.objects.filter(denominazione__icontains=qterm)[0:50]
-#        else:
-#            if self.kwargs['slug']:
-#                s = self.kwargs['slug']
-#
-#                object = TipologiaProgetto.objects.get(slug = s)
-#                context['tipologia'] = object.denominazione
-#                context['slug'] = object.slug
-#                context['project_list'] = Progetto.objects.filter(tipologia=object)
+
         else:
            return  Progetto.objects.all()[0:50]
-#            return context
+
 
 
 class TerritorioView(DetailView):
@@ -548,7 +541,7 @@ class TipologieCedenteView(TemplateView):
         if self.n_donazioni:
             context['n_donazioni']=self.n_donazioni
         if self.tot_donazioni:
-            context['tot_donazioni']=self.tot_donazioni
+            context['tot_donazioni']=moneyfmt(self.tot_donazioni,2,"",".",",")
         if self.tipologia:
             context['tipologia']=self.tipologia
         if self.comune:
@@ -629,7 +622,7 @@ class TipologieProgettoView(TemplateView):
         if self.n_progetti:
             context['n_progetti']=self.n_progetti
         if self.tot_danno:
-            context['tot_danno']=self.tot_danno
+            context['tot_danno']=moneyfmt(self.tot_danno,2,"",".",",")
         if self.tipologia:
             context['tipologia']=self.tipologia
         if self.comune:

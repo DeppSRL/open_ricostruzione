@@ -23,7 +23,7 @@
     </strong>
     {% if n_donazioni > 0 %}
         ({{ n_donazioni }} {% if n_donazioni > 1 %}donazioni{% else %}donazione{% endif %}
-        {% if tot_donazioni > 0 %} per {{ tot_donazioni|floatformat:0 }} euro{% endif %})
+        {% if tot_donazioni > 0 %} per {{ tot_donazioni }} euro{% endif %})
     {% endif %}
 {% endblock %}
 
@@ -63,7 +63,7 @@
                 {% if result.donazione.importo > 0 %}
                     <div class="span2 box">
                         <div class="importi">
-                            {{ result.donazione.importo|safe }} euro
+                            {{ result.donazione.get_importo_ita }} euro
                         </div>
                     </div>
                 {% endif %}
