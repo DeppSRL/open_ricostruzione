@@ -183,7 +183,7 @@
                     {% for c in comuni_evidenza %}
                         <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
                             <div class="span3" style="color: #4467af;">
-                                <a href="../comune/{{ c.slug }}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
+                                <a href="{% url territorio_detail c.slug %}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
                             </div>
                             <div class="span3" style="">{{ c.p_sum|floatformat:0}} euro</div>
                             <div class="span3" style="">{{ c.d_sum }} euro</div>
@@ -208,7 +208,7 @@
                             <div class="span3" style="color: #4467af;">
                                 <a href="{% url progetto_detail p.slug %} ">{{ p.denominazione }} </a>
                             </div>
-                            <div class="span3" style=""><a href="../tipologie-progetto/">{{ p.tipologia.denominazione }}</a></div>
+                            <div class="span3" style=""><a href="{% url progetti-tipologia p.tipologia.slug %}">{{ p.tipologia.denominazione }}</a></div>
                             <div class="span3" style="">{{ p.riepilogo_importi }} euro</div>
                         </div>
 
