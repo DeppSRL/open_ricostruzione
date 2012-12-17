@@ -185,7 +185,7 @@
                             <div class="span3" style="color: #4467af;">
                                 <a href="../comune/{{ c.slug }}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
                             </div>
-                            <div class="span3" style="">{{ c.p_sum|floatformat }} euro</div>
+                            <div class="span3" style="">{{ c.p_sum|floatformat:0}} euro</div>
                             <div class="span3" style="">{{ c.d_sum }} euro</div>
                         </div>
 

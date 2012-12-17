@@ -4,7 +4,7 @@ from django.db.models.aggregates import Count, Sum
 from open_ricostruzione import settings
 from open_ricostruzione.models import *
 from django.db import connections
-from datetime import datetime
+import datetime
 import time
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
 from datetime import timedelta
@@ -56,13 +56,57 @@ class HomeView(TemplateView):
             filter(confermato = True).values('tipologia__denominazione').\
             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
+
+        #trasforma la data di oggi in timestamp come base per creare un indice randomico sulla base del giorno
+        today = int(time.mktime(datetime.date.today().timetuple()))
         #comuni oggi in evidenza
-        context['comuni_evidenza'] = Territorio.objects.filter(tipo_territorio="C",cod_comune__in=settings.COMUNI_CRATERE).\
+        
+        comuni_considerati= Territorio.objects.filter(tipo_territorio="C",cod_comune__in=settings.COMUNI_CRATERE).\
             annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi"),d = Count("donazione"),d_sum=Sum("donazione")).\
-            filter(p__gt=0,d__gt=0, d_sum__gt=0).order_by('-pk')[:3]
+            filter(p__gt=0,d__gt=0, d_sum__gt=0)
+
+        comuni_index=[]
+    
+        comuni_index.append(today%comuni_considerati.count())
+        comuni_index.append(comuni_index[0] -1)
+        comuni_index.append(comuni_index[0] +1)
+    
+        if comuni_index[0] == 0:
+            comuni_index[1] = comuni_considerati.count()
+        elif comuni_index[0] == comuni_considerati.count():
+            comuni_index[2] = 0
+    
+    
+        comuni_evidenza=[]
+        #progetti oggi in evidenza
+        for index in comuni_index:
+            comuni_evidenza.append(comuni_considerati[index])
+
+        context['comuni_evidenza']=comuni_evidenza
 
         #progetti oggi in evidenza
-        context['progetti_evidenza'] = Progetto.objects.filter(id_padre__isnull=True).order_by("-riepilogo_importi")[:3]
+        
+        progetti_considerati = Progetto.objects.filter(id_padre__isnull=True, riepilogo_importi__gt=0)
+
+        proj_index=[]
+        
+        proj_index.append(today%progetti_considerati.count())
+        proj_index.append(proj_index[0] -1)
+        proj_index.append(proj_index[0] +1)
+
+        if proj_index[0] == 0:
+            proj_index[1] = progetti_considerati.count()
+        elif proj_index[0] == progetti_considerati.count():
+            proj_index[2] = 0
+
+
+        progetti_evidenza=[]
+        #progetti oggi in evidenza
+        for index in proj_index:
+            progetti_evidenza.append(progetti_considerati[index])
+
+
+        context['progetti_evidenza'] =progetti_evidenza
 
         context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
 
