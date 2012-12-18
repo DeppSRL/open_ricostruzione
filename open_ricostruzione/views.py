@@ -481,7 +481,7 @@ class TipologieCedenteView(TemplateView):
     comune = None
     donazioni = None
     page = 1
-    donazioni_pagina = 5 # numero di elementi per pagina
+    donazioni_pagina = 50 # numero di elementi per pagina
 
     def get_context_data(self, **kwargs):
 
@@ -577,7 +577,7 @@ class TipologieProgettoView(TemplateView):
     comune = None
     progetti = None
     page = 1
-    progetti_pagina = 5 # numero di elementi per pagina
+    progetti_pagina = 50 # numero di elementi per pagina
 
     def get_context_data(self, **kwargs):
         paginator =None
