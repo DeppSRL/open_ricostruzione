@@ -94,10 +94,17 @@
                     </div>
                 </div>
             {% endif %}
-            {% ifnotequal progetto.riepilogo_importi "0,00" %}
+            {% ifnotequal progetto.get_riepilogo_importi_ita "0,00" %}
                 <div class="data_row">
                     <div class="titolo">
                         importo dei lavori: {{ progetto.get_riepilogo_importi_ita }} euro
+                    </div>
+                </div>
+            {% endifnotequal %}
+            {% ifnotequal progetto.get_donazioni_ita "0,00" %}
+                <div class="data_row">
+                    <div class="titolo">
+                        donazioni ricevute : {{ progetto.get_donazioni_ita }} euro
                     </div>
                 </div>
             {% endifnotequal %}
@@ -159,7 +166,7 @@
                                         </div>
 
                                     {% endif %}
-                                    {% ifnotequal p.riepilogo_importi "0,00" %}
+                                    {% ifnotequal p.get_riepilogo_importi_ita "0,00" %}
                                         <div class="importi ">
                                             IMPORTO DEI LAVORI: {{ p.get_riepilogo_importi_ita}} euro
                                         </div>

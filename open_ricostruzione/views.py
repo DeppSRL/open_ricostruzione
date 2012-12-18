@@ -200,6 +200,13 @@ class ProgettoView(DetailView):
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
 
+        # numero donazioni
+        context['n_donazioni'] = Donazione.objects.filter(confermato = True, progetto=p).count()
+        # donazioni per il territorio considerato
+        tot_donazioni = Donazione.objects.filter(confermato = True, progetto=p).aggregate(s=Sum('importo')).values()
+        if tot_donazioni[0]:
+            context['tot_donazioni'] = tot_donazioni[0]
+
 
         context['territorio_nome'] = p.territorio.denominazione
         iban =  Progetto.objects.get(pk = p.pk).territorio.iban

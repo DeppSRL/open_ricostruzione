@@ -135,7 +135,17 @@ class Progetto(models.Model):
 
 #    ritorna l'importo lavori in formato italiano
     def get_riepilogo_importi_ita(self):
-        return moneyfmt(self.riepilogo_importi,2,"",".",",")
+        if self.riepilogo_importi:
+            return moneyfmt(self.riepilogo_importi,2,"",".",",")
+        else:
+            return "0,00"
+
+    def get_donazioni_ita(self):
+        donazioni_p = Donazione.objects.filter(progetto=self).aggregate(sum=Sum('importo')).values()
+        if donazioni_p[0]:
+            return moneyfmt(donazioni_p[0],2,"",".",",")
+        else:
+            return "0,00"
 
     def __unicode__(self):
         return u"%s ID: %s, TIPOLOGIA: %s, PADRE: [%s]" % (self.denominazione, self.id_progetto, self.tipologia, self.parent)
