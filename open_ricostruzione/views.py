@@ -125,22 +125,15 @@ class HomeView(TemplateView):
             annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi"),d = Count("donazione"),d_sum=Sum("donazione")).\
             filter(p__gt=0,d__gt=0, d_sum__gt=0)
 
-        comuni_index=[]
-    
-        comuni_index.append(today%comuni_considerati.count())
-        comuni_index.append(comuni_index[0] -1)
-        comuni_index.append(comuni_index[0] +1)
-    
-        if comuni_index[0] == 0:
-            comuni_index[1] = comuni_considerati.count()
-        elif comuni_index[0] == comuni_considerati.count():
-            comuni_index[2] = 0
-    
-    
+
+
         comuni_evidenza=[]
         #progetti oggi in evidenza
-        for index in comuni_index:
-            comuni_evidenza.append(comuni_considerati[index])
+        i = today%comuni_considerati.count()
+        progetti_evidenza=[]
+        for j in range(1,4):
+            comuni_evidenza.append(comuni_considerati[((i+j)%comuni_considerati.count())+1])
+
 
         #humanize cifre monetarie
         for val in comuni_evidenza:
@@ -154,22 +147,11 @@ class HomeView(TemplateView):
         
         progetti_considerati = Progetto.objects.filter(id_padre__isnull=True, riepilogo_importi__gt=0)
 
-        proj_index=[]
-        
-        proj_index.append(today%progetti_considerati.count())
-        proj_index.append(proj_index[0] -1)
-        proj_index.append(proj_index[0] +1)
-
-        if proj_index[0] == 0:
-            proj_index[1] = progetti_considerati.count()
-        elif proj_index[0] == progetti_considerati.count():
-            proj_index[2] = 0
-
-
+        i = today%progetti_considerati.count()
         progetti_evidenza=[]
-        #progetti oggi in evidenza
-        for index in proj_index:
-            progetti_evidenza.append(progetti_considerati[index])
+        for j in range(1,4):
+            progetti_evidenza.append(progetti_considerati[((i+j)%progetti_considerati.count())+1])
+
 
         #humanize cifre monetarie
         for val in progetti_evidenza:
