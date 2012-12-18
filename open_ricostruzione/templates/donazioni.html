@@ -91,9 +91,13 @@
 
 {% block graph-data %}
     <script>
+
         var chart1; // globally available
         var piechart;
         $(document).ready(function() {
+
+
+            /*SPLINE CHART*/
             chart1 = new Highcharts.Chart({
             chart: {
             renderTo: 'graph-container',
@@ -122,7 +126,8 @@
 
                 labels: {
                     formatter: function() {
-                        return this.value;
+
+                        return this.value.formatMoney(0,"",".",",")
                     }
                 },
                 title: {
