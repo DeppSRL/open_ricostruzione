@@ -114,9 +114,6 @@ class HomeView(TemplateView):
 
         context['donazioni_categorie_list'] = donazioni_categorie_list
 
-
-
-
         #trasforma la data di oggi in timestamp come base per creare un indice randomico sulla base del giorno
         today = int(time.mktime(datetime.date.today().timetuple()))
         #comuni oggi in evidenza

@@ -288,7 +288,7 @@
 
 
             /*PIE CHART*/
-            {% if progetti_categorie_pie %}
+            {% if progetti_categorie_pie|length > 1 and stima_danno %}
                 /*TIPOLOGIA PROGETTI */
                 piechart1 = new Highcharts.Chart({
                     chart: {
@@ -342,7 +342,7 @@
 
                 });
             {% endif %}
-            {% if donazioni_categorie_pie%}
+            {% if donazioni_categorie_pie|length > 1 and tot_donazioni%}
                 /*CATEGORIA DONAZIONI */
 
                 piechart2 = new Highcharts.Chart({

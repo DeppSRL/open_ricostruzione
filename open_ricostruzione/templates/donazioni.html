@@ -165,60 +165,58 @@
             } ]
             });
 
-            /*PIE CHART*/
-            piechart = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'don_pie',
-                    type: 'pie',
-                    plotBackgroundColor: '#fff'
+            {% if donazioni_categorie_pie|length > 1 and tot_donazioni%}
+                /*PIE CHART*/
+                piechart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'don_pie',
+                        type: 'pie',
+                        plotBackgroundColor: '#fff'
 
-                },
-                tooltip: {
-                    formatter: function() {
-                        return '<div class="tooltip-box"><b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +'<small>%</small></div>';
                     },
-                    useHTML: true,
-                    backgroundColor: '#F7F6F1',
-                    borderWidth: 0,
-                    shadow: false,
-                    style: {
-                        width: '150px',
-                        'min-height': '20px'
-                    }
-                },
-                title: {
-                    text: 'Donazioni ricevute per tipologia'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: false,
-                            color: '#000000',
-                            connectorColor: '#000000',
-                            percentageDecimals: 2,
-                            formatter: function() {
-                                return '<b>'+ this.point.name +'</b>: '+ this.y +' Euro';
+                    tooltip: {
+                        formatter: function() {
+                            return '<div class="tooltip-box"><b>'+ this.point.name +'</b>: '+ this.percentage.toFixed(2) +'<small>%</small></div>';
+                        },
+                        useHTML: true,
+                        backgroundColor: '#F7F6F1',
+                        borderWidth: 0,
+                        shadow: false,
+                        style: {
+                            width: '150px',
+                            'min-height': '20px'
+                        }
+                    },
+                    title: {
+                        text: 'Donazioni ricevute per tipologia'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false,
+                                color: '#000000',
+                                connectorColor: '#000000',
+                                percentageDecimals: 2,
+                                formatter: function() {
+                                    return '<b>'+ this.point.name +'</b>: '+ this.y +' Euro';
+                                }
                             }
                         }
-                    }
-                },
-                series: [{
-                    type: 'pie',
-                    name: 'Tipologia cedente',
-                    title: 'Donazioni per tipologia',
-                    data: [
-                        {% for d in donazioni_categorie_pie %}
-                            ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
-                        {% endfor %}
-                    ]
-                }]
-
-
-
-        });
-
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Tipologia cedente',
+                        title: 'Donazioni per tipologia',
+                        data: [
+                            {% for d in donazioni_categorie_pie %}
+                                ['{{ d.tipologia__denominazione }}',{{ d.sum }}],
+                            {% endfor %}
+                        ]
+                    }]
+                });
+            {% endif %}
     });
     </script>
 {% endblock %}
