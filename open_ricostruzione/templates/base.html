@@ -104,6 +104,9 @@
                                             <a href="{% url donazioni-tipologia t.slug %}">{{ t.denominazione }}</a>
                                         </li>
                                     {% endfor %}
+                                    <li class="submenu">
+                                        <a href="{% url donazioni-completa %}">Tutte le donazioni</a>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="dropdown ">
@@ -255,20 +258,7 @@
         <div id="comment">
             <div class="row">
                 <div class="span6">
-                    {% block comment%}
-                        <form>
-                            <legend class="titolo">Commenta</legend>
-                            <div class="control-group">
-                                <div class="controls">
-                                    <textarea placeholder="Inserisci il tuo commento" class="input-xlarge" id="textarea" rows="3"></textarea>
-                                </div>
-                            </div>
-                            <div class="">
-                                <button type="submit" disabled="true" class="btn btn-primary">Invia</button>
-                            </div>
-
-                        </form>
-                    {% endblock %}
+                    {% block comment%}{% endblock %}
                 </div>
             </div>
         </div>
