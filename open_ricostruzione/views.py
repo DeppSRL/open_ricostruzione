@@ -539,7 +539,7 @@ class DonazioniCompleta(TipologieCedenteView):
 
     def get_context_data(self, **kwargs):
 
-        self.donazioni= Donazione.objects.filter(confermato=True).order_by('-importo')
+        self.donazioni= Donazione.objects.filter(confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniCompleta, self).get_context_data(**kwargs)
         return self.context
@@ -550,7 +550,7 @@ class DonazioniTipologiaComune(TipologieCedenteView):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.tipologia = TipologiaCedente.objects.get(slug=kwargs['tipologia'])
-        self.donazioni= Donazione.objects.filter(territorio=self.comune, tipologia=self.tipologia,confermato=True).order_by('-importo')
+        self.donazioni= Donazione.objects.filter(territorio=self.comune, tipologia=self.tipologia,confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniTipologiaComune, self).get_context_data(**kwargs)
         return self.context
@@ -561,7 +561,7 @@ class DonazioniTipologia(TipologieCedenteView):
     def get_context_data(self, **kwargs):
 
         self.tipologia = TipologiaCedente.objects.get(slug=kwargs['tipologia'])
-        self.donazioni= Donazione.objects.filter( tipologia=self.tipologia,confermato=True).order_by('-importo')
+        self.donazioni= Donazione.objects.filter( tipologia=self.tipologia,confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
 
         self.context = super(DonazioniTipologia, self).get_context_data(**kwargs)
@@ -572,7 +572,7 @@ class DonazioniComune(TipologieCedenteView):
     def get_context_data(self, **kwargs):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
-        self.donazioni= Donazione.objects.filter(territorio=self.comune,confermato=True).order_by('-importo')
+        self.donazioni= Donazione.objects.filter(territorio=self.comune,confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
         return self.context

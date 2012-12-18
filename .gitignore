@@ -3,3 +3,4 @@ log/*
 open_ricostruzione/settings_local.py
 sqlite.db.000
 sqlite.db.001
+sqlite.db.002
