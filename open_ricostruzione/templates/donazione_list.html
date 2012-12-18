@@ -18,8 +18,12 @@
 
 {% block main-subtitle %}
     <strong>
-        Donazioni
-        {% if tipologia %}da {{tipologia.denominazione}}{% endif %}{% if comune %} per il <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
+        {% if tipologia or comune %}
+            Donazioni
+            {% if tipologia %}da {{tipologia.denominazione}}{% endif %}{% if comune %} per il <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
+         {% else %}
+            Tutte le donazioni
+        {% endif %}
     </strong>
     {% if n_donazioni > 0 %}
         ({{ n_donazioni }} {% if n_donazioni > 1 %}donazioni{% else %}donazione{% endif %}

@@ -17,7 +17,7 @@ from django.utils.functional import curry
 from django.http import HttpResponse, HttpResponseNotFound
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect
-
+from open_ricostruzione.settings import COMUNI_CRATERE
 
 class HomeView(TemplateView):
     template_name = "home.html"
@@ -532,6 +532,15 @@ class TipologieCedenteView(TemplateView):
             context['n_pages']=paginator._get_num_pages()
 
         return context
+
+class DonazioniCompleta(TipologieCedenteView):
+
+    def get_context_data(self, **kwargs):
+
+        self.donazioni= Donazione.objects.filter(confermato=True).order_by('-importo')
+        self.page = self.request.GET.get('page')
+        self.context = super(DonazioniCompleta, self).get_context_data(**kwargs)
+        return self.context
 
 class DonazioniTipologiaComune(TipologieCedenteView):
 
