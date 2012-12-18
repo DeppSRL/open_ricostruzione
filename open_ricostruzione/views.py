@@ -228,7 +228,7 @@ class ProgettoListView(ListView):
 
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
-            return Progetto.objects.filter(denominazione__icontains=qterm)[0:50]
+            return Progetto.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
 
         else:
            return  Progetto.objects.all()[0:50]
