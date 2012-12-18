@@ -23,7 +23,7 @@
     </strong>
     {% if n_progetti > 0 %}
         ({{ n_progetti }} {% if n_progetti > 1 %}progetti{% else %}progetto{% endif %}
-            {% if tot_danno > 0 %} per {{ tot_danno }} euro{% endif %})
+            {% ifnotequal tot_danno "0,00" %} per {{ tot_danno }} euro{% endifnotequal %})
     {% endif %}
 {% endblock %}
 
@@ -55,13 +55,13 @@
                         {{ result.tipologia.denominazione|safe }}
                     </a>
                 </div>
-                {% if result.riepilogo_importi > 0 %}
+                {% ifnotequal result.get_riepilogo_importi_ita "0,00" %}
                     <div class="span2 box">
                         <div class="importi">
                             {{ result.get_riepilogo_importi_ita }} euro
                         </div>
                     </div>
-                {% endif %}
+                {% endifnotequal %}
             </div>
         {% endfor %}
     <div class="row project_row">

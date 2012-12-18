@@ -23,7 +23,7 @@
     </strong>
     {% if n_donazioni > 0 %}
         ({{ n_donazioni }} {% if n_donazioni > 1 %}donazioni{% else %}donazione{% endif %}
-        {% if tot_donazioni > 0 %} per {{ tot_donazioni }} euro{% endif %})
+        {% ifnotequal tot_donazioni "0,00" %} per {{ tot_donazioni }} euro{% endifnotequal %})
     {% endif %}
 {% endblock %}
 
@@ -60,13 +60,13 @@
                         </div>
                     </div>
                 </div>
-                {% if result.donazione.importo > 0 %}
+                {% ifnotequal result.donazione.get_importo_ita "0,00" %}
                     <div class="span2 box">
                         <div class="importi">
                             {{ result.donazione.get_importo_ita }} euro
                         </div>
                     </div>
-                {% endif %}
+                {% endifnotequal %}
             </div>
         {% endfor %}
         <div class="row project_row">

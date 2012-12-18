@@ -49,7 +49,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="spacer"></div>
+{#                    <div class="spacer"></div>#}
                 </div>
             </div>
             <div class="span6">
@@ -120,7 +120,7 @@
                     <div class="row-fluid">
                         <div class="project_list span12">
                             {% for p in progetti_categorie_list %}
-                                {% if p.sum > 0 %}
+                                {% ifnotequal p.sum "0,00" %}
                                     <div class="project_row ">
                                         <div class="box">
                                             <div class="n_progetti">{{ p.c }} <a href="{% url progetti-tipologia p.tipologia__slug %}">{{ p.tipologia__denominazione }}</a></div>
@@ -128,7 +128,7 @@
                                         </div>
                                         <div class="spacer"></div>
                                     </div>
-                                {% endif %}
+                                {% endifnotequal %}
                             {% endfor %}
                         </div>
                     </div>
@@ -151,7 +151,7 @@
                             <div class="span12">
                                 <div class="project_list">
                                     {% for p in donazioni_categorie_list %}
-                                        {% if p.sum > 0 %}
+                                        {% ifnotequal p.sum "0,00" %}
                                             <div class="project_row ">
                                                 <div class="box">
                                                     <div class="n_progetti">{{ p.c }} da
@@ -165,7 +165,7 @@
                                                 </div>
                                                 <div class="spacer"></div>
                                             </div>
-                                        {% endif %}
+                                        {% endifnotequal %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -191,8 +191,16 @@
                             <div class="span3" style="color: #4467af;">
                                 <a href="{% url territorio_detail c.slug %}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
                             </div>
-                            <div class="span3" style="">{{ c.p_sum}} euro</div>
-                            <div class="span3" style="">{{ c.d_sum }} euro</div>
+                            <div class="span3" style="">
+                                {% ifnotequal c.p_sum "0,00" %}
+                                    {{ c.p_sum}} euro
+                                {% endifnotequal %}
+                            </div>
+                            <div class="span3" style="">
+                                {% ifnotequal c.d_sum "0,00" %}
+                                    {{ c.d_sum }} euro
+                                {% endifnotequal %}
+                            </div>
                         </div>
 
                     {% endfor %}
@@ -215,7 +223,11 @@
                                 <a href="{% url progetto_detail p.slug %} ">{{ p.denominazione }} </a>
                             </div>
                             <div class="span3" style=""><a href="">{{ p.tipologia.denominazione }}</a></div>
-                            <div class="span3" style="">{{ p.riepilogo_importi }} euro</div>
+                            {% ifnotequal p.riepilogo_importi "0,00" %}
+                                <div class="span3" style="">
+                                    {{ p.riepilogo_importi }} euro
+                                </div>
+                            {% endifnotequal %}
                         </div>
 
                     {% endfor %}
@@ -234,7 +246,11 @@
                                 <div class="n_progetti">
                                     Concerto Campovolo
                                 </div>
-                                <div class="importo">{{ donazioni_campovolo }} euro</div>
+                                <div class="importo">
+                                    {% ifnotequal donazioni_campovolo "0,00" %}
+                                        {{ donazioni_campovolo }} euro
+                                    {% endifnotequal %}
+                                </div>
                             </div>
                             <div class="spacer"></div>
                         </div>
@@ -245,7 +261,11 @@
                                 <div class="n_progetti">
                                     Ricevute tramite SMS
                                 </div>
-                                <div class="importo">{{ donazioni_sms }} euro</div>
+                                <div class="importo">
+                                    {% ifnotequal donazioni_sms "0,00" %}
+                                        {{ donazioni_sms }} euro
+                                    {% endifnotequal %}
+                                </div>
                             </div>
                             <div class="spacer"></div>
                         </div>

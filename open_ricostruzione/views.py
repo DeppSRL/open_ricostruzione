@@ -418,8 +418,8 @@ class DonazioneView(TemplateView):
 
         #donazioni per tipologia
         donazioni_categorie_list = Donazione.objects.all().\
-            filter(confermato=True).values('tipologia__denominazione').\
-            annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
+            filter(confermato=True).values('tipologia__denominazione','tipologia__slug').\
+            annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo')).order_by('-sum')
 
         for idx, val in enumerate(donazioni_categorie_list):
             val['sum'] = moneyfmt(val['sum'],2,"",".",",")
