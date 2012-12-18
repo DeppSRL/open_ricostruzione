@@ -4,8 +4,19 @@
 
 {% block support %}
     {% if iban %}
-        Supporta questo progetto!<br xmlns="http://www.w3.org/1999/html"/>
-        Codice IBAN: {{ iban }}<br/>
+        Supporta questo progetto!
+        <div class="iban">
+            {% if iban %}
+                <div class="title">Codice Iban</div>
+                <div class="number">{{ iban }}</div>
+            {% endif %}
+        </div>
+        <div class="iban">
+            {% if swift %}
+                <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
+                <div class="number">{{ swift }}</div>
+            {% endif %}
+        </div>
     {% endif %}
 {% endblock %}
 
