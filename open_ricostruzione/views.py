@@ -213,8 +213,6 @@ class ProgettoView(DetailView):
         if iban:
             context['iban'] = iban
 
-#       TODO: mancano le donazioni perche' ci mancano i le relazioni fra donazioni e progetti
-
         return context
 
 
@@ -555,7 +553,7 @@ class DonazioniTipologiaComune(TipologieCedenteView):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.tipologia = TipologiaCedente.objects.get(slug=kwargs['tipologia'])
-        self.donazioni= Donazione.objects.filter(territorio_set=self.comune, tipologia=self.tipologia,confermato=True).order_by('-importo')
+        self.donazioni= Donazione.objects.filter(territorio=self.comune, tipologia=self.tipologia,confermato=True).order_by('-importo')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniTipologiaComune, self).get_context_data(**kwargs)
         return self.context
@@ -577,7 +575,7 @@ class DonazioniComune(TipologieCedenteView):
     def get_context_data(self, **kwargs):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
-        self.donazioni= Donazione.objects.filter(territorio_set=self.comune,confermato=True).order_by('-importo')
+        self.donazioni= Donazione.objects.filter(territorio=self.comune,confermato=True).order_by('-importo')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
         return self.context
