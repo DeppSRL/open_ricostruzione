@@ -171,76 +171,11 @@
                             </div>
                         </div>
                 {% endif %}
-            </div><!-- /span -->
-        </div> <!-- /row -->
-        <div class="row">
-            <div class="pie-spacer span12"></div>
-        </div>
-        <div class="row">
-            <div class="span12">
-                <div id="comuni_evidenza" class="evidenza">
-                    <div class="titolo" > Comuni oggi in evidenza</div>
-                    <div class="subtitle">Aggregato dei danni per Comune</div>
-                    <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                        <div class="span3" style="font-weight: bold;">Comune</div>
-                        <div class="span3" style="font-weight: bold;">Danno</div>
-                        <div class="span3" style="font-weight: bold;">Donazione</div>
-                    </div>
-                    {% for c in comuni_evidenza %}
-                        <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                            <div class="span3" style="color: #4467af;">
-                                <a href="{% url territorio_detail c.slug %}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
-                            </div>
-                            <div class="span3" style="">
-                                {% ifnotequal c.p_sum "0,00" %}
-                                    {{ c.p_sum}} euro
-                                {% endifnotequal %}
-                            </div>
-                            <div class="span3" style="">
-                                {% ifnotequal c.d_sum "0,00" %}
-                                    {{ c.d_sum }} euro
-                                {% endifnotequal %}
-                            </div>
-                        </div>
 
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="span12">
-                <div id="progetti_evidenza" class="evidenza">
-                    <div class="titolo" > Progetti oggi in evidenza</div>
-                    <div class="subtitle">Tre progetti in rilievo</div>
-                    <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                        <div class="span3" style="font-weight: bold;">Progetto</div>
-                        <div class="span3" style="font-weight: bold;">Tipologia</div>
-                        <div class="span3" style="font-weight: bold;">Danno</div>
-                    </div>
-                    {% for p in progetti_evidenza %}
-                        <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                            <div class="span3" style="color: #4467af;">
-                                <a href="{% url progetto_detail p.slug %} ">{{ p.denominazione }} </a>
-                            </div>
-                            <div class="span3" style=""><a href="">{{ p.tipologia.denominazione }}</a></div>
-                            {% ifnotequal p.riepilogo_importi "0,00" %}
-                                <div class="span3" style="">
-                                    {{ p.riepilogo_importi }} euro
-                                </div>
-                            {% endifnotequal %}
-                        </div>
-
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="span6">
                 <div id="don_last" class="evidenza" style="border:0;">
                     <div class="titolo">Donazioni d'iniziative speciali e SMS</div>
                     <div class="subtitle">I contributi dei cittadini inviati con SMS e gli incassi del concerto Campovolo</div>
                     <div class="project_list">
-
                         <div class="project_row ">
                             <div class="box">
                                 <div class="n_progetti">
@@ -267,9 +202,74 @@
                                     {% endifnotequal %}
                                 </div>
                             </div>
-{#                            <div class="spacer"></div>#}
+                            {#                            <div class="spacer"></div>#}
                         </div>
                     </div>
+                </div>
+            </div><!-- /span -->
+        </div> <!-- /row -->
+        <div class="row">
+            <div class="pie-spacer span12"></div>
+        </div>
+        <div class="row">
+            <div class="span12">
+                <div id="comuni_evidenza" class="evidenza">
+                    <div class="titolo" > Comuni oggi in evidenza</div>
+                    <div class="subtitle">Aggregato dei danni per Comune</div>
+                    <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
+                        <div class="span3" style="font-weight: bold;">Comune</div>
+                        <div class="span3" style="font-weight: bold;">Danno</div>
+                        <div class="span3" style="font-weight: bold;">Donazione</div>
+                    </div>
+                    {% for c in comuni_evidenza %}
+                        <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
+                            <div class="span3" style="color: #4467af;">
+                                <a href="{% url territorio_detail c.slug %}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
+                            </div>
+                            <div class="span3" style="font-weight: bold;">
+                                {% ifnotequal c.p_sum "0,00" %}
+                                    {{ c.p_sum}} euro
+                                {% endifnotequal %}
+                            </div>
+                            <div class="span3" style="font-weight: bold;">
+                                {% ifnotequal c.d_sum "0,00" %}
+                                    {{ c.d_sum }} euro
+                                {% endifnotequal %}
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span12">
+                <div id="progetti_evidenza" class="evidenza">
+                    <div class="titolo" > Progetti oggi in evidenza</div>
+                    <div class="subtitle">Tre progetti in rilievo</div>
+                    <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
+                        <div class="span3" style="font-weight: bold;">Progetto</div>
+                        <div class="span3" style="font-weight: bold;">Tipologia</div>
+                        <div class="span3" style="font-weight: bold;">Danno</div>
+                    </div>
+                    {% for p in progetti_evidenza %}
+                        <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
+                            <div class="span3" style="color: #4467af;">
+                                <a href="{% url progetto_detail p.slug %} ">{{ p.denominazione }} </a>
+                            </div>
+                            <div class="span3" style="">
+                                <a href="{% url progetti-tipologia p.tipologia.slug %}">
+                                    {{ p.tipologia.denominazione }}
+                                </a>
+                            </div>
+                            {% ifnotequal p.riepilogo_importi "0,00" %}
+                                <div class="span3" style="font-weight: bold;">
+                                    {{ p.riepilogo_importi }} euro
+                                </div>
+                            {% endifnotequal %}
+                        </div>
+
+                    {% endfor %}
                 </div>
             </div>
         </div>
