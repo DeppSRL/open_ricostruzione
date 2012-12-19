@@ -1,4 +1,5 @@
 .idea
+*.pyc
 log/*
 open_ricostruzione/settings_local.py
 sqlite.db.000
