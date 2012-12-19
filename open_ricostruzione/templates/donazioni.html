@@ -8,7 +8,6 @@
 {% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
 {% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}
 {% block main-title %}<p style="color:#a1ba03; text-transform: uppercase;" >Donazioni</P>{% endblock %}
-{% block breadcrumb %}{{ block.super }} &raquo; <a href="/donazioni/">Donazioni</a>{% endblock %}
 
 {% block data-content %}
 

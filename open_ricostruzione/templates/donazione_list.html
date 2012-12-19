@@ -10,8 +10,6 @@
     Donazioni {% if tipologia %}- {{tipologia.denominazione}}{% endif %}{% if comune %}- {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }}){% endif %}
 {% endblock %}
 
-
-{% block breadcrumb-class %}hidden{% endblock %}
 {% block main-title-class %}hidden{% endblock %}
 {% block main-subtitle-class %}project_list{% endblock %}
 {% block boxes-class %}hidden{% endblock %}
