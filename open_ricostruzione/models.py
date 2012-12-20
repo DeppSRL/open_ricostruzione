@@ -58,6 +58,7 @@ class Territorio(models.Model):
         donazioni_spline =[]
         j = 0
 
+
         for idx, val in enumerate(donazioni_mese):
 ##            converto la data nel formato  Nome mese - Anno
             if type(val['date']).__name__=="datetime":
@@ -71,12 +72,17 @@ class Territorio(models.Model):
 #                se le due date sono piu' distanti di un mese
 #                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
 #                per creare un grafico piatto
-                donazioni_date_obj = datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+                if type(val['date']).__name__=="datetime":
+                    donazioni_date_obj = donazioni_mese[idx-1]['date']
+                else:
+                    donazioni_date_obj = datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+
                 if (val_date_obj-donazioni_date_obj) > timedelta(31):
                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
                     for k in range(1, n_mesi):
                         new_month_obj = add_months(donazioni_date_obj,k)
                         new_month_print = time.strftime("%b - %Y", new_month_obj.timetuple())
+
                         donazioni_spline.append({
                             'month':new_month_print,
                             'sum':Decimal(donazioni_spline[j-1]['sum']),

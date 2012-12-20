@@ -378,7 +378,10 @@ class TerritorioView(DetailView):
         for idx, val in enumerate(donazioni_temp):
 ##      converto la data nel formato  Nome mese - Anno
 
-            val_date_obj = datetime.datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
+            if type(val.date).__name__=="datetime":
+                val_date_obj =val.date
+            else:
+                val_date_obj = datetime.datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
 
             val_date_day = val.data.day
             val_date_month = time.strftime("%b", val_date_obj.timetuple())
@@ -443,7 +446,11 @@ class DonazioneView(TemplateView):
 #                se le due date sono piu' distanti di un mese
 #                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
 #                per creare un grafico piatto
-                donazioni_date_obj = datetime.datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+                if type(donazioni_mese[idx-1]['date']).__name__=="datetime":
+                    donazioni_date_obj=donazioni_mese[idx-1]['date']
+                else:
+                    donazioni_date_obj = datetime.datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+
                 if (val_date_obj-donazioni_date_obj) > timedelta(31):
                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
                     for k in range(1, n_mesi):
