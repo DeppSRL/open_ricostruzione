@@ -60,7 +60,11 @@ class Territorio(models.Model):
 
         for idx, val in enumerate(donazioni_mese):
 ##            converto la data nel formato  Nome mese - Anno
-            val_date_obj = datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+            if type(val['date']).__name__=="datetime":
+                val_date_obj = val['date']
+            else:
+                val_date_obj = datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+
             val_date_print = time.strftime("%b - %Y", val_date_obj.timetuple())
 
             if idx is not 0:

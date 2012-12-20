@@ -117,11 +117,10 @@ class HomeView(TemplateView):
         #trasforma la data di oggi in timestamp come base per creare un indice randomico sulla base del giorno
         today = int(time.mktime(datetime.date.today().timetuple()))
         #comuni oggi in evidenza
-        
+
         comuni_considerati= Territorio.objects.filter(tipo_territorio="C",cod_comune__in=settings.COMUNI_CRATERE).\
             annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi"),d = Count("donazione"),d_sum=Sum("donazione")).\
-            filter(p__gt=0,d__gt=0, d_sum__gt=0)
-
+            filter(p__gt=0, d__gt=0, d_sum__gt=0)
 
 
         comuni_evidenza=[]
@@ -329,9 +328,10 @@ class TerritorioView(DetailView):
         donazioni_last =[]
 
         for idx, val in enumerate(donazioni_temp):
-        ##            converto la data nel formato  Nome mese - Anno
+##      converto la data nel formato  Nome mese - Anno
+
             val_date_obj = datetime.datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
-#            val_date_day = time.strftime("%d", val_date_obj.timetuple()).lstrip('0')
+
             val_date_day = val.data.day
             val_date_month = time.strftime("%b", val_date_obj.timetuple())
             val_date_year = time.strftime("%Y", val_date_obj.timetuple())
@@ -384,7 +384,11 @@ class DonazioneView(TemplateView):
 
         for idx, val in enumerate(donazioni_mese):
 ##            converto la data nel formato  Nome mese - Anno
-            val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+            if type(val['date']).__name__=="datetime":
+                val_date_obj = val['date']
+            else:
+                val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+
             val_date_print = time.strftime("%b - %Y", val_date_obj.timetuple())
 
             if idx is not 0:
