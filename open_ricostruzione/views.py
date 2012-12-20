@@ -18,6 +18,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect
 from open_ricostruzione.settings import COMUNI_CRATERE
+from django.template.defaultfilters import date as _date
 
 class HomeView(TemplateView):
     template_name = "home.html"
@@ -375,6 +376,7 @@ class TerritorioView(DetailView):
 
         donazioni_last =[]
 
+
         for idx, val in enumerate(donazioni_temp):
 ##      converto la data nel formato  Nome mese - Anno
 
@@ -440,7 +442,7 @@ class DonazioneView(TemplateView):
             else:
                 val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
 
-            val_date_print = time.strftime("%b - %Y", val_date_obj.timetuple())
+            val_date_print=_date(val_date_obj,"M - Y")
 
             if idx is not 0:
 #                se le due date sono piu' distanti di un mese
@@ -455,7 +457,7 @@ class DonazioneView(TemplateView):
                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
                     for k in range(1, n_mesi):
                         new_month_obj = add_months(donazioni_date_obj,k)
-                        new_month_print = time.strftime("%b - %Y", new_month_obj.timetuple())
+                        new_month_print = _date(new_month_obj,"M - Y")
                         donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum'],'sum_ita':None})
                         j += 1
 
