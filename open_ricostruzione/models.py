@@ -28,6 +28,8 @@ class Territorio(models.Model):
     tipologia_cc = models.CharField(max_length=2, null=True, blank=True)
     slug = models.SlugField(max_length=60)
     sigla_provincia = models.CharField(max_length=3, null=True, blank=True)
+    gps_lat = models.FloatField(null=True, blank=True)
+    gps_lon = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
         return u"%s (%s)" % (self.denominazione, self.cod_comune)
