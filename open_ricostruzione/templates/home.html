@@ -202,7 +202,7 @@
                                     {% endifnotequal %}
                                 </div>
                             </div>
-                            {#                            <div class="spacer"></div>#}
+                            <div class="spacer"></div>
                         </div>
                     </div>
                 </div>
@@ -224,7 +224,7 @@
                     {% for c in comuni_evidenza %}
                         <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
                             <div class="span3" style="color: #4467af;">
-                                <a href="{% url territorio_detail c.slug %}">{{ c.denominazione }} ({{ c.get_provincia.sigla_provincia }})</a>
+                                <a href="{% url territorio_detail c.comune.slug %}">{{ c.comune.denominazione }} ({{ c.comune.get_provincia.sigla_provincia }})</a>
                             </div>
                             <div class="span3" style="font-weight: bold;">
                                 {% ifnotequal c.p_sum "0,00" %}

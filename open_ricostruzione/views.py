@@ -116,26 +116,74 @@ class HomeView(TemplateView):
 
         #trasforma la data di oggi in timestamp come base per creare un indice randomico sulla base del giorno
         today = int(time.mktime(datetime.date.today().timetuple()))
+
         #comuni oggi in evidenza
 
-        comuni_considerati= Territorio.objects.filter(tipo_territorio="C",cod_comune__in=settings.COMUNI_CRATERE).\
-            annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi"),d = Count("donazione"),d_sum=Sum("donazione")).\
-            filter(p__gt=0, d__gt=0, d_sum__gt=0)
+#        comuni con progetti padre con importo maggiore di zero
+        c_progetti=Territorio.objects.\
+           filter(
+            tipo_territorio="C",
+            progetto__parent__isnull=True,
+            progetto__riepilogo_importi__gt=0
+            ).\
+            annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi")).\
+            values_list('cod_comune',flat=True)
+
+#        comuni con donazioni confermate e importo maggiore di zero
+        c_donazioni=Territorio.objects.filter(
+            tipo_territorio="C",
+            progetto__parent__isnull=True,
+            donazione__importo__gt=0,
+            donazione__confermato=True
+            ).annotate(c=Count("donazione"),sum=Sum("donazione__importo")).\
+            values_list('cod_comune',flat=True)
+
+
+        donazioni_considerate_cod=Donazione.objects.filter(
+            importo__gt=0,
+            confermato=True,
+            territorio__cod_comune__in=c_donazioni
+            ).values_list('id_donazione',flat=True)
+
+
+        progetti_considerati_cod=Progetto.objects.\
+            filter(id_padre__isnull=True, riepilogo_importi__gt=0).\
+            values_list('id_progetto',flat=True)
+
+
+
+#        codici dei comuni che sono presenti nei tre insiemi
+        cod_considerati=set.intersection(set(c_donazioni), set(c_progetti),set( COMUNI_CRATERE))
+
+        comuni_considerati = Territorio.objects.\
+            filter(cod_comune__in=cod_considerati, donazione__id_donazione__in=donazioni_considerate_cod).\
+            annotate(c=Count('cod_comune'))
 
 
         comuni_evidenza=[]
         #progetti oggi in evidenza
-        i = today%comuni_considerati.count()
-        progetti_evidenza=[]
+        c_considerati_num = comuni_considerati.count()
+        i = today%c_considerati_num
+
         for j in range(1,4):
-            comuni_evidenza.append(comuni_considerati[((i+j)%comuni_considerati.count())+1])
+            c_evidenza={}
+            comune = comuni_considerati[((i+j)%c_considerati_num)+1]
+            comune_donazioni = Donazione.objects.filter(territorio=comune, id_donazione__in=donazioni_considerate_cod).\
+                aggregate(d_sum=Sum('importo'))
 
+            comune_danno = Progetto.objects.filter(
+                territorio=comune,
+                id_progetto__in=progetti_considerati_cod
+            ).aggregate(p_sum=Sum('riepilogo_importi'))
 
-        #humanize cifre monetarie
-        for val in comuni_evidenza:
-            val.p_sum=moneyfmt(Decimal(val.p_sum),2,"",".",",")
-            val.d_sum=moneyfmt(Decimal(val.d_sum),2,"",".",",")
+#           inserisce il comune e le somme di danno e donazioni nel diz. in evidenza e fa lo humanize delle cifre
+            c_evidenza={
+                'comune':comune,
+                'd_sum':moneyfmt(Decimal(comune_donazioni['d_sum']),2,"",".",","),
+                'p_sum':moneyfmt(Decimal(comune_danno['p_sum']),2,"",".",","),
+            }
 
+            comuni_evidenza.append(c_evidenza)
 
         context['comuni_evidenza']=comuni_evidenza
 
