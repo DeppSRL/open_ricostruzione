@@ -54,7 +54,7 @@ class HomeView(TemplateView):
 
         ##   converto la data nel formato  Nome mese - Anno
         context['news_big']={'day':news_big.published_at.day,
-                             'month':news_big.published_at.strftime("%B")[:3],
+                             'month':_date(news_big.published_at,"M"),
                              'year':news_big.published_at.year,
                              'title':news_big.title,
                              'abstract':news_big.abstract,
@@ -68,7 +68,7 @@ class HomeView(TemplateView):
         for idx, val in enumerate(news_temp):
             news_small.append(
                 {'day':val.published_at.day,
-                 'month':val.published_at.strftime("%B")[:3],
+                 'month':_date(news_big.published_at,"M"),
                  'year':val.published_at.year,
                  'title':val.title,
                  'abstract':val.abstract,
@@ -386,7 +386,7 @@ class TerritorioView(DetailView):
                 val_date_obj = datetime.datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
 
             val_date_day = val.data.day
-            val_date_month = time.strftime("%b", val_date_obj.timetuple())
+            val_date_month = _date(val_date_obj,"M")
             val_date_year = time.strftime("%Y", val_date_obj.timetuple())
             donazioni_last.append({'day':val_date_day,
                                    'month':val_date_month,
@@ -508,7 +508,7 @@ class DonazioneView(TemplateView):
         for idx, val in enumerate(donazioni_temp):
         ##            converto la data nel formato  Nome mese - Anno
             val_date_day = val.data.day
-            val_date_month = time.strftime("%b", val.data.timetuple())
+            val_date_month= _date(val.data,"M")
             val_date_year = time.strftime("%Y", val.data.timetuple())
             donazioni_last.append({'day':val_date_day,
                                    'month':val_date_month,
@@ -572,7 +572,7 @@ class TipologieCedenteView(TemplateView):
             for idx, val in enumerate(page_obj.object_list):
                 donazioni_page.append(
                     {'day':val.data.day,
-                     'month':val.data.strftime("%B")[:3],
+                     'month':_date(val.data,"M"),
                      'year':val.data.year,
                      'donazione':val,
                      }
