@@ -52,7 +52,7 @@
         <div  id="logo_header" >
             <div class="span7" id="logo_top">
                 <a href="/">
-                    <img src="../../static/img/logo_white.png">
+                    <img src="{{ STATIC_URL }}/img/logo_white.png">
                 </a>
             </div>
             {% if iban %}
@@ -206,9 +206,7 @@
 <div class="container content ">
     <div class="row {% block show-content %}{% endblock %}">
         <div class="span7 ">
-            <div id="breadcrumbs" class="{% block breadcrumb-class %}{% endblock %}">
-                {% block breadcrumb %}<a href="/">Home</a>{% endblock %}
-            </div>
+
             <div id="main-title" class="{% block main-title-class %}{% endblock %}">{% block main-title %}{% endblock %}</div>
             <div id="main-subtitle">{% block main-subtitle %}{% endblock %}</div>
             <div class="main-content">{% block main-content %}{% endblock %}</div>

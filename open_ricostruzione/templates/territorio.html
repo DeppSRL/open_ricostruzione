@@ -18,8 +18,6 @@
         </div>
 {% endblock %}
 
-{% block breadcrumb %}{{ block.super }} / <a href="/comune/{{ territorio.slug }}">Comune di {{ territorio.denominazione }}</a>{% endblock %}
-
 {% block main-title %}Comune di {{ territorio.denominazione }} ({{ sigla_provincia }}){% endblock %}
 {% block main-subtitle %}I progetti in evidenza nel Comune di {{ territorio.denominazione }} {% endblock %}
 
