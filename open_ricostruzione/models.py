@@ -56,7 +56,7 @@ class Territorio(models.Model):
 
         donazioni_mese = Donazione.objects.filter(territorio = self).\
             extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
-            values('date').annotate(sum = Sum('importo'))
+            values('date').annotate(sum = Sum('importo')).order_by('date')
 
         donazioni_spline =[]
         j = 0
@@ -109,9 +109,10 @@ class Territorio(models.Model):
                 })
                 j += 1
 
-            for d in donazioni_spline:
-                d['sum']=moneyfmt(Decimal(d['sum']),2,"","",".")
-                d['sum_ita']=moneyfmt(Decimal(d['sum']),2,"",".",",")
+
+        for d in donazioni_spline:
+            d['sum']=moneyfmt(Decimal(d['sum']),2,"","",".")
+            d['sum_ita']=moneyfmt(Decimal(d['sum']),2,"",".",",")
 
         return donazioni_spline
 

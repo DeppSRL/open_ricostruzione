@@ -438,6 +438,7 @@ class DonazioneView(TemplateView):
 
         donazioni_mese = Donazione.objects.filter(confermato = True).\
                         extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
+                        order_by('date').\
                         values('date').annotate(sum = Sum('importo'))
 
         donazioni_spline =[]
