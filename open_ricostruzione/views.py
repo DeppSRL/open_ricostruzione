@@ -397,6 +397,14 @@ class TerritorioView(DetailView):
             })
 
         context['donazioni_last'] = donazioni_last
+
+# coordinate del comune
+
+        if t.gps_lat:
+            context['gps_lat']=t.gps_lat
+        if t.gps_lon:
+            context['gps_lon']=t.gps_lon
+
         return context
 
 class DonazioneView(TemplateView):

@@ -40,7 +40,7 @@
 {% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}di{% endif %}{% endblock %}
 
 {% block map %}
-    <div id="map" class='span4'>Mappa del Comune</div>
+    <div id="map" class='span4'></div>
 {% endblock %}
 
 {% block main-content %}
@@ -195,6 +195,22 @@
 
 {% endblock %}
 
+
+{% block map-data %}
+    {% if progetto.territorio.gps_lat and progetto.territorio.gps_lon %}
+        <script>
+            var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
+                    cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+                    cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
+
+            var map = new L.Map('map');
+            map.setView(new L.LatLng({{ progetto.territorio.gps_lat|stringformat:"f" }}, {{ progetto.territorio.gps_lon|stringformat:"f" }}), 13).addLayer(cloudmade);
+            L.marker([{{  progetto.territorio.gps_lat|stringformat:"f" }}, {{  progetto.territorio.gps_lon|stringformat:"f" }}]).addTo(map)
+                    .bindPopup('Comune di <strong>{{ progetto.territorio.denominazione }} ({{ progetto.territorio.get_provincia.sigla_provincia}})</strong>').openPopup();
+
+        </script>
+    {% endif %}
+{% endblock %}
 
 {% block comment %}
     {% load disqus_tags %}

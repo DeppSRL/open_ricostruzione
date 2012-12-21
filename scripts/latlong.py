@@ -1,5 +1,8 @@
 #Script che importa latitudine e longitudine
 #per tutti i comuni dell'Emilia a partire dalle API di Openpolis
+#questo file serve solo come reference dei comandi,
+#lo script dava errore per cui l'import l'ho eseguito nella shell di Python
+
 from open_ricostruzione.models import Territorio
 import requests
 
