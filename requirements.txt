@@ -6,4 +6,4 @@ django-disqus==0.4.1
 django-extensions==1.0.1
 docutils==0.9.1
 psycopg2==2.4.6
-
+requests

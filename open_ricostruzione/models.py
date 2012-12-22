@@ -7,6 +7,7 @@ from open_ricostruzione.utils.moneydate import moneyfmt,add_months
 from django.db.models.aggregates import Sum
 from datetime import timedelta
 from django.template.defaultfilters import slugify
+from django.template.defaultfilters import date as _date
 
 
 class UltimoAggiornamento(models.Model):
@@ -27,6 +28,8 @@ class Territorio(models.Model):
     tipologia_cc = models.CharField(max_length=2, null=True, blank=True)
     slug = models.SlugField(max_length=60)
     sigla_provincia = models.CharField(max_length=3, null=True, blank=True)
+    gps_lat = models.FloatField(null=True, blank=True)
+    gps_lon = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
         return u"%s (%s)" % (self.denominazione, self.cod_comune)
@@ -66,7 +69,7 @@ class Territorio(models.Model):
             else:
                 val_date_obj = datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
 
-            val_date_print = time.strftime("%b - %Y", val_date_obj.timetuple())
+            val_date_print=_date(val_date_obj,"M - Y")
 
             if idx is not 0:
 #                se le due date sono piu' distanti di un mese
@@ -81,7 +84,7 @@ class Territorio(models.Model):
                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
                     for k in range(1, n_mesi):
                         new_month_obj = add_months(donazioni_date_obj,k)
-                        new_month_print = time.strftime("%b - %Y", new_month_obj.timetuple())
+                        new_month_print = _date(new_month_obj,"M - Y")
 
                         donazioni_spline.append({
                             'month':new_month_print,

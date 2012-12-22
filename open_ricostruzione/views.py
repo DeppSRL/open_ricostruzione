@@ -18,6 +18,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect
 from open_ricostruzione.settings import COMUNI_CRATERE
+from django.template.defaultfilters import date as _date
 
 class HomeView(TemplateView):
     template_name = "home.html"
@@ -53,7 +54,7 @@ class HomeView(TemplateView):
 
         ##   converto la data nel formato  Nome mese - Anno
         context['news_big']={'day':news_big.published_at.day,
-                             'month':news_big.published_at.strftime("%B")[:3],
+                             'month':_date(news_big.published_at,"M"),
                              'year':news_big.published_at.year,
                              'title':news_big.title,
                              'abstract':news_big.abstract,
@@ -67,7 +68,7 @@ class HomeView(TemplateView):
         for idx, val in enumerate(news_temp):
             news_small.append(
                 {'day':val.published_at.day,
-                 'month':val.published_at.strftime("%B")[:3],
+                 'month':_date(news_big.published_at,"M"),
                  'year':val.published_at.year,
                  'title':val.title,
                  'abstract':val.abstract,
@@ -375,6 +376,7 @@ class TerritorioView(DetailView):
 
         donazioni_last =[]
 
+
         for idx, val in enumerate(donazioni_temp):
 ##      converto la data nel formato  Nome mese - Anno
 
@@ -384,7 +386,7 @@ class TerritorioView(DetailView):
                 val_date_obj = datetime.datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
 
             val_date_day = val.data.day
-            val_date_month = time.strftime("%b", val_date_obj.timetuple())
+            val_date_month = _date(val_date_obj,"M")
             val_date_year = time.strftime("%Y", val_date_obj.timetuple())
             donazioni_last.append({'day':val_date_day,
                                    'month':val_date_month,
@@ -395,6 +397,14 @@ class TerritorioView(DetailView):
             })
 
         context['donazioni_last'] = donazioni_last
+
+# coordinate del comune
+
+        if t.gps_lat:
+            context['gps_lat']=t.gps_lat
+        if t.gps_lon:
+            context['gps_lon']=t.gps_lon
+
         return context
 
 class DonazioneView(TemplateView):
@@ -440,7 +450,7 @@ class DonazioneView(TemplateView):
             else:
                 val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
 
-            val_date_print = time.strftime("%b - %Y", val_date_obj.timetuple())
+            val_date_print=_date(val_date_obj,"M - Y")
 
             if idx is not 0:
 #                se le due date sono piu' distanti di un mese
@@ -455,7 +465,7 @@ class DonazioneView(TemplateView):
                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
                     for k in range(1, n_mesi):
                         new_month_obj = add_months(donazioni_date_obj,k)
-                        new_month_print = time.strftime("%b - %Y", new_month_obj.timetuple())
+                        new_month_print = _date(new_month_obj,"M - Y")
                         donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum'],'sum_ita':None})
                         j += 1
 
@@ -506,7 +516,7 @@ class DonazioneView(TemplateView):
         for idx, val in enumerate(donazioni_temp):
         ##            converto la data nel formato  Nome mese - Anno
             val_date_day = val.data.day
-            val_date_month = time.strftime("%b", val.data.timetuple())
+            val_date_month= _date(val.data,"M")
             val_date_year = time.strftime("%Y", val.data.timetuple())
             donazioni_last.append({'day':val_date_day,
                                    'month':val_date_month,
@@ -570,7 +580,7 @@ class TipologieCedenteView(TemplateView):
             for idx, val in enumerate(page_obj.object_list):
                 donazioni_page.append(
                     {'day':val.data.day,
-                     'month':val.data.strftime("%B")[:3],
+                     'month':_date(val.data,"M"),
                      'year':val.data.year,
                      'donazione':val,
                      }
