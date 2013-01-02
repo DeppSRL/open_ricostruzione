@@ -37,6 +37,38 @@ class Territorio(models.Model):
     class Meta:
         verbose_name_plural = u'Territori'
 
+    def get_danno(self):
+        return Progetto.objects.filter(territorio=self, id_padre__isnull = True).\
+               aggregate(s=Sum('riepilogo_importi')).values()[0]
+
+    def get_donazioni(self):
+        return Donazione.objects.filter(territorio=self, confermato = True).aggregate(s=Sum('importo')).values()[0]
+
+    def get_percentuale_donazioni(self):
+
+        danno = self.get_danno()
+        donazioni =  self.get_donazioni()
+        if danno:
+            if donazioni:
+                return (100 * donazioni)/danno
+            else:
+                return 0
+        else:
+            return None
+
+    def get_angolo_donazioni(self):
+
+        perc =  self.get_percentuale_donazioni()
+        if perc:
+            if perc==100:
+                return 359
+            else:
+                return (perc*360)/100
+        else:
+            return None
+
+
+
     def get_comuni_with_progetti(self):
         return Territorio.objects.filter(tipo_territorio="C", cod_provincia = self.cod_provincia).\
                 filter(progetto__isnull = False).\
@@ -47,6 +79,8 @@ class Territorio(models.Model):
             return Territorio.objects.get(tipo_territorio="P", cod_provincia = self.cod_provincia)
         else:
             return None
+
+
 
     def get_spline_data(self):
 

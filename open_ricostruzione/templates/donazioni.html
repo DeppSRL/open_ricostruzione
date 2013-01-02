@@ -9,12 +9,13 @@
 {% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}
 {% block main-title %}<p style="color:#a1ba03; text-transform: uppercase;" >Donazioni</P>{% endblock %}
 
+
+
 {% block data-content %}
 
 
     <div class="row" style="margin-top:25px;">
-        <div class="span12">
-            <img src="../static/img/home_map.jpg" />
+        <div class="span12" id="riepilogo-map">
         </div>
     </div>
 
@@ -93,6 +94,74 @@
 
 
 {% endblock %}
+
+
+{% block map-data %}
+    {% if territori %}
+        <script>
+
+            var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
+                    cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+                    cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
+
+            var map = new L.Map('riepilogo-map');
+            map.setView(new L.LatLng(44.7879, 11.1439), 10).addLayer(cloudmade);
+
+            {% for t in territori %}
+                {% if t.get_angolo_donazioni %}
+
+                    /*Comune di {{ t.denominazione }} */
+
+    {#                disegna il semicerchio verde, le donazioni#}
+
+                    L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}], 2000,
+                            {
+                                fill: true,
+                                fillColor:'#a1ba03',
+                                fillOpacity: 0.5,
+                                color: '#a1ba03',
+                                opacity: 0.5,
+                                startAngle: 0,
+                                stopAngle:{{ t.get_angolo_donazioni|stringformat:"f" }}
+                            }
+                    ).addTo(map);
+
+
+                    {% if t.get_angolo_donazioni < 359 %}
+                        {#                disegna il semicerchio blu, il danno #}
+
+                        L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}],2000,
+                                {
+
+                                    fill: true,
+                                    fillColor:'#18a3c9',
+                                    fillOpacity: 0.5,
+                                    color: '#18a3c9',
+                                    opacity: 0.5,
+                                    startAngle: {{ t.get_angolo_donazioni|stringformat:"f" }},
+                                    stopAngle: 360
+                                }
+                        ).addTo(map);
+                    {% endif %}
+
+                {% endif %}
+            {% endfor %}
+
+
+
+
+
+
+
+
+        </script>
+    {% endif %}
+{% endblock %}
+
+
+
+
+
 
 
 {% block graph-data %}
@@ -187,7 +256,7 @@
                         }
                     },
                     title: {
-                        text: 'Donazioni ricevute per tipologia'
+                        text: ''
                     },
                     plotOptions: {
                         pie: {
