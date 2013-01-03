@@ -105,7 +105,7 @@
                     cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
 
             var map = new L.Map('riepilogo-map');
-            map.setView(new L.LatLng(44.7879, 11.1439), 10).addLayer(cloudmade);
+            map.setView(new L.LatLng({{ map_center_lat|stringformat:"f" }}, {{ map_center_lon|stringformat:"f" }}), 10).addLayer(cloudmade);
 
             {% for t in territori %}
                 {% if t.get_angolo_donazioni %}

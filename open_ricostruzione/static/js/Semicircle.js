@@ -41,6 +41,8 @@ L.Circle = L.Circle.extend({
         if (L.Browser.svg) {
 
 //          STE
+// if startA=0 & stopA=360 draws a full circle. BUG FIX
+
             if(this.options.startAngle == 0 && this.options.stopAngle>359){
                 var e = this._point, t = this._radius;
                 return "M" + e.x + "," + (e.y - t) + "A" + t + "," + t + ",0,1,1," + (e.x - .1) + "," + (e.y - t) + " z";

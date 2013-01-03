@@ -4,7 +4,7 @@ from django.db import connections
 from datetime import datetime
 import time
 from open_ricostruzione.utils.moneydate import moneyfmt,add_months
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Count
 from datetime import timedelta
 from django.template.defaultfilters import slugify
 from django.template.defaultfilters import date as _date
@@ -86,7 +86,7 @@ class Territorio(models.Model):
     def get_marker_size(self):
 
         biggest_damage=Territorio.objects.\
-                       filter(cod_comune__in=settings.COMUNI_CRATERE).\
+                       filter(cod_comune__in=Territorio.get_territori_attivi()).\
                         annotate(s=Sum('progetto__riepilogo_importi')).order_by('-s').\
                         values_list('s',flat=True)[0]
         danno=self.get_danno()
@@ -177,6 +177,41 @@ class Territorio(models.Model):
             d['sum_ita']=moneyfmt(Decimal(d['sum']),2,"",".",",")
 
         return donazioni_spline
+
+#    get_territori_attivi restituisce la lista dei codici comune dei territori in cui abbiamo almeno un progetto attivo
+    @classmethod
+    def get_territori_attivi(cls):
+        return Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+            annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',flat=True)
+
+    @classmethod
+    def get_map_center_lat(cls):
+        lat_max=Territorio.objects.\
+            filter(cod_comune__in=Territorio.get_territori_attivi()).\
+            filter(gps_lat__gt=0).order_by('-gps_lat').values_list('gps_lat',flat=True)[0]
+
+        lat_min=Territorio.objects.\
+                filter(cod_comune__in=Territorio.get_territori_attivi()).\
+                filter(gps_lat__gt=0).order_by('gps_lat').values_list('gps_lat',flat=True)[0]
+        if lat_max and lat_min:
+            return lat_min+(lat_max-lat_min)/2
+        else:
+            return None
+
+    @classmethod
+    def get_map_center_lon(cls):
+        lon_max=Territorio.objects.\
+            filter(cod_comune__in=Territorio.get_territori_attivi()).\
+            filter(gps_lon__gt=0).order_by('-gps_lon').values_list('gps_lon',flat=True)[0]
+        lon_min=Territorio.objects.\
+            filter(cod_comune__in=Territorio.get_territori_attivi()).\
+            filter(gps_lon__gt=0).order_by('gps_lon').values_list('gps_lon',flat=True)[0]
+        if lon_max and lon_min:
+            return lon_min+(lon_max-lon_min)/2
+        else:
+            return None
+
+
 
 class TipologiaProgetto(models.Model):
     codice = models.SmallIntegerField(null=True, blank=True)

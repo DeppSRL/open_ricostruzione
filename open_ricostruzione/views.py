@@ -526,6 +526,9 @@ class DonazioneView(TemplateView):
 
         context['donazioni_last'] = donazioni_last
 
+        context['map_center_lat']= Territorio.get_map_center_lat()
+        context['map_center_lon']= Territorio.get_map_center_lon()
+
         return context
 
 class EntryView(DetailView):
