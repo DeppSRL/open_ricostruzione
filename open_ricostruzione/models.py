@@ -61,11 +61,21 @@ class Territorio(models.Model):
         perc =  self.get_percentuale_donazioni()
         if perc:
             if perc==100:
-                return 359
+                return 360
             else:
                 return (perc*360)/100
         else:
             return None
+
+    def get_marker_size(self):
+        max_size= 4000
+# biggest damage        da ricalcolare
+        biggest_damage=Donazione.objects.order_by('-importo').values_list('importo',flat=True)[:1][0]
+        danno=self.get_danno()
+        if danno and biggest_damage:
+            return (danno/biggest_damage)*max_size
+        else:
+            return 0
 
 
 

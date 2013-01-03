@@ -114,6 +114,7 @@
 
     {#                disegna il semicerchio verde, le donazioni#}
 
+
                     L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}], 2000,
                             {
                                 fill: true,
@@ -125,6 +126,8 @@
                                 stopAngle:{{ t.get_angolo_donazioni|stringformat:"f" }}
                             }
                     ).addTo(map);
+
+
 
 
                     {% if t.get_angolo_donazioni < 359 %}

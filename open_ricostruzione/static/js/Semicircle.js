@@ -10,7 +10,6 @@ L.Circle = L.Circle.extend({
     options: {
         startAngle: 0,
         stopAngle: 359.9999
-
     },
 
     // make sure 0 degrees is up (North) and convert to radians.
@@ -28,6 +27,7 @@ L.Circle = L.Circle.extend({
         ).round();
     },
     getPathString: function () {
+
         var center = this._point,
             r = this._radius;
 
@@ -39,6 +39,12 @@ L.Circle = L.Circle.extend({
         }
 
         if (L.Browser.svg) {
+
+//          STE
+            if(this.options.startAngle == 0 && this.options.stopAngle>359){
+                var e = this._point, t = this._radius;
+                return "M" + e.x + "," + (e.y - t) + "A" + t + "," + t + ",0,1,1," + (e.x - .1) + "," + (e.y - t) + " z";
+            }
             var largeArc = (this.options.stopAngle - this.options.startAngle >= 180) ? '1' : '0';
             //move to center
             var ret = "M" + center.x + "," + center.y;
@@ -75,6 +81,7 @@ L.Circle = L.Circle.extend({
 });
 L.Circle.include(!L.Path.CANVAS ? {} : {
     _drawPath: function () {
+
         var center = this._point,
             r = this._radius;
 
@@ -84,8 +91,7 @@ L.Circle.include(!L.Path.CANVAS ? {} : {
         this._ctx.moveTo(center.x, center.y);
         this._ctx.lineTo(start.x, start.y);
 
-        this._ctx.arc(center.x, center.y, this._radius,
-            this.startAngle(), this.stopAngle(), false);
+        this._ctx.arc(center.x, center.y, this._radius, this.startAngle(), this.stopAngle(), false);
         this._ctx.lineTo(center.x, center.y);
     }
 
