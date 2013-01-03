@@ -268,6 +268,11 @@ class ProgettoView(DetailView):
         if iban:
             context['iban'] = iban
 
+#        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
         return context
 
 
@@ -408,7 +413,11 @@ class TerritorioView(DetailView):
 
         context['donazioni_last'] = donazioni_last
 
-
+        #        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
 
         return context
 
