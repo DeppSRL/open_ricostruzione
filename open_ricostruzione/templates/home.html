@@ -94,12 +94,26 @@
     </div>
 
     <div class="container" id="home-map">
-        <div class="row">
-            <div class="span12">
-                <img src="../static/img/home_map.jpg" />
+        <div class="row" style="margin-top:25px;">
+            <div class="span12" id="riepilogo-map">
+            </div>
+        </div>
+        <div class="row" style="margin-top:12px;">
+            <div class="span3" >
+                <img src="{{ STATIC_URL }}img/box_legenda_danno.png">
+                Stima del danno
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+            <div class="span3" >
+                <img src="{{ STATIC_URL }}img/box_legenda_donazioni.png">
+                Donazioni ricevute
             </div>
         </div>
     </div>
+
+
 
     <div class="container content">
         <!-- PIE CHARTS -->
@@ -277,6 +291,73 @@
 {% endblock %}
 
 
+{% block map-data %}
+    {% if territori %}
+        <script>
+
+            var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
+                    cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+                    cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
+
+            var map = new L.Map('riepilogo-map');
+            map.setView(new L.LatLng({{ map_center_lat|stringformat:"f" }}, {{ map_center_lon|stringformat:"f" }}), 10).addLayer(cloudmade);
+
+            {% for t in territori %}
+                {% if t.get_angolo_donazioni %}
+
+                    /*Comune di {{ t.denominazione }} */
+
+                    {#                disegna il semicerchio verde, le donazioni#}
+
+                    L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}], {{ t.get_marker_size|floatformat:"0" }},
+                            {
+                                fill: true,
+                                fillColor:'#a1ba03',
+                                fillOpacity: 0.5,
+                                color: '#a1ba03',
+                                opacity: 0.5,
+                                startAngle: 0,
+                                stopAngle:{{ t.get_angolo_donazioni|stringformat:"f" }}
+                            }
+                    ).bindLabel('Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})', { noHide: true })
+                            .addTo(map)
+                            .bindPopup('<a href="{% url territorio_detail t.slug %}">' +
+                            "Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR>"+
+                            "<strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR>"+
+                            "<strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro<BR>"+
+                            "<strong>Percentuale donazioni ricevute:</strong> {{ t.get_percentuale_donazioni|floatformat:"2" }}%");
+
+
+
+                    {% if t.get_angolo_donazioni < 359 %}
+                        {#                disegna il semicerchio blu, il danno #}
+
+                        L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}],{{ t.get_marker_size|floatformat:"0" }},
+                                {
+                                    fill: true,
+                                    fillColor:'#18a3c9',
+                                    fillOpacity: 0.5,
+                                    color: '#18a3c9',
+                                    opacity: 0.5,
+                                    startAngle: {{ t.get_angolo_donazioni|stringformat:"f" }},
+                                    stopAngle: 360
+                                }
+                        ).bindLabel('Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})', { noHide: true })
+                                .addTo(map)
+                                .bindPopup('<a href="{% url territorio_detail t.slug %}">' +
+                                "Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR>"+
+                                "<strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR>"+
+                                "<strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro<BR>"+
+                                "<strong>Percentuale donazioni ricevute:</strong> {{ t.get_percentuale_donazioni|floatformat:"2" }}%");
+
+
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+        </script>
+    {% endif %}
+{% endblock %}
 
 {% block graph-data %}
 

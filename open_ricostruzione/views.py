@@ -221,6 +221,8 @@ class HomeView(TemplateView):
         donazioni_sms= moneyfmt(donazioni_sms,2,"",".",",")
         context['donazioni_sms']=donazioni_sms
 
+        context['map_center_lat']= Territorio.get_map_center_lat()
+        context['map_center_lon']= Territorio.get_map_center_lon()
         return context
 
 
