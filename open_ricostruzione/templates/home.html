@@ -299,7 +299,17 @@
                     cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
                     cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
 
-            var map = new L.Map('riepilogo-map');
+            //set map bounds
+            var southWest = new L.LatLng({{ map_minlat|stringformat:"f" }}, {{ map_minlon|stringformat:"f" }}),
+                northEast = new L.LatLng({{ map_maxlat|stringformat:"f" }}, {{ map_maxlon|stringformat:"f" }}),
+                bounds = new L.LatLngBounds(southWest, northEast);
+
+            var map = new L.Map('riepilogo-map', {
+                minZoom: 8,
+                maxZoom: 13,
+                maxBounds: bounds,
+                scrollWheelZoom: false
+            });
             map.setView(new L.LatLng({{ map_center_lat|stringformat:"f" }}, {{ map_center_lon|stringformat:"f" }}), 10).addLayer(cloudmade);
 
             {% for t in territori %}

@@ -184,6 +184,28 @@ class Territorio(models.Model):
         return Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
             annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',flat=True)
 
+
+    @classmethod
+    def get_boundingbox_minlat(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('gps_lat').values_list('gps_lat',flat=True)[0]
+    @classmethod
+    def get_boundingbox_maxlat(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('-gps_lat').values_list('gps_lat',flat=True)[0]
+
+    @classmethod
+    def get_boundingbox_minlon(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('gps_lon').values_list('gps_lon',flat=True)[0]
+    @classmethod
+    def get_boundingbox_maxlon(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('-gps_lon').values_list('gps_lon',flat=True)[0]
+
+
+
+
     @classmethod
     def get_map_center_lat(cls):
         lat_max=Territorio.objects.\

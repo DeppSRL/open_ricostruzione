@@ -221,8 +221,16 @@ class HomeView(TemplateView):
         donazioni_sms= moneyfmt(donazioni_sms,2,"",".",",")
         context['donazioni_sms']=donazioni_sms
 
+#       set map center
         context['map_center_lat']= Territorio.get_map_center_lat()
         context['map_center_lon']= Territorio.get_map_center_lon()
+
+#        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+
         return context
 
 
@@ -528,8 +536,15 @@ class DonazioneView(TemplateView):
 
         context['donazioni_last'] = donazioni_last
 
+        #       set map center
         context['map_center_lat']= Territorio.get_map_center_lat()
         context['map_center_lon']= Territorio.get_map_center_lon()
+
+        #        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
 
         return context
 
