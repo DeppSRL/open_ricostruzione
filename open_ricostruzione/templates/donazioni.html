@@ -114,7 +114,6 @@
 
     {#                disegna il semicerchio verde, le donazioni#}
 
-
                     L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}], 2000,
                             {
                                 fill: true,
@@ -125,17 +124,13 @@
                                 startAngle: 0,
                                 stopAngle:{{ t.get_angolo_donazioni|stringformat:"f" }}
                             }
-                    ).addTo(map);
-
-
-
+                    ).addTo(map).bindPopup('<a href="{% url territorio_detail t.slug %}">Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR><strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR><strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro');
 
                     {% if t.get_angolo_donazioni < 359 %}
                         {#                disegna il semicerchio blu, il danno #}
 
                         L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}],2000,
                                 {
-
                                     fill: true,
                                     fillColor:'#18a3c9',
                                     fillOpacity: 0.5,
@@ -144,26 +139,14 @@
                                     startAngle: {{ t.get_angolo_donazioni|stringformat:"f" }},
                                     stopAngle: 360
                                 }
-                        ).addTo(map);
+                        ).addTo(map).bindPopup('<a href="{% url territorio_detail t.slug %}">Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR><strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR><strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro');
                     {% endif %}
-
                 {% endif %}
             {% endfor %}
-
-
-
-
-
-
-
 
         </script>
     {% endif %}
 {% endblock %}
-
-
-
-
 
 
 

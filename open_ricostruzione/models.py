@@ -44,6 +44,23 @@ class Territorio(models.Model):
     def get_donazioni(self):
         return Donazione.objects.filter(territorio=self, confermato = True).aggregate(s=Sum('importo')).values()[0]
 
+
+    #    ritorna l'importo del danno in formato italiano
+    def get_danno_ita(self):
+        if self.get_danno():
+            return moneyfmt(self.get_danno(),2,"",".",",")
+        else:
+            return "0,00"
+
+    #    ritorna l'importo delle donazioni in formato italiano
+    def get_donazioni_ita(self):
+        if self.get_donazioni():
+            return moneyfmt(self.get_donazioni(),2,"",".",",")
+        else:
+            return "0,00"
+
+
+
     def get_percentuale_donazioni(self):
 
         danno = self.get_danno()
@@ -60,10 +77,7 @@ class Territorio(models.Model):
 
         perc =  self.get_percentuale_donazioni()
         if perc:
-            if perc==100:
-                return 360
-            else:
-                return (perc*360)/100
+            return (perc*360)/100
         else:
             return None
 
