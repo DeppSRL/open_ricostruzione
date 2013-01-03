@@ -8,6 +8,7 @@ from django.db.models.aggregates import Sum
 from datetime import timedelta
 from django.template.defaultfilters import slugify
 from django.template.defaultfilters import date as _date
+from django.conf import settings
 
 
 class UltimoAggiornamento(models.Model):
@@ -30,6 +31,8 @@ class Territorio(models.Model):
     sigla_provincia = models.CharField(max_length=3, null=True, blank=True)
     gps_lat = models.FloatField(null=True, blank=True)
     gps_lon = models.FloatField(null=True, blank=True)
+    marker_max_size= 8000
+    marker_min_size= 1000
 
     def __unicode__(self):
         return u"%s (%s)" % (self.denominazione, self.cod_comune)
@@ -60,7 +63,6 @@ class Territorio(models.Model):
             return "0,00"
 
 
-
     def get_percentuale_donazioni(self):
 
         danno = self.get_danno()
@@ -82,12 +84,14 @@ class Territorio(models.Model):
             return None
 
     def get_marker_size(self):
-        max_size= 4000
-# biggest damage        da ricalcolare
-        biggest_damage=Donazione.objects.order_by('-importo').values_list('importo',flat=True)[:1][0]
+
+        biggest_damage=Territorio.objects.\
+                       filter(cod_comune__in=settings.COMUNI_CRATERE).\
+                        annotate(s=Sum('progetto__riepilogo_importi')).order_by('-s').\
+                        values_list('s',flat=True)[0]
         danno=self.get_danno()
         if danno and biggest_damage:
-            return (danno/biggest_damage)*max_size
+            return self.marker_min_size+((danno/biggest_damage)*self.marker_max_size)*Decimal(0.45)
         else:
             return 0
 
