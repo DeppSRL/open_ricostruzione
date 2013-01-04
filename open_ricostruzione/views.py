@@ -292,10 +292,21 @@ class ProgettoListView(ListView):
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
             return Progetto.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
-
         else:
            return  Progetto.objects.all()[0:50]
 
+
+class TerritorioListView(ListView):
+    model = Territorio
+
+    def get_queryset(self):
+        territori = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+            annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',flat=True)
+        if 'qterm' in self.request.GET:
+            qterm = self.request.GET['qterm']
+            return Territorio.objects.filter(denominazione__icontains=qterm,cod_comune__in=territori)[0:50]
+        else:
+            return  None
 
 
 class TerritorioView(DetailView):
@@ -579,6 +590,7 @@ class TipologieCedenteView(TemplateView):
     page = 1
     donazioni_pagina = 50 # numero di elementi per pagina
 
+
     def get_context_data(self, **kwargs):
 
         context = super(TipologieCedenteView, self).get_context_data(**kwargs)
@@ -636,6 +648,10 @@ class DonazioniCompleta(TipologieCedenteView):
         self.donazioni= Donazione.objects.filter(confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniCompleta, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = True
+        self.context['search_result_link'] = "donazioni-comune/"
+
         return self.context
 
 class DonazioniTipologiaComune(TipologieCedenteView):
@@ -647,6 +663,10 @@ class DonazioniTipologiaComune(TipologieCedenteView):
         self.donazioni= Donazione.objects.filter(territorio=self.comune, tipologia=self.tipologia,confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniTipologiaComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 
@@ -659,6 +679,10 @@ class DonazioniTipologia(TipologieCedenteView):
         self.page = self.request.GET.get('page')
 
         self.context = super(DonazioniTipologia, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = True
+        self.context['search_result_link'] = "donazioni/" + self.tipologia.slug + "/"
+
         return self.context
 
 class DonazioniComune(TipologieCedenteView):
@@ -668,7 +692,11 @@ class DonazioniComune(TipologieCedenteView):
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.donazioni= Donazione.objects.filter(territorio=self.comune,confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
-        self.context = super(ProgettiComune, self).get_context_data(**kwargs)
+        self.context = super(DonazioniComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 
@@ -787,4 +815,9 @@ class ProgettiJSONListView(JSONResponseMixin, ProgettoListView):
     def convert_context_to_json(self, context):
         return dumps(context['progetto_list'])
 
+
+
+class TerritoriJSONListView(JSONResponseMixin, TerritorioListView):
+    def convert_context_to_json(self, context):
+        return dumps(context['territorio_list'])
 
