@@ -756,6 +756,10 @@ class ProgettiTipologiaComune(TipologieProgettoView):
         self.progetti= Progetto.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiTipologiaComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 
@@ -768,6 +772,10 @@ class ProgettiTipologia(TipologieProgettoView):
         self.page = self.request.GET.get('page')
 
         self.context = super(ProgettiTipologia, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = True
+        self.context['search_result_link'] = "progetti/" + self.tipologia.slug + "/"
+
         return self.context
 
 class ProgettiComune(TipologieProgettoView):
@@ -778,6 +786,10 @@ class ProgettiComune(TipologieProgettoView):
         self.progetti= Progetto.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 

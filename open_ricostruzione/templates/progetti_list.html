@@ -25,6 +25,22 @@
     {% endif %}
 {% endblock %}
 
+{% block main-search %}
+    {% if show_search %}
+        <div class=" span5">
+            <form method="get" action="/territori/" class="navbar-search form-search pull-left">
+                <section  class="ui-widget">
+                    <input type="text"
+                           class="search-query "
+                           id="territorio-search"
+                           placeholder="Cerca tra i Comuni" />
+                </section>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}
+
+
 {% block main-content %}
 
     <div class="container" id="project_list">
@@ -80,4 +96,41 @@
 
 {% block comment %}
 
+{% endblock %}
+
+{% block comuni-search %}
+    {% if show_search %}
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+                $( "#territorio-search" ).autocomplete({
+                    source: function( request, response ) {
+                        $.getJSON(
+                                "{{ SITE_URL }}/territori.json",
+                                {'qterm': request.term },
+                                function( data ) {
+                                    response( $.map( data, function( item ) {
+                                        return {
+                                            label: item.fields.denominazione,
+                                            value: item.fields.slug
+                                        }
+                                    }));
+                                }
+                        );
+                    },
+                    minLength: 4,
+                    select: function( event, ui ) {
+                        window.location.href = "../{{ search_result_link }}"+ ui.item.value;
+                    },
+                    open: function() {
+                        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+                    },
+                    close: function() {
+                        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+                    }
+                }).css('z-index', 10000);
+
+            });
+        </script>
+    {% endif %}
 {% endblock %}
