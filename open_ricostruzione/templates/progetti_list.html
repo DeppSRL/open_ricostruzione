@@ -17,17 +17,17 @@
 {% block main-subtitle %}
     <strong>
         Progetti
-        {% if tipologia %}per {{tipologia}}{% endif %}{% if comune %} nel <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
+        {% if tipologia %}per <a href="{% url progetti-tipologia tipologia.slug %}" >{{tipologia}}</a>{% endif %}{% if comune %} nel <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
     </strong>
     {% if n_progetti > 0 %}
         ({{ n_progetti }} {% if n_progetti > 1 %}progetti{% else %}progetto{% endif %}
-            {% ifnotequal tot_danno "0,00" %} per {{ tot_danno }} euro{% endifnotequal %})
+            {% ifnotequal tot_danno "0,00" %}{% if tot_danno %} per {{ tot_danno }} euro{% endif %}{% endifnotequal %})
     {% endif %}
 {% endblock %}
 
 {% block main-search %}
     {% if show_search %}
-        <div class=" span5">
+        <div class="">
             <form method="get" action="/territori/" class="navbar-search form-search pull-left">
                 <section  class="ui-widget">
                     <input type="text"
@@ -44,51 +44,59 @@
 {% block main-content %}
 
     <div class="container" id="project_list">
-
-        {% for result in page_obj.object_list %}
-            <div class="row project_row">
-                <div class="span7 spacer" >
-                </div>
-            </div>
-            <div class="row project_row">
-                <div class="span5 titolo">
-                    <a href="{% url progetto_detail result.slug %}">
-                        {{ result.denominazione|safe }}
-                    </a>
-                </div>
-            </div>
-            <div class="row project_row">
-                <div class="span5 ">
-                    <a href="{% url territorio_detail result.territorio.slug %}" >
-                        {{ result.territorio.denominazione }}
-
-                        ({{ result.territorio.get_provincia.sigla_provincia}})
-                    </a> &#126;
-
-                    <a href="{% url progetti-tipologia result.tipologia.slug %} " >
-                        {{ result.tipologia.denominazione|safe }}
-                    </a>
-                </div>
-                {% ifnotequal result.get_riepilogo_importi_ita "0,00" %}
-                    <div class="span2 box">
-                        <div class="importi">
-                            {{ result.get_riepilogo_importi_ita }} euro
-                        </div>
+        {% if page_obj.object_list %}
+            {% for result in page_obj.object_list %}
+                <div class="row project_row">
+                    <div class="span7 spacer" >
                     </div>
-                {% endifnotequal %}
+                </div>
+                <div class="row project_row">
+                    <div class="span5 titolo">
+                        <a href="{% url progetto_detail result.slug %}">
+                            {{ result.denominazione|safe }}
+                        </a>
+                    </div>
+                </div>
+                <div class="row project_row">
+                    <div class="span5 ">
+                        <a href="{% url territorio_detail result.territorio.slug %}" >
+                            {{ result.territorio.denominazione }}
+
+                            ({{ result.territorio.get_provincia.sigla_provincia}})
+                        </a> &#126;
+
+                        <a href="{% url progetti-tipologia result.tipologia.slug %} " >
+                            {{ result.tipologia.denominazione|safe }}
+                        </a>
+                    </div>
+                    {% ifnotequal result.get_riepilogo_importi_ita "0,00" %}
+                        <div class="span2 box">
+                            <div class="importi">
+                                {{ result.get_riepilogo_importi_ita }} euro
+                            </div>
+                        </div>
+                    {% endifnotequal %}
+                </div>
+            {% endfor %}
+            <div class="row project_row">
+                <div class="span7 spacer">
+                </div>
             </div>
-        {% endfor %}
-    <div class="row project_row">
-        <div class="span7 spacer">
-        </div>
-    </div>
-    {% if n_pages > 1 %}
-        <div class="row" style="margin: 0 auto;">
-            <div class="span7" >
-                {% digg_paginator %}
+            {% if n_pages > 1 %}
+                <div class="row" style="margin: 0 auto;">
+                    <div class="span7" >
+                        {% digg_paginator %}
+                    </div>
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="row project_row">
+                <div class="span7 spacer">
+                </div>
             </div>
-        </div>
-    {% endif %}
+            Non è stato trovato nessun progetto {% if tipologia %}di tipologia <a href="{% url progetti-tipologia tipologia.slug %}" >{{tipologia}}</a>{% endif %}{% if comune %} nel <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %}
+        {% endif %}
     </div>
 
 

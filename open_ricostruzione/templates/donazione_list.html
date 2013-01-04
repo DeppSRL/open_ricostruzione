@@ -18,7 +18,7 @@
     <strong>
         {% if tipologia or comune %}
             Donazioni
-            {% if tipologia %}da {{tipologia.denominazione}}{% endif %}{% if comune %} per il <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
+            {% if tipologia %}da <a href="{% url donazioni-tipologia tipologia.slug %}">{{tipologia.denominazione}}</a>{% endif %}{% if comune %} per il <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
          {% else %}
             Tutte le donazioni
         {% endif %}
@@ -32,7 +32,7 @@
 
 {% block main-search %}
     {% if show_search %}
-        <div class=" span5">
+        <div class="">
             <form method="get" action="/territori/" class="navbar-search form-search pull-left">
                 <section  class="ui-widget">
                     <input type="text"
@@ -48,59 +48,74 @@
 
 
 {% block main-content %}
-
     <div class="container" id="project_list">
-
-        {% for result in donazioni_page %}
+        {% if donazioni_page %}
+            {% for result in donazioni_page %}
+                <div class="row project_row">
+                    <div class="span7 spacer" >
+                    </div>
+                </div>
+                <div class="row project_row">
+                    <div class="span1 ">
+                        <div class="box_data" >
+                            <div class="day">{{ result.day}}</div>
+                            <div class="month">{{ result.month }}</div>
+                            <div class="year">{{ result.year }}</div>
+                        </div>
+                    </div>
+                    <div class="span4 ">
+                        <div class="row">
+                            <div class="span4 titolo">
+                                {{ result.donazione.denominazione|safe }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="span4">
+                                Per il Comune di
+                                <a href="{% url territorio_detail result.donazione.territorio.slug %}" >
+                                    {{ result.donazione.territorio.denominazione }}
+                                    ({{ result.donazione.territorio.get_provincia.sigla_provincia}})
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% ifnotequal result.donazione.get_importo_ita "0,00" %}
+                        <div class="span2 box">
+                            <div class="importi">
+                                {{ result.donazione.get_importo_ita }} euro
+                            </div>
+                        </div>
+                    {% endifnotequal %}
+                </div>
+            {% endfor %}
             <div class="row project_row">
-                <div class="span7 spacer" >
+                <div class="span7 spacer">
                 </div>
             </div>
+            {% if n_pages > 1 %}
+                <div class="row" style="margin: 0 auto;">
+                    <div class="span7" >
+                        {% digg_paginator %}
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
             <div class="row project_row">
-                <div class="span1 ">
-                    <div class="box_data" >
-                        <div class="day">{{ result.day}}</div>
-                        <div class="month">{{ result.month }}</div>
-                        <div class="year">{{ result.year }}</div>
-                    </div>
-                </div>
-                <div class="span4 ">
-                    <div class="row">
-                        <div class="span4 titolo">
-                            {{ result.donazione.denominazione|safe }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="span4">
-                            Per il Comune di
-                            <a href="{% url territorio_detail result.donazione.territorio.slug %}" >
-                                {{ result.donazione.territorio.denominazione }}
-                                ({{ result.donazione.territorio.get_provincia.sigla_provincia}})
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% ifnotequal result.donazione.get_importo_ita "0,00" %}
-                    <div class="span2 box">
-                        <div class="importi">
-                            {{ result.donazione.get_importo_ita }} euro
-                        </div>
-                    </div>
-                {% endifnotequal %}
-            </div>
-        {% endfor %}
-        <div class="row project_row">
-            <div class="span7 spacer">
-            </div>
-        </div>
-        {% if n_pages > 1 %}
-            <div class="row" style="margin: 0 auto;">
-                <div class="span7" >
-                    {% digg_paginator %}
+                <div class="span7 spacer">
                 </div>
             </div>
+            Non è stata trovata nessuna donazione
+            {% if tipologia %}da
+                <a href="{% url donazioni-tipologia tipologia.slug %}">
+                    {{tipologia.denominazione}}
+                </a>
+            {% endif %}
+            {% if comune %} per il
+                <a href="{% url territorio_detail comune.slug %} ">
+                    Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})
+                </a>
+            {% endif %},
         {% endif %}
-
     </div>
 
 {% endblock %}
