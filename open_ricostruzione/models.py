@@ -63,6 +63,7 @@ class Territorio(models.Model):
             return "0,00"
 
 
+
     def get_percentuale_donazioni(self):
 
         danno = self.get_danno()
