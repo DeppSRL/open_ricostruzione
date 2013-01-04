@@ -45,6 +45,7 @@ class HomeView(TemplateView):
         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
+            context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
 
@@ -447,6 +448,7 @@ class DonazioneView(TemplateView):
         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
+            context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         #numero progetti
         context['n_progetti']=  Progetto.objects.filter( id_padre__isnull = True).count()

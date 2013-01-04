@@ -68,6 +68,19 @@
                             </div>
                         {% endifnotequal %}
                     {% endfor %}
+                    <div class="project_row ">
+                        <div class="box">
+                            <div class="n_progetti" >
+                                    <span class="cypher">
+                                        {{ n_donazioni }}
+                                    </span>
+                                <a href="{% url donazioni-completa %} ">
+                                    Donazioni totali
+                                </a>
+                            </div>
+                            <div class="importo">{{ tot_donazioni_ita }} euro</div>
+                        </div>
+                    </div>
                 </div>
             {% endif %}
         </div>
