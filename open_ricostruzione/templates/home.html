@@ -137,7 +137,11 @@
                                 {% ifnotequal p.sum "0,00" %}
                                     <div class="project_row ">
                                         <div class="box">
-                                            <div class="n_progetti">{{ p.c }} <a href="{% url progetti-tipologia p.tipologia__slug %}">{{ p.tipologia__denominazione }}</a></div>
+                                            <div class="n_progetti">
+                                                <span class="cypher">
+                                                    {{ p.c }}
+                                                </span>
+                                                <a href="{% url progetti-tipologia p.tipologia__slug %}">{{ p.tipologia__denominazione }}</a></div>
                                             <div class="importo">{{ p.sum}} euro</div>
                                         </div>
                                         <div class="spacer"></div>
@@ -168,7 +172,10 @@
                                         {% ifnotequal p.sum "0,00" %}
                                             <div class="project_row ">
                                                 <div class="box">
-                                                    <div class="n_progetti">{{ p.c }} da
+                                                    <div class="n_progetti">
+                                                        <span class="cypher">
+                                                            {{ p.c }} da
+                                                        </span>
                                                         {% if p.tipologia__denominazione != tipologia_privati.denominazione %}
                                                             <a href="{% url donazioni-tipologia p.tipologia__slug %}" >
                                                                 {{ p.tipologia__denominazione }}

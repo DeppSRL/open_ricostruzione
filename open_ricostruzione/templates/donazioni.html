@@ -50,7 +50,9 @@
                             <div class="project_row ">
                                 <div class="box">
                                     <div class="n_progetti">
-                                        {{ p.c }} da
+                                        <span class="cypher">
+                                            {{ p.c }} da
+                                        </span>
 
                                         {% if p.tipologia__denominazione != tipologia_privati.denominazione %}
                                             <a href="{% url donazioni-tipologia p.tipologia__slug %} ">
