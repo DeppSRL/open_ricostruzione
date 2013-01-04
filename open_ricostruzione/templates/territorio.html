@@ -121,7 +121,15 @@
                         {% ifnotequal p.sum "0,00" %}
                             <div class="project_row ">
                                 <div class="box">
-                                    <div class="n_progetti">{{ p.c }} da <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %} ">{{ p.tipologia__denominazione }}</a></div>
+                                    <div class="n_progetti">{{ p.c }} da
+                                        {% if p.tipologia__denominazione != tipologia_privati.denominazione %}
+                                            <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %} ">
+                                                {{ p.tipologia__denominazione }}
+                                            </a>
+                                        {% else %}
+                                            {{ p.tipologia__denominazione }}
+                                        {% endif %}
+                                    </div>
                                     <div class="importo">{{ p.sum}} euro</div>
                                 </div>
                                 <div class="spacer"></div>
@@ -150,7 +158,17 @@
 
                                 <div class="span6">
                                     <div class="abstract" style="color:black;">
-                                        Da <strong><a href="{% url donazioni-tipologia-comune p.slug territorio.slug %}">{{ p.tipologia.denominazione }}</a></strong>
+                                        Da
+                                        <strong>
+                                            {% if p.tipologia.denominazione != tipologia_privati.denominazione %}
+                                                <a href="{% url donazioni-tipologia-comune p.slug territorio.slug %}">
+                                                    {{ p.tipologia.denominazione }}
+                                                </a>
+                                            {% else %}
+                                                {{ p.tipologia.denominazione }}
+                                            {% endif %}
+
+                                        </strong>
                                     </div>
                                 </div>
                                 <div class="span4">
