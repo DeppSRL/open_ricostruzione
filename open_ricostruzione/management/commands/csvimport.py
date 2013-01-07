@@ -254,7 +254,15 @@ class Command(BaseCommand):
                 data = datetime.fromtimestamp(float(r['data_inserimento']))
 
             r['importo'] = r['importo'].replace(',','.')
-            tipologia_cedente = TipologiaCedente.objects.get(codice = r['tipologia_c'])
+
+            #se la tipologia e' srl o spa inserisce come tipologia Aziende, viceversa la tipologia riportata
+            aziende=TipologiaCedente.objects.get(denominazione="Aziende")
+
+            if r['tipologia_c'] == 4 or r['tipologia_c'] == 5:
+                tipologia_cedente = aziende
+            else:
+                tipologia_cedente = TipologiaCedente.objects.get(codice = r['tipologia_c'])
+
             donazione, created = Donazione.objects.get_or_create(
                 id_donazione = r['id_flusso'],
 
