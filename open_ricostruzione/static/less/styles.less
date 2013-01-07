@@ -1,10 +1,15 @@
 @import "bootstrap/bootstrap.less";
+@import "styles-responsive.less";
 @import url(http://fonts.googleapis.com/css?family=Abel);
 //Open Ricostruzione custom Css
 
 body{
   font-family: 'Arial', sans-serif;
   background-color: white;
+}
+
+.ui-autocomplete{
+  z-index: 1000!important;
 }
 
 .header{
@@ -107,6 +112,16 @@ div.content{
   min-height: 500px;
 
 
+  #main-search{
+    .search-query{
+      height: 20px;
+      padding-bottom: 5px;
+      padding-left: 5px;
+      border-radius: 0;
+      margin-bottom: @spacing-half;
+    }
+
+  }
   .spacer{
     clear:both;
     margin-top: 7px;
@@ -196,6 +211,17 @@ div.content{
     width: 400px;
     height: 400px;
   }
+
+  #riepilogo-map{
+    color:black;
+    text-align: center;
+    font-family: 'Abel','sans-serif';
+    font-size: @slogan-size;
+    margin-top: @spacing-single;
+    min-height: 450px;
+  }
+
+
   #aggiornamento{
     font-size: 13px;
     color: #7e8080;
@@ -279,6 +305,11 @@ div.content{
   .main-content{
     #project_list{
       .project_row{
+
+        .text{
+          margin-left: 20px;
+        }
+
         .titolo{
           color: @project-name;
           font-weight: bold;
@@ -316,6 +347,14 @@ div.content{
 
   }
   #data-content{
+    .box_data{
+      a{
+        color: black;
+      }
+      a:hover{
+        text-decoration: none;
+      }
+    }
 
     a{
       color: @project-name;
@@ -324,12 +363,15 @@ div.content{
     .news_list{
       padding-top: @spacing-half;
 
+      .text{
+        margin-left: 20px;
+      }
+
       .title{
         a{
           font-size: 20px;
         }
       }
-
     }
     .news-spacer{
       height: @spacing-half;
@@ -370,8 +412,10 @@ div.content{
       padding-left:0;
       padding-right:0;
 
-
       .project_row{
+        .text{
+          margin-left: 5px;
+        }
         .titolo{
           color: @project-name;
           font-weight: bold;
@@ -389,8 +433,11 @@ div.content{
           .n_progetti{
             color:@blue-color;
             float:left;
-          }
 
+            .cypher{
+              color:black;
+            }
+          }
         }
       }
     }
@@ -486,6 +533,7 @@ footer{
   #green-background{
     min-height: 200px;
     background-color: @footer-green;
+    margin-top: @spacing-half;
 
     li{
       list-style: square;

@@ -1,22 +1,33 @@
 {% extends "base.html" %}
 {% load humanize %}
-{% block title %}Donazioni{% endblock %}
+{% block title %}Donazioni - Riepilogo{% endblock %}
 
-{% block page-title %}Donazioni{% endblock %}
 {% block stima-danno-number %}{{ stima_danno|onlynumber }}{% endblock %}
 {% block stima-danno-word %}{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %} di{% endif %}{% endblock %}
 {% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
 {% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}
 {% block main-title %}<p style="color:#a1ba03; text-transform: uppercase;" >Donazioni</P>{% endblock %}
+{% block main-subtitle %}Sottotitolo alla pagina Donazioni riepilogo{% endblock %}
 
 {% block data-content %}
-
-
     <div class="row" style="margin-top:25px;">
-        <div class="span12">
-            <img src="../static/img/home_map.jpg" />
+        <div class="span12" id="riepilogo-map">
         </div>
     </div>
+    <div class="row" style="margin-top:12px;">
+        <div class="span3" >
+            <img src="{{ STATIC_URL }}img/box_legenda_danno.png">
+            Stima del danno
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:12px;">
+        <div class="span3" >
+            <img src="{{ STATIC_URL }}img/box_legenda_donazioni.png">
+            Donazioni ricevute
+        </div>
+    </div>
+
 
     <div class="row">
         <div class="span12">
@@ -39,8 +50,17 @@
                             <div class="project_row ">
                                 <div class="box">
                                     <div class="n_progetti">
-                                        {{ p.c }} da
-                                        <a href="{% url donazioni-tipologia p.tipologia__slug %} ">{{ p.tipologia__denominazione }}</a>
+                                        <span class="cypher">
+                                            {{ p.c }} da
+                                        </span>
+
+                                        {% if p.tipologia__denominazione != tipologia_privati.denominazione %}
+                                            <a href="{% url donazioni-tipologia p.tipologia__slug %} ">
+                                                {{ p.tipologia__denominazione }}
+                                            </a>
+                                        {% else %}
+                                            {{ p.tipologia__denominazione }}
+                                        {% endif %}
                                     </div>
                                     <div class="importo">{{ p.sum}} euro</div>
                                 </div>
@@ -48,6 +68,19 @@
                             </div>
                         {% endifnotequal %}
                     {% endfor %}
+                    <div class="project_row ">
+                        <div class="box">
+                            <div class="n_progetti" >
+                                    <span class="cypher">
+                                        {{ n_donazioni }}
+                                    </span>
+                                <a href="{% url donazioni-completa %} ">
+                                    Donazioni totali
+                                </a>
+                            </div>
+                            <div class="importo">{{ tot_donazioni_ita }} euro</div>
+                        </div>
+                    </div>
                 </div>
             {% endif %}
         </div>
@@ -62,7 +95,6 @@
 
                             <div class="row-fluid project_row ">
                                 <div class="span2 box">
-                                    {#                                    <div class="n_progetti">#}
                                     <div class="box_data" >
                                         <div class="day">{{ p.day}}</div>
                                         <div class="month">{{ p.month }}</div>
@@ -70,9 +102,18 @@
                                     </div>
                                 </div>
 
-                                <div class="span6">
+                                <div class="span6 text">
                                     <div class="abstract" style="color:black;">
-                                        Da <strong><a href="{% url donazioni-tipologia p.tipologia.slug %}">{{ p.tipologia.denominazione }}</a></strong>
+                                        Da
+                                        <strong>
+                                            {% if p.tipologia.denominazione != tipologia_privati.denominazione%}
+                                                <a href="{% url donazioni-tipologia p.tipologia.slug %}">
+                                                    {{ p.tipologia.denominazione }}
+                                                </a>
+                                            {% else %}
+                                                {{ p.tipologia.denominazione }}
+                                            {% endif %}
+                                        </strong>
                                     </div>
                                 </div>
                                 <div class="span4">
@@ -93,6 +134,86 @@
 
 
 {% endblock %}
+
+
+{% block map-data %}
+    {% if territori %}
+        <script>
+
+            var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
+                    cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+                    cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
+
+            //set map bounds
+            var southWest = new L.LatLng({{ map_minlat|stringformat:"f" }}, {{ map_minlon|stringformat:"f" }}),
+                    northEast = new L.LatLng({{ map_maxlat|stringformat:"f" }}, {{ map_maxlon|stringformat:"f" }}),
+                    bounds = new L.LatLngBounds(southWest, northEast);
+
+            var map = new L.Map('riepilogo-map', {
+                minZoom: 8,
+                maxZoom: 15,
+                maxBounds: bounds,
+                scrollWheelZoom: false
+            });
+            map.setView(new L.LatLng({{ map_center_lat|stringformat:"f" }}, {{ map_center_lon|stringformat:"f" }}), 10).addLayer(cloudmade);
+
+            {% for t in territori %}
+                {% if t.get_angolo_donazioni %}
+
+                    /*Comune di {{ t.denominazione }} */
+
+    {#                disegna il semicerchio verde, le donazioni#}
+
+                    L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}], {{ t.get_marker_size|floatformat:"0" }},
+                            {
+                                fill: true,
+                                fillColor:'#a1ba03',
+                                fillOpacity: 0.5,
+                                color: '#a1ba03',
+                                opacity: 0.5,
+                                startAngle: 0,
+                                stopAngle:{{ t.get_angolo_donazioni|stringformat:"f" }}
+                            }
+                    ).bindLabel('Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})', { noHide: true })
+                            .addTo(map)
+                            .bindPopup('<a href="{% url territorio_detail t.slug %}">' +
+                                "Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR>"+
+                                "<strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR>"+
+                                "<strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro<BR>"+
+                                "<strong>Percentuale donazioni ricevute:</strong> {{ t.get_percentuale_donazioni|floatformat:"2" }}%");
+
+
+
+                    {% if t.get_angolo_donazioni < 359 %}
+                        {#                disegna il semicerchio blu, il danno #}
+
+                        L.circle([{{ t.gps_lat|stringformat:"f" }}, {{ t.gps_lon|stringformat:"f" }}],{{ t.get_marker_size|floatformat:"0" }},
+                                {
+                                    fill: true,
+                                    fillColor:'#18a3c9',
+                                    fillOpacity: 0.5,
+                                    color: '#18a3c9',
+                                    opacity: 0.5,
+                                    startAngle: {{ t.get_angolo_donazioni|stringformat:"f" }},
+                                    stopAngle: 360
+                                }
+                        ).bindLabel('Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})', { noHide: true })
+                            .addTo(map)
+                                .bindPopup('<a href="{% url territorio_detail t.slug %}">' +
+                                "Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR>"+
+                                "<strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR>"+
+                                "<strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro<BR>"+
+                                "<strong>Percentuale donazioni ricevute:</strong> {{ t.get_percentuale_donazioni|floatformat:"2" }}%");
+
+
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+        </script>
+    {% endif %}
+{% endblock %}
+
 
 
 {% block graph-data %}
@@ -187,7 +308,7 @@
                         }
                     },
                     title: {
-                        text: 'Donazioni ricevute per tipologia'
+                        text: ''
                     },
                     plotOptions: {
                         pie: {

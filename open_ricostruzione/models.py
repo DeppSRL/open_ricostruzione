@@ -4,10 +4,11 @@ from django.db import connections
 from datetime import datetime
 import time
 from open_ricostruzione.utils.moneydate import moneyfmt,add_months
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Count
 from datetime import timedelta
 from django.template.defaultfilters import slugify
 from django.template.defaultfilters import date as _date
+from django.conf import settings
 
 
 class UltimoAggiornamento(models.Model):
@@ -30,12 +31,72 @@ class Territorio(models.Model):
     sigla_provincia = models.CharField(max_length=3, null=True, blank=True)
     gps_lat = models.FloatField(null=True, blank=True)
     gps_lon = models.FloatField(null=True, blank=True)
+    marker_max_size= 8000
+    marker_min_size= 1000
 
     def __unicode__(self):
         return u"%s (%s)" % (self.denominazione, self.cod_comune)
 
     class Meta:
         verbose_name_plural = u'Territori'
+
+    def get_danno(self):
+        return Progetto.objects.filter(territorio=self, id_padre__isnull = True).\
+               aggregate(s=Sum('riepilogo_importi')).values()[0]
+
+    def get_donazioni(self):
+        return Donazione.objects.filter(territorio=self, confermato = True).aggregate(s=Sum('importo')).values()[0]
+
+
+    #    ritorna l'importo del danno in formato italiano
+    def get_danno_ita(self):
+        if self.get_danno():
+            return moneyfmt(self.get_danno(),2,"",".",",")
+        else:
+            return "0,00"
+
+    #    ritorna l'importo delle donazioni in formato italiano
+    def get_donazioni_ita(self):
+        if self.get_donazioni():
+            return moneyfmt(self.get_donazioni(),2,"",".",",")
+        else:
+            return "0,00"
+
+
+
+    def get_percentuale_donazioni(self):
+
+        danno = self.get_danno()
+        donazioni =  self.get_donazioni()
+        if danno:
+            if donazioni:
+                return (100 * donazioni)/danno
+            else:
+                return 0
+        else:
+            return None
+
+    def get_angolo_donazioni(self):
+
+        perc =  self.get_percentuale_donazioni()
+        if perc:
+            return (perc*360)/100
+        else:
+            return None
+
+    def get_marker_size(self):
+
+        biggest_damage=Territorio.objects.\
+                       filter(cod_comune__in=Territorio.get_territori_attivi()).\
+                        annotate(s=Sum('progetto__riepilogo_importi')).order_by('-s').\
+                        values_list('s',flat=True)[0]
+        danno=self.get_danno()
+        if danno and biggest_damage:
+            return self.marker_min_size+((danno/biggest_damage)*self.marker_max_size)*Decimal(0.45)
+        else:
+            return 0
+
+
 
     def get_comuni_with_progetti(self):
         return Territorio.objects.filter(tipo_territorio="C", cod_provincia = self.cod_provincia).\
@@ -48,6 +109,8 @@ class Territorio(models.Model):
         else:
             return None
 
+
+
     def get_spline_data(self):
 
         #tutte le donazioni nel tempo per il comune self
@@ -56,7 +119,7 @@ class Territorio(models.Model):
 
         donazioni_mese = Donazione.objects.filter(territorio = self).\
             extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
-            values('date').annotate(sum = Sum('importo'))
+            values('date').annotate(sum = Sum('importo')).order_by('date')
 
         donazioni_spline =[]
         j = 0
@@ -109,11 +172,69 @@ class Territorio(models.Model):
                 })
                 j += 1
 
-            for d in donazioni_spline:
-                d['sum']=moneyfmt(Decimal(d['sum']),2,"","",".")
-                d['sum_ita']=moneyfmt(Decimal(d['sum']),2,"",".",",")
+
+        for d in donazioni_spline:
+            d['sum']=moneyfmt(Decimal(d['sum']),2,"","",".")
+            d['sum_ita']=moneyfmt(Decimal(d['sum']),2,"",".",",")
 
         return donazioni_spline
+
+#    get_territori_attivi restituisce la lista dei codici comune dei territori in cui abbiamo almeno un progetto attivo
+    @classmethod
+    def get_territori_attivi(cls):
+        return Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+            annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',flat=True)
+
+
+    @classmethod
+    def get_boundingbox_minlat(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('gps_lat').values_list('gps_lat',flat=True)[0]
+    @classmethod
+    def get_boundingbox_maxlat(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('-gps_lat').values_list('gps_lat',flat=True)[0]
+
+    @classmethod
+    def get_boundingbox_minlon(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('gps_lon').values_list('gps_lon',flat=True)[0]
+    @classmethod
+    def get_boundingbox_maxlon(cls):
+        return Territorio.objects.\
+               filter(gps_lat__gt=0).order_by('-gps_lon').values_list('gps_lon',flat=True)[0]
+
+
+
+
+    @classmethod
+    def get_map_center_lat(cls):
+        lat_max=Territorio.objects.\
+            filter(cod_comune__in=Territorio.get_territori_attivi()).\
+            filter(gps_lat__gt=0).order_by('-gps_lat').values_list('gps_lat',flat=True)[0]
+
+        lat_min=Territorio.objects.\
+                filter(cod_comune__in=Territorio.get_territori_attivi()).\
+                filter(gps_lat__gt=0).order_by('gps_lat').values_list('gps_lat',flat=True)[0]
+        if lat_max and lat_min:
+            return lat_min+(lat_max-lat_min)/2
+        else:
+            return None
+
+    @classmethod
+    def get_map_center_lon(cls):
+        lon_max=Territorio.objects.\
+            filter(cod_comune__in=Territorio.get_territori_attivi()).\
+            filter(gps_lon__gt=0).order_by('-gps_lon').values_list('gps_lon',flat=True)[0]
+        lon_min=Territorio.objects.\
+            filter(cod_comune__in=Territorio.get_territori_attivi()).\
+            filter(gps_lon__gt=0).order_by('gps_lon').values_list('gps_lon',flat=True)[0]
+        if lon_max and lon_min:
+            return lon_min+(lon_max-lon_min)/2
+        else:
+            return None
+
+
 
 class TipologiaProgetto(models.Model):
     codice = models.SmallIntegerField(null=True, blank=True)

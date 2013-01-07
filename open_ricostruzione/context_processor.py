@@ -12,6 +12,7 @@ def main_settings(request):
 
     return {
         "DEBUG": settings.DEBUG,
+        "TEMPLATE_DEBUG": settings.TEMPLATE_DEBUG,
         "tipologie_progetti": TipologiaProgetto.objects.\
             filter(progetto__id_padre__isnull=True).\
             annotate(c=Count('progetto')).values("denominazione","slug","c").\
@@ -21,4 +22,5 @@ def main_settings(request):
             filter(donazione__confermato=True).\
             annotate(c=Count('donazione')).values("denominazione","slug","c").filter(c__gt=0).order_by("denominazione"),
         "territori": territori,
+        "tipologia_privati":TipologiaCedente.objects.get(codice='1'),
         }

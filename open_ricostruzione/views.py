@@ -45,6 +45,7 @@ class HomeView(TemplateView):
         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
+            context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
 
@@ -221,6 +222,16 @@ class HomeView(TemplateView):
         donazioni_sms= moneyfmt(donazioni_sms,2,"",".",",")
         context['donazioni_sms']=donazioni_sms
 
+#       set map center
+        context['map_center_lat']= Territorio.get_map_center_lat()
+        context['map_center_lon']= Territorio.get_map_center_lon()
+
+#        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+
         return context
 
 
@@ -258,6 +269,11 @@ class ProgettoView(DetailView):
         if iban:
             context['iban'] = iban
 
+#        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
         return context
 
 
@@ -277,10 +293,21 @@ class ProgettoListView(ListView):
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
             return Progetto.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
-
         else:
            return  Progetto.objects.all()[0:50]
 
+
+class TerritorioListView(ListView):
+    model = Territorio
+
+    def get_queryset(self):
+        territori = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+            annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',flat=True)
+        if 'qterm' in self.request.GET:
+            qterm = self.request.GET['qterm']
+            return Territorio.objects.filter(denominazione__icontains=qterm,cod_comune__in=territori)[0:50]
+        else:
+            return  None
 
 
 class TerritorioView(DetailView):
@@ -398,12 +425,11 @@ class TerritorioView(DetailView):
 
         context['donazioni_last'] = donazioni_last
 
-# coordinate del comune
-
-        if t.gps_lat:
-            context['gps_lat']=t.gps_lat
-        if t.gps_lon:
-            context['gps_lon']=t.gps_lon
+        #        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
 
         return context
 
@@ -422,6 +448,7 @@ class DonazioneView(TemplateView):
         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
+            context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         #numero progetti
         context['n_progetti']=  Progetto.objects.filter( id_padre__isnull = True).count()
@@ -438,6 +465,7 @@ class DonazioneView(TemplateView):
 
         donazioni_mese = Donazione.objects.filter(confermato = True).\
                         extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
+                        order_by('date').\
                         values('date').annotate(sum = Sum('importo'))
 
         donazioni_spline =[]
@@ -530,6 +558,16 @@ class DonazioneView(TemplateView):
 
         context['donazioni_last'] = donazioni_last
 
+        #       set map center
+        context['map_center_lat']= Territorio.get_map_center_lat()
+        context['map_center_lon']= Territorio.get_map_center_lon()
+
+        #        set map bounds
+        context['map_minlat']=Territorio.get_boundingbox_minlat()
+        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        context['map_minlon']=Territorio.get_boundingbox_minlon()
+        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+
         return context
 
 class EntryView(DetailView):
@@ -553,6 +591,7 @@ class TipologieCedenteView(TemplateView):
     donazioni = None
     page = 1
     donazioni_pagina = 50 # numero di elementi per pagina
+
 
     def get_context_data(self, **kwargs):
 
@@ -611,6 +650,10 @@ class DonazioniCompleta(TipologieCedenteView):
         self.donazioni= Donazione.objects.filter(confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniCompleta, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = True
+        self.context['search_result_link'] = "donazioni-comune/"
+
         return self.context
 
 class DonazioniTipologiaComune(TipologieCedenteView):
@@ -622,6 +665,10 @@ class DonazioniTipologiaComune(TipologieCedenteView):
         self.donazioni= Donazione.objects.filter(territorio=self.comune, tipologia=self.tipologia,confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniTipologiaComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 
@@ -634,6 +681,10 @@ class DonazioniTipologia(TipologieCedenteView):
         self.page = self.request.GET.get('page')
 
         self.context = super(DonazioniTipologia, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = True
+        self.context['search_result_link'] = "donazioni/" + self.tipologia.slug + "/"
+
         return self.context
 
 class DonazioniComune(TipologieCedenteView):
@@ -643,7 +694,11 @@ class DonazioniComune(TipologieCedenteView):
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.donazioni= Donazione.objects.filter(territorio=self.comune,confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
-        self.context = super(ProgettiComune, self).get_context_data(**kwargs)
+        self.context = super(DonazioniComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 
@@ -703,6 +758,10 @@ class ProgettiTipologiaComune(TipologieProgettoView):
         self.progetti= Progetto.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiTipologiaComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 
@@ -715,6 +774,10 @@ class ProgettiTipologia(TipologieProgettoView):
         self.page = self.request.GET.get('page')
 
         self.context = super(ProgettiTipologia, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = True
+        self.context['search_result_link'] = "progetti/" + self.tipologia.slug + "/"
+
         return self.context
 
 class ProgettiComune(TipologieProgettoView):
@@ -725,6 +788,10 @@ class ProgettiComune(TipologieProgettoView):
         self.progetti= Progetto.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
+
+        self.context['show_search'] = False
+        self.context['search_result_link'] = ""
+
         return self.context
 
 
@@ -762,4 +829,9 @@ class ProgettiJSONListView(JSONResponseMixin, ProgettoListView):
     def convert_context_to_json(self, context):
         return dumps(context['progetto_list'])
 
+
+
+class TerritoriJSONListView(JSONResponseMixin, TerritorioListView):
+    def convert_context_to_json(self, context):
+        return dumps(context['territorio_list'])
 

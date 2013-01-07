@@ -94,7 +94,11 @@
 
                         <div class="project_row ">
                             <div class="box">
-                                <div class="n_progetti">{{ p.c }} <a href="{% url progetti-tipologia-comune p.tipologia__slug territorio.slug %}">{{ p.tipologia__denominazione }}</a></div>
+                                <div class="n_progetti">
+                                    <span class="cypher">
+                                        {{ p.c }}
+                                    </span>
+                                    <a href="{% url progetti-tipologia-comune p.tipologia__slug territorio.slug %}">{{ p.tipologia__denominazione }}</a></div>
 
                                 <div class="importo">
                                     {% ifnotequal p.sum "0,00" %}
@@ -117,17 +121,46 @@
                     <div id="don_pie"></div>
                 {% endif %}
                 <div class="project_list">
-                    {% for p in donazioni_categorie_list %}
-                        {% ifnotequal p.sum "0,00" %}
-                            <div class="project_row ">
-                                <div class="box">
-                                    <div class="n_progetti">{{ p.c }} da <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %} ">{{ p.tipologia__denominazione }}</a></div>
-                                    <div class="importo">{{ p.sum}} euro</div>
+                    {% if donazioni_categorie_list %}
+                        {% for p in donazioni_categorie_list %}
+                            {% ifnotequal p.sum "0,00" %}
+                                <div class="project_row ">
+                                    <div class="box">
+                                        <div class="n_progetti">
+                                            <span class="cypher">
+                                                {{ p.c }}
+
+                                                da
+                                            </span>
+                                            {% if p.tipologia__denominazione != tipologia_privati.denominazione %}
+                                                <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %} ">
+                                                    {{ p.tipologia__denominazione }}
+                                                </a>
+                                            {% else %}
+                                                {{ p.tipologia__denominazione }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="importo">{{ p.sum}} euro</div>
+                                    </div>
+                                    <div class="spacer"></div>
                                 </div>
-                                <div class="spacer"></div>
+                            {% endifnotequal %}
+                        {% endfor %}
+                        <div class="project_row ">
+                            <div class="box">
+                                <div class="n_progetti">
+                                    <span class="cypher">
+                                        {{ n_donazioni }}
+                                    </span>
+                                    <a href="{% url donazioni-comune territorio.slug %} ">
+                                         Donazioni totali
+                                    </a>
+                                </div>
+                                <div class="importo">{{ territorio.get_donazioni_ita}} euro</div>
                             </div>
-                        {% endifnotequal %}
-                    {% endfor %}
+                        </div>
+
+                    {% endif %}
                 </div>
             {% endif %}
             {% if donazioni_last %}
@@ -148,9 +181,19 @@
                                         </div>
                                 </div>
 
-                                <div class="span6">
+                                <div class="span6 text">
                                     <div class="abstract" style="color:black;">
-                                        Da <strong><a href="{% url donazioni-tipologia-comune p.slug territorio.slug %}">{{ p.tipologia.denominazione }}</a></strong>
+                                        Da
+                                        <strong>
+                                            {% if p.tipologia.denominazione != tipologia_privati.denominazione %}
+                                                <a href="{% url donazioni-tipologia-comune p.slug territorio.slug %}">
+                                                    {{ p.tipologia.denominazione }}
+                                                </a>
+                                            {% else %}
+                                                {{ p.tipologia.denominazione }}
+                                            {% endif %}
+
+                                        </strong>
                                     </div>
                                 </div>
                                 <div class="span4">
@@ -172,16 +215,27 @@
 {% endblock %}
 
 {% block map-data %}
-    {% if gps_lat and gps_lon %}
+    {% if territorio.gps_lat and territorio.gps_lon %}
         <script>
             var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
                     cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
                     cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
 
-            var map = new L.Map('map');
-            map.setView(new L.LatLng({{ gps_lat|stringformat:"f" }}, {{ gps_lon|stringformat:"f" }}), 13).addLayer(cloudmade);
 
-            L.marker([{{ gps_lat|stringformat:"f" }}, {{ gps_lon|stringformat:"f" }}]).addTo(map)
+            //set map bounds
+            var southWest = new L.LatLng({{ map_minlat|stringformat:"f" }}, {{ map_minlon|stringformat:"f" }}),
+                    northEast = new L.LatLng({{ map_maxlat|stringformat:"f" }}, {{ map_maxlon|stringformat:"f" }}),
+                    bounds = new L.LatLngBounds(southWest, northEast);
+
+            var map = new L.Map('map', {
+                minZoom: 8,
+                maxZoom: 15,
+                maxBounds: bounds,
+                scrollWheelZoom: false
+            });
+            map.setView(new L.LatLng({{ territorio.gps_lat|stringformat:"f" }}, {{ territorio.gps_lon|stringformat:"f" }}), 13).addLayer(cloudmade);
+
+            L.marker([{{ territorio.gps_lat|stringformat:"f" }}, {{ territorio.gps_lon|stringformat:"f" }}]).addTo(map)
                     .bindPopup('Comune di <strong>{{ territorio.denominazione }} ({{ sigla_provincia }})</strong>').openPopup();
 
         </script>
