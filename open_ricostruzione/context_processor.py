@@ -12,6 +12,7 @@ def main_settings(request):
 
     return {
         "DEBUG": settings.DEBUG,
+        "TEMPLATE_DEBUG": settings.TEMPLATE_DEBUG,
         "tipologie_progetti": TipologiaProgetto.objects.\
             filter(progetto__id_padre__isnull=True).\
             annotate(c=Count('progetto')).values("denominazione","slug","c").\

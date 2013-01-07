@@ -1,10 +1,15 @@
 @import "bootstrap/bootstrap.less";
+@import "styles-responsive.less";
 @import url(http://fonts.googleapis.com/css?family=Abel);
 //Open Ricostruzione custom Css
 
 body{
   font-family: 'Arial', sans-serif;
   background-color: white;
+}
+
+.ui-autocomplete{
+  z-index: 1000!important;
 }
 
 .header{
@@ -300,6 +305,11 @@ div.content{
   .main-content{
     #project_list{
       .project_row{
+
+        .text{
+          margin-left: 20px;
+        }
+
         .titolo{
           color: @project-name;
           font-weight: bold;
@@ -353,12 +363,15 @@ div.content{
     .news_list{
       padding-top: @spacing-half;
 
+      .text{
+        margin-left: 20px;
+      }
+
       .title{
         a{
           font-size: 20px;
         }
       }
-
     }
     .news-spacer{
       height: @spacing-half;
@@ -399,8 +412,10 @@ div.content{
       padding-left:0;
       padding-right:0;
 
-
       .project_row{
+        .text{
+          margin-left: 5px;
+        }
         .titolo{
           color: @project-name;
           font-weight: bold;
@@ -423,7 +438,6 @@ div.content{
               color:black;
             }
           }
-
         }
       }
     }
