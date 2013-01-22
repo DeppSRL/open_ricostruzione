@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="span12 titolo "> Come procede</div>
-            <div class="span12 subtitle">Gli ultimi post dal blog di Open Ricostruzione</div>
+            <div class="span12 subtitle">Ultime notizie su Open Ricostruzione</div>
         </div>
         <div class="row">
             <div class="span12 news-spacer"></div>
@@ -181,7 +181,9 @@
                                                                 {{ p.tipologia__denominazione }}
                                                             </a>
                                                         {% else %}
-                                                            {{ p.tipologia__denominazione }}
+                                                            <span style="color:black;">
+                                                                {{ p.tipologia__denominazione }}
+                                                            </span>
                                                         {% endif %}
                                                     </div>
                                                     <div class="importo">{{ p.sum}} euro</div>
@@ -209,12 +211,12 @@
                 {% endif %}
 
                 <div id="don_last" class="evidenza" style="border:0;">
-                    <div class="titolo">Donazioni d'iniziative speciali e SMS</div>
+                    <div class="titolo">Donazioni da iniziative speciali e SMS</div>
                     <div class="subtitle">I contributi dei cittadini inviati con SMS e gli incassi del concerto Campovolo</div>
                     <div class="project_list">
                         <div class="project_row ">
                             <div class="box">
-                                <div class="n_progetti">
+                                <div class="n_progetti" style="color: black;">
                                     Concerto Campovolo
                                 </div>
                                 <div class="importo">
@@ -229,7 +231,7 @@
 
                         <div class="project_row ">
                             <div class="box">
-                                <div class="n_progetti">
+                                <div class="n_progetti" style="color: black;">
                                     Ricevute tramite SMS
                                 </div>
                                 <div class="importo">

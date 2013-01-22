@@ -92,7 +92,7 @@ class Territorio(models.Model):
                         values_list('s',flat=True)[0]
         danno=self.get_danno()
         if danno and biggest_damage:
-            return self.marker_min_size+((danno/biggest_damage)*self.marker_max_size)*Decimal(0.45)
+            return self.marker_min_size+((danno/biggest_damage)*self.marker_max_size)*Decimal('0.45')
         else:
             return 0
 

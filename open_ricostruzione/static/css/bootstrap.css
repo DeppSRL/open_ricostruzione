@@ -8944,6 +8944,10 @@ body {
   font-size: 15px;
 }
 
+#top_navbar .navbar-custom .dropdown-menu {
+  z-index: 2000!important;
+}
+
 #top_navbar .navbar-custom .navbar-inner-custom {
   padding: 0;
   background-color: #7b7979;
