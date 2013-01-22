@@ -8900,6 +8900,20 @@ body {
   z-index: 1000!important;
 }
 
+input::-webkit-input-placeholder {
+  color: #555;
+}
+
+input:-moz-placeholder {
+  color: #555;
+}
+
+input[placeholder],
+[placeholder],
+*[placeholder] {
+  color: #555;
+}
+
 .header #logo_header #logo_top {
   padding-top: 50px;
   padding-bottom: 50px;
@@ -8939,6 +8953,7 @@ body {
 
 .header #logo_header #appello .iban .title {
   padding-top: 5px;
+  font-family: 'Arial', 'sans-serif';
   font-size: 12px;
   text-transform: uppercase;
 }
