@@ -63,7 +63,7 @@
             {% if iban %}
                 <div class="span4" id="appello">
                         {% block support %}
-                            Aiutaci a ricostruire!<br/>
+                            AIUTACI A RICOSTRUIRE!<br/>
                             <div class="iban">
                                 <div class="title">Codice Iban</div>
                                 <div class="number">&nbsp;</div>
@@ -74,7 +74,24 @@
                             </div>
                         {% endblock %}
                 </div><!--/span-->
+            {% else %}
+                <div class="span4 {% block show-appello-home %}hidden{% endblock %}" id="appello">
+                        <p class="title">AIUTACI A RICOSTRUIRE!</p>
+                        <p>Scegli un comune, analizza lo stato delle cose, aiutaci a costruire</p>
+                        <select >
+                            <option>Scegli il Comune</option>
+                            {% for c in territori_alfabetico %}
+                                <option value="{% url territorio_detail c.slug %}">
+                                    {{ c.denominazione }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                </div><!--/span-->
             {% endif %}
+
+
         </div>
     </div>
 </div>
@@ -143,11 +160,11 @@
                 </nav>
              </div> <!--/navbar-span -->
         <div class=" span5">
+
+{#            disable the form submit when pressing enter #}
             <script type='text/javascript'>
                 var oktosubmit = false;
             </script>
-
-
             <form method="get" action="" class="navbar-search form-search pull-left" onsubmit="return oktosubmit;">
                 <section  class="ui-widget">
                     <input type="text"
@@ -431,6 +448,12 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+        $('select').change(function(){
+            var url = $(this).val();
+            window.location = url;
+        });
+
         $('#progetto-search').focus(function(){
             if ($(this)._cleared) return;
             $(this).val('');

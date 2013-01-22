@@ -10,6 +10,9 @@ def main_settings(request):
     territori = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
                     annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia")
 
+    territori_alfabetico = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+        annotate(c = Count("progetto")).filter(c__gt=0).order_by("denominazione")
+
     return {
         "DEBUG": settings.DEBUG,
         "TEMPLATE_DEBUG": settings.TEMPLATE_DEBUG,
@@ -22,5 +25,6 @@ def main_settings(request):
             filter(donazione__confermato=True).\
             annotate(c=Count('donazione')).values("denominazione","slug","c").filter(c__gt=0).order_by("denominazione"),
         "territori": territori,
+        "territori_alfabetico": territori_alfabetico,
         "tipologia_privati":TipologiaCedente.objects.get(codice='1'),
         }
