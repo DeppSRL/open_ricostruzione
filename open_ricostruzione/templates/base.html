@@ -77,9 +77,9 @@
             {% else %}
                 <div class="span4 {% block show-appello-home %}hidden{% endblock %}" id="appello">
                         <p class="title">AIUTACI A RICOSTRUIRE!</p>
-                        <p>Scegli un comune, analizza lo stato delle cose, aiutaci a costruire</p>
+                        <p>Scegli un comune, analizza lo stato dei lavori, aiutaci a ricostruire</p>
                         <select >
-                            <option>Scegli il Comune</option>
+                            <option value="">Scegli il Comune</option>
                             {% for c in territori_alfabetico %}
                                 <option value="{% url territorio_detail c.slug %}">
                                     {{ c.denominazione }}
@@ -451,7 +451,8 @@
 
         $('select').change(function(){
             var url = $(this).val();
-            window.location = url;
+            if(url)
+                window.location = url;
         });
 
         $('#progetto-search').focus(function(){
