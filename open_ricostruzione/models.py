@@ -377,9 +377,3 @@ class Blog(object):
             return entries[0] if entries else None
 
         return entries
-
-class StaticPage(Entry):
-    class Meta():
-        ordering= ['title']
-        verbose_name= 'pagina statica'
-        verbose_name_plural= 'pagine statiche'

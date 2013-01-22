@@ -32,9 +32,6 @@ class EntryAdmin(admin.ModelAdmin):
 class UltimoAggiornamentoAdmin(admin.ModelAdmin):
     model=UltimoAggiornamento
 
-class StaticPageAdmin(admin.ModelAdmin):
-    model=StaticPage
-
 
 admin.site.register(Progetto, ProgettoAdmin)
 admin.site.register(Territorio, TerritorioAdmin)
@@ -42,5 +39,4 @@ admin.site.register(TipologiaProgetto, TipologiaProgettoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)
 admin.site.register(TipologiaCedente, TipologiaCedenteAdmin)
 admin.site.register(Entry, EntryAdmin)
-admin.site.register(StaticPage, StaticPageAdmin)
 admin.site.register(UltimoAggiornamento, UltimoAggiornamentoAdmin)
