@@ -21,7 +21,7 @@ def main_settings(request):
             annotate(c=Count('progetto')).values("denominazione","slug","c").\
             filter(c__gt=0).order_by("denominazione"),
         "tipologie_donazioni": TipologiaCedente.objects.\
-            exclude(denominazione__iexact="Privati Cittadini").\
+            exclude(denominazione__iexact="Privati Cittadini").exclude(denominazione__iexact="Altro").\
             filter(donazione__confermato=True).\
             annotate(c=Count('donazione')).values("denominazione","slug","c").filter(c__gt=0).order_by("denominazione"),
         "territori": territori,
@@ -29,4 +29,5 @@ def main_settings(request):
         "territori_alfabetico": territori_alfabetico,
         "tipologia_privati":TipologiaCedente.objects.get(codice='1'),
         "tipologia_regione_emilia":TipologiaCedente.objects.get(codice='7'),
+        "tipologia_altro":TipologiaCedente.objects.get(codice='6'),
         }

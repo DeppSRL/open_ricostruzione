@@ -54,7 +54,7 @@
                                             {{ p.c }} da
                                         </span>
 
-                                        {% if p.tipologia__denominazione != tipologia_privati.denominazione %}
+                                        {% if p.tipologia__denominazione != tipologia_privati.denominazione and  p.tipologia__denominazione != tipologia_altro.denominazione %}
                                             <a href="{% url donazioni-tipologia p.tipologia__slug %} ">
                                                 {{ p.tipologia__denominazione }}
                                             </a>
@@ -62,7 +62,7 @@
                                                 <span style="color:black">(compresi SMS)</span>
                                             {% endif %}
                                         {% else %}
-                                            {{ p.tipologia__denominazione }}
+                                            <span style="color:#000000;"> {{ p.tipologia__denominazione }}</span>
                                         {% endif %}
                                     </div>
                                     <div class="importo">{{ p.sum}} euro</div>
@@ -109,7 +109,7 @@
                                     <div class="abstract" style="color:black;">
                                         Da
                                         <strong>
-                                            {% if p.tipologia.denominazione != tipologia_privati.denominazione%}
+                                            {% if p.tipologia.denominazione != tipologia_privati.denominazione and  p.tipologia.denominazione != tipologia_altro.denominazione %}
                                                 <a href="{% url donazioni-tipologia p.tipologia.slug %}">
                                                     {{ p.tipologia.denominazione }}
                                                 </a>

@@ -665,7 +665,15 @@ class DonazioniCompleta(TipologieCedenteView):
 
     def get_context_data(self, **kwargs):
 
-        self.donazioni= Donazione.objects.filter(confermato=True).order_by('denominazione')
+        privati = TipologiaCedente.objects.get(denominazione="Privati cittadini")
+        altro = TipologiaCedente.objects.get(denominazione="Altro")
+
+        self.donazioni= Donazione.objects.\
+            exclude(tipologia=privati).\
+            exclude(tipologia=altro).\
+            filter(confermato=True).\
+            order_by('denominazione')
+
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniCompleta, self).get_context_data(**kwargs)
 
@@ -710,7 +718,15 @@ class DonazioniComune(TipologieCedenteView):
     def get_context_data(self, **kwargs):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
-        self.donazioni= Donazione.objects.filter(territorio=self.comune,confermato=True).order_by('denominazione')
+
+        privati = TipologiaCedente.objects.get(denominazione="Privati cittadini")
+        altro = TipologiaCedente.objects.get(denominazione="Altro")
+
+        self.donazioni= Donazione.objects.\
+            exclude(tipologia=privati).\
+            exclude(tipologia=altro).\
+            filter(territorio=self.comune,confermato=True).\
+            order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniComune, self).get_context_data(**kwargs)
 

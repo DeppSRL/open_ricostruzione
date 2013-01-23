@@ -176,7 +176,7 @@
                                                         <span class="cypher">
                                                             {{ p.c }} da
                                                         </span>
-                                                        {% if p.tipologia__denominazione != tipologia_privati.denominazione %}
+                                                        {% if p.tipologia__denominazione != tipologia_privati.denominazione and  p.tipologia__denominazione != tipologia_altro.denominazione %}
                                                             <a href="{% url donazioni-tipologia p.tipologia__slug %}" >
                                                                 {{ p.tipologia__denominazione }}
                                                             </a>
