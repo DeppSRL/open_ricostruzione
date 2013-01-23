@@ -333,7 +333,7 @@
             var southWest = new L.LatLng({{ map_minlat|stringformat:"f" }}, {{ map_minlon|stringformat:"f" }}),
                 northEast = new L.LatLng({{ map_maxlat|stringformat:"f" }}, {{ map_maxlon|stringformat:"f" }}),
                 bounds = new L.LatLngBounds(southWest, northEast);
-            
+
             var tonerLayer = new L.StamenTileLayer("toner-lite");
             var map = new L.Map('riepilogo-map', {
                 minZoom: 8,
