@@ -9021,6 +9021,10 @@ div.content {
   padding-top: 25px;
 }
 
+div.content .socialplugin {
+  margin-top: 25px;
+}
+
 div.content #main-search .search-query {
   height: 20px;
   padding-bottom: 5px;

@@ -45,8 +45,6 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ STATIC_URL }}ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}ico/apple-touch-icon-57-precomposed.png">
 
-
-
 </head>
 
 <body>
@@ -279,6 +277,17 @@
         {% endblock %}
     </div>
 
+    <div class="row">
+        <div class="span6 socialplugin">
+            <span class='st_facebook_large' displayText='Facebook'></span>
+            <span class='st_twitter_large' displayText='Tweet'></span>
+            <span class='st_googleplus_large' displayText='Google +'></span>
+            <span class='st_linkedin_large' displayText='LinkedIn'></span>
+            <span class='st_pinterest_large' displayText='Pinterest'></span>
+            <span class='st_email_large' displayText='Email'></span>
+        </div>
+    </div>
+
     {% block comments %}
         <div id="comment">
             <div class="row">
@@ -401,7 +410,7 @@
                                 <img class="logo" src="{{ STATIC_URL }}img/wikitalia.png" >
                             </a>
                         </div>
-                        <div class="span1">
+                        <div class="span1 visible-desktop">
                                 <img class="spacer" src="{{ STATIC_URL }}img/footer-spacer.png" >
                         </div>
                     </div>
@@ -438,7 +447,7 @@
                                 <img class="logo" src="{{ STATIC_URL }}img/anci.png">
                             </a>
                         </div>
-                        <div class="span1">
+                        <div class="span1 visible-desktop">
                             <img class="spacer" src="{{ STATIC_URL }}img/footer-spacer.png" >
                         </div>
                     </div>
@@ -476,6 +485,10 @@
 <script src="{{ STATIC_URL }}js/leaflet.label.js"></script>
 <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>
 
+{# social plugin#}
+<script type="text/javascript">var switchTo5x=true;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "62a46d2a-ee71-4345-80b2-24304f80a64c"});</script>
 
 
 <script type="text/javascript">
