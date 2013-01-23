@@ -9135,6 +9135,10 @@ div.content #riepilogo-map {
   border: 2px solid #b5b8b6;
 }
 
+div.content #don_last {
+  margin-top: 50px;
+}
+
 div.content #aggiornamento {
   margin-top: 5px;
   font-size: 13px;
@@ -9456,7 +9460,14 @@ footer #green-background li {
   list-style: square;
 }
 
+footer #green-background li a {
+  font-weight: normal;
+  color: white;
+  text-decoration: none;
+}
+
 footer #green-background a {
+  font-weight: bold;
   color: white;
   text-decoration: none;
 }
@@ -9489,8 +9500,12 @@ footer #gray-background .partners a {
 }
 
 footer #gray-background .logo {
-  max-height: 35px;
+  max-height: 50px;
   padding-top: 15px;
+}
+
+footer #gray-background #anci .logo {
+  padding-top: 0;
 }
 
 footer #gray-background .spacer {

@@ -576,11 +576,18 @@ footer{
 
     li{
       list-style: square;
+      a{
+        font-weight: normal;
+        text-decoration: none;
+        color: white;
+      }
     }
     a{
+      font-weight: bold;
+      color:white;
       text-decoration: none;
-      color: white;
     }
+
 
     .footer{
       padding-top: @spacing-double;
@@ -610,7 +617,12 @@ footer{
     }
     .logo{
       padding-top: @spacing-half;
-      max-height: 35px;
+      max-height: @spacing-double;
+    }
+    #anci{
+      .logo{
+        padding-top: 0;
+      }
     }
     .spacer{
       padding-left: @spacing-half;
