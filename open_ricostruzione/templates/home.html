@@ -40,11 +40,6 @@
                                         {{ news_big.title }}
                                     </a>
                                 </div>
-                                <div class="abstract">
-                                    <a href="../news/{{ news_big.slug }}">
-                                        {{ news_big.abstract }}
-                                    </a>
-                                </div>
                                 <div class="body">
                                     {{ news_big.body_html|safe|truncatechars:300 }}
                                     <br/>
@@ -78,9 +73,9 @@
                                             </a>
                                         </div>
                                         <div class="abstract">
-                                            <a href="../news/{{ n.slug }}">
-                                                {{ n.abstract }}
-                                            </a>
+                                                {{ n.body_html|safe|truncatechars:100 }}
+                                                <br/>
+                                                <a href="../news/{{ n.slug }} ">Leggi tutto</a>
                                         </div>
                                     </div>
                                 </div>

@@ -27,7 +27,7 @@ class TipologiaCedenteAdmin(admin.ModelAdmin):
 class EntryAdmin(admin.ModelAdmin):
     model=Entry
     ordering=['-published_at']
-
+    prepopulated_fields = {'slug':('title',),}
 
 class UltimoAggiornamentoAdmin(admin.ModelAdmin):
     model=UltimoAggiornamento

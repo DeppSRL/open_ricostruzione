@@ -58,13 +58,12 @@ class HomeView(TemplateView):
                              'month':_date(news_big.published_at,"M"),
                              'year':news_big.published_at.year,
                              'title':news_big.title,
-                             'abstract':news_big.abstract,
                              'slug':news_big.slug,
                              'body_html':news_big.body_html,
                              }
 
 
-        news_temp = Entry.objects.filter(published=True).order_by('-published_at')[1:3]
+        news_temp = Entry.objects.filter(published=True, big_news=False).order_by('-published_at')[0:2]
         news_small=[]
         for idx, val in enumerate(news_temp):
             news_small.append(
@@ -72,7 +71,7 @@ class HomeView(TemplateView):
                  'month':_date(news_big.published_at,"M"),
                  'year':val.published_at.year,
                  'title':val.title,
-                 'abstract':val.abstract,
+                 'body_html': val.body_html,
                  'slug':val.slug,
                  }
             )

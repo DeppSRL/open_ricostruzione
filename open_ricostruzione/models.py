@@ -333,7 +333,6 @@ class Donazione(models.Model):
 class Entry(models.Model):
 
     title= models.CharField(max_length=255)
-    abstract=models.CharField(max_length=255)
     author=models.CharField(max_length=255, null=True, blank=True)
     body= models.TextField()
     body_html = models.TextField(editable=False, default="")
