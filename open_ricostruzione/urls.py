@@ -25,7 +25,8 @@ urlpatterns = patterns('',
     url(r'^donazioni-comune/(?P<comune>[-\w]+)$',  DonazioniComune.as_view(), name="donazioni-comune"),
         url(r'^donazioni-completa/$',  DonazioniCompleta.as_view(), name="donazioni-completa"),
     url(r'^news/(?P<slug>[-\w]+)$', EntryView.as_view(), name="news"),
-    url(r'^chi-siamo/$', HomeView.as_view(), name='home'),
+    url(r'^chi-siamo/$', TemplateView.as_view(template_name='chi-siamo.html'), name='chi-siamo'),
+    url(r'^il-progetto/$', TemplateView.as_view(template_name='il-progetto.html'), name='il-progetto'),
     url(r'^contatti/$', HomeView.as_view(), name='home'),
     url(r'^download/$', HomeView.as_view(), name='home'),
     url(r'^licenza/$', HomeView.as_view(), name='home'),
@@ -35,3 +36,4 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )
+

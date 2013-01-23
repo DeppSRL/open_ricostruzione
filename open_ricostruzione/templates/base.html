@@ -63,7 +63,7 @@
             {% if iban %}
                 <div class="span4" id="appello">
                         {% block support %}
-                            Aiutaci a ricostruire!<br/>
+                            AIUTACI A RICOSTRUIRE!<br/>
                             <div class="iban">
                                 <div class="title">Codice Iban</div>
                                 <div class="number">&nbsp;</div>
@@ -74,7 +74,24 @@
                             </div>
                         {% endblock %}
                 </div><!--/span-->
+            {% else %}
+                <div class="span4 {% block show-appello-home %}hidden{% endblock %}" id="appello">
+                        <p class="title">AIUTACI A RICOSTRUIRE!</p>
+                        <p>Scegli un comune, analizza lo stato dei lavori, aiutaci a ricostruire</p>
+                        <select >
+                            <option value="">Scegli il Comune</option>
+                            {% for c in territori_alfabetico %}
+                                <option value="{% url territorio_detail c.slug %}">
+                                    {{ c.denominazione }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                </div><!--/span-->
             {% endif %}
+
+
         </div>
     </div>
 </div>
@@ -143,11 +160,11 @@
                 </nav>
              </div> <!--/navbar-span -->
         <div class=" span5">
+
+{#            disable the form submit when pressing enter #}
             <script type='text/javascript'>
                 var oktosubmit = false;
             </script>
-
-
             <form method="get" action="" class="navbar-search form-search pull-left" onsubmit="return oktosubmit;">
                 <section  class="ui-widget">
                     <input type="text"
@@ -167,11 +184,11 @@
         <div class="row">
             <div class="span5">
                 <div class="main-content">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vel arcu lacus, eget imperdiet odio. Aliquam mollis dapibus mauris ut laoreet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-                    Nam vulputate bibendum mauris facilisis auctor. Vestibulum venenatis placerat sollicitudin.
-                    Integer cursus consectetur neque, ac feugiat purus scelerisque eu.
-                    Mauris volutpat leo ac lacus consequat a luctus tortor consequat.
-                    Sed aliquam tempus leo, quis placerat neque viverra at. Quisque sit amet viverra leo.
+                    Quante donazioni sono state fatte per la ricostruzione dell'Emilia dopo il terremoto della
+                    primavera de 2012? E dove sono finite?
+                    A che punto sono i progetti? Come si stanno spendendo i finanziamenti pubblici?<br/>
+                    Questo sito prova a rispondere a queste ed altre domande pubblicando e aggiornando tutti i dati a
+                    disposizione.<br/> Perchè trasparenza degli amministratori vuol dire fiducia dei cittadini.
                 </div>
             </div>
             <div class="span5 offset2 boxes" id="boxes-home">
@@ -425,12 +442,20 @@
 <script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
 <script src="{{ STATIC_URL }}js/Semicircle.js?"></script>
 <script src="{{ STATIC_URL }}js/leaflet.label.js"></script>
+<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>
 
 
 
 <script type="text/javascript">
 
     $(document).ready(function() {
+
+        $('select').change(function(){
+            var url = $(this).val();
+            if(url)
+                window.location = url;
+        });
+
         $('#progetto-search').focus(function(){
             if ($(this)._cleared) return;
             $(this).val('');

@@ -3,7 +3,7 @@ import django.conf.global_settings as DEFAULT_SETTINGS
 import os
 
 DEBUG = True
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
 
@@ -99,6 +99,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 )
 
 ROOT_URLCONF = 'open_ricostruzione.urls'

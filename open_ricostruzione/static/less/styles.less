@@ -12,6 +12,19 @@ body{
   z-index: 1000!important;
 }
 
+//placeholder color
+input::-webkit-input-placeholder{
+  color:#555;
+}
+input:-moz-placeholder {
+  color:#555;
+}
+input[placeholder], [placeholder], *[placeholder]
+{
+  color:#555;
+}
+
+
 .header{
 
   #logo_header{
@@ -32,12 +45,27 @@ body{
       background-color: #dcf930;
       color: black;
       font: 'Arial', 'sans-serif';
-      font-weight: bold;
+      font-weight: normal;
       letter-spacing: 0px;
       font-size: 16px;
 
+      p{
+        margin-bottom: @spacing-half;
+      }
+
+      .title{
+        font-weight: normal;
+        font-family: 'Abel','sans-serif';
+        font-size: 25px;
+      }
+
+      select{
+        background-color: #ddd;
+      }
+
       .iban{
         .title{
+          font-family: 'Arial','sans-serif';
           padding-top: 5px;
           font-size: 12px;
           text-transform: uppercase;
@@ -134,7 +162,7 @@ div.content{
     clear:both;
     margin-top: 7px;
     margin-bottom: @spacing-half;
-    border-bottom: 1px solid #b5b8b6;
+    border-bottom: 1px solid @spacer-color;
     min-height: 1px;
   }
 
@@ -172,7 +200,6 @@ div.content{
   .evidenza{
 
     padding-bottom: @spacing-double;
-    border-bottom:1px solid #CCC;
 
     .titolo{
       min-height: @medium-size;
@@ -227,8 +254,12 @@ div.content{
     font-size: @slogan-size;
     margin-top: @spacing-single;
     min-height: 450px;
+    border: 2px solid @spacer-color;
   }
 
+  #don_last{
+    margin-top: @spacing-double;
+  }
 
   #aggiornamento{
     font-size: 13px;
@@ -383,11 +414,11 @@ div.content{
     }
     .news-spacer{
       height: @spacing-half;
-      border-bottom:  1px solid #b5b8b6;
+      border-bottom:  1px solid @spacer-color;
     }
     .pie-spacer{
       height: @spacing-half;
-      border-bottom: 4px double  #b5b8b6;
+      border-bottom: 4px double  @spacer-color;
     }
     .titolo{
       min-height: @medium-size;
@@ -415,7 +446,7 @@ div.content{
 
     .project_list{
       font-size: @navbar-size;
-      border-top: 1px solid #b5b8b6;
+      border-top: 1px solid @spacer-color;
       padding-top: @spacing-half;
       padding-left:0;
       padding-right:0;

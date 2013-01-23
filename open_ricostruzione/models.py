@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.contrib.markup.templatetags.markup import markdown
 from django.db import models
 from django.db import connections
 from datetime import datetime
@@ -329,27 +330,33 @@ class Donazione(models.Model):
         verbose_name_plural = u'Donazioni'
 
 
-
 class Entry(models.Model):
 
     title= models.CharField(max_length=255)
     abstract=models.CharField(max_length=255)
     author=models.CharField(max_length=255, null=True, blank=True)
     body= models.TextField()
+    body_html = models.TextField(editable=False, default="")
     published_at= models.DateTimeField(default=datetime.now())
     slug=models.SlugField(max_length=60, blank=True)
+    published=models.BooleanField(default=False)
+    big_news=models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.title
+        if self.big_news:
+            return u"%s - %s - BIG NEWS" %(self.published_at.date(), self.title)
+        else:
+            return u"%s - %s" %(self.published_at.date(), self.title)
 
 
     class Meta():
-        ordering= ['-published_at']
         verbose_name= 'articolo'
-        verbose_name_plural= 'articoli'
+        verbose_name_plural= 'News'
 
     def save(self):
         super(Entry, self).save()
+        if self.body:
+            self.body_html= markdown(self.body)
 
         if self.published_at:
             self.slug = '%s-%s%s%s-%i' % (

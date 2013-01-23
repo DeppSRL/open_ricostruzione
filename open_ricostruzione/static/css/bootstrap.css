@@ -8900,6 +8900,20 @@ body {
   z-index: 1000!important;
 }
 
+input::-webkit-input-placeholder {
+  color: #555;
+}
+
+input:-moz-placeholder {
+  color: #555;
+}
+
+input[placeholder],
+[placeholder],
+*[placeholder] {
+  color: #555;
+}
+
 .header #logo_header #logo_top {
   padding-top: 50px;
   padding-bottom: 50px;
@@ -8917,14 +8931,29 @@ body {
   overflow: hidden;
   font: 'Arial', 'sans-serif';
   font-size: 16px;
-  font-weight: bold;
+  font-weight: normal;
   letter-spacing: 0;
   color: black;
   background-color: #dcf930;
 }
 
+.header #logo_header #appello p {
+  margin-bottom: 15px;
+}
+
+.header #logo_header #appello .title {
+  font-family: 'Abel', 'sans-serif';
+  font-size: 25px;
+  font-weight: normal;
+}
+
+.header #logo_header #appello select {
+  background-color: #ddd;
+}
+
 .header #logo_header #appello .iban .title {
   padding-top: 5px;
+  font-family: 'Arial', 'sans-serif';
   font-size: 12px;
   text-transform: uppercase;
 }
@@ -9044,7 +9073,6 @@ div.content .box_data .year {
 
 div.content .evidenza {
   padding-bottom: 50px;
-  border-bottom: 1px solid #CCC;
 }
 
 div.content .evidenza .titolo {
@@ -9104,6 +9132,7 @@ div.content #riepilogo-map {
   font-size: 18px;
   color: black;
   text-align: center;
+  border: 2px solid #b5b8b6;
 }
 
 div.content #aggiornamento {
@@ -9256,7 +9285,7 @@ div.content #data-content .news-spacer {
 
 div.content #data-content .pie-spacer {
   height: 15px;
-  border-bottom: 4px double  #b5b8b6;
+  border-bottom: 4px double #b5b8b6;
 }
 
 div.content #data-content .titolo {

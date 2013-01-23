@@ -50,7 +50,7 @@ class HomeView(TemplateView):
         context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
 
         #news in home page
-        news_big = Entry.objects.all().order_by('-published_at')[0]
+        news_big = Entry.objects.filter(published=True, big_news=True).order_by('-published_at')[0]
 
 
         ##   converto la data nel formato  Nome mese - Anno
@@ -60,11 +60,11 @@ class HomeView(TemplateView):
                              'title':news_big.title,
                              'abstract':news_big.abstract,
                              'slug':news_big.slug,
-                             'body':news_big.body,
+                             'body_html':news_big.body_html,
                              }
 
 
-        news_temp = Entry.objects.all().order_by('-published_at')[1:3]
+        news_temp = Entry.objects.filter(published=True).order_by('-published_at')[1:3]
         news_small=[]
         for idx, val in enumerate(news_temp):
             news_small.append(
