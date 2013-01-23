@@ -9218,6 +9218,18 @@ div.content #main-subtitle {
   margin-bottom: 25px;
 }
 
+div.content .main-content #faq-page p {
+  margin-left: 25px;
+}
+
+div.content .main-content ol.faq-list {
+  font-weight: bold;
+}
+
+div.content .main-content ol.faq-list li p {
+  margin-left: 0!important;
+}
+
 div.content .main-content #project_list .project_row .text {
   margin-left: 20px;
 }
@@ -9500,12 +9512,12 @@ footer #gray-background .partners a {
 }
 
 footer #gray-background .logo {
-  max-height: 50px;
+  max-height: 40px;
   padding-top: 15px;
 }
 
 footer #gray-background #anci .logo {
-  padding-top: 0;
+  padding-top: 10px;
 }
 
 footer #gray-background .spacer {

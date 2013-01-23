@@ -25,6 +25,7 @@ def main_settings(request):
             filter(donazione__confermato=True).\
             annotate(c=Count('donazione')).values("denominazione","slug","c").filter(c__gt=0).order_by("denominazione"),
         "territori": territori,
+        "territori_cratere": settings.COMUNI_CRATERE,
         "territori_alfabetico": territori_alfabetico,
         "tipologia_privati":TipologiaCedente.objects.get(codice='1'),
         "tipologia_regione_emilia":TipologiaCedente.objects.get(codice='7'),

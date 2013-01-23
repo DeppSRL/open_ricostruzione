@@ -27,10 +27,10 @@ urlpatterns = patterns('',
     url(r'^news/(?P<slug>[-\w]+)$', EntryView.as_view(), name="news"),
     url(r'^chi-siamo/$', TemplateView.as_view(template_name='chi-siamo.html'), name='chi-siamo'),
     url(r'^il-progetto/$', TemplateView.as_view(template_name='il-progetto.html'), name='il-progetto'),
-    url(r'^contatti/$', HomeView.as_view(), name='home'),
+    url(r'^contatti/$', TemplateView.as_view(template_name='contatti.html'), name="contatti"),
     url(r'^download/$', HomeView.as_view(), name='home'),
     url(r'^licenza/$', HomeView.as_view(), name='home'),
-    url(r'^faq/$', HomeView.as_view(), name='home'),
+    url(r'^faq/$', FaqView.as_view(), name='faq'),
     # Uncomment the admin/doc line below to enable admin documentation:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Uncomment the next line to enable the admin:

@@ -537,8 +537,6 @@ class DonazioneView(TemplateView):
 
         context['donazioni_categorie_pie']=donazioni_categorie_pie
 
-
-
         #       ultime donazioni per il comune considerato
         donazioni_temp = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
         donazioni_last=[]
@@ -555,8 +553,6 @@ class DonazioneView(TemplateView):
                                    'importo':moneyfmt(val.importo,2,"",".",","),
                                    'slug':val.tipologia.slug
             })
-
-
 
         context['donazioni_last'] = donazioni_last
 
@@ -581,6 +577,26 @@ class EntryView(DetailView):
         context = super(EntryView, self).get_context_data(**kwargs)
         entry = self.get_object()
 
+        return context
+
+class FaqView(TemplateView):
+    template_name = "faq.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(FaqView, self).get_context_data(**kwargs)
+        #numero di comuni con almeno 1 progetto attivo
+        context['n_comuni_progetti'] = \
+            Territorio.objects.\
+                filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+                annotate(c = Count("progetto")).filter(c__gt=0).count()
+
+        context['n_comuni_donazioni'] =\
+            Territorio.objects.\
+            filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+            annotate(c = Count("donazione")).filter(c__gt=0).count()
+
+        #numero progetti
+        context['n_progetti']=  Progetto.objects.filter(id_padre__isnull = True).count()
         return context
 
 
@@ -836,4 +852,5 @@ class ProgettiJSONListView(JSONResponseMixin, ProgettoListView):
 class TerritoriJSONListView(JSONResponseMixin, TerritorioListView):
     def convert_context_to_json(self, context):
         return dumps(context['territorio_list'])
+
 
