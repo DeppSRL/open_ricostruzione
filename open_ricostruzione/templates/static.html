@@ -21,7 +21,7 @@
 {% block main-content %}
     <div class="row">
         <div class="span7">
-            {{ entry.body }}
+            {{ entry.body_html|safe }}
         </div>
     </div>
 {% endblock %}

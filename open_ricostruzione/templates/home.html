@@ -46,7 +46,7 @@
                                     </a>
                                 </div>
                                 <div class="body">
-                                    {{ news_big.body|truncatechars:300 }}
+                                    {{ news_big.body_html|safe|truncatechars:300 }}
                                     <br/>
                                     <a href="../news/{{ news_big.slug }} ">Leggi tutto</a>
 
