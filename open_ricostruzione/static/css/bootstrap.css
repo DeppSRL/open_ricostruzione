@@ -9073,7 +9073,6 @@ div.content .box_data .year {
 
 div.content .evidenza {
   padding-bottom: 50px;
-  border-bottom: 1px solid #CCC;
 }
 
 div.content .evidenza .titolo {
@@ -9133,6 +9132,7 @@ div.content #riepilogo-map {
   font-size: 18px;
   color: black;
   text-align: center;
+  border: 2px solid #b5b8b6;
 }
 
 div.content #aggiornamento {
@@ -9285,7 +9285,7 @@ div.content #data-content .news-spacer {
 
 div.content #data-content .pie-spacer {
   height: 15px;
-  border-bottom: 4px double  #b5b8b6;
+  border-bottom: 4px double #b5b8b6;
 }
 
 div.content #data-content .titolo {

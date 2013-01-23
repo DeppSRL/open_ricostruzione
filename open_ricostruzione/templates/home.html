@@ -256,26 +256,26 @@
             <div class="pie-spacer span12"></div>
         </div>
         <div class="row">
-            <div class="span12">
+            <div class="span6">
                 <div id="comuni_evidenza" class="evidenza">
                     <div class="titolo" > Comuni oggi in evidenza</div>
                     <div class="subtitle">Aggregato dei danni per Comune</div>
                     <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                        <div class="span3" style="font-weight: bold;">Comune</div>
-                        <div class="span3" style="font-weight: bold;">Danno</div>
-                        <div class="span3" style="font-weight: bold;">Donazione</div>
+                        <div class="span4" style="font-weight: bold;">Comune</div>
+                        <div class="span4" style="font-weight: bold;">Danno</div>
+                        <div class="span4" style="font-weight: bold;">Donazione</div>
                     </div>
                     {% for c in comuni_evidenza %}
                         <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                            <div class="span3" style="color: #4467af;">
+                            <div class="span4" style="color: #4467af;">
                                 <a href="{% url territorio_detail c.comune.slug %}">{{ c.comune.denominazione }} ({{ c.comune.get_provincia.sigla_provincia }})</a>
                             </div>
-                            <div class="span3" style="font-weight: bold;">
+                            <div class="span4" style="font-weight: bold;">
                                 {% ifnotequal c.p_sum "0,00" %}
                                     {{ c.p_sum}} euro
                                 {% endifnotequal %}
                             </div>
-                            <div class="span3" style="font-weight: bold;">
+                            <div class="span4" style="font-weight: bold;">
                                 {% ifnotequal c.d_sum "0,00" %}
                                     {{ c.d_sum }} euro
                                 {% endifnotequal %}
@@ -285,29 +285,27 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="span12">
+            <div class="span6">
                 <div id="progetti_evidenza" class="evidenza" style="border-bottom:none;">
                     <div class="titolo" > Progetti oggi in evidenza</div>
                     <div class="subtitle">Tre progetti in rilievo</div>
                     <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                        <div class="span3" style="font-weight: bold;">Progetto</div>
-                        <div class="span3" style="font-weight: bold;">Tipologia</div>
-                        <div class="span3" style="font-weight: bold;">Danno</div>
+                        <div class="span4" style="font-weight: bold;">Progetto</div>
+                        <div class="span4" style="font-weight: bold;">Tipologia</div>
+                        <div class="span4" style="font-weight: bold;">Danno</div>
                     </div>
                     {% for p in progetti_evidenza %}
                         <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
-                            <div class="span3" style="color: #4467af;">
+                            <div class="span4" style="color: #4467af;">
                                 <a href="{% url progetto_detail p.slug %} ">{{ p.denominazione }} </a>
                             </div>
-                            <div class="span3" style="">
+                            <div class="span4" style="">
                                 <a href="{% url progetti-tipologia p.tipologia.slug %}">
                                     {{ p.tipologia.denominazione }}
                                 </a>
                             </div>
                             {% ifnotequal p.riepilogo_importi "0,00" %}
-                                <div class="span3" style="font-weight: bold;">
+                                <div class="span4" style="font-weight: bold;">
                                     {{ p.riepilogo_importi }} euro
                                 </div>
                             {% endifnotequal %}
