@@ -140,6 +140,9 @@
                                                 <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %} ">
                                                     {{ p.tipologia__denominazione }}
                                                 </a>
+                                                {% if p.tipologia__denominazione == tipologia_regione_emilia.denominazione %}
+                                                    <span style="color:black">(compresi SMS)</span>
+                                                {% endif %}
                                             {% else %}
                                                 {{ p.tipologia__denominazione }}
                                             {% endif %}

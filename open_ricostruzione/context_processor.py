@@ -27,4 +27,5 @@ def main_settings(request):
         "territori": territori,
         "territori_alfabetico": territori_alfabetico,
         "tipologia_privati":TipologiaCedente.objects.get(codice='1'),
+        "tipologia_regione_emilia":TipologiaCedente.objects.get(codice='7'),
         }

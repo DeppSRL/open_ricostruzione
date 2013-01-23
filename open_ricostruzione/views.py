@@ -213,9 +213,12 @@ class HomeView(TemplateView):
         donazioni_campovolo= moneyfmt(donazioni_campovolo,2,"",".",",")
         context['donazioni_campovolo']=donazioni_campovolo
 
-        donazioni_sms = Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
-            confermato=True,denominazione="Emilia-Romagna",
-            modalita_r__exact="SMS").\
+        donazioni_sms = Donazione.objects.\
+            filter(
+                tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
+                confermato=True,denominazione="Emilia-Romagna",
+                modalita_r__exact="SMS"
+            ).\
             aggregate(sum=Sum('importo')).values()[0]
 
         donazioni_sms= moneyfmt(donazioni_sms,2,"",".",",")

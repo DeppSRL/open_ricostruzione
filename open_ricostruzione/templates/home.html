@@ -50,7 +50,6 @@
                             </div>
                         </div>
                     </div>
-{#                    <div class="spacer"></div>#}
                 </div>
             </div>
             <div class="span6">
@@ -181,6 +180,10 @@
                                                             <a href="{% url donazioni-tipologia p.tipologia__slug %}" >
                                                                 {{ p.tipologia__denominazione }}
                                                             </a>
+                                                            {% if p.tipologia__denominazione == tipologia_regione_emilia.denominazione %}
+                                                                <span style="color:black">(compresi SMS)</span>
+                                                            {% endif %}
+
                                                         {% else %}
                                                             <span style="color:black;">
                                                                 {{ p.tipologia__denominazione }}
