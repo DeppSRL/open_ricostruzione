@@ -68,7 +68,7 @@ class HomeView(TemplateView):
         for idx, val in enumerate(news_temp):
             news_small.append(
                 {'day':val.published_at.day,
-                 'month':_date(news_big.published_at,"M"),
+                 'month':_date(val.published_at,"M"),
                  'year':val.published_at.year,
                  'title':val.title,
                  'body_html': val.body_html,
@@ -571,12 +571,29 @@ class DonazioneView(TemplateView):
 class EntryView(DetailView):
     model = Entry
     context_object_name = "entry"
-    template_name = "static.html"
+    template_name = "news.html"
 
     def get_context_data(self, **kwargs):
         context = super(EntryView, self).get_context_data(**kwargs)
         entry = self.get_object()
 
+
+        news_temp = Entry.objects.\
+                    exclude(pk=entry.pk).\
+                    filter(published=True).order_by('-published_at')[0:2]
+        news_altre=[]
+        for idx, val in enumerate(news_temp):
+            news_altre.append(
+                {'day':val.published_at.day,
+                 'month':_date(val.published_at,"M"),
+                 'year':val.published_at.year,
+                 'title':val.title,
+                 'body_html': val.body_html,
+                 'slug':val.slug,
+                 }
+            )
+
+        context['altrenews']=news_altre
         return context
 
 class FaqView(TemplateView):

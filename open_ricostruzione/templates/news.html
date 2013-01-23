@@ -1,0 +1,63 @@
+{% extends "static.html" %}
+
+{% block title %}{{ entry.title }}{% endblock %}
+
+{% block main-title %}{{ entry.title}}{% endblock %}
+
+{% block main-subtitle %}
+
+    Pubblicato  {{ entry.published_at }}
+    {% if entry.author %}
+        da {{ entry.author }}
+    {% endif %}
+
+{% endblock %}
+
+{% block main-content %}
+    <div class="row">
+        <div class="span7">
+            {{ entry.body_html|safe }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block altre-news-visible %}visible{% endblock %}
+
+{% block altre-news %}
+    <div class="altrenews">Le altre news</div>
+
+    {% for n in altrenews%}
+        <div class="row-fluid">
+            <div class="news_small news_list">
+                <div class="box">
+                    <div class="row-fluid">
+                        <div class="span1 box_data" >
+                            <a href="../news/{{ n.slug }}">
+                                <div class="day">{{ n.day}}</div>
+                                <div class="month">{{ n.month }}</div>
+                                <div class="year">{{ n.year }}</div>
+                            </a>
+                        </div>
+                        <div class="text span7" style="color:black;">
+                            <div class="title">
+                                <a href="../news/{{ n.slug }}">
+                                    {{ n.title }}
+                                </a>
+                            </div>
+                            <div class="abstract">
+                                {{ n.body_html|striptags|truncatechars:100 }}
+                            </div>
+                            <div>
+                                <a href="../news/{{ n.slug }} ">Leggi tutto</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spacer span10 news-spacer" style="border-bottom: 0;"></div>
+
+            </div>
+        </div>
+
+    {% endfor %}
+{% endblock %}
