@@ -121,7 +121,10 @@ input[placeholder], [placeholder], *[placeholder]
   }
   .navbar-search{
     .search-query{
-      min-width: 380px;
+      @media (min-width: 767px){
+        min-width: 380px;
+      }
+
     }
   }
 
@@ -130,7 +133,10 @@ input[placeholder], [placeholder], *[placeholder]
 
 #top_home{
   background-color: #e2e3e8;
-  max-height: 200px;
+
+  @media (min-width: 767px){
+    max-height: 200px;
+  }
 }
 
 #home-map{
@@ -145,7 +151,10 @@ input[placeholder], [placeholder], *[placeholder]
 
 div.content{
   padding-top: @spacing-single;
-  min-height: 500px;
+
+  @media (max-width: 400px){
+    min-height: 500px;
+  }
 
   .altrenews{
     font-family: 'Abel','sans-serif';
@@ -178,6 +187,10 @@ div.content{
   }
 
   .box_data{
+    @media (max-width: 767px){
+      margin-right: @spacing-half;
+    }
+
     a{
       color: black;
     }
@@ -187,6 +200,8 @@ div.content{
     width: 60px;
     height: 60px;
     padding-top: 7px;
+
+
     float:left;
     color:black;
     text-transform: uppercase;
@@ -279,7 +294,15 @@ div.content{
   }
 
   .boxes{
+    min-height: 200px;
 
+    .smallbox{
+      @media (max-width: 767px){
+        max-width: 180px;
+        margin-top:@spacing-single;
+
+      }
+    }
     .title{
       color:black;
       text-transform: uppercase;
@@ -598,6 +621,8 @@ div.content{
 }
 
 footer{
+
+
   #green-background{
     min-height: 200px;
     background-color: @footer-green;

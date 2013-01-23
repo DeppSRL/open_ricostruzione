@@ -73,20 +73,10 @@
                         {% endblock %}
                 </div><!--/span-->
             {% else %}
-                <div class="span4 {% block show-appello-home %}hidden{% endblock %}" id="appello">
-                        <p class="title">AIUTACI A RICOSTRUIRE!</p>
-                        <p>Scegli un comune, analizza lo stato dei lavori, aiutaci a ricostruire</p>
-                        <select >
-                            <option value="">Scegli il Comune</option>
-                            {% for c in territori_alfabetico %}
-                                <option value="{% url territorio_detail c.slug %}">
-                                    {{ c.denominazione }}
-                                </option>
-                            {% endfor %}
+                {% block appello_home %}
 
-                        </select>
+                {% endblock %}
 
-                </div><!--/span-->
             {% endif %}
 
 
@@ -191,7 +181,7 @@
             </div>
             <div class="span5 offset2 boxes" id="boxes-home">
                 <div class="row">
-                    <div class="span2" >
+                    <div class="span2 smallbox" >
                         {%  if stima_danno %}
                             <div class="title">Stima del danno </div>
                             <div class="box" id="danno">
@@ -205,7 +195,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    <div class="span2" >
+                    <div class="span2 smallbox" >
                         {% if tot_donazioni %}
                             <div class="title">Donazioni ricevute</div>
                             <div class="box" id="donazioni">
@@ -241,7 +231,7 @@
 
         <div class="span5 boxes {% block boxes-class %}{% endblock %}" >
             <div class="row">
-                <div class="span2" >
+                <div class="span2 smallbox" >
                     {%  if stima_danno %}
                         <div class="title">Stima del danno </div>
                         <div class="box" id="danno">
@@ -255,7 +245,7 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="span2" >
+                <div class="span2 smallbox" >
                     {% if tot_donazioni %}
                         <div class="title">Donazioni ricevute</div>
                         <div class="box" id="donazioni">

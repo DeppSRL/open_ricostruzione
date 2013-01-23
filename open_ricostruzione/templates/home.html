@@ -7,7 +7,25 @@
 
 {% block show-home %}visible{% endblock %}
 
-{% block show-appello-home %}visible{% endblock %}
+{#{% block show-appello-home %}visible{% endblock %}#}
+
+{% block appello_home %}
+    <div class="span4 " id="appello">
+        <p class="title">AIUTACI A RICOSTRUIRE!</p>
+        <p>Scegli un comune, analizza lo stato dei lavori, aiutaci a ricostruire</p>
+        <select >
+            <option value="">Scegli il Comune</option>
+            {% for c in territori_alfabetico %}
+                <option value="{% url territorio_detail c.slug %}">
+                    {{ c.denominazione }}
+                </option>
+            {% endfor %}
+
+        </select>
+
+    </div><!--/span-->
+{% endblock %}
+
 
 {% block support %}
 
