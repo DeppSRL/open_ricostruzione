@@ -556,6 +556,11 @@ class DonazioneView(TemplateView):
 
         context['donazioni_last'] = donazioni_last
 
+        context['n_comuni_donazioni'] =\
+            Territorio.objects.\
+            filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+            annotate(c = Count("donazione")).filter(c__gt=0).count()
+
         #       set map center
         context['map_center_lat']= Territorio.get_map_center_lat()
         context['map_center_lon']= Territorio.get_map_center_lon()

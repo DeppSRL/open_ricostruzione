@@ -8,7 +8,8 @@
 {% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}
 {% block main-title %}<p style="color:#a1ba03; text-transform: uppercase;" >Donazioni</P>{% endblock %}
 {% block main-subtitle %}
-    In questa pagina sono riassunti i dati relativi alle donazioni effettivamente<br/> ricevute dai Comuni monitorati.<br/>
+    In questa pagina sono riassunti i dati relativi alle donazioni effettivamente<br/>
+    versate sui conti correnti dei {{ n_comuni_donazioni }} Comuni monitorati sui {{ territori_cratere|length }} totali.
 
 {% endblock %}
 
@@ -150,7 +151,8 @@
         <script>
 
             var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
-            cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+            //cloudmadeAttribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://cloudmade.com">CloudMade</a>',
+            cloudmadeAttribution='';
             cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18, attribution: cloudmadeAttribution});
 
             //set map bounds
