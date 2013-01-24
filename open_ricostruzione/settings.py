@@ -2,7 +2,7 @@
 import django.conf.global_settings as DEFAULT_SETTINGS
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = False
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
@@ -136,7 +136,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'open_ricostruzione.depp_humanize',
     'disqus',
-    'sociable',
 )
 
 

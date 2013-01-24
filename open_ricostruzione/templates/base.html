@@ -283,15 +283,37 @@
     </div>
 
     <div class="row">
-        <div class=" span5">
+        <div class=" span1">
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ url }}" data-lang="it" data-hashtags="Openricostruzione" data-dnt="true">Tweet</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+        <div class="span1" >
+            <div id="fb-root"></div>
+            <script>(function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/it_IT/all.js#xfbml=1";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+            <div class="fb-like"
+                 data-href="{{ url }}" data-send="false"
+                 data-layout="button_count" data-width="150" data-show-faces="false" font="arial" data-action="recommend"></div>
+        </div>
+        <div  class="span1" style="margin-left: 40px;">
+            <!-- Place this tag where you want the +1 button to render. -->
+            <div class="g-plusone" data-size="medium"></div>
 
-            {% load sociable_tags %}
-            {% get_sociable Facebook TwitThis Google Reddit email as sociable_links with url=url title="Open Ricostruzione" %}
-            {% for link in sociable_links %}
-                <a href="{{ link.link }}">
-                    <img alt="{{ link.site }}" title="{{ link.site }}" src="{{ link.image }}" />
-                </a>
-            {% endfor %}
+            <!-- Place this tag after the last +1 button tag. -->
+            <script type="text/javascript">
+                window.___gcfg = {lang: 'it'};
+
+                (function() {
+                    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                    po.src = 'https://apis.google.com/js/plusone.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                })();
+            </script>
         </div>
     </div>
 
