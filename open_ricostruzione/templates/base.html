@@ -173,7 +173,7 @@
             <div class="span5">
                 <div class="main-content">
                     Quante donazioni sono state fatte per la ricostruzione dell'Emilia dopo il terremoto della
-                    primavera de 2012? E dove sono finite?
+                    primavera del 2012? E dove sono finite?
                     A che punto sono i progetti? Come si stanno spendendo i finanziamenti pubblici?<br/>
                     Questo sito prova a rispondere a queste ed altre domande pubblicando e aggiornando tutti i dati a
                     disposizione.<br/> Perchè trasparenza degli amministratori vuol dire fiducia dei cittadini.
@@ -202,7 +202,10 @@
                                 <div class="number">{{ tot_donazioni|onlynumber}} </div>
                                 <div class="grandezza">{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}di{% endif %} Euro</div>
                             </div>
-                            <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
+                            <div class="subtitle">
+                                Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}
+                                versate sui conti correnti dei Comuni
+                            </div>
                         {% endif %}
 
                     </div>
@@ -252,7 +255,13 @@
                             <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
                             <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} Euro</div>
                         </div>
-                        <div class="subtitle">Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}</div>
+                        <div class="subtitle">
+                            Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}
+                            versat{% if n_donazioni < 2 %}a{% else %}e{% endif %}
+                            {% block conti-correnti-comuni %}
+                                sul conto corrente del Comune
+                            {% endblock %}
+                        </div>
                     {% endif %}
                 </div>
             </div>
