@@ -2,8 +2,9 @@
 import django.conf.global_settings as DEFAULT_SETTINGS
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = False
+DEVELOPMENT = False
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
 
