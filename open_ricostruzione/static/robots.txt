@@ -1,0 +1,22 @@
+# Robots.txt for BoogieJack.com
+# disallow the images directories
+
+User-agent: *
+Disallow: /static/
+
+#disallow specific file types
+
+User-agent: *
+Disallow: /*.gif$
+
+User-agent: *
+Disallow: /*.jpg$
+
+User-agent: *
+Disallow: /*.png$
+
+User-agent: *
+Disallow: /*.css$
+
+User-agent: *
+Disallow: /*.js$
