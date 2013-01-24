@@ -283,15 +283,40 @@
     </div>
 
     <div class="row">
-        <div class="span6 socialplugin">
-            <span class='st_facebook_large' displayText='Facebook'></span>
-            <span class='st_twitter_large' displayText='Tweet'></span>
-            <span class='st_googleplus_large' displayText='Google +'></span>
-            <span class='st_linkedin_large' displayText='LinkedIn'></span>
-            <span class='st_pinterest_large' displayText='Pinterest'></span>
-            <span class='st_email_large' displayText='Email'></span>
+        <div class=" span1">
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="{{ url }}" data-lang="it" data-hashtags="Openricostruzione" data-dnt="true">Tweet</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+        <div class="span1" >
+            <div id="fb-root"></div>
+            <script>(function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/it_IT/all.js#xfbml=1";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+            <div class="fb-like"
+                 data-href="{{ url }}" data-send="false"
+                 data-layout="button_count" data-width="150" data-show-faces="false" font="arial" data-action="recommend"></div>
+        </div>
+        <div  class="span1" style="margin-left: 40px;">
+            <!-- Place this tag where you want the +1 button to render. -->
+            <div class="g-plusone" data-size="medium"></div>
+
+            <!-- Place this tag after the last +1 button tag. -->
+            <script type="text/javascript">
+                window.___gcfg = {lang: 'it'};
+
+                (function() {
+                    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                    po.src = 'https://apis.google.com/js/plusone.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                })();
+            </script>
         </div>
     </div>
+
 
     {% block comments %}
         <div id="comment">
@@ -490,10 +515,6 @@
 <script src="{{ STATIC_URL }}js/leaflet.label.js"></script>
 <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>
 
-{# social plugin#}
-<script type="text/javascript">var switchTo5x=true;</script>
-<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-<script type="text/javascript">stLight.options({publisher: "62a46d2a-ee71-4345-80b2-24304f80a64c"});</script>
 
 {# google analytics #}
 <script type="text/javascript">

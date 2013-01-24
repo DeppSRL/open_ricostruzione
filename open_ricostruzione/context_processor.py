@@ -3,6 +3,7 @@ from open_ricostruzione.models import *
 from django.db.models import Count
 
 
+
 def main_settings(request):
     territori=[]
 
@@ -30,4 +31,5 @@ def main_settings(request):
         "tipologia_privati":TipologiaCedente.objects.get(codice='1'),
         "tipologia_regione_emilia":TipologiaCedente.objects.get(codice='7'),
         "tipologia_altro":TipologiaCedente.objects.get(codice='6'),
+        "url": request.build_absolute_uri(),
         }

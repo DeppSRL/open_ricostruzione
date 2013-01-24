@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from open_ricostruzione.views import *
 from django.views.generic.base import RedirectView
+from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -25,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^donazioni-tipologia/altro$',  RedirectView.as_view(url='/'), name="donazioni-tipologia-altro"),
     url(r'^donazioni-tipologia/(?P<tipologia>[-\w]+)$',  DonazioniTipologia.as_view(), name="donazioni-tipologia"),
     url(r'^donazioni-comune/(?P<comune>[-\w]+)$',  DonazioniComune.as_view(), name="donazioni-comune"),
-        url(r'^donazioni-completa/$',  DonazioniCompleta.as_view(), name="donazioni-completa"),
+    url(r'^donazioni-completa/$',  DonazioniCompleta.as_view(), name="donazioni-completa"),
     url(r'^news/(?P<slug>[-\w]+)$', EntryView.as_view(), name="news"),
     url(r'^chi-siamo/$', TemplateView.as_view(template_name='chi-siamo.html'), name='chi-siamo'),
     url(r'^il-progetto/$', TemplateView.as_view(template_name='il-progetto.html'), name='il-progetto'),
@@ -38,4 +39,10 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )
+
+if settings.DEVELOPMENT:
+    urlpatterns += patterns('',
+        url(r'^media/(?P<path>.*)$','django.views.static.serve',{
+            'document_root': settings.MEDIA_ROOT,
+        }))
 
