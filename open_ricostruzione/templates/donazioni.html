@@ -7,7 +7,10 @@
 {% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
 {% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}
 {% block main-title %}<p style="color:#a1ba03; text-transform: uppercase;" >Donazioni</P>{% endblock %}
-{% block main-subtitle %}Sottotitolo alla pagina Donazioni riepilogo{% endblock %}
+{% block main-subtitle %}
+    In questa pagina sono riassunti i dati relativi alle donazioni effettivamente<br/> ricevute dai Comuni monitorati.<br/>
+
+{% endblock %}
 
 
 {% block conti-correnti-comuni %}versate sui conti correnti dei Comuni{% endblock %}
