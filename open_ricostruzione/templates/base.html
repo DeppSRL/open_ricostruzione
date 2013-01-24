@@ -282,6 +282,19 @@
         {% endblock %}
     </div>
 
+    <div class="row">
+        <div class=" span5">
+
+            {% load sociable_tags %}
+            {% get_sociable Facebook TwitThis Google Reddit email as sociable_links with url=url title="Open Ricostruzione" %}
+            {% for link in sociable_links %}
+                <a href="{{ link.link }}">
+                    <img alt="{{ link.site }}" title="{{ link.site }}" src="{{ link.image }}" />
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
 
     {% block comments %}
         <div id="comment">
