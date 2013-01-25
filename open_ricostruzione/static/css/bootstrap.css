@@ -9221,10 +9221,15 @@ div.content .boxes .box .number {
 div.content .boxes .box .grandezza {
   width: 50px;
   padding-top: 10px;
-  margin-left: 10px;
   font-size: 20px;
   text-transform: uppercase;
   vertical-align: middle;
+}
+
+@media (min-width: 400px) {
+  div.content .boxes .box .grandezza {
+    margin-left: 10px;
+  }
 }
 
 div.content .boxes .subtitle {

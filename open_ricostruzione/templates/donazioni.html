@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load italianize %}
 {% block title %}Donazioni - Riepilogo{% endblock %}
 
-{% block stima-danno-number %}{{ stima_danno|onlynumber }}{% endblock %}
-{% block stima-danno-word %}{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %} di{% endif %}{% endblock %}
-{% block tot-donazioni-number %}{{ tot_donazioni|onlynumber}}{% endblock %}
-{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}
+{% block stima-danno-number %}{{ stima_danno|italianize }}{% endblock %}
+{#{% block stima-danno-word %}{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %} di{% endif %}{% endblock %}#}
+{% block tot-donazioni-number %}{{ tot_donazioni|italianize}}{% endblock %}
+{#{% block tot-donazioni-word %}{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}  di{% endif %}{% endblock %}#}
 {% block main-title %}<p style="color:#a1ba03; text-transform: uppercase;" >Donazioni</P>{% endblock %}
 {% block main-subtitle %}
     In questa pagina sono riassunti i dati relativi alle donazioni effettivamente<br/>

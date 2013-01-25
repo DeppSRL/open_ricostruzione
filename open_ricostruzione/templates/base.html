@@ -254,10 +254,14 @@
                 <div class="span5 smallbox" >
                     {%  if stima_danno %}
                         <div class="title">Stima del danno </div>
-                        <div class="box" id="danno">
-                            <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
-                            <div class="grandezza">{% block stima-danno-word %}{% endblock %} Euro</div>
+
+                        <div class="box row" id="danno">
+                            <div class="number_background span2">
+                                <div class="number"> {% block stima-danno-number %}{% endblock %}</div>
+                            </div>
+                            <div class="grandezza span1"> Euro</div>
                         </div>
+
                         <div class="subtitle">
                         {% if n_progetti %}
                             Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione
@@ -270,9 +274,11 @@
                 <div class="span5 smallbox" >
                     {% if tot_donazioni %}
                         <div class="title">Donazioni ricevute</div>
-                        <div class="box" id="donazioni">
-                            <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
-                            <div class="grandezza">{% block tot-donazioni-word %}{% endblock %} Euro</div>
+                        <div class="box row" id="donazioni">
+                            <div class="number_background span2">
+                                <div class="number"> {% block tot-donazioni-number %}{% endblock %} </div>
+                            </div>
+                            <div class="grandezza span1"> Euro</div>
                         </div>
                         <div class="subtitle">
                             Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}

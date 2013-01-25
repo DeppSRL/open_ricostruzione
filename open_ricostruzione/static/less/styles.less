@@ -287,7 +287,7 @@ div.content{
   #aggiornamento{
     font-size: 13px;
     color: #7e8080;
-    
+
   }
 
   .boxes{
@@ -333,7 +333,10 @@ div.content{
       }
       .grandezza{
 
-        margin-left: 10px;
+        @media(min-width:400px){
+          margin-left: 10px;
+        }
+
         width: @spacing-double;
         vertical-align: middle;
         padding-top:10px;
