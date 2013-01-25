@@ -129,6 +129,8 @@ textarea {
 
 /* MARGIN */
 
+/*BOXES BACKGROUND*/
+
 /* COLOR */
 
 /* FONT SIZE */
@@ -9009,7 +9011,7 @@ input[placeholder],
 
 @media (min-width: 767px) {
   #top_home {
-    max-height: 200px;
+    min-height: 270px;
   }
 }
 
@@ -9024,7 +9026,7 @@ input[placeholder],
 }
 
 div.content {
-  padding-top: 25px;
+  padding-top: 15px;
 }
 
 @media (max-width: 400px) {
@@ -9169,7 +9171,6 @@ div.content #don_last {
 }
 
 div.content #aggiornamento {
-  margin-top: 5px;
   font-size: 13px;
   color: #7e8080;
 }
@@ -9180,7 +9181,6 @@ div.content .boxes {
 
 @media (max-width: 767px) {
   div.content .boxes .smallbox {
-    max-width: 180px;
     margin-top: 25px;
   }
 }
@@ -9193,24 +9193,35 @@ div.content .boxes .title {
 }
 
 div.content .boxes .box {
-  min-height: 60px;
+  min-height: 40px;
+}
+
+div.content .boxes .box .number_background {
+  float: left;
+  width: 160px;
+  height: 40px;
+  background-position: center;
+  background-repeat: no-repeat;
+  -webkit-background-size: 160px 40px;
+     -moz-background-size: 160px 40px;
+       -o-background-size: 160px 40px;
+          background-size: 160px 40px;
 }
 
 div.content .boxes .box .number {
-  float: left;
-  width: 80px;
-  height: 40px;
-  padding-top: 20px;
-  font-size: 35px;
+  width: 150px;
+  height: 30px;
+  padding-top: 10px;
+  padding-right: 10px;
+  font-size: 20px;
   color: white;
-  text-align: center;
+  text-align: right;
 }
 
 div.content .boxes .box .grandezza {
-  float: right;
-  width: 85px;
-  height: 50px;
+  width: 50px;
   padding-top: 10px;
+  margin-left: 10px;
   font-size: 20px;
   text-transform: uppercase;
   vertical-align: middle;
@@ -9218,27 +9229,22 @@ div.content .boxes .box .grandezza {
 
 div.content .boxes .subtitle {
   padding-top: 10px ;
+  margin-bottom: 15px;
   font-size: 12px;
   line-height: 12px;
   text-transform: uppercase;
 }
 
-div.content .boxes #donazioni.box .number {
+div.content .boxes #donazioni.box .number_background {
   background-image: url("../img/box_donazioni.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 80px 60px;
 }
 
 div.content .boxes #donazioni.box .grandezza {
   color: #a1ba03;
 }
 
-div.content .boxes #danno.box .number {
+div.content .boxes #danno.box .number_background {
   background-image: url("../img/box_danno.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 80px 60px;
 }
 
 div.content .boxes #danno.box .grandezza {

@@ -1,4 +1,6 @@
 {% load humanize %}
+{% load italianize %}
+
 <!DOCTYPE html >
 <html lang="en" itemscope itemtype="http://schema.org/Article">
 <head>
@@ -185,28 +187,36 @@
                     disposizione.<br/> Perchè trasparenza degli amministratori vuol dire fiducia dei cittadini.
                 </div>
             </div>
-            <div class="span5 offset2 boxes" id="boxes-home">
+            <div class="span3 offset2 boxes" id="boxes-home">
                 <div class="row">
-                    <div class="span2 smallbox" >
+                    <div class="span3 smallbox" >
                         {%  if stima_danno %}
                             <div class="title">Stima del danno </div>
-                            <div class="box" id="danno">
-                                <div class="number"> {{ stima_danno|onlynumber }}</div>
-                                <div class="grandezza">{{ stima_danno|onlyword }} {% if stima_danno > 1000000 %}di{% endif %} Euro</div>
+                            <div class="box row" id="danno">
+                                <div class="number_background span2">
+                                    <div class="number"> {{ stima_danno|italianize}}</div>
+                                </div>
+                                <div class="grandezza span1">Euro</div>
                             </div>
+
                             <div class="subtitle">
                                 {% if n_progetti %}
                                     Per {{ n_progetti }} progett{% if n_progetti < 2 %}o{% else %}i{% endif %} di ricostruzione
                                 {% endif %}
                             </div>
+
                         {% endif %}
                     </div>
-                    <div class="span2 smallbox" >
+                </div>
+                <div class="row">
+                    <div class="span3 smallbox" >
                         {% if tot_donazioni %}
                             <div class="title">Donazioni ricevute</div>
-                            <div class="box" id="donazioni">
-                                <div class="number">{{ tot_donazioni|onlynumber}} </div>
-                                <div class="grandezza">{{ tot_donazioni|onlyword }} {% if tot_donazioni > 1000000 %}di{% endif %} Euro</div>
+                            <div class="box row" id="donazioni">
+                                <div class="number_background span2">
+                                    <div class="number">{{ tot_donazioni_ita}} </div>
+                                </div>
+                                    <div class="grandezza span1"> Euro</div>
                             </div>
                             <div class="subtitle">
                                 Da {{ n_donazioni }} donazion{% if n_donazioni < 2 %}e{% else %}i{% endif %}
@@ -236,12 +246,12 @@
             <div id="main-search">{% block main-search %}{% endblock %}</div>
             <div class="main-content">{% block main-content %}{% endblock %}</div>
         </div>
-{#        colonna altre news#}
+        {#        colonna altre news#}
         <div class="{% block altre-news-visible %}hidden{% endblock %} span5">{% block altre-news %}{% endblock %}</div>
 
         <div class="span5 boxes {% block boxes-class %}{% endblock %}" >
             <div class="row">
-                <div class="span2 smallbox" >
+                <div class="span5 smallbox" >
                     {%  if stima_danno %}
                         <div class="title">Stima del danno </div>
                         <div class="box" id="danno">
@@ -255,7 +265,9 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="span2 smallbox" >
+            </div>
+            <div class="row">
+                <div class="span5 smallbox" >
                     {% if tot_donazioni %}
                         <div class="title">Donazioni ricevute</div>
                         <div class="box" id="donazioni">
