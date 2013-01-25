@@ -1,14 +1,17 @@
 {% load humanize %}
 <!DOCTYPE html >
-<html lang="en" >
+<html lang="en" itemscope itemtype="http://schema.org/Article">
 <head>
     <meta charset="utf-8">
-    <meta property="og:image" content="{{ STATIC_URL }}img/logo_white.png">
+    
+    <meta itemprop="name" content="Open Ricostruzione">
+    <meta itemprop="description" content="Open Ricostruzione è uno strumento a disposizione degli amministratori e dei cittadini per favorire una ricostruzione partecipata e trasparente. E' aperto al contributo di tutti e anzi lo incoraggia: commenti, notizie, segnalazioni.">
+    <meta itemprop="image" content="http://www.openricostruzione.it/static/img/favicon_grande.png">
     <title>Open Ricostruzione - {% block title %} {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="" >
-
+ 
     <!-- Le styles -->
     <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.9.1.custom.css" rel="stylesheet">
 
@@ -316,7 +319,8 @@
                 })();
             </script>
         </div>
-    </div>
+        {% block reddit-button %}{% endblock %}
+   </div>
 
 
     {% block comments %}
