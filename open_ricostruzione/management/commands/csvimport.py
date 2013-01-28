@@ -103,11 +103,14 @@ class Command(BaseCommand):
         #               data inserimento, utente, confermato, multiplo,
 
             created = False
+            updated = False
+
             territorio = Territorio.objects.get(cod_comune=r['istat'])
             tipologia = TipologiaProgetto.objects.get(codice=r['tipologia'])
             self.logger.info("%s: Analizzando record: %s" % ( r['istat'],r['id_progetto']))
             importo_previsto=r['importo_previsto'].replace('$','')
             riepilogo_importi=r['riepilogo_importi'].replace(',','.')
+
             progetto, created = Progetto.objects.get_or_create(
                 id_progetto = r['id_progetto'],
                 id_padre__isnull = True,
@@ -118,29 +121,40 @@ class Command(BaseCommand):
                     'denominazione': strip_tags(r['denominazione']),
                     'importo_previsto': importo_previsto,
                     'riepilogo_importi': Decimal(riepilogo_importi),
+                    'tipologia': tipologia,
+                    'tempi_di_realizzazione' : r['tempistica_prevista'],
+                    'stato_attuale': r['stato_attuale'],
+                    'interventi_previsti':r['interventi_previsti'],
+                    'epoca':r['epoca'],
+                    'cenni_storici':r['cenni_storici'],
+                    'ulteriori_info':r['ulteriori_informazioni'],
+                    'slug': slugify(r['denominazione'][:50]+r['id_progetto']),
                     }
             )
-#            aggiunge la tipologia
-            progetto.tipologia = tipologia
-            if created:
-                self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
+
+            if options['update']:
+                progetto.territorio=territorio
+                progetto.importo_previsto=importo_previsto
+                progetto.riepilogo_importi= Decimal(riepilogo_importi)
+                progetto.tipologia = tipologia
+                progetto.tempi_di_realizzazione = r['tempistica_prevista']
+                progetto.stato_attuale = r['stato_attuale']
+                progetto.interventi_previsti = r['interventi_previsti']
+                progetto.epoca = r['epoca']
+                progetto.cenni_storici = r['cenni_storici']
+                progetto.ulteriori_info = r['ulteriori_informazioni']
+                progetto.ubicazione = r['ubicazione']
+
+                updated=True
+                progetto.save()
+
+        if created:
+            self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
+        else:
+            if updated:
+                self.logger.debug("%s: progetto trovato e aggiornato: %s" % (c, progetto))
             else:
-                self.logger.debug("%s: progetto trovato e non duplicato: %s" % (c, progetto))
-
-#           aggiunge ubicazione, tempi di realizzazione, stato attuale, tempistica, interventi previsti
-            progetto.ubicazione = r['ubicazione']
-            progetto.tempi_di_realizzazione = r['tempistica_prevista']
-            progetto.stato_attuale = r['stato_attuale']
-            progetto.interventi_previsti = r['interventi_previsti']
-            progetto.epoca = r['epoca']
-            progetto.cenni_storici = r['cenni_storici']
-            progetto.ulteriori_info = r['ulteriori_informazioni']
-
-#           aggiunge lo slug
-            myslug = progetto.denominazione[:50] + progetto.id_progetto
-            progetto.slug = slugify(myslug)
-            progetto.save()
-
+                self.logger.debug("%s: progetto trovato e non aggiornato: %s" % (c, progetto))
             c += 1
 
     def handle_subproj(self, *args, **options):
