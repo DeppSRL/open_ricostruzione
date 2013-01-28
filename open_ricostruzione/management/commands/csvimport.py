@@ -162,6 +162,7 @@ class Command(BaseCommand):
         self.logger.info("Inizio import da %s" % self.csv_file)
 
         for r in self.unicode_reader:
+            updated=False
 
         #Totale:
         #id_figlio	id_padre	tipologia	denominazione	epoca	ubicazione	cenni_storici	stato_attuale	interventi_previsti	tempistica_prevista	importo_previsto	riepilogo_importi	ulteriori_informazioni	data_inserimento	utente	confermato
@@ -189,28 +190,38 @@ class Command(BaseCommand):
                     'denominazione': strip_tags(r['denominazione']),
                     'importo_previsto': r['importo_previsto'],
                     'riepilogo_importi': Decimal(r['riepilogo_importi']),
+                    'tipologia': tipologia,
+                    'ubicazione': r['ubicazione'],
+                    'tempi_di_realizzazione': r['tempistica_prevista'],
+                    'stato_attuale':r['stato_attuale'],
+                    'interventi_previsti':r['interventi_previsti'],
+                    'epoca':r['epoca'],
+                    'cenni_storici':r['cenni_storici'],
+                    'ulteriori_info':r['ulteriori_informazioni'],
+                    'slug':slugify(strip_tags(r['denominazione'])[:50]+r['id_figlio']),
                     }
             )
-#            aggiunge la tipologia
-            progetto.tipologia = tipologia
+
+            if options['update']:
+
+                progetto.tipologia = tipologia
+                progetto.ubicazione = r['ubicazione']
+                progetto.tempi_di_realizzazione = r['tempistica_prevista']
+                progetto.stato_attuale = r['stato_attuale']
+                progetto.interventi_previsti = r['interventi_previsti']
+                progetto.epoca = r['epoca']
+                progetto.cenni_storici = r['cenni_storici']
+                progetto.ulteriori_info = r['ulteriori_informazioni']
+                updated=True
+                progetto.save()
+
             if created:
                 self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
             else:
-                self.logger.debug("%s: progetto trovato e non duplicato: %s" % (c, progetto))
-
-#           aggiunge ubicazione, tempi di realizzazione, stato attuale, tempistica, interventi previsti
-            progetto.ubicazione = r['ubicazione']
-            progetto.tempi_di_realizzazione = r['tempistica_prevista']
-            progetto.stato_attuale = r['stato_attuale']
-            progetto.interventi_previsti = r['interventi_previsti']
-            progetto.epoca = r['epoca']
-            progetto.cenni_storici = r['cenni_storici']
-            progetto.ulteriori_info = r['ulteriori_informazioni']
-
-#           aggiunge slug
-            myslug = progetto.denominazione[:50] + progetto.id_progetto
-            progetto.slug = slugify(myslug)
-            progetto.save()
+                if updated:
+                    self.logger.debug("%s: progetto trovato e aggiornato: %s" % (c, progetto))
+                else:
+                    self.logger.debug("%s: progetto trovato e non aggiornato: %s" % (c, progetto))
 
             c += 1
 
