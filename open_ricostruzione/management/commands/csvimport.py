@@ -363,14 +363,18 @@ class Command(BaseCommand):
         for r in self.unicode_reader:
             comune=Territorio.objects.get(cod_comune=r['istat'],tipo_territorio="C")
             if comune:
-                comune.iban = r['riferimento']
-                if "postale" in r['descrizione']:
-                    comune.tipologia_cc="P"
-                elif "bancario" in r['descrizione']:
-                    comune.tipologia_cc="B"
+                if options['update']:
+                    comune.iban = r['riferimento']
+                    if "postale" in r['descrizione']:
+                        comune.tipologia_cc="P"
+                    elif "bancario" in r['descrizione']:
+                        comune.tipologia_cc="B"
 
-                comune.save()
-                self.logger.info("%s: dati Comune aggiornati: %s" % ( c, comune))
+                    comune.save()
+                    self.logger.info("%s: dati Comune aggiornati: %s" % ( c, comune))
+
+                else:
+                    self.logger.info("%s: dati Comune non aggiornati: %s" % ( c, comune))
             else:
                 self.logger.debug("%s: Comune non trovato: %s" % (c, comune))
 
