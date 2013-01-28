@@ -42,7 +42,12 @@ class Command(BaseCommand):
             dest='type',
             default=None,
             help='Type of import: proj|subproj|loc|don|donproj|iban'),
+        make_option('--update',
+                    dest='update',
+                    default=False,
+                    help='Update Existing Records: True|False'),
         )
+
     csv_file = ''
     encoding = 'utf8'
     logger = logging.getLogger('csvimport')
@@ -56,7 +61,8 @@ class Command(BaseCommand):
 
         # read first csv file
         try:
-            self.unicode_reader = utils.UnicodeDictReader(open(self.csv_file, 'r'), encoding=self.encoding, dialect='excel_semicolon')
+            self.unicode_reader = \
+                utils.UnicodeDictReader(open(self.csv_file, 'r'), encoding=self.encoding, dialect='excel_semicolon')
         except IOError:
             self.logger.error("It was impossible to open file %s\n" % self.csv_file)
             exit(1)
@@ -243,9 +249,17 @@ class Command(BaseCommand):
     #    avvenuto = models.BooleanField()
     #    importo = models.FloatField()
     #    confermato = models.BooleanField()
+    #    modalita_r = models.TextField(max_length=20,null=True, blank=True)
+    #    info = models.TextField(max_length=1000,null=True, blank=True)
+
+    #    campi CSV:
+    #    "id_flusso";"istat";"tipologia_c";"denominazione";"istat_c";"data_c";"modalita_c";"avvenuto";
+    #   "indicazione";"importo";"modalita_r";"modalita_v";"info";"data_inserimento";"confermato";"utente"
 
         for r in self.unicode_reader:
             created = False
+            donazione = None
+            updated = True
 
             territorio = Territorio.objects.get(cod_comune=r['istat'])
             if r['data_c']:
@@ -275,24 +289,34 @@ class Command(BaseCommand):
                     'avvenuto': r['avvenuto'],
                     'importo': Decimal(r['importo']),
                     'confermato': r['confermato'],
+                    'info': r['info'],
+                    'modalita_r':r['modalita_r'],
                     }
             )
 
-            if r['info']:
-                self.logger.info("%s: Donazione %s con info: %s" % ( c, donazione,r['info']))
-                donazione.info=r['info']
-                donazione.save()
-
-            if r['modalita_r']:
-                self.logger.info("%s: Donazione %s con modalita_r: %s" % ( c, donazione,r['modalita_r']))
+            if created == False and donazione and options['update']==True:
+                donazione.territorio = territorio
+                donazione.denominazione = r['denominazione']
+                donazione.tipologia = tipologia_cedente
+                donazione.data = data
+                donazione.avvenuto = r['avvenuto']
+                donazione.importo = Decimal(r['importo'])
+                donazione.confermato = r['confermato']
+                donazione.info = r['info']
                 donazione.modalita_r=r['modalita_r']
+                updated=True
                 donazione.save()
-
 
             if created:
                 self.logger.info("%s: donazione inserita: %s" % ( c, donazione))
             else:
-                self.logger.debug("%s: donazione trovata e non duplicata: %s" % (c, donazione))
+                if donazione:
+                    if options['update'] and updated:
+                        self.logger.debug("%s: donazione aggiornata: %s" % (c, donazione))
+                    else:
+                        self.logger.debug("%s: donazione trovata e non aggiornata: %s" % (c, donazione))
+                else:
+                    self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_flusso']))
 
             c += 1
 
@@ -309,11 +333,16 @@ class Command(BaseCommand):
             if donazione:
 
                 if r['id_figlio'] == "NULL":
-                    donazione.progetto=Progetto.objects.get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
+                    donazione.progetto=\
+                        Progetto.objects.\
+                        get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
                 else:
-                    donazione.progetto=Progetto.objects.get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
+                    donazione.progetto=\
+                        Progetto.objects.\
+                        get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
 
                 donazione.save()
+
                 self.logger.info("%s: donazione aggiornata: %s" % ( c, donazione))
             else:
                 self.logger.debug("%s: donazione non trovata: %s" % (c, donazione))
