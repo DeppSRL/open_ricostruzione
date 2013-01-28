@@ -259,7 +259,7 @@ class Command(BaseCommand):
         for r in self.unicode_reader:
             created = False
             donazione = None
-            updated = True
+            updated = False
 
             territorio = Territorio.objects.get(cod_comune=r['istat'])
             if r['data_c']:
@@ -329,23 +329,25 @@ class Command(BaseCommand):
         #   "id";"id_flusso";"id_progetto";"id_figlio"
 
         for r in self.unicode_reader:
-            donazione =Donazione.objects.get(id_donazione=r['id_flusso'])
+            donazione = Donazione.objects.get(id_donazione=r['id_flusso'])
             if donazione:
+                if options['update']:
+                    if r['id_figlio'] == "NULL":
+                        donazione.progetto=\
+                            Progetto.objects.\
+                            get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
+                    else:
+                        donazione.progetto=\
+                            Progetto.objects.\
+                            get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
 
-                if r['id_figlio'] == "NULL":
-                    donazione.progetto=\
-                        Progetto.objects.\
-                        get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
+                    donazione.save()
+
+                    self.logger.info("%s: donazione aggiornata: %s" % ( c, donazione))
                 else:
-                    donazione.progetto=\
-                        Progetto.objects.\
-                        get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
-
-                donazione.save()
-
-                self.logger.info("%s: donazione aggiornata: %s" % ( c, donazione))
+                    self.logger.info("%s: donazione non aggiornata: %s" % ( c, donazione))
             else:
-                self.logger.debug("%s: donazione non trovata: %s" % (c, donazione))
+                self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_progetto']))
 
             c += 1
 
