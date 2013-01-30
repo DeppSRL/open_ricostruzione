@@ -168,23 +168,26 @@ class HomeView(TemplateView):
 
         for j in range(1,4):
             c_evidenza={}
-            comune = comuni_considerati[((i+j)%c_considerati_num)+1]
-            comune_donazioni = Donazione.objects.filter(territorio=comune, id_donazione__in=donazioni_considerate_cod).\
+            try:
+              comune = comuni_considerati[((i+j)%c_considerati_num)+1]
+              comune_donazioni = Donazione.objects.filter(territorio=comune, id_donazione__in=donazioni_considerate_cod).\
                 aggregate(d_sum=Sum('importo'))
 
-            comune_danno = Progetto.objects.filter(
+              comune_danno = Progetto.objects.filter(
                 territorio=comune,
                 id_progetto__in=progetti_considerati_cod
-            ).aggregate(p_sum=Sum('riepilogo_importi'))
+              ).aggregate(p_sum=Sum('riepilogo_importi'))
 
-#           inserisce il comune e le somme di danno e donazioni nel diz. in evidenza e fa lo humanize delle cifre
-            c_evidenza={
+#             inserisce il comune e le somme di danno e donazioni nel diz. in evidenza e fa lo humanize delle cifre
+              c_evidenza={
                 'comune':comune,
                 'd_sum':moneyfmt(Decimal(comune_donazioni['d_sum']),2,"",".",","),
                 'p_sum':moneyfmt(Decimal(comune_danno['p_sum']),2,"",".",","),
-            }
+              }
 
-            comuni_evidenza.append(c_evidenza)
+              comuni_evidenza.append(c_evidenza)
+            except IndexError:
+              pass
 
         context['comuni_evidenza']=comuni_evidenza
 
