@@ -10,6 +10,7 @@ class DonazioneAdmin(admin.ModelAdmin):
     ordering = ['data']
     list_filter = ['tipologia',]
     search_fields = ['^denominazione', 'id_donazione']
+    list_per_page = 500
 
 class TerritorioAdmin(admin.ModelAdmin):
     model = Territorio
@@ -23,6 +24,7 @@ class TipologiaProgettoAdmin(admin.ModelAdmin):
 class TipologiaCedenteAdmin(admin.ModelAdmin):
     model = TipologiaCedente
     ordering = ['codice']
+    prepopulated_fields = {'slug':('denominazione',),}
 
 class EntryAdmin(admin.ModelAdmin):
     model=Entry

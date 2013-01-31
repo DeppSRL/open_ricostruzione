@@ -294,10 +294,11 @@ class Command(BaseCommand):
 
             r['importo'] = r['importo'].replace(',','.')
 
-            #se la tipologia e' srl o spa inserisce come tipologia Aziende, viceversa la tipologia riportata
+            #se la tipologia e' srl, spa o Altre aziende inserisce come tipologia Aziende,
+            # viceversa la tipologia riportata
             aziende=TipologiaCedente.objects.get(denominazione="Aziende")
 
-            if r['tipologia_c'] == 4 or r['tipologia_c'] == 5:
+            if r['tipologia_c'] == 4 or r['tipologia_c'] == 5 or r['tipologia_c'] == 11:
                 tipologia_cedente = aziende
             else:
                 tipologia_cedente = TipologiaCedente.objects.get(codice = r['tipologia_c'])
