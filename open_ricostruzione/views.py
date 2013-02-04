@@ -198,7 +198,11 @@ class HomeView(TemplateView):
         i = today%progetti_considerati.count()
         progetti_evidenza=[]
         for j in range(1,4):
-            progetti_evidenza.append(progetti_considerati[((i+j)%progetti_considerati.count())])
+            try:
+                progetti_evidenza.append(progetti_considerati[((i+j)%progetti_considerati.count())])
+            except IndexError:
+                pass
+
 
 
         #humanize cifre monetarie
