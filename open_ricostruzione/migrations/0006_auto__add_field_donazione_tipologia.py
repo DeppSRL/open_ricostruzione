@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Donazione.tipologia'
         db.add_column('open_ricostruzione_donazione', 'tipologia',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['open_ricostruzione.TipologiaCedente']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(default="", to=orm['open_ricostruzione.TipologiaCedente']),
                       keep_default=False)
 
 

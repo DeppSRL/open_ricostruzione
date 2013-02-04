@@ -11,3 +11,5 @@ sqlite.db.001
 sqlite.db.002
 sqlite.db.003
 open_ricostruzione/static/js/leaflet.js
+open_ricostruzione/migrations/*
+open_ricostruzione/csv/*

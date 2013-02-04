@@ -50,6 +50,7 @@ class Command(BaseCommand):
 
     csv_file = ''
     encoding = 'utf8'
+#    encoding='latin1'
     logger = logging.getLogger('csvimport')
     unicode_reader = None
 
@@ -95,6 +96,7 @@ class Command(BaseCommand):
         self.logger.info("Inizio import da %s" % self.csv_file)
 
         for r in self.unicode_reader:
+
 
         #               Totale:
         #               progetto, tipologia, istat, denominazione, epoca,

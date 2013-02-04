@@ -204,7 +204,6 @@ class HomeView(TemplateView):
                 pass
 
 
-
         #humanize cifre monetarie
         for val in progetti_evidenza:
             val.riepilogo_importi=moneyfmt(val.riepilogo_importi,2,"",".",",")
