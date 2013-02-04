@@ -169,7 +169,7 @@ class HomeView(TemplateView):
         for j in range(1,4):
             c_evidenza={}
             try:
-              comune = comuni_considerati[((i+j)%c_considerati_num)+1]
+              comune = comuni_considerati[((i+j)%c_considerati_num)]
               comune_donazioni = Donazione.objects.filter(territorio=comune, id_donazione__in=donazioni_considerate_cod).\
                 aggregate(d_sum=Sum('importo'))
 
@@ -198,7 +198,7 @@ class HomeView(TemplateView):
         i = today%progetti_considerati.count()
         progetti_evidenza=[]
         for j in range(1,4):
-            progetti_evidenza.append(progetti_considerati[((i+j)%progetti_considerati.count())+1])
+            progetti_evidenza.append(progetti_considerati[((i+j)%progetti_considerati.count())])
 
 
         #humanize cifre monetarie
