@@ -9,7 +9,7 @@ class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
     ordering = ['data']
     list_filter = ['tipologia',]
-    search_fields = ['^denominazione', 'id_donazione']
+    search_fields = ['^denominazione', 'id_donazione', 'data']
     list_per_page = 500
 
 class TerritorioAdmin(admin.ModelAdmin):

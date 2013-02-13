@@ -5,7 +5,7 @@ from django.db.utils import DatabaseError
 from django.core.management.base import BaseCommand, CommandError
 from decimal import Decimal
 from django.template.defaultfilters import slugify
-
+from django.core.exceptions import ObjectDoesNotExist
 from open_ricostruzione import utils
 from open_ricostruzione.models import *
 from optparse import make_option
@@ -29,6 +29,7 @@ def strip_tags(html):
     s.feed(html)
     return s.get_data()
 
+
 class Command(BaseCommand):
 
     help = 'Import data from CSV'
@@ -46,6 +47,10 @@ class Command(BaseCommand):
                     dest='update',
                     default=False,
                     help='Update Existing Records: True|False'),
+        make_option('--delete',
+            dest='delete',
+            default=False,
+            help='Delete Existing Records: True|False'),
         )
 
     csv_file = ''
@@ -62,8 +67,8 @@ class Command(BaseCommand):
 
         # read first csv file
         try:
-            self.unicode_reader = \
-                utils.UnicodeDictReader(open(self.csv_file, 'r'), encoding=self.encoding, dialect='excel_semicolon')
+            self.unicode_reader =\
+                            utils.UnicodeDictReader(open(self.csv_file, 'r'), encoding=self.encoding, dialect="excel")
         except IOError:
             self.logger.error("It was impossible to open file %s\n" % self.csv_file)
             exit(1)
@@ -93,10 +98,15 @@ class Command(BaseCommand):
 
     def handle_proj(self, *args, **options):
         c = 0
+
+        if options['delete'].upper()=="TRUE":
+            self.logger.info("Deleting Progetto table...")
+            Progetto.objects.all().delete()
+
+
         self.logger.info("Inizio import da %s" % self.csv_file)
 
         for r in self.unicode_reader:
-
 
         #               Totale:
         #               progetto, tipologia, istat, denominazione, epoca,
@@ -104,11 +114,16 @@ class Command(BaseCommand):
         #               tempistica prevista, importo previsto, riepilogo importi, ulteriori informazioni,
         #               data inserimento, utente, confermato, multiplo,
 
-            created = False
+
             updated = False
 
             territorio = Territorio.objects.get(cod_comune=r['istat'])
-            tipologia = TipologiaProgetto.objects.get(codice=r['tipologia'])
+
+            try:
+                tipologia = TipologiaProgetto.objects.get(codice=r['tipologia'])
+            except ObjectDoesNotExist:
+                tipologia = TipologiaProgetto.objects.get(denominazione="Altro")
+
             self.logger.info("%s: Analizzando record: %s" % ( r['istat'],r['id_progetto']))
             importo_previsto=r['importo_previsto'].replace('$','')
             riepilogo_importi=r['riepilogo_importi'].replace(',','.')
@@ -134,7 +149,7 @@ class Command(BaseCommand):
                     }
             )
 
-            if options['update']:
+            if options['update'].upper()=="TRUE":
                 progetto.territorio=territorio
                 progetto.importo_previsto=importo_previsto
                 progetto.riepilogo_importi= Decimal(riepilogo_importi)
@@ -150,13 +165,14 @@ class Command(BaseCommand):
                 updated=True
                 progetto.save()
 
-        if created:
-            self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
-        else:
-            if updated:
-                self.logger.debug("%s: progetto trovato e aggiornato: %s" % (c, progetto))
+            if created:
+                self.logger.info("%s: progetto inserito: %s" % ( c, progetto))
             else:
-                self.logger.debug("%s: progetto trovato e non aggiornato: %s" % (c, progetto))
+                if updated:
+                    self.logger.debug("%s: progetto trovato e aggiornato: %s" % (c, progetto))
+                else:
+                    self.logger.debug("%s: progetto trovato e non aggiornato: %s" % (c, progetto))
+
             c += 1
 
     def handle_subproj(self, *args, **options):
@@ -180,7 +196,12 @@ class Command(BaseCommand):
             except ObjectDoesNotExist:
                 self.logger.info("Record padre con id: %s non esiste" % ( r['id_padre']))
                 continue
-            tipologia = TipologiaProgetto.objects.get(codice=r['tipologia'])
+
+            try:
+                tipologia = TipologiaProgetto.objects.get(codice=r['tipologia'])
+            except ObjectDoesNotExist:
+                tipologia = TipologiaProgetto.objects.get(denominazione="Altro")
+
             progetto, created = Progetto.objects.get_or_create(
                 id_progetto = r['id_figlio'],
                 id_padre = r['id_padre'],
@@ -204,7 +225,7 @@ class Command(BaseCommand):
                     }
             )
 
-            if options['update']:
+            if options['update'].upper()=="TRUE":
 
                 progetto.tipologia = tipologia
                 progetto.ubicazione = r['ubicazione']
@@ -265,6 +286,11 @@ class Command(BaseCommand):
 
     def handle_donation(self, *args, **options):
         c = 0
+
+        if options['delete'].upper()=="TRUE":
+            self.logger.info("Deleting Donazione table...")
+            Donazione.objects.all().delete()
+
         self.logger.info("Inizio import da %s" % self.csv_file)
 
     #    campi da importare:
@@ -289,8 +315,11 @@ class Command(BaseCommand):
             updated = False
 
             territorio = Territorio.objects.get(cod_comune=r['istat'])
-            if r['data_c']:
-                data = datetime.strptime(r['data_c'], "%d/%m/%Y")
+
+        #se non c'e' la data usa il ts di inserimento della donazione
+
+            if r['data_c']and r['data_c']!="0000-00-00":
+                data = datetime.strptime(r['data_c'], "%Y-%m-%d")
             else:
                 data = datetime.fromtimestamp(float(r['data_inserimento']))
 
@@ -303,7 +332,10 @@ class Command(BaseCommand):
             if r['tipologia_c'] == 4 or r['tipologia_c'] == 5 or r['tipologia_c'] == 11:
                 tipologia_cedente = aziende
             else:
-                tipologia_cedente = TipologiaCedente.objects.get(codice = r['tipologia_c'])
+                try:
+                    tipologia_cedente = TipologiaCedente.objects.get(codice = r['tipologia_c'])
+                except ObjectDoesNotExist:
+                    tipologia_cedente = TipologiaCedente.objects.get(denominazione="Altro")
 
             donazione, created = Donazione.objects.get_or_create(
                 id_donazione = r['id_flusso'],
@@ -322,7 +354,7 @@ class Command(BaseCommand):
                     }
             )
 
-            if created == False and donazione and options['update']==True:
+            if created == False and donazione and options['update'].upper()=="TRUE":
                 donazione.territorio = territorio
                 donazione.denominazione = r['denominazione']
                 donazione.tipologia = tipologia_cedente
@@ -339,7 +371,7 @@ class Command(BaseCommand):
                 self.logger.info("%s: donazione inserita: %s" % ( c, donazione))
             else:
                 if donazione:
-                    if options['update'] and updated:
+                    if options['update'].upper()=="TRUE" and updated:
                         self.logger.debug("%s: donazione aggiornata: %s" % (c, donazione))
                     else:
                         self.logger.debug("%s: donazione trovata e non aggiornata: %s" % (c, donazione))
@@ -359,8 +391,8 @@ class Command(BaseCommand):
         for r in self.unicode_reader:
             donazione = Donazione.objects.get(id_donazione=r['id_flusso'])
             if donazione:
-                if options['update']:
-                    if r['id_figlio'] == "NULL":
+                if options['update'].upper()=="TRUE":
+                    if r['id_figlio'] == "NULL" or not r['id_figlio']:
                         donazione.progetto=\
                             Progetto.objects.\
                             get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
@@ -383,6 +415,7 @@ class Command(BaseCommand):
 #    import Territorio IBAN
     def handle_iban(self, *args, **options):
         c = 0
+
         self.logger.info("Inizio import da %s" % self.csv_file)
 
         #   campi da importare:
@@ -391,7 +424,7 @@ class Command(BaseCommand):
         for r in self.unicode_reader:
             comune=Territorio.objects.get(cod_comune=r['istat'],tipo_territorio="C")
             if comune:
-                if options['update']:
+                if options['update'].upper()=="TRUE":
                     comune.iban = r['riferimento']
                     if "postale" in r['descrizione']:
                         comune.tipologia_cc="P"
