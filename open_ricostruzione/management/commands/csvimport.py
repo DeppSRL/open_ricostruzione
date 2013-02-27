@@ -45,10 +45,12 @@ class Command(BaseCommand):
             help='Type of import: proj|subproj|loc|don|donproj|iban'),
         make_option('--update',
                     dest='update',
+                    action='store_true',
                     default=False,
                     help='Update Existing Records: True|False'),
         make_option('--delete',
             dest='delete',
+            action='store_true',
             default=False,
             help='Delete Existing Records: True|False'),
         )
@@ -99,11 +101,6 @@ class Command(BaseCommand):
     def handle_proj(self, *args, **options):
         c = 0
 
-        if options['delete'].upper()=="TRUE":
-            self.logger.info("Deleting Progetto table...")
-            Progetto.objects.all().delete()
-
-
         self.logger.info("Inizio import da %s" % self.csv_file)
 
         for r in self.unicode_reader:
@@ -149,7 +146,7 @@ class Command(BaseCommand):
                     }
             )
 
-            if options['update'].upper()=="TRUE":
+            if options['update']:
                 progetto.territorio=territorio
                 progetto.importo_previsto=importo_previsto
                 progetto.riepilogo_importi= Decimal(riepilogo_importi)
@@ -225,7 +222,7 @@ class Command(BaseCommand):
                     }
             )
 
-            if options['update'].upper()=="TRUE":
+            if options['update']:
 
                 progetto.tipologia = tipologia
                 progetto.ubicazione = r['ubicazione']
@@ -286,10 +283,6 @@ class Command(BaseCommand):
 
     def handle_donation(self, *args, **options):
         c = 0
-
-        if options['delete'].upper()=="TRUE":
-            self.logger.info("Deleting Donazione table...")
-            Donazione.objects.all().delete()
 
         self.logger.info("Inizio import da %s" % self.csv_file)
 
@@ -354,7 +347,7 @@ class Command(BaseCommand):
                     }
             )
 
-            if created == False and donazione and options['update'].upper()=="TRUE":
+            if created == False and donazione and options['update']:
                 donazione.territorio = territorio
                 donazione.denominazione = r['denominazione']
                 donazione.tipologia = tipologia_cedente
@@ -371,7 +364,7 @@ class Command(BaseCommand):
                 self.logger.info("%s: donazione inserita: %s" % ( c, donazione))
             else:
                 if donazione:
-                    if options['update'].upper()=="TRUE" and updated:
+                    if options['update'] and updated:
                         self.logger.debug("%s: donazione aggiornata: %s" % (c, donazione))
                     else:
                         self.logger.debug("%s: donazione trovata e non aggiornata: %s" % (c, donazione))
@@ -391,7 +384,7 @@ class Command(BaseCommand):
         for r in self.unicode_reader:
             donazione = Donazione.objects.get(id_donazione=r['id_flusso'])
             if donazione:
-                if options['update'].upper()=="TRUE":
+                if options['update']:
                     if r['id_figlio'] == "NULL" or not r['id_figlio']:
                         donazione.progetto=\
                             Progetto.objects.\
@@ -424,7 +417,7 @@ class Command(BaseCommand):
         for r in self.unicode_reader:
             comune=Territorio.objects.get(cod_comune=r['istat'],tipo_territorio="C")
             if comune:
-                if options['update'].upper()=="TRUE":
+                if options['update']:
                     comune.iban = r['riferimento']
                     if "postale" in r['descrizione']:
                         comune.tipologia_cc="P"
