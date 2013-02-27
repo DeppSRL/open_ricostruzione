@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from open_ricostruzione.views import *
 from django.views.generic.base import RedirectView
 from django.conf import settings
+from django.views.generic.simple import direct_to_template
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -9,7 +10,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
+
+    # work in progress url
+    # url(r'^.*$', direct_to_template, {'template': 'lavorincorso.html'}),
+    
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^progetto/(?P<slug>[-\w]+)$', ProgettoView.as_view(), name="progetto_detail"),
     url(r'^progetti.json$', ProgettiJSONListView.as_view(), name="progetti_listJSON"),
