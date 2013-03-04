@@ -341,6 +341,26 @@
     </div>
 {% endblock %}
 
+{% block recent-comments %}
+    <div class="row">
+        <div class="span6">
+            <div id="recent_comments" class="evidenza" style="border-bottom:none;">
+                <div class="titolo" >Commenti dal sito</div>
+                <div class="subtitle">Gli ultimi 5 commenti dalle pagine di questo sito</div>
+                <div class="row-fluid" style="border-bottom:1px solid #CCCCCC;">
+                    <div id="recentcomments" class="dsq-widget">
+                        <script
+                                type="text/javascript"
+                                src="http://openricostruzione.disqus.com/recent_comments_widget.js?num_items=5&hide_avatars=0&avatar_size=32&excerpt_length=200">
+
+                                </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 
 {% block map-data %}
     {% if territori %}
