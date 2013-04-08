@@ -101,6 +101,10 @@ class Command(BaseCommand):
     def handle_proj(self, *args, **options):
         c = 0
 
+        if options['delete']:
+            self.logger.info("Erasing the precedently stored data...")
+            Progetto.objects.all().delete()
+
         self.logger.info("Inizio import da %s" % self.csv_file)
 
         for r in self.unicode_reader:
@@ -249,6 +253,10 @@ class Command(BaseCommand):
 
     def handle_localita(self, *args, **options):
         c = 0
+
+        if options['delete']:
+            self.logger.info("Erasing the precedently stored data...")
+            Territorio.objects.all().delete()
         self.logger.info("Inizio import da %s" % self.csv_file)
 
         for r in self.unicode_reader:
@@ -283,6 +291,9 @@ class Command(BaseCommand):
 
     def handle_donation(self, *args, **options):
         c = 0
+        if options['delete']:
+            self.logger.info("Erasing the precedently stored data...")
+            Donazione.objects.all().delete()
 
         self.logger.info("Inizio import da %s" % self.csv_file)
 
@@ -390,9 +401,14 @@ class Command(BaseCommand):
                             Progetto.objects.\
                             get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
                     else:
-                        donazione.progetto=\
-                            Progetto.objects.\
-                            get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
+                        if r['id_progetto']:
+                            donazione.progetto=\
+                                Progetto.objects.\
+                                get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
+                        else:
+                            donazione.progetto= \
+                                Progetto.objects. \
+                                    get(id_padre=None,id_progetto=r['id_figlio'])
 
                     donazione.save()
 
