@@ -53,7 +53,9 @@ class Command(BaseCommand):
             action='store_true',
             default=False,
             help='Delete Existing Records: True|False'),
-        )
+
+    )
+
 
     csv_file = ''
     encoding = 'utf8'
@@ -63,6 +65,7 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+
 
         self.csv_file = options['csvfile']
         self.logger.info('CSV FILE "%s"\n' % self.csv_file )
@@ -94,9 +97,11 @@ class Command(BaseCommand):
             self.handle_localita(*args, **options)
         elif options['type'] == 'iban':
             self.handle_iban(*args, **options)
+
         else:
-            self.logger.error("Wrong type %s. Select among proj, subproj, loc and don." % options['type'])
+            self.logger.error("Wrong type %s. Select among proj, subproj, loc, don." % options['type'])
             exit(1)
+
 
     def handle_proj(self, *args, **options):
         c = 0
@@ -412,9 +417,9 @@ class Command(BaseCommand):
 
                     donazione.save()
 
-                    self.logger.info("%s: donazione aggiornata: %s" % ( c, donazione))
+                    self.logger.info("%s - %s: donazione aggiornata: %s" % ( c, r['id'],donazione))
                 else:
-                    self.logger.info("%s: donazione non aggiornata: %s" % ( c, donazione))
+                    self.logger.info("%s - %s: donazione non aggiornata: %s" % ( c, r['id'], donazione))
             else:
                 self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_progetto']))
 
