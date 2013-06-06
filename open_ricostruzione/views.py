@@ -8,6 +8,7 @@ from django.db import connections
 import datetime
 import time
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
+from open_ricostruzione.utils import remove_img_tags
 from datetime import timedelta
 import json
 from json.encoder import JSONEncoder
@@ -19,19 +20,21 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponseRedirect
 from open_ricostruzione.settings import COMUNI_CRATERE
 from django.template.defaultfilters import date as _date
+import socket
+import feedparser
+from BeautifulSoup import BeautifulSoup
 
 class HomeView(TemplateView):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs ):
-        context={}
+        context= {'n_comuni': Territorio.objects.filter(tipo_territorio="C", cod_comune__in=settings.COMUNI_CRATERE). \
+            annotate(c=Count("progetto")).filter(c__gt=0).count(),
+                  'n_progetti': Progetto.objects.filter(id_padre__isnull=True).count()}
 
         #numero di comuni con almeno 1 progetto attivo
-        context['n_comuni'] = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
-                annotate(c = Count("progetto")).filter(c__gt=0).count()
 
         #numero progetti
-        context['n_progetti']=  Progetto.objects.filter(id_padre__isnull = True).count()
         # importi progetti totale
         stima_danno = Progetto.objects.filter( id_padre__isnull = True).\
             aggregate(s=Sum('riepilogo_importi')).values()
@@ -50,33 +53,44 @@ class HomeView(TemplateView):
         context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
 
         #news in home page
-        news_big = Entry.objects.filter(published=True, big_news=True).order_by('-published_at')[0]
 
 
-        ##   converto la data nel formato  Nome mese - Anno
-        context['news_big']={'day':news_big.published_at.day,
-                             'month':_date(news_big.published_at,"M"),
-                             'year':news_big.published_at.year,
-                             'title':news_big.title,
-                             'slug':news_big.slug,
-                             'body_html':news_big.body_html,
-                             }
+        blogposts = []
+        # sets the timeout for the socket connection
+        socket.setdefaulttimeout(150)
+        feeds = feedparser.parse(settings.OR_BLOG_FEED)
+
+        if feeds is not None:
+            i=0
+            post_counter = 0
+
+            while i<len(feeds.entries) and post_counter < 2 :
+                post={}
+                post['title']=feeds.entries[i]['title']
+
+                post['content'] = remove_img_tags(feeds.entries[i]['content'][0]['value'])
+
+                post_date = time.strptime(feeds.entries[i]['published'], '%a, %d %b %Y %H:%M:%S +0000')
+                post_date_dt = datetime.date.fromtimestamp( time.mktime(post_date))
+                post['month'] = _date(post_date_dt,"M")
+                post['day'] = time.strftime("%d",post_date)
+                post['year'] = time.strftime("%Y",post_date)
+                post['link'] = feeds.entries[i]['link']
+                html_content = BeautifulSoup(feeds.entries[i]['content'][0]['value'])
+                post['thumbnail'] = html_content.p.img['src']
 
 
-        news_temp = Entry.objects.filter(published=True, big_news=False).order_by('-published_at')[0:2]
-        news_small=[]
-        for idx, val in enumerate(news_temp):
-            news_small.append(
-                {'day':val.published_at.day,
-                 'month':_date(val.published_at,"M"),
-                 'year':val.published_at.year,
-                 'title':val.title,
-                 'body_html': val.body_html,
-                 'slug':val.slug,
-                 }
-            )
+                blogposts.append(post)
+                post_counter += 1
 
-        context['news_small']=news_small
+                i += 1
+
+
+
+        context['blogposts']=blogposts
+
+
+
 
         # importi dei progetti per categorie
         progetti_categorie_pie =\

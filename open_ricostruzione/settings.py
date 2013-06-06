@@ -197,3 +197,6 @@ COMUNI_CRATERE=[u'037002', u'037003', u'037005', u'037017', u'037019', u'037024'
 
 DISQUS_WEBSITE_SHORTNAME = 'openricostruzione'
 DISQUS_API_KEY = 'pO33Z2FVRd0eI2s6Ujf8BSJKWrGZARAvgPAF6gsqdtBmxDjt5i3BaXWV6XNqBYaA'
+
+OR_BLOG_FEED = 'http://blog.openricostruzione.it/?feed=rss2'
+
