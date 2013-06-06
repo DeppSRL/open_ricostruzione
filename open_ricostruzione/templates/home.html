@@ -77,7 +77,7 @@
                                     </a>
                                 </div>
                                 <div class="body">
-                                    {{ post.content|striptags|truncatechars:300 }}
+                                    {{ post.content|striptags|truncatewords:40 }}
                                     <br/>
                                     <a href="{{ post.link }} ">Leggi tutto</a>
 
@@ -96,7 +96,7 @@
     </div>
 
     <div class="container" id="home-map">
-        <div class="row" style="margin-top:25px;">
+        <div class="row" style="margin-top:0;">
             <div class="span12" id="riepilogo-map">
             </div>
         </div>
