@@ -82,6 +82,14 @@
                             </option>
                         {% endfor %}
                     </select>
+                    <div id="try-1">open lightbox</div>
+
+                    <div id="donation_form" style="display: none;">
+                        bla bla
+                    </div>
+
+
+
                 {% endblock %}
             </div><!--/span-->
 
@@ -548,6 +556,7 @@
 <script src="{{ STATIC_URL }}js/highcharts.js"></script>
 <script src="{{ STATIC_URL }}js/jquery-ui-1.9.1.custom.min.js" type="text/javascript" ></script>
 <script src="{{ STATIC_URL }}js/utils.js" type="text/javascript" ></script>
+<script src="{{ STATIC_URL }}js/jquery.lightbox_me.js" type="text/javascript" ></script>
 
 <!-- leaflet -->
 <script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
@@ -615,6 +624,17 @@
             }
         }).css('z-index', 10000);
 
+
+        {#        binds the button click with the donation lightbox #}
+        $('#try-1').click(function(e) {
+            $('#donation_form').lightbox_me({
+                centered: true,
+                onLoad: function() {
+                    $('#donation_form').find('input:first').focus()
+                }
+            });
+            e.preventDefault();
+        });
 
       
     });
