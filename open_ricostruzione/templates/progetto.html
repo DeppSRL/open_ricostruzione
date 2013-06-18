@@ -3,27 +3,15 @@
 {% load italianize %}
 {% block title %}Progetto{% endblock %}
 
-{% block support %}
-    {% if iban %}
-        <p class="title">AIUTACI A RICOSTRUIRE!</p>
-        <p>
-            Analizza lo stato dei lavori, partecipa alla ricostruzione:
-            dona anche tu utilizzando queste coordinate bancarie
-        </p>
-        <div class="iban">
-            {% if iban %}
-                <div class="title">Codice Iban</div>
-                <div class="number">{{ iban }}</div>
-            {% endif %}
-        </div>
-        <div class="iban">
-            {% if swift %}
-                <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-                <div class="number">{{ swift }}</div>
-            {% endif %}
-        </div>
-    {% endif %}
+{% block support_slogan %}
+    Dona ora per il progetto {{ progetto.denominazione }}
+    nel Comune di {{ progetto.territorio.denominazione }} con la tua Carta di credito
 {% endblock %}
+
+{% block support_control %}
+    <button> Dona!</button>
+{% endblock %}
+
 
 {% block main-title %}{{ progetto.denominazione }}{% endblock %}
 {% block main-subtitle %}

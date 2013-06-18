@@ -16,28 +16,6 @@
 </div>
 {% endblock %}
 
-{% block appello_home %}
-    <div class="span4 " id="appello">
-        <p class="title">AIUTACI A RICOSTRUIRE!</p>
-        <p>Scegli un Comune e analizza lo stato dei lavori</p>
-        <select >
-            <option value="">Scegli il Comune</option>
-            {% for c in territori_alfabetico %}
-                <option value="{% url territorio_detail c.slug %}">
-                    {{ c.denominazione }}
-                </option>
-            {% endfor %}
-
-        </select>
-
-    </div><!--/span-->
-{% endblock %}
-
-
-{% block support %}
-
-{% endblock %}
-
 {% block data-content %}
     <div class="container">
         <div class="row">

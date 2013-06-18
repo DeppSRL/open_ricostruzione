@@ -3,25 +3,14 @@
 {% load italianize %}
 {% block title %}Comune di {{ territorio.denominazione }}{% endblock %}
 
-{% block support %}
-        <p class="title">AIUTACI A RICOSTRUIRE!</p>
-        <p>
-            Analizza lo stato dei lavori, partecipa alla ricostruzione:
-            dona anche tu utilizzando queste coordinate bancarie
-        </p>
-        <div class="iban">
-            {% if iban %}
-                <div class="title">Codice Iban</div>
-                <div class="number">{{ iban }}</div>
-            {% endif %}
-        </div>
-        <div class="iban">
-            {% if swift %}
-                <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-                <div class="number">{{ swift }}</div>
-            {% endif %}
-        </div>
+{% block support_slogan %}
+    Dona ora per il Comune di {{ territorio.denominazione }} con la tua Carta di credito
 {% endblock %}
+
+{% block support_control %}
+    <button> Dona!</button>
+{% endblock %}
+
 
 {% block main-title %}Comune di {{ territorio.denominazione }} ({{ sigla_provincia }}){% endblock %}
 {% block main-subtitle %}I progetti in evidenza nel Comune di {{ territorio.denominazione }} {% endblock %}

@@ -64,27 +64,27 @@
                     <img src="{{ STATIC_URL }}img/logo_white.png">
                 </a>
             </div>
-            {% if iban %}
-                <div class="span4" id="appello">
-                        {% block support %}
-                            AIUTACI A RICOSTRUIRE!<br/>
-                            <div class="iban">
-                                <div class="title">Codice Iban</div>
-                                <div class="number">&nbsp;</div>
-                            </div>
-                            <div class="iban">
-                                <div class="title">Codice Bic Swift (bonifici dall'estero)</div>
-                                <div class="number">&nbsp;</div>
-                            </div>
-                        {% endblock %}
-                </div><!--/span-->
-            {% else %}
-                {% block appello_home %}
 
+            <div class="span4 " id="appello">
+                <p class="title">
+                    AIUTACI A RICOSTRUIRE!
+                </p>
+                <p>
+                    {% block support_slogan %}
+                        Scegli un Comune e dona ora
+                    {% endblock %}
+                </p>
+                {% block support_control %}
+                    <select >
+                        <option value="">Scegli il Comune</option>
+                        {% for c in territori_alfabetico %}
+                            <option value="{% url territorio_detail c.slug %}">
+                                {{ c.denominazione }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 {% endblock %}
-
-            {% endif %}
-
+            </div><!--/span-->
 
         </div>
     </div>
