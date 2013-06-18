@@ -9504,6 +9504,19 @@ div.content #data-content #subproj .accordion .accordion-group .accordion-inner 
   text-transform: none;
 }
 
+div.content #data-content #progetti_evidenza .row-fluid,
+div.content #data-content #comuni_evidenza .row-fluid {
+  min-height: 14px;
+  padding-bottom: 10px;
+  margin-top: 10px;
+  line-height: 20px;
+}
+
+div.content #data-content #progetti_evidenza .row-fluid .span4,
+div.content #data-content #comuni_evidenza .row-fluid .span4 {
+  min-height: 14px;
+}
+
 div.content #comment .titolo {
   min-height: 30px;
   margin-top: 25px;
