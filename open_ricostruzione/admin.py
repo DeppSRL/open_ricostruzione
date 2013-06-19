@@ -1,5 +1,6 @@
 from django.contrib import admin
 from open_ricostruzione.models import *
+from open_ricostruzione.filters import HasProgetto
 
 class ProgettoAdmin(admin.ModelAdmin):
     model = Progetto
@@ -8,9 +9,10 @@ class ProgettoAdmin(admin.ModelAdmin):
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
     ordering = ['data']
-    list_filter = ['tipologia',]
+    list_filter = ['tipologia', HasProgetto]
     search_fields = ['^denominazione', 'id_donazione', 'data']
     list_per_page = 500
+
 
 class TerritorioAdmin(admin.ModelAdmin):
     model = Territorio

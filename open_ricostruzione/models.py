@@ -316,8 +316,10 @@ class Donazione(models.Model):
     progetto = models.ForeignKey('Progetto',null=True, blank=True)
 
     def __unicode__(self):
-        return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
-
+        if self.progetto is None:
+            return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
+        else:
+            return u"%s (ID: %s, Data:%s) Progetto:%s" % (self.denominazione, self.id, self.data, self.progetto.denominazione)
     #    ritorna l'importo lavori in formato italiano
     def get_importo_ita(self):
         return moneyfmt(self.importo,2,"",".",",")
