@@ -83,6 +83,9 @@
                         {% endfor %}
                     </select>
                 {% endblock %}
+
+                {% block support_hidden %}{% endblock %}
+
             </div><!--/span-->
         </div> <!-- /logo header -->
     </div> <!--/row -->
@@ -578,6 +581,9 @@
 </script>
 
 <script type="text/javascript">
+    {#    names of hidden inputs for donation #}
+    var donate_territorio = '#donate_territorio';
+    var donate_progetto = '#donate_progetto';
 
     $(document).ready(function() {
 
@@ -626,9 +632,25 @@
             }
             e.preventDefault();
         });
+
         {#        binds the button click with the donation lightbox #}
         $('.donate_button').click(function(e) {
-            click_donate(null,null);
+            var progetto_value = null;
+            var territorio_value = null;
+            var territorio_input = $(donate_territorio);
+            var progetto_input = $(donate_progetto);
+
+            if(territorio_input.length) {
+                // there's at least one matching element
+                territorio_value = territorio_input.val();
+            }
+
+            if(progetto_input.length) {
+                // there's at least one matching element
+                progetto_value = progetto_input.val();
+            }
+
+            click_donate(territorio_value,progetto_value);
         });
 
       

@@ -18,7 +18,18 @@ Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
 function click_donate(territorio, progetto){
 
     // precarica i dati del comune nella form
+    if(territorio!=null){
+        $('#payerCausale').attr('value',territorio);
+        $("#payerCausale").attr('disabled','disabled');
 
+    }
+
+    if(progetto!=null){
+        $('#payerCespite').attr('value',progetto);
+        $('#payerCespite').attr('disabled','disabled');
+    }
+
+    //    show the lightbox
     $('#donation_form').lightbox_me({
         centered: true,
         onLoad: function() {

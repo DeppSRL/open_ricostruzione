@@ -4,11 +4,17 @@
 {% block title %}Comune di {{ territorio.denominazione }}{% endblock %}
 
 {% block support_slogan %}
-    Dona ora per il Comune di {{ territorio.denominazione }} con la tua Carta di credito
+    Dona ora per il <br/>
+    Comune di {{ territorio.denominazione }}<br/>
+    con la tua Carta di credito
 {% endblock %}
 
 {% block support_control %}
-    <button class="btn btn-primary donate_button" type="button">Dona!</button>
+    <button class="btn btn-primary donate_button" type="button">Dona</button>
+{% endblock %}
+
+{% block support_hidden %}
+    <input type="hidden" id="donate_territorio" value="{{ territorio.cod_comune }} - {{ territorio.denominazione }}"/>
 {% endblock %}
 
 
