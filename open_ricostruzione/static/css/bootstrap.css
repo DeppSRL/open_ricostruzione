@@ -9592,3 +9592,20 @@ footer #gray-background .spacer {
 footer #gray-background .cisco {
   margin-left: 0;
 }
+
+#donation_form {
+  position: relative;
+  display: none;
+  padding: 14px 22px;
+  background: #eef2f7;
+  border: 1px solid #536376;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0 2px 12px;
+     -moz-box-shadow: rgba(0, 0, 0, 0.6) 0 2px 12px;
+}
+
+#donation_form .thin_control_group {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
