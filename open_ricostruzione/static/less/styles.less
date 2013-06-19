@@ -714,7 +714,7 @@ footer{
 #donation_form{
 
   -moz-border-radius: 6px;
-  background: #eef2f7;
+  background: @donation-form-color;
   -webkit-border-radius: 6px;
   border: 1px solid #536376;
   -webkit-box-shadow: rgba(0,0,0,.6) 0px 2px 12px;
@@ -726,6 +726,19 @@ footer{
   .thin_control_group{
     margin-top: 0px;
     margin-bottom: 15px;
+  }
+
+  ::-webkit-input-placeholder { /* WebKit browsers */
+    color:    @placeholder-color;
+  }
+  :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color:    @placeholder-color;
+  }
+  ::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color:    @placeholder-color;
+  }
+  :-ms-input-placeholder { /* Internet Explorer 10+ */
+    color:    @placeholder-color;
   }
 
 }

@@ -9597,7 +9597,7 @@ footer #gray-background .cisco {
   position: relative;
   display: none;
   padding: 14px 22px;
-  background: #eef2f7;
+  background: #eeeeee;
   border: 1px solid #536376;
   -webkit-border-radius: 6px;
      -moz-border-radius: 6px;
@@ -9608,4 +9608,28 @@ footer #gray-background .cisco {
 #donation_form .thin_control_group {
   margin-top: 0;
   margin-bottom: 15px;
+}
+
+#donation_form ::-webkit-input-placeholder {
+  /* WebKit browsers */
+
+  color: #cccccc;
+}
+
+#donation_form :-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+
+  color: #cccccc;
+}
+
+#donation_form ::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+
+  color: #cccccc;
+}
+
+#donation_form :-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+
+  color: #cccccc;
 }

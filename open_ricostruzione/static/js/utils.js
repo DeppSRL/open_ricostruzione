@@ -20,13 +20,11 @@ function click_donate(territorio, progetto){
     // precarica i dati del comune nella form
     if(territorio!=null){
         $('#payerCausale').attr('value',territorio);
-        $("#payerCausale").attr('disabled','disabled');
 
     }
 
     if(progetto!=null){
         $('#payerCespite').attr('value',progetto);
-        $('#payerCespite').attr('disabled','disabled');
     }
 
     //    show the lightbox
@@ -36,4 +34,17 @@ function click_donate(territorio, progetto){
             $('#donation_form').find('input:first').focus()
         }
     });
+}
+
+
+//if an input is null return true, otherwise false
+
+function check_input_is_null(id){
+
+    if($(id).length){
+        if($(id).val()!=null)
+            return false;
+    }
+
+    return true;
 }

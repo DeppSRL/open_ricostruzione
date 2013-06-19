@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block support_hidden %}
-    <input type="hidden" id="donate_territorio" value="{{ territorio.cod_comune }} - {{ territorio.denominazione }}"/>
+    <input type="hidden" id="donate_territorio" value="{{ territorio.cod_comune }} - {{ territorio.denominazione|truncatechars:31 }}"/>
 {% endblock %}
 
 

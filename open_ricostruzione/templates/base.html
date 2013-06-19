@@ -77,7 +77,7 @@
                     <select id="select_territorio_donation">
                         <option value="">Scegli il Comune</option>
                         {% for c in territori_alfabetico %}
-                            <option value="{{ c.cod_comune }} - {{ c.denominazione }}" >
+                            <option value="{{ c.cod_comune }} - {{ c.denominazione|truncatechars:31 }}" >
                                 {{ c.denominazione }}
                             </option>
                         {% endfor %}
@@ -652,6 +652,8 @@
 
             click_donate(territorio_value,progetto_value);
         });
+
+
 
       
     });
