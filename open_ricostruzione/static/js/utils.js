@@ -12,3 +12,17 @@ Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
         j = (j = i.length) > 3 ? j % 3 : 0;
     return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
 };
+
+
+//funzione invocata dalla select box nelle pagine generiche o dal bottone DONA nella pagina progetto / territorio
+function click_donate(territorio, progetto){
+
+    // precarica i dati del comune nella form
+
+    $('#donation_form').lightbox_me({
+        centered: true,
+        onLoad: function() {
+            $('#donation_form').find('input:first').focus()
+        }
+    });
+}

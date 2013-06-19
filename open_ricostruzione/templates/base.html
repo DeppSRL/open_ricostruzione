@@ -74,15 +74,14 @@
                     {% endblock %}
                 </p>
                 {% block support_control %}
-                    <select >
+                    <select id="select_territorio_donation">
                         <option value="">Scegli il Comune</option>
                         {% for c in territori_alfabetico %}
-                            <option value="{% url territorio_detail c.slug %}">
+                            <option value="{{ c.cod_comune }} - {{ c.denominazione }}" >
                                 {{ c.denominazione }}
                             </option>
                         {% endfor %}
                     </select>
-                    <div id="try-1">open lightbox</div>
                 {% endblock %}
             </div><!--/span-->
         </div> <!-- /logo header -->
@@ -582,12 +581,6 @@
 
     $(document).ready(function() {
 
-        $('select').change(function(){
-            var url = $(this).val();
-            if(url)
-                window.location = url;
-        });
-
         $('#progetto-search').focus(function(){
             if ($(this)._cleared) return;
             $(this).val('');
@@ -623,15 +616,19 @@
         }).css('z-index', 10000);
 
 
-        {#        binds the button click with the donation lightbox #}
-        $('#try-1').click(function(e) {
-            $('#donation_form').lightbox_me({
-                centered: true,
-                onLoad: function() {
-                    $('#donation_form').find('input:first').focus()
-                }
-            });
+        {#        binds the select with the donation lightbox #}
+        $('#select_territorio_donation').change(function(e) {
+            var territorio_value=$(this).val();
+
+            {# se e' stato selezionato un comune apre la lightbox donazione#}
+            if(territorio_value!=null && territorio_value!=''){
+                click_donate(territorio_value,null);
+            }
             e.preventDefault();
+        });
+        {#        binds the button click with the donation lightbox #}
+        $('.donate_button').click(function(e) {
+            click_donate(null,null);
         });
 
       
