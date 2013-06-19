@@ -4,7 +4,7 @@ from django.contrib.admin import SimpleListFilter
 class HasProgetto(SimpleListFilter):
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = _('Has Progetto')
+    title = _('Associata a un Progetto')
     parameter_name = 'has_progetto'
 
     def lookups(self, request, model_admin):
@@ -16,7 +16,7 @@ class HasProgetto(SimpleListFilter):
         in the right sidebar.
         """
         return (
-            ('yes', _('yes')),
+            ('yes', _('si')),
             ('no', _('no')),
         )
 
