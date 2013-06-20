@@ -91,9 +91,12 @@
     </div> <!--/row -->
 </div> <!-- / container header -->
 
-<div class="row" id="donation_form" style="display: none;">
-    <div class="span6" >
-        {% include "donation_form.html" %}
+{# donation lightbox form #}
+<div class="container">
+    <div class="row" id="donation_form" style="display: none;">
+        <div class="span6" >
+            {% include "donation_form.html" %}
+        </div>
     </div>
 </div>
 
@@ -584,6 +587,7 @@
     {#    names of hidden inputs for donation #}
     var donate_territorio = '#donate_territorio';
     var donate_progetto = '#donate_progetto';
+    var error_container = "#error_container";
 
     $(document).ready(function() {
 
@@ -653,6 +657,45 @@
             click_donate(territorio_value,progetto_value);
         });
 
+        $('#donation_submit').click(function(e) {
+
+            var error = false;
+
+            //clears all previous error messages
+            removeErrorFlashMessage(error_container);
+            {#   check cognome e codice fiscale not null#}
+            if(
+               check_input_is_null('#payerCodiceFiscaleContribuente') ||
+               check_input_is_null('#payerCognomeContribuente') ||
+               check_input_is_null('#payerImporto') ||
+               check_input_is_null('#payerImportoCent')
+                    ){
+                    //set error msg
+                    error=true;
+
+                    addFlashMessage(error_container,"error","I campi Cognome, Codice Fiscale e Importo sono obbligatori");
+            }
+
+            {#  codice fiscale >= 11 caratteri #}
+            if(!error && $('#payerCodiceFiscaleContribuente').val().length<11){
+                error=true;
+                addFlashMessage(error_container,"error","Il campo Codice Fiscale / P.Iva deve contenere almeno 11 caratteri");
+
+            }
+            {# check importo is not null and is a positive number#}
+            if(!error && !isNumeric($('#payerImporto').val()) || !isNumeric($('#payerImportoCent').val())
+                    || $('#payerImporto').val()<0 || $('#payerImportoCent').val()<0 ){
+                error=true;
+                addFlashMessage(error_container,"error","Il campo Importo Totale deve contenere solo caratteri numerici");
+            }
+
+            if(error==true){
+                e.preventDefault();
+            }
+            else
+                addFlashMessage(error_container,"info","La preghiamo di attendere, stiamo procedendo a redizionarla verso la piattaforma di pagamento");
+
+        });
 
 
       

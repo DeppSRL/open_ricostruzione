@@ -29,7 +29,8 @@ function click_donate(territorio, progetto){
 
     //    show the lightbox
     $('#donation_form').lightbox_me({
-        centered: true,
+        centered: false,
+        modalCSS: {top: '10px'},
         onLoad: function() {
             $('#donation_form').find('input:first').focus()
         }
@@ -42,9 +43,31 @@ function click_donate(territorio, progetto){
 function check_input_is_null(id){
 
     if($(id).length){
-        if($(id).val()!=null)
+        if($(id).val()!='')
             return false;
     }
 
     return true;
+}
+
+//check if n is numeric or not
+function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function addFlashMessage(id, type, text){
+
+    var div_class = '';
+    if(type=='error')
+        div_class='alert-error';
+    else
+        div_class='alert-info';
+
+    var el = $('<div class="alert '+div_class+'" id="error">').text(text);
+    $(id).append(el);
+
+}
+
+function removeErrorFlashMessage(id){
+    $(id).children().remove();
 }
