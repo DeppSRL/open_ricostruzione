@@ -66,6 +66,7 @@ input[placeholder], [placeholder], *[placeholder]
 
       select{
         background-color: #ddd;
+        width: 248px;
       }
 
       .iban{
@@ -724,14 +725,31 @@ footer{
 #donation_form{
 
   -moz-border-radius: 6px;
-  background: @donation-form-color;
+  background: #fff;
   -webkit-border-radius: 6px;
   border: 1px solid #536376;
   -webkit-box-shadow: rgba(0,0,0,.6) 0px 2px 12px;
   -moz-box-shadow: rgba(0,0,0,.6) 0px 2px 12px;
-  padding: 14px 22px;
+  top: 15px!important;
+  padding-top: 14px;
+  padding-right: 22px;
+  padding-left: 22px;
+  padding-bottom: 14px;
   position: relative;
   display: none;
+
+  form{
+    margin: 0;
+
+    label{
+      width: 200px;
+    }
+
+    .controls{
+      margin-left: 220px;
+    }
+
+  }
 
   .thin_control_group{
     margin-top: 0px;
@@ -751,4 +769,17 @@ footer{
     color:    @placeholder-color;
   }
 
+  h1{
+
+    min-height: @medium-size;
+    font-family: 'Abel','sans-serif';
+    font-weight: normal;
+    text-transform: uppercase;
+    font-size: 35px;
+    color: @green-color;
+  }
+
+  legend{
+    border-bottom: 0;
+  }
 }

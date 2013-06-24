@@ -8955,6 +8955,7 @@ input[placeholder],
 }
 
 .header #logo_header #appello select {
+  width: 248px;
   background-color: #ddd;
 }
 
@@ -9606,14 +9607,30 @@ footer #gray-background .cisco {
 
 #donation_form {
   position: relative;
+  top: 15px!important;
   display: none;
-  padding: 14px 22px;
-  background: #eeeeee;
+  padding-top: 14px;
+  padding-right: 22px;
+  padding-bottom: 14px;
+  padding-left: 22px;
+  background: #fff;
   border: 1px solid #536376;
   -webkit-border-radius: 6px;
      -moz-border-radius: 6px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0 2px 12px;
      -moz-box-shadow: rgba(0, 0, 0, 0.6) 0 2px 12px;
+}
+
+#donation_form form {
+  margin: 0;
+}
+
+#donation_form form label {
+  width: 200px;
+}
+
+#donation_form form .controls {
+  margin-left: 220px;
 }
 
 #donation_form .thin_control_group {
@@ -9643,4 +9660,17 @@ footer #gray-background .cisco {
   /* Internet Explorer 10+ */
 
   color: #cccccc;
+}
+
+#donation_form h1 {
+  min-height: 30px;
+  font-family: 'Abel', 'sans-serif';
+  font-size: 35px;
+  font-weight: normal;
+  color: #a1ba03;
+  text-transform: uppercase;
+}
+
+#donation_form legend {
+  border-bottom: 0;
 }

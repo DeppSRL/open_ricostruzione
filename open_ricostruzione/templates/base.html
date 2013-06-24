@@ -112,7 +112,7 @@
 {# donation lightbox form #}
 <div class="container">
     <div class="row" id="donation_form" style="display: none;">
-        <div class="span6" >
+        <div class="span6" style="margin-left: 15px;">
             {% include "donation_form.html" %}
         </div>
     </div>
@@ -687,8 +687,7 @@
             if(
                check_input_is_null('#payerCodiceFiscaleContribuente') ||
                check_input_is_null('#payerCognomeContribuente') ||
-               check_input_is_null('#payerImporto') ||
-               check_input_is_null('#payerImportoCent')
+               check_input_is_null('#payerImporto')
                     ){
                     //set error msg
                     error=true;
@@ -703,8 +702,7 @@
 
             }
             {# check importo is not null and is a positive number#}
-            if(!error && !isNumeric($('#payerImporto').val()) || !isNumeric($('#payerImportoCent').val())
-                    || $('#payerImporto').val()<0 || $('#payerImportoCent').val()<0 ){
+            if(!error && !isNumeric($('#payerImporto').val()) || $('#payerImporto').val()<0 ){
                 error=true;
                 addFlashMessage(error_container,"error","Il campo Importo Totale deve contenere solo caratteri numerici");
             }

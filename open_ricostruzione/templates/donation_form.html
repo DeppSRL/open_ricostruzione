@@ -1,7 +1,7 @@
 <div id="error_container">
 </div>
 
-<div class="row-fluid">
+<div class="row-fluid ">
     <div class="span12">
         <h1>
             DONA PER LA RICOSTRUZIONE
@@ -9,81 +9,106 @@
 
     </div>
 </div>
-<div class="row-fluid">
+<div class="row-fluid ">
     <div class="span12">
         <form action="https://payertest.lepida.it/payer/pagonet/extern.do" method="POST" class="form-horizontal">
-            Compila il modulo per aiutare la ricostruzione. <br/>
-            Verrai indirizzato nel sito per i <strong>pagamenti sicuri</strong> della Regione Emilia-Romagna."
-            <fieldset>
-                <legend>Anagrafica donatore</legend>
-                
-                 <div class="control-group thin_control_group">
-                    <label class="control-label" style="font-weight: bold;">Cognome / Rag.Sociale:</label>
-                    <div class="controls">
-                        <input type="text" id="payerCognomeContribuente" name="payerCognomeContribuente" value="" />
-                    </div>
+            <div class="row-fluid " >
+                <div class="span12" style="margin-bottom: 15px;">
+                    <span >
+                        Compila il modulo per aiutare la ricostruzione. <br/>
+                        Verrai indirizzato nel sito per i <strong>pagamenti sicuri</strong> della Regione Emilia-Romagna.
+                    </span>
                 </div>
-                 <div class="control-group thin_control_group">
-                    <label class="control-label" >Nome:</label>
-                    <div class="controls">
-                        <input type="text" name="payerNomeContribuente" value="" />
-                    </div>
-                 </div>
+            </div>
+            <div class="row-fluid ">
+                <div class="span12">
+                    <fieldset>
+                        <legend>Dati del donatore</legend>
 
-                 <div class="control-group thin_control_group">
-                    <label class="control-label" style="font-weight: bold;"> Codice Fiscale / P.Iva:</label>
-                    <div class="controls">
-                        <input type="text" id="payerCodiceFiscaleContribuente" name="payerCodiceFiscaleContribuente" value=""  />
-                    </div>
-                 </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Dati donazione</legend>
-                <div class="control-group thin_control_group">
-                    <label class="control-label" style="font-weight: bold;" >Importo Totale:</label>
-                    <div class="controls">
-                        <div class="input-prepend input-append">
-                            <span class="add-on">&euro;</span>
-                            <input style="text-align:right;width: 100px;"
-                                   name="payerImporto"
-                                   id="payerImporto"
-                                   type="text" value=""
-                                   placeholder="Importo"
-                                   class="cssImporto appendedPrependedInput"
-                                    />
-                            <span class="add-on">,</span>
-                            <input style="width: 50px;"
-                                   name="payerImportoCent"
-                                   id="payerImportoCent"
-                                   type="text"
-                                   value="00"
-                                   maxlength="2" class="cssImportoCent" />
+                        <div class="control-group thin_control_group">
+                            <label class="control-label" style="font-weight: bold;">Cognome o Ragione sociale</label>
+                            <div class="controls">
+                                <input class="span9"
+                                       type="text" id="payerCognomeContribuente"
+                                       name="payerCognomeContribuente" value=""
+                                       placeholder="Il tuo cognome o Ragione sociale"
+                                        />
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="control-group thin_control_group">
+                            <label class="control-label" >Nome</label>
+                            <div class="controls">
+                                <input class="span9" type="text" name="payerNomeContribuente" value=""
+                                       placeholder="Inserisci il tuo nome"/>
+                            </div>
+                        </div>
 
-                 <div class="control-group thin_control_group">
-                     <label class="control-label" >Causale Servizio:</label>
-                     <div class="controls">
-                        <input type="text" id="payerCausale" name="payerCausale" placeholder="Donazione per il Comune di ..." maxlength="40"/>
-                     </div>
-                 </div>
-                <div class="control-group thin_control_group">
-                     <label class="control-label" >Progetto per la Ricostruzione:</label>
-                    <div class="controls">
-                        <input type="text" id="payerCespite" name="payerCespite" value="" maxlength="40"/>
-                    </div>
+                        <div class="control-group thin_control_group">
+                            <label class="control-label" style="font-weight: bold;"> Codice fiscale o P.I.</label>
+                            <div class="controls">
+                                <input class="span9" type="text" id="payerCodiceFiscaleContribuente"
+                                       name="payerCodiceFiscaleContribuente" value=""
+                                       placeholder="Inserisci il tuo Codice fiscale o la tua P.Iva"/>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
-            </fieldset>
+            </div>
+            <div class="row-fluid ">
+                <div class="span12">
+                    <fieldset>
+                        <legend>Dati della donazione</legend>
+                        <div class="control-group thin_control_group">
+                            <label class="control-label" style="font-weight: bold;" >Importo totale</label>
+                            <div class="controls">
+                                <div class="input-prepend input-append">
+                                    <span class="add-on">&euro;</span>
+                                    <input style="text-align:right;width: 204px;"
+                                           name="payerImporto"
+                                           id="payerImporto"
+                                           type="text" value=""
+                                           placeholder="Importo"
+                                           class="cssImporto appendedPrependedInput"
+                                            />
+                                    <span class="add-on">,00</span>
+                                </div>
+                            </div>
+                        </div>
 
-            <input type="submit" class="btn" name="btnConferma" id="donation_submit" value="Conferma" />
+                        <div class="control-group thin_control_group">
+                            <label class="control-label" >Causale del servizio</label>
+                            <div class="controls">
+                                <input class="span9" type="text" id="payerCausale"
+                                       name="payerCausale"
+                                       placeholder="Inserisci il nome del Comune a cui doni" maxlength="40"/>
+                            </div>
+                        </div>
+                        <div class="control-group thin_control_group">
+                            <label class="control-label" >Progetto da ricostruire</label>
+                            <div class="controls">
+                                <input class="span9" type="text" id="payerCespite" name="payerCespite"
+                                       value="" maxlength="40"
+                                       placeholder="Inserisci il nome del progetto"/>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="row-fluid " style="margin-top: 10px;">
+                <div class="span6">
+                    <input type="submit"
+                           class="btn btn-primary "
+                           name="btnConferma"
+                           id="donation_submit" value="Dona ora!" />
+                </div>
+            </div>
 
             {#    tipologia servizio: spontaneo#}
             <input type="hidden" name="payerTipologiaServizio" value="RIC" />
             {#    ente: Regione Emilia-Romagna#}
             <input type="hidden" name="payerCodiceEnte" value="12781" />
             <input type="hidden" name="formName" value="formExtern" />
+            <input type="hidden" name="payerImportoCent" value="00" />
             <input type="hidden" name="payerTipoBollettino" value="SPOM" />
             <input type="hidden" name="payerCodiceUtente" value="01RER" />
             <input type="hidden" name="payerTipoUfficio" value="" />
@@ -94,7 +119,6 @@
             <input type="hidden" name="payerAnno" value="2013"/><br/>
 
         </form>
-
     </div>
 </div>
 

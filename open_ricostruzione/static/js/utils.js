@@ -29,8 +29,6 @@ function click_donate(territorio, progetto){
 
     //    show the lightbox
     $('#donation_form').lightbox_me({
-        centered: false,
-        modalCSS: {top: '10px'},
         onLoad: function() {
             $('#donation_form').find('input:first').focus()
         }
