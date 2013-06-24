@@ -22,8 +22,8 @@
 
     {% if TEMPLATE_DEBUG %}
 
-        <link href="{{ STATIC_URL }}less/styles.less" rel="stylesheet/less">
-        <link href="{{ STATIC_URL }}less/styles-responsive.less" rel="stylesheet/less">
+        <link href="{{ STATIC_URL }}less/styles.less?" rel="stylesheet/less">
+        <link href="{{ STATIC_URL }}less/styles-responsive.less?" rel="stylesheet/less">
         <script type="text/javascript" src="{{ STATIC_URL }}js/less-1.3.1.min.js"></script>
 
     {% else %}
@@ -64,27 +64,45 @@
                 </a>
             </div>
 
-            <div class="span4 " id="appello">
-                <p class="title">
-                    AIUTACI A RICOSTRUIRE!
-                </p>
-                <p>
-                    {% block support_slogan %}
-                        Scegli un Comune e dona ora
-                    {% endblock %}
-                </p>
+            <div class="span4" id="appello">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <p class="title">
+                            AIUTACI A RICOSTRUIRE!
+                        </p>
+                        <p>
+                            {% block support_slogan %}
+                                Scegli un Comune e dona ora
+                            {% endblock %}
+                        </p>
+                    </div>
+                </div>
                 {% block support_control %}
-                    <select id="select_territorio_donation">
-                        <option value="">Scegli il Comune</option>
-                        {% for c in territori_alfabetico %}
-                            <option value="{{ c.cod_comune }} - {{ c.denominazione|truncatechars:31 }}" >
-                                {{ c.denominazione }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <select id="select_territorio_donation">
+                                <option value="">Scegli il Comune</option>
+                                {% for c in territori_alfabetico %}
+                                    <option value="{{ c.cod_comune }} - {{ c.denominazione|truncatechars:31 }}" >
+                                        {{ c.denominazione }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span4">
+                            <button class="btn btn-primary donate_button" type="button">Dona ora!</button>
+                        </div>
+                        <div class="span4" style="margin-left:15px;">
+                            <img src="{{ STATIC_URL }}img/donazioni_paypal.png" />
+                        </div>
+                    </div>
                 {% endblock %}
 
-                {% block support_hidden %}{% endblock %}
+                {% block support_hidden %}
+                    <input type="hidden" id="donate_territorio" value=""/>
+                {% endblock %}
 
             </div><!--/span-->
         </div> <!-- /logo header -->
@@ -629,10 +647,12 @@
         {#        binds the select with the donation lightbox #}
         $('#select_territorio_donation').change(function(e) {
             var territorio_value=$(this).val();
+            var territorio_input = $(donate_territorio);
 
-            {# se e' stato selezionato un comune apre la lightbox donazione#}
-            if(territorio_value!=null && territorio_value!=''){
-                click_donate(territorio_value,null);
+            {# set hidden input to territorio value#}
+
+            if(territorio_input.length){
+                $(territorio_input).val(territorio_value);
             }
             e.preventDefault();
         });

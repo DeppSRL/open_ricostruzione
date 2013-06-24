@@ -4,13 +4,14 @@
 {% block title %}Comune di {{ territorio.denominazione }}{% endblock %}
 
 {% block support_slogan %}
-    Dona ora per il <br/>
-    Comune di {{ territorio.denominazione }}<br/>
-    con la tua Carta di credito
+    Dona al <span style="font-weight: bold;">
+    Comune di {{ territorio.denominazione }}</span>.
+    Puoi usare la tua Carta di credito o il sistema Paypal.
 {% endblock %}
 
 {% block support_control %}
-    <button class="btn btn-primary donate_button" type="button">Dona</button>
+    <button class="btn btn-primary donate_button" type="button">Dona ora!</button>
+    <img src="{{ STATIC_URL }}img/donazioni_paypal.png" />
 {% endblock %}
 
 {% block support_hidden %}

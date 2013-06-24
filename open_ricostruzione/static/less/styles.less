@@ -42,12 +42,17 @@ input[placeholder], [placeholder], *[placeholder]
       padding-top: @spacing-half;
       padding-bottom: 40px;
       overflow: hidden;
-      background-color: #dcf930;
+      background-color: @support-box-color ;
+      background-image:  url("../img/donazioni_bg.png");
+      background-repeat:no-repeat;
+      background-position: bottom center;
+      background-size: 100%;
       color: black;
       font: 'Arial', 'sans-serif';
       font-weight: normal;
       letter-spacing: 0px;
       font-size: 16px;
+      min-height: 139px;
 
       p{
         margin-bottom: @spacing-half;
@@ -75,6 +80,11 @@ input[placeholder], [placeholder], *[placeholder]
           color: black;
           text-transform: uppercase;
         }
+      }
+      .donate_button{
+        width: 122px;
+        height: 48px;
+        font-size: 18px;
       }
     }
   }

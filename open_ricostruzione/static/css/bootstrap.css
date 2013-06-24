@@ -8926,6 +8926,7 @@ input[placeholder],
 }
 
 .header #logo_header #appello {
+  min-height: 139px;
   padding-top: 15px;
   padding-right: 15px;
   padding-bottom: 40px;
@@ -8937,6 +8938,10 @@ input[placeholder],
   letter-spacing: 0;
   color: black;
   background-color: #dcf930;
+  background-image: url("../img/donazioni_bg.png");
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: 100%;
 }
 
 .header #logo_header #appello p {
@@ -8964,6 +8969,12 @@ input[placeholder],
   color: black;
   text-transform: uppercase;
   background-color: white;
+}
+
+.header #logo_header #appello .donate_button {
+  width: 122px;
+  height: 48px;
+  font-size: 18px;
 }
 
 #top_navbar {

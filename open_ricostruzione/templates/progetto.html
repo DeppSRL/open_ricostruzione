@@ -4,14 +4,15 @@
 {% block title %}Progetto{% endblock %}
 
 {% block support_slogan %}
-    Dona ora per il progetto<br/>
-    {{ progetto.denominazione }}<br/>
-    nel Comune di {{ progetto.territorio.denominazione }}<br/>
-    con la tua Carta di credito
+    Dona al progetto
+    <span style="font-weight: bold;">{{ progetto.denominazione }}</span>
+    nel Comune di <span style="font-weight: bold;">{{ progetto.territorio.denominazione }}</span>.
+    Puoi usare la tua Carta di credito o il sistema Paypal.
 {% endblock %}
 
 {% block support_control %}
-    <button class="btn btn-primary donate_button" type="button">Dona</button>
+    <button class="btn btn-primary donate_button" type="button">Dona ora!</button>
+    <img src="{{ STATIC_URL }}img/donazioni_paypal.png" />
 {% endblock %}
 
 
