@@ -9357,6 +9357,10 @@ div.content #data-content .news_list .title a {
   font-size: 20px;
 }
 
+div.content #data-content .news_list img {
+  max-height: 130px;
+}
+
 div.content #data-content .news-spacer {
   height: 15px;
   border-bottom: 1px solid #b5b8b6;

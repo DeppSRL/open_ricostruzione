@@ -398,7 +398,11 @@ class Command(BaseCommand):
         #   "id";"id_flusso";"id_progetto";"id_figlio"
 
         for r in self.unicode_reader:
-            donazione = Donazione.objects.get(id_donazione=r['id_flusso'])
+            try:
+                donazione = Donazione.objects.get(id_donazione=r['id_flusso'])
+            except ObjectDoesNotExist:
+                self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_flusso']))
+
             if donazione:
                 if options['update']:
                     if r['id_figlio'] == "NULL" or not r['id_figlio']:
