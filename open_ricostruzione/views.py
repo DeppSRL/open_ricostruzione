@@ -77,7 +77,8 @@ class HomeView(TemplateView):
                 post['year'] = time.strftime("%Y",post_date)
                 post['link'] = feeds.entries[i]['link']
                 html_content = BeautifulSoup(feeds.entries[i]['content'][0]['value'])
-                post['thumbnail'] = html_content.p.img['src']
+                if html_content.p:
+                    post['thumbnail'] = html_content.p.img['src']
 
 
                 blogposts.append(post)
