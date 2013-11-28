@@ -34,7 +34,11 @@
                         <div class="row">
                             <div class="span6">
                                 <a href="{{ post.link }}">
-                                    <img src="{{ post.thumbnail }}" />
+                                    {% if post.thumbnail != '' %}
+                                      <img src="{{ post.thumbnail }}" />
+                                    {% else %}
+                                      <img src="{{ STATIC_URL }}img/post_dummythumb.jpg">
+                                    {% endif %}
                                 </a>
                             </div>
                         </div>

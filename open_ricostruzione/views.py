@@ -80,6 +80,8 @@ class HomeView(TemplateView):
                 if html_content.p:
                     if html_content.p.img:
                         post['thumbnail'] = html_content.p.img['src']
+                    else:
+                        post['thumbnail'] = ''
 
 
                 blogposts.append(post)
