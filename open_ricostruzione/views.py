@@ -78,7 +78,8 @@ class HomeView(TemplateView):
                 post['link'] = feeds.entries[i]['link']
                 html_content = BeautifulSoup(feeds.entries[i]['content'][0]['value'])
                 if html_content.p:
-                    post['thumbnail'] = html_content.p.img['src']
+                    if html_content.p.img:
+                        post['thumbnail'] = html_content.p.img['src']
 
 
                 blogposts.append(post)
