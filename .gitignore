@@ -6,11 +6,7 @@ csv/*
 open_ricostruzione/settings_local.py
 open_ricostruzione/sitestatic
 open_ricostruzione/media
-sqlite.db
-sqlite.db.000
-sqlite.db.001
-sqlite.db.002
-sqlite.db.003
+sqlite.db*
 open_ricostruzione/static/js/leaflet.js
 open_ricostruzione/migrations/*
 open_ricostruzione/csv/*
