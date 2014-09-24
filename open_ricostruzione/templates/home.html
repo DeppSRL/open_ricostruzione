@@ -17,6 +17,7 @@
 {% endblock %}
 
 {% block data-content %}
+
     <div class="container">
         <div class="row">
             <div class="span12 titolo "> Come procede</div>
@@ -300,6 +301,23 @@
             </div>
         </div>
     </div>
+
+    <!-- home Modal -->
+    <div class="modal fade" id="HomeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">TITOLO DA INSERIRE</h4>
+          </div>
+          <div class="modal-body">
+            Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}
 
 {% block recent-comments %}
@@ -324,7 +342,8 @@
 
 
 {% block map-data %}
-    {% if territori %}
+
+     {% if territori %}
         <script>
 
             var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
@@ -402,6 +421,7 @@
 
         </script>
     {% endif %}
+
 {% endblock %}
 
 {% block graph-data %}
@@ -523,4 +543,26 @@
             {% endif %}
         });
 </script>
+{% endblock %}
+
+
+{% block extra-js %}
+
+    <script type="text/javascript">
+
+        {# load modal on home page    #}
+
+        $(document).ready(function() {
+
+            var show_modal = false;
+            {# if the visit of the home page does NOT come from another page in the application, show the modal  #}
+            if(show_modal && document.referrer.indexOf(location.protocol + "//" + location.host) !== 0 ){
+                $('#HomeModal').modal();
+            }
+
+        });
+
+    </script>
+
+
 {% endblock %}
