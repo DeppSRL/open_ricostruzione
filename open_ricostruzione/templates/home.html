@@ -307,13 +307,26 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id="myModalLabel">TITOLO DA INSERIRE</h4>
+            <h4 class="modal-title" id="myModalLabel">Avviso</h4>
           </div>
           <div class="modal-body">
-            Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
+            <p>
+                Il sito <strong>Open Ricostruzione</strong> è in fase di aggiornamento dati.</br>
+                Ci scusiamo per il disagio.
+          </p>
+            <p>
+                A breve sarà possibile consultare:
+                <ul>
+                  <li>l'intero elenco degli immobili pubblici danneggiati</li>
+                  <li>su quali immobili verranno destinate risorse provenienti da
+                donazioni o da altre fonti di finanziamento pubblico</li>
+                  <li>il totale delle donazioni raccolte da tutti gli enti coinvolti</li>
+                </ul>
+            </p>
+
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
           </div>
         </div>
       </div>
@@ -554,7 +567,7 @@
 
         $(document).ready(function() {
 
-            var show_modal = false;
+            var show_modal = true;
             {# if the visit of the home page does NOT come from another page in the application, show the modal  #}
             if(show_modal && document.referrer.indexOf(location.protocol + "//" + location.host) !== 0 ){
                 $('#HomeModal').modal();
