@@ -133,10 +133,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'open_ricostruzione',
-    'south',
-    'django_extensions',
+    # 'django_extensions',
     'open_ricostruzione.depp_humanize',
-    'disqus',
+    # 'disqus',
 )
 
 

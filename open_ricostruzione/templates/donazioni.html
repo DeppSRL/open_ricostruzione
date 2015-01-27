@@ -63,7 +63,7 @@
                                         </span>
 
                                         {% if p.tipologia__denominazione != tipologia_privati.denominazione and  p.tipologia__denominazione != tipologia_altro.denominazione %}
-                                            <a href="{% url donazioni-tipologia p.tipologia__slug %} ">
+                                            <a href="{% url "donazioni-tipologia" p.tipologia__slug %} ">
                                                 {{ p.tipologia__denominazione }}
                                             </a>
                                             {% if p.tipologia__denominazione == tipologia_regione_emilia.denominazione %}
@@ -85,7 +85,7 @@
                                     <span class="cypher">
                                         {{ n_donazioni }}
                                     </span>
-                                <a href="{% url donazioni-completa %} ">
+                                <a href="{% url "donazioni-completa" %} ">
                                     Donazioni totali
                                 </a>
                             </div>
@@ -118,7 +118,7 @@
                                         Da
                                         <strong>
                                             {% if p.tipologia.denominazione != tipologia_privati.denominazione and  p.tipologia.denominazione != tipologia_altro.denominazione %}
-                                                <a href="{% url donazioni-tipologia p.tipologia.slug %}">
+                                                <a href="{% url "donazioni-tipologia" p.tipologia.slug %}">
                                                     {{ p.tipologia.denominazione }}
                                                 </a>
                                             {% else %}
@@ -192,7 +192,7 @@
                             }
                     ).bindLabel('Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})', { noHide: true })
                             .addTo(map)
-                            .bindPopup('<a href="{% url territorio_detail t.slug %}">' +
+                            .bindPopup('<a href="{% url "territorio_detail" t.slug %}">' +
                                 "Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR>"+
                                 "<strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR>"+
                                 "<strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro<BR>"+
@@ -215,7 +215,7 @@
                                 }
                         ).bindLabel('Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})', { noHide: true })
                             .addTo(map)
-                                .bindPopup('<a href="{% url territorio_detail t.slug %}">' +
+                                .bindPopup('<a href="{% url "territorio_detail" t.slug %}">' +
                                 "Comune di {{ t.denominazione }} ({{ t.get_provincia.sigla_provincia }})</a><BR>"+
                                 "<strong>Danno totale:</strong> {{ t.get_danno_ita }} Euro<BR>"+
                                 "<strong>Donazioni totali:</strong> {{ t.get_donazioni_ita }} Euro<BR>"+

@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.contrib.markup.templatetags.markup import markdown
+# from django.contrib.markup.templatetags.markup import markdown
 from django.db import models
 from django.db import connections
 from datetime import datetime
@@ -205,9 +205,6 @@ class Territorio(models.Model):
         return Territorio.objects.\
                filter(gps_lat__gt=0).order_by('-gps_lon').values_list('gps_lon',flat=True)[0]
 
-
-
-
     @classmethod
     def get_map_center_lat(cls):
         lat_max=Territorio.objects.\
@@ -303,6 +300,7 @@ class TipologiaCedente(models.Model):
 
 class Donazione(models.Model):
 
+    progetto = models.ForeignKey('Progetto',null=True, blank=True)
     id_donazione = models.CharField(max_length=6)
     territorio = models.ForeignKey('Territorio')
     denominazione = models.TextField(max_length=1000)
@@ -310,10 +308,9 @@ class Donazione(models.Model):
     modalita_r = models.TextField(max_length=20,null=True, blank=True)
     tipologia = models.ForeignKey('TipologiaCedente')
     data = models.DateField()
-    avvenuto = models.BooleanField()
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
-    confermato = models.BooleanField()
-    progetto = models.ForeignKey('Progetto',null=True, blank=True)
+    confermato = models.BooleanField(default=False)
+    avvenuto = models.BooleanField(default=False)
 
     def __unicode__(self):
         if self.progetto is None:
@@ -330,59 +327,3 @@ class Donazione(models.Model):
 
     class Meta:
         verbose_name_plural = u'Donazioni'
-
-
-class Entry(models.Model):
-
-    title= models.CharField(max_length=255)
-    author=models.CharField(max_length=255, null=True, blank=True)
-    body= models.TextField()
-    body_html = models.TextField(editable=False, default="")
-    published_at= models.DateTimeField(default=datetime.now())
-    slug=models.SlugField(max_length=60, blank=True)
-    published=models.BooleanField(default=False)
-    big_news=models.BooleanField(default=False)
-
-    def __unicode__(self):
-        if self.big_news:
-            return u"%s - %s - BIG NEWS" %(self.published_at.date(), self.title)
-        else:
-            return u"%s - %s" %(self.published_at.date(), self.title)
-
-
-    class Meta():
-        verbose_name= 'articolo'
-        verbose_name_plural= 'News'
-
-    def save(self):
-        super(Entry, self).save()
-        if self.body:
-            self.body_html= markdown(self.body)
-
-        if self.published_at:
-            self.slug = '%s-%s%s%s-%i' % (
-                slugify(self.title), self.published_at.day,self.published_at.month,self.published_at.year, self.id
-            )
-        else:
-            self.slug = '%s-%i' % (
-                slugify(self.title), self.id
-                )
-        super(Entry, self).save()
-
-
-class Blog(object):
-
-    @staticmethod
-    def get_latest_entries(qnt=10, end_date=None, start_date=None, single=False):
-        end_date = end_date or datetime.now()
-        qnt = qnt if not single else 1
-
-        if start_date:
-            entries = Entry.objects.filter(published_at__range=(start_date, end_date))[:qnt]
-        else :
-            entries = Entry.objects.filter(published_at__lte=end_date)[:qnt]
-
-        if single :
-            return entries[0] if entries else None
-
-        return entries

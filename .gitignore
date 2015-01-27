@@ -8,5 +8,6 @@ open_ricostruzione/sitestatic
 open_ricostruzione/media
 sqlite.db*
 open_ricostruzione/static/js/leaflet.js
+open_ricostruzione/migrations
 open_ricostruzione/migrations/*
 open_ricostruzione/csv/*

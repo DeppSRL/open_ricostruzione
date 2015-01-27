@@ -134,7 +134,7 @@
                                 <ul class="dropdown-menu">
                                     {% for t in tipologie_progetti %}
                                         <li class="submenu">
-                                            <a href="{% url progetti-tipologia t.slug %}">{{ t.denominazione }}</a>
+                                            <a href="{% url "progetti-tipologia" t.slug %}">{{ t.denominazione }}</a>
                                         </li>
                                     {% endfor %}
                                 </ul>
@@ -143,15 +143,15 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Donazioni <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li class="submenu">
-                                        <a href="{% url donazioni-riepilogo %}">Riepilogo</a>
+                                        <a href="{% url "donazioni-riepilogo" %}">Riepilogo</a>
                                     </li>
                                     {% for t in tipologie_donazioni %}
                                         <li class="submenu">
-                                            <a href="{% url donazioni-tipologia t.slug %}">{{ t.denominazione }}</a>
+                                            <a href="{% url "donazioni-tipologia" t.slug %}">{{ t.denominazione }}</a>
                                         </li>
                                     {% endfor %}
                                     <li class="submenu">
-                                        <a href="{% url donazioni-completa %}">Tutte le donazioni</a>
+                                        <a href="{% url "donazioni-completa" %}">Tutte le donazioni</a>
                                     </li>
                                 </ul>
                             </li>
@@ -167,7 +167,7 @@
                                                 <ul class="dropdown-menu">
                                                     {% for item in g.list|dictsort:"denominazione"%}
                                                         <li>
-                                                            <a href="{% url territorio_detail item.slug %}">
+                                                            <a href="{% url "territorio_detail" item.slug %}">
                                                                 {{ item.denominazione }}
                                                             </a>
                                                         </li>
@@ -177,7 +177,7 @@
                                         {% endfor %}
                                 </ul>
                             </li>
-                            <li><a href="{% url faq %}">FAQ</a></li>
+                            <li><a href="{% url "faq" %}">FAQ</a></li>
                             <li><a href="http://blog.openricostruzione.it" target="_blank">Blog</a></li>
 
                         </ul>
@@ -223,7 +223,7 @@
                         contenuti sono ancora in fase di aggiornamento e che stiamo
                         lavorando per perfezionarli.
                         Per questo è importante la collaborazione di tutti: se vuoi aiutarci
-                        <a href="{% url contatti %}">
+                        <a href="{% url "contatti" %}">
                             indicaci
                         </a>
                         eventuali
@@ -419,7 +419,7 @@
                             anzi lo incoraggia: commenti, notizie, segnalazioni.
                         </p>
                         <p>
-                            <a href="{% url contatti %}">
+                            <a href="{% url "contatti" %}">
                                 Siamo qui.
                             </a>
                         </p>

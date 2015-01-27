@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
-from open_ricostruzione import settings
+from django.conf import settings
 from open_ricostruzione.models import *
 from django.db import connections
 import datetime
@@ -15,9 +15,8 @@ from json.encoder import JSONEncoder
 from django.db.models.query import QuerySet
 from django.core.serializers import serialize
 from django.utils.functional import curry
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseRedirect
 from open_ricostruzione.settings import COMUNI_CRATERE
 from django.template.defaultfilters import date as _date
 import socket
@@ -53,8 +52,6 @@ class HomeView(TemplateView):
         context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
 
         #news in home page
-
-
         blogposts = []
         # sets the timeout for the socket connection
         socket.setdefaulttimeout(150)
@@ -89,12 +86,7 @@ class HomeView(TemplateView):
 
                 i += 1
 
-
-
         context['blogposts']=blogposts
-
-
-
 
         # importi dei progetti per categorie
         progetti_categorie_pie =\
@@ -597,33 +589,6 @@ class DonazioneView(TemplateView):
 
         return context
 
-class EntryView(DetailView):
-    model = Entry
-    context_object_name = "entry"
-    template_name = "news.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(EntryView, self).get_context_data(**kwargs)
-        entry = self.get_object()
-
-
-        news_temp = Entry.objects.\
-                    exclude(pk=entry.pk).\
-                    filter(published=True).order_by('-published_at')[0:2]
-        news_altre=[]
-        for idx, val in enumerate(news_temp):
-            news_altre.append(
-                {'day':val.published_at.day,
-                 'month':_date(val.published_at,"M"),
-                 'year':val.published_at.year,
-                 'title':val.title,
-                 'body_html': val.body_html,
-                 'slug':val.slug,
-                 }
-            )
-
-        context['altrenews']=news_altre
-        return context
 
 class FaqView(TemplateView):
     template_name = "faq.html"

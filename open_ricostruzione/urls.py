@@ -2,7 +2,6 @@ from django.conf.urls import patterns, include, url
 from open_ricostruzione.views import *
 from django.views.generic.base import RedirectView
 from django.conf import settings
-from django.views.generic.simple import direct_to_template
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -11,7 +10,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    # work in progress url
+    # todo: work in progress url to fix
     # url(r'^.*$', direct_to_template, {'template': 'lavorincorso.html'}),
     
     url(r'^$', HomeView.as_view(), name='home'),
@@ -31,7 +30,6 @@ urlpatterns = patterns('',
     url(r'^donazioni-tipologia/(?P<tipologia>[-\w]+)$',  DonazioniTipologia.as_view(), name="donazioni-tipologia"),
     url(r'^donazioni-comune/(?P<comune>[-\w]+)$',  DonazioniComune.as_view(), name="donazioni-comune"),
     url(r'^donazioni-completa/$',  DonazioniCompleta.as_view(), name="donazioni-completa"),
-    url(r'^news/(?P<slug>[-\w]+)$', EntryView.as_view(), name="news"),
     url(r'^chi-siamo/$', TemplateView.as_view(template_name='chi-siamo.html'), name='chi-siamo'),
     url(r'^il-progetto/$', TemplateView.as_view(template_name='il-progetto.html'), name='il-progetto'),
     url(r'^contatti/$', TemplateView.as_view(template_name='contatti.html'), name="contatti"),

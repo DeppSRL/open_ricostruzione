@@ -32,7 +32,7 @@
         </a>
     </div>
     <div>
-        <a href="{% url progetti-tipologia progetto.tipologia.slug %}">{{ progetto.tipologia.denominazione }}</a>
+        <a href="{% url "progetti-tipologia" progetto.tipologia.slug %}">{{ progetto.tipologia.denominazione }}</a>
     </div>
 {% endblock %}
 
@@ -145,7 +145,7 @@
                                     </a>
                                 </div>
                                 <div class="ubicazione">{{  p.parent.ubicazione}}, <a href="../comune/{{ progetto.territorio.slug }}" >Comune di {{ progetto.territorio.denominazione }} ({{ progetto.territorio.get_provincia.sigla_provincia}})</a></div>
-                                <div class="tipologia"><a href="{% url progetti-tipologia p.tipologia.slug %}" >{{  p.tipologia }}</a></div>
+                                <div class="tipologia"><a href="{% url "progetti-tipologia" p.tipologia.slug %}" >{{  p.tipologia }}</a></div>
                                 {% if  p.cenni_storici %}
                                     <div class="descrizione">
                                         <div class="slogan">descrizione</div>
@@ -225,6 +225,6 @@
 {% endblock %}
 
 {% block comment %}
-    {% load disqus_tags %}
-    {% disqus_show_comments %}
+{#    {% load disqus_tags %}#}
+{#    {% disqus_show_comments %}#}
 {% endblock %}

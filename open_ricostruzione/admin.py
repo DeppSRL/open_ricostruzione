@@ -28,11 +28,6 @@ class TipologiaCedenteAdmin(admin.ModelAdmin):
     ordering = ['codice']
     prepopulated_fields = {'slug':('denominazione',),}
 
-class EntryAdmin(admin.ModelAdmin):
-    model=Entry
-    ordering=['-published_at']
-    prepopulated_fields = {'slug':('title',),}
-
 class UltimoAggiornamentoAdmin(admin.ModelAdmin):
     model=UltimoAggiornamento
 
@@ -42,5 +37,4 @@ admin.site.register(Territorio, TerritorioAdmin)
 admin.site.register(TipologiaProgetto, TipologiaProgettoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)
 admin.site.register(TipologiaCedente, TipologiaCedenteAdmin)
-admin.site.register(Entry, EntryAdmin)
 admin.site.register(UltimoAggiornamento, UltimoAggiornamentoAdmin)

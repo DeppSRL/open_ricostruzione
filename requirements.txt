@@ -1,10 +1,10 @@
 BeautifulSoup==3.2.1
-Django==1.4.2
+Django==1.7.3
 Markdown
-South==0.7.6
 argparse
 distribute
-django-disqus
+#django-disqus
+django-extensions==1.0.1
 django-extensions==1.0.1
 docutils
 feedparser==5.1.3

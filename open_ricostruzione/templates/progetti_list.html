@@ -17,7 +17,7 @@
 {% block main-subtitle %}
     <strong>
         Progetti
-        {% if tipologia %}per <a href="{% url progetti-tipologia tipologia.slug %}" >{{tipologia}}</a>{% endif %}{% if comune %} nel <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
+        {% if tipologia %}per <a href="{% url "progetti-tipologia" tipologia.slug %}" >{{tipologia}}</a>{% endif %}{% if comune %} nel <a href="{% url "territorio_detail" comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
     </strong>
     {% if n_progetti > 0 %}
         ({{ n_progetti }} {% if n_progetti > 1 %}progetti{% else %}progetto{% endif %}
@@ -52,20 +52,20 @@
                 </div>
                 <div class="row project_row">
                     <div class="span5 titolo">
-                        <a href="{% url progetto_detail result.slug %}">
+                        <a href="{% url "progetto_detail" result.slug %}">
                             {{ result.denominazione|safe }}
                         </a>
                     </div>
                 </div>
                 <div class="row project_row">
                     <div class="span5 ">
-                        <a href="{% url territorio_detail result.territorio.slug %}" >
+                        <a href="{% url "territorio_detail" result.territorio.slug %}" >
                             {{ result.territorio.denominazione }}
 
                             ({{ result.territorio.get_provincia.sigla_provincia}})
                         </a> &#126;
 
-                        <a href="{% url progetti-tipologia result.tipologia.slug %} " >
+                        <a href="{% url "progetti-tipologia" result.tipologia.slug %} " >
                             {{ result.tipologia.denominazione|safe }}
                         </a>
                     </div>
@@ -95,7 +95,7 @@
                 <div class="span7 spacer">
                 </div>
             </div>
-            Non è stato trovato nessun progetto {% if tipologia %}di tipologia <a href="{% url progetti-tipologia tipologia.slug %}" >{{tipologia}}</a>{% endif %}{% if comune %} nel <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %}
+            Non è stato trovato nessun progetto {% if tipologia %}di tipologia <a href="{% url "progetti-tipologia" tipologia.slug %}" >{{tipologia}}</a>{% endif %}{% if comune %} nel <a href="{% url "territorio_detail" comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %}
         {% endif %}
     </div>
 
