@@ -1,8 +1,7 @@
 open_ricostruzione
 ============
 
-Open Ricostruzione Project
+Web application to open and display data about reconstruction projects following the 2011 Emilia Romagna earthquake.
 
-* contains the application of Open Ricostruzione
 
 
