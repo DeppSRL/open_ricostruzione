@@ -7,12 +7,16 @@ from django.conf import settings
 from django.contrib import admin
 
 admin.autodiscover()
-
 urlpatterns = patterns('',
 
-    # todo: work in progress url to fix
-    # url(r'^.*$', direct_to_template, {'template': 'lavorincorso.html'}),
-    
+    # Uncomment the admin/doc line below to enable admin documentation:
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # Uncomment the next line to enable the admin:
+    url(r'^admin/', include(admin.site.urls)),
+
+    # work in progress url
+    url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
+
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^progetto/(?P<slug>[-\w]+)$', ProgettoView.as_view(), name="progetto_detail"),
     url(r'^progetti.json$', ProgettiJSONListView.as_view(), name="progetti_listJSON"),
@@ -36,11 +40,8 @@ urlpatterns = patterns('',
     url(r'^download/$', HomeView.as_view(), name='home'),
     url(r'^licenza/$', HomeView.as_view(), name='home'),
     url(r'^faq/$', FaqView.as_view(), name='faq'),
-    # Uncomment the admin/doc line below to enable admin documentation:
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
 )
+
 
 if settings.DEVELOPMENT:
     urlpatterns += patterns('',
