@@ -1,16 +1,31 @@
 # Django settings for open_ricostruzione project.
 import django.conf.global_settings as DEFAULT_SETTINGS
 import os
+import environ
 
-DEBUG = False
-TEMPLATE_DEBUG = False
+root = environ.Path(__file__) - 2  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
+
+# set default values and casting
+env = environ.Env(
+    DEBUG=(bool, True),
+)
+env.read_env(root('.env'))
+
+
+########## DEBUG CONFIGURATION
+DEBUG = env.bool('DEBUG', False)
+TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', False)
+########## END DEBUG CONFIGURATION
+
 DEVELOPMENT = False
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Guglielmo Celata', 'guglielmo@depp.it'),
+    ('Stefano Vergani', 'stefano.vergani.it@gmail.com'),
 )
+
 
 MANAGERS = ADMINS
 
@@ -55,7 +70,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/media'
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -83,7 +98,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'cpg0e#)#k7^#$j28t6rmnd_5$1&amp;ttyitl8fmmvqqnb45@k@0^q'
+SECRET_KEY = None
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -115,11 +130,19 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates'),
     )
 
-TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
-    'open_ricostruzione.context_processor.main_settings',
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.request',
-    )
 
+    # bilanci project context processor
+    'open_ricostruzione.context_processor.main_settings',
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -133,7 +156,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'open_ricostruzione',
-    # 'django_extensions',
+    'django_extensions',
     'open_ricostruzione.depp_humanize',
     # 'disqus',
 )
@@ -194,8 +217,9 @@ LOGGING = {
 
 COMUNI_CRATERE=[u'037002', u'037003', u'037005', u'037017', u'037019', u'037024', u'037028', u'037035', u'037038', u'037039', u'037048', u'037050', u'037052', u'037053', u'037055', u'037056', u'037006', u'037009', u'037032', u'037037', u'038003', u'038004', u'038016', u'038018', u'038021', u'038022', u'038008', u'038001', u'036001', u'036002', u'036003', u'036004', u'036005', u'036006', u'036009', u'036010', u'036012', u'036021', u'036022', u'036027', u'036028', u'036034', u'036037', u'036038', u'036039', u'036044', u'036023', u'035005', u'035006', u'035020', u'035021', u'035023', u'035024', u'035026', u'035028', u'035032', u'035034', u'035035', u'035037', u'035009', u'035033']
 
-DISQUS_WEBSITE_SHORTNAME = 'openricostruzione'
-DISQUS_API_KEY = 'pO33Z2FVRd0eI2s6Ujf8BSJKWrGZARAvgPAF6gsqdtBmxDjt5i3BaXWV6XNqBYaA'
+DISQUS_WEBSITE_SHORTNAME = env('DISQUS_WEBSITE_SHORTNAME')
+
+DISQUS_API_KEY = env('DISQUS_API_KEY')
 
 OR_BLOG_FEED = 'http://blog.openricostruzione.it/?feed=rss2'
 
