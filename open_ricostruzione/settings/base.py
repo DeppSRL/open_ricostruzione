@@ -223,3 +223,11 @@ DISQUS_API_KEY = env('DISQUS_API_KEY')
 
 OR_BLOG_FEED = 'http://blog.openricostruzione.it/?feed=rss2'
 
+OP_API = {
+  'base_url': env('OP_API_DOMAIN'),
+  'username': env('OP_API_USERNAME'),
+  'password': env('OP_API_PASSWORD'),
+}
+
+
+

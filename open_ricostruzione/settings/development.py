@@ -32,13 +32,3 @@ STATIC_URL = '/static/'
 ########## SECRET CONFIGURATION
 SECRET_KEY = env('SECRET_KEY')  # Raises ImproperlyConfigured exception if SECRET_KEY not in os.environ
 ########## END SECRET CONFIGURATION
-
-
-
-OP_API = {
-  'base_url': 'http://api2.openpolis.it',
-  'username': 'openricostruzione',
-  'password': 'maya',
-}
-
-
