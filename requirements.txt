@@ -1,15 +1,3 @@
-Django==1.7.3
-BeautifulSoup==3.2.1
-psycopg2==2.5.4
-Markdown
-argparse
-distribute
-#django-disqus
-Werkzeug==0.10
-environ==1.0
-django-extensions==1.5.0
--e git+git@github.com:joke2k/django-environ.git@156b9344a42597e66bcb1d75d21f6101e4d12359#egg=environ
-docutils
-feedparser==5.1.3
-requests
-wsgiref==0.1.2
+# This file is here because many Platforms as a Service look for
+#	requirements.txt in the root directory of a project.
+-r requirements/production.txt

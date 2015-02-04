@@ -4,6 +4,7 @@
 .htdigest
 log/*
 csv/*
+requirements/local.txt
 open_ricostruzione/settings_local.py
 open_ricostruzione/sitestatic
 open_ricostruzione/media

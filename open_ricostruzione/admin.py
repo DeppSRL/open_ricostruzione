@@ -18,19 +18,6 @@ class TerritorioAdmin(admin.ModelAdmin):
     model = Territorio
     search_fields = ['^denominazione', ]
 
-class TipologiaProgettoAdmin(admin.ModelAdmin):
-    model = TipologiaProgetto
-    ordering = ['codice']
-
-
-class TipologiaCedenteAdmin(admin.ModelAdmin):
-    model = TipologiaCedente
-    ordering = ['codice']
-    prepopulated_fields = {'slug':('denominazione',),}
-
-
 admin.site.register(Progetto, ProgettoAdmin)
 admin.site.register(Territorio, TerritorioAdmin)
-admin.site.register(TipologiaProgetto, TipologiaProgettoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)
-admin.site.register(TipologiaCedente, TipologiaCedenteAdmin)

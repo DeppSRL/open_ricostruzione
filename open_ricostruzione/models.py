@@ -1,6 +1,7 @@
 from decimal import Decimal
 # from django.contrib.markup.templatetags.markup import markdown
 from django.db import models
+from model_utils import Choices
 from django.db import connections
 from datetime import datetime
 import time
@@ -225,23 +226,10 @@ class Territorio(models.Model):
             return None
 
 
-
-class TipologiaProgetto(models.Model):
-    codice = models.SmallIntegerField(null=True, blank=True)
-    denominazione = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=100)
-
-    def __unicode__(self):
-        return u"%s" % self.denominazione
-
-    class Meta:
-        verbose_name_plural = u'Tipologia Progetti'
-
 class Progetto(models.Model):
 
     id_progetto = models.CharField(max_length=6)
     id_padre = models.CharField(max_length=6, blank=True, null=True)
-    tipologia = models.ForeignKey('TipologiaProgetto', null=False)
     territorio = models.ForeignKey('Territorio', null=True)
     importo_previsto = models.TextField(max_length=4096)
     riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
@@ -278,43 +266,34 @@ class Progetto(models.Model):
         verbose_name_plural = u'Progetti'
 
 
-class TipologiaCedente(models.Model):
-    codice = models.SmallIntegerField(null=True, blank=True)
-    denominazione = models.CharField(max_length=255)
-    slug=models.SlugField(max_length=60)
-
-    def __unicode__(self):
-        return u"%s - %s" % (self.codice, self.denominazione)
-
-    class Meta:
-        verbose_name_plural = u'Tipologia Cedenti'
 
 
 class Donazione(models.Model):
 
-    progetto = models.ForeignKey('Progetto',null=True, blank=True)
-    id_donazione = models.CharField(max_length=6)
+    TIPO_DONAZIONE = Choices(
+        (u'1', u'Diretta', _(u'Diretta')),
+        (u'2', u'Regione', _(u'Regione')),
+    )
+
+    TIPO_CEDENTE = Choices(
+        (u'0', u'privato', _(u'privato')),
+    )
+
     territorio = models.ForeignKey('Territorio')
-    denominazione = models.TextField(max_length=1000)
-    info = models.TextField(max_length=1000,null=True, blank=True)
-    modalita_r = models.TextField(max_length=20,null=True, blank=True)
-    tipologia = models.ForeignKey('TipologiaCedente')
+    denominazione = models.CharField(max_length=256)
+    informazioni = models.TextField(max_length=800)
+    tipologia_cedente = models.CharField(max_length=2, choices=TIPO_CEDENTE, default='')
+    tipologia_donazione = models.CharField(max_length=2, choices=TIPO_DONAZIONE, default='')
     data = models.DateField()
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
-    confermato = models.BooleanField(default=False)
-    avvenuto = models.BooleanField(default=False)
 
     def __unicode__(self):
         if self.progetto is None:
             return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
-        else:
-            return u"%s (ID: %s, Data:%s) Progetto:%s" % (self.denominazione, self.id, self.data, self.progetto.denominazione)
+
     #    ritorna l'importo lavori in formato italiano
     def get_importo_ita(self):
         return moneyfmt(self.importo,2,"",".",",")
-
-    def detail(self):
-        return u"%s (ID: %s, territorio:%s, tipologia:%s, progetto:%s, avvenuto:%s, conf:%s)" % (self.denominazione, self.id, self.territorio_id, self.tipologia_id, self.progetto_id, self.avvenuto, self.confermato)
 
 
     class Meta:
