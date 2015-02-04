@@ -28,13 +28,9 @@ class TipologiaCedenteAdmin(admin.ModelAdmin):
     ordering = ['codice']
     prepopulated_fields = {'slug':('denominazione',),}
 
-class UltimoAggiornamentoAdmin(admin.ModelAdmin):
-    model=UltimoAggiornamento
-
 
 admin.site.register(Progetto, ProgettoAdmin)
 admin.site.register(Territorio, TerritorioAdmin)
 admin.site.register(TipologiaProgetto, TipologiaProgettoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)
 admin.site.register(TipologiaCedente, TipologiaCedenteAdmin)
-admin.site.register(UltimoAggiornamento, UltimoAggiornamentoAdmin)

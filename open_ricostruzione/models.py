@@ -12,14 +12,6 @@ from django.template.defaultfilters import date as _date
 from django.conf import settings
 
 
-class UltimoAggiornamento(models.Model):
-    data_progetti = models.DateTimeField()
-    data_donazioni = models.DateTimeField()
-
-    class Meta:
-        verbose_name_plural = u'Ultimo Aggiornamento'
-
-
 class Territorio(models.Model):
 
     tipo_territorio = models.CharField(max_length=2)
