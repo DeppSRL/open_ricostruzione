@@ -9,8 +9,6 @@ class ProgettoAdmin(admin.ModelAdmin):
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
     ordering = ['data']
-    list_filter = ['tipologia', HasProgetto]
-    search_fields = ['^denominazione', 'id_donazione', 'data']
     list_per_page = 500
 
 

@@ -271,21 +271,21 @@ class Progetto(models.Model):
 class Donazione(models.Model):
 
     TIPO_DONAZIONE = Choices(
-        (u'1', u'Diretta', _(u'Diretta')),
-        (u'2', u'Regione', _(u'Regione')),
+        (u'1', u'Diretta', u'Diretta'),
+        (u'2', u'Regione', u'Regione'),
     )
 
     TIPO_CEDENTE = Choices(
-        (u'0', u'privato', _(u'privato')),
+        (u'0', u'privato', u'privato'),
     )
 
     territorio = models.ForeignKey('Territorio')
     denominazione = models.CharField(max_length=256)
-    informazioni = models.TextField(max_length=800)
-    tipologia_cedente = models.CharField(max_length=2, choices=TIPO_CEDENTE, default='')
-    tipologia_donazione = models.CharField(max_length=2, choices=TIPO_DONAZIONE, default='')
+    informazioni = models.TextField(max_length=800, blank=True, null=True, default=None)
+    tipologia_cedente = models.CharField(max_length=2, choices=TIPO_CEDENTE, blank=False, null=False, default='')
+    tipologia_donazione = models.CharField(max_length=2, choices=TIPO_DONAZIONE, blank=False, null=False, default='')
     data = models.DateField()
-    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
+    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False,)
 
     def __unicode__(self):
         if self.progetto is None:
