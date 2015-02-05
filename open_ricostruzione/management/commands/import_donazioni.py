@@ -58,9 +58,7 @@ class Command(BaseCommand):
         # todo: define date format!!
         date_format = ''
 
-        set_autocommit(autocommit=False)
-        c = 0
-
+        donazioni_list = []
         for row in self.unicode_reader:
 
             # COLUMNS
@@ -102,14 +100,7 @@ class Command(BaseCommand):
 
             }
 
-            donazione = Donazione(**don_dict)
-            donazione.save()
+            donazioni_list.append(Donazione(**don_dict))
 
-            c += 1
-
-            if c == 100:
-                commit()
-                c = 0
-
-        commit()
-        set_autocommit(autocommit=True)
+        # save all donazioni in a bulk create
+        Donazione.objects.bulk_create(donazioni_list)
