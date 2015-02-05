@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.transaction import set_autocommit, commit
+import xlrd
 from open_ricostruzione import utils
 from open_ricostruzione.models import Donazione, Territorio
 from optparse import make_option
@@ -30,7 +31,7 @@ class Command(BaseCommand):
 
     input_file = ''
     delete = ''
-    encoding = 'utf8'
+    encoding = 'latin-1'
     logger = logging.getLogger('csvimport')
     unicode_reader = None
 
@@ -39,11 +40,10 @@ class Command(BaseCommand):
         self.input_file = options['file']
         self.delete = options['delete']
         self.logger.info('Input file:{}'.format(self.input_file))
-
+        book = None
         # read file
         try:
-            self.unicode_reader = \
-                utils.UnicodeDictReader(open(self.input_file, 'r'), encoding=self.encoding, dialect="excel")
+            book = xlrd.open_workbook(self.input_file)
         except IOError:
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
@@ -55,32 +55,39 @@ class Command(BaseCommand):
             Donazione.objects.all().delete()
             self.logger.info("Done")
 
-        # todo: define date format!!
-        date_format = ''
+        # define date format
+        date_format = '%d/%M/%Y'
+        worksheet = book.sheet_by_index(0)
 
         donazioni_list = []
-        for row in self.unicode_reader:
+        for row_counter in range(worksheet.nrows):
+            row = []
+            if row_counter == 0:
+                # header row
+                continue
+            for col_counter in range(worksheet.ncols):
+                row.append(worksheet.cell_value(row_counter,col_counter))
 
             # COLUMNS
             #
-            # Tipologia del Cedente (1)
-            # Denominazione Cedente (2)
-            # Comune Ricevente
-            # Data Comunicazione (3)
-            # Importo
-            # Ulteriori informazioni
-            # Tipologia (1=diretta,2=tramite regione)
+            # 1: Tipologia del Cedente (1)
+            # 2: Denominazione Cedente (2)
+            # 3: Comune Ricevente
+            # 4: Data Comunicazione (3)
+            # 5: Importo
+            # 6: Ulteriori informazioni
+            # 7: Tipologia (1=diretta,2=tramite regione)
 
             territorio = None
             try:
-                territorio = Territorio.objects.get(denominazione=row['Comune Ricevente'])
+                territorio = Territorio.objects.get(denominazione=row[3])
             except ObjectDoesNotExist:
-                self.logger.error(u"Could not find Territorio with denominazione:{}")
+                self.logger.error(u"Could not find Territorio with denominazione:{}".format(row[3]))
                 exit()
 
-            data = datetime.strptime(row['Data Comunicazione (3)'], date_format)
+            data = datetime.strptime(row[4], date_format)
 
-            tipologia_donazione = row['Tipologia (1=diretta,2=tramite regione)']
+            tipologia_donazione = row[7]
 
             if tipologia_donazione != '1' and tipologia_donazione != '2':
                 self.logger.error(u"Tipologia donazione value is not accepted:{}".format(tipologia_donazione))
@@ -91,12 +98,12 @@ class Command(BaseCommand):
 
             don_dict = {
                 'territorio': territorio,
-                'informazioni': row['Ulteriori informazioni'],
-                'denominazione': row['Denominazione Cedente (2)'],
+                'informazioni': row[6],
+                'denominazione': row[2],
                 'tipologia_cedente': tipologia_cedente,
                 'tipologia_donazione': tipologia_donazione,
                 'data': data,
-                'importo': Decimal(row['Importo'].replace(',', '.').replace("€", '')),
+                'importo': Decimal(row[5].replace(',', '.').replace("€", '')),
 
             }
 

@@ -3,6 +3,7 @@
 *.pyc
 .htdigest
 log/*
+open_ricostruzione/log/logfile
 csv/*
 requirements/local.txt
 open_ricostruzione/settings_local.py

@@ -389,45 +389,45 @@ class Command(BaseCommand):
 
             c += 1
 
-#    import relationship between donation for projects
-    def handle_donationproj(self, *args, **options):
-        c = 0
-        self.logger.info("Inizio import da %s" % self.csv_file)
-
-        #    campi da importare:
-        #   "id";"id_flusso";"id_progetto";"id_figlio"
-
-        for r in self.unicode_reader:
-            try:
-                donazione = Donazione.objects.get(id_donazione=r['id_flusso'])
-            except ObjectDoesNotExist:
-                self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_flusso']))
-
-            if donazione:
-                if options['update']:
-                    if r['id_figlio'] == "NULL" or not r['id_figlio']:
-                        donazione.progetto=\
-                            Progetto.objects.\
-                            get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
-                    else:
-                        if r['id_progetto']:
-                            donazione.progetto=\
-                                Progetto.objects.\
-                                get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
-                        else:
-                            donazione.progetto= \
-                                Progetto.objects. \
-                                    get(id_padre=None,id_progetto=r['id_figlio'])
-
-                    donazione.save()
-
-                    self.logger.info("%s - %s: donazione aggiornata: %s" % ( c, r['id'],donazione))
-                else:
-                    self.logger.info("%s - %s: donazione non aggiornata: %s" % ( c, r['id'], donazione))
-            else:
-                self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_progetto']))
-
-            c += 1
+# #    import relationship between donation for projects
+#     def handle_donationproj(self, *args, **options):
+#         c = 0
+#         self.logger.info("Inizio import da %s" % self.csv_file)
+#
+#         #    campi da importare:
+#         #   "id";"id_flusso";"id_progetto";"id_figlio"
+#
+#         for r in self.unicode_reader:
+#             try:
+#                 donazione = Donazione.objects.get(id_donazione=r['id_flusso'])
+#             except ObjectDoesNotExist:
+#                 self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_flusso']))
+#
+#             if donazione:
+#                 if options['update']:
+#                     if r['id_figlio'] == "NULL" or not r['id_figlio']:
+#                         donazione.progetto=\
+#                             Progetto.objects.\
+#                             get(id_progetto=r['id_progetto'],parent__isnull=True, id_padre__isnull=True)
+#                     else:
+#                         if r['id_progetto']:
+#                             donazione.progetto=\
+#                                 Progetto.objects.\
+#                                 get(id_padre=r['id_progetto'], id_progetto=r['id_figlio'])
+#                         else:
+#                             donazione.progetto= \
+#                                 Progetto.objects. \
+#                                     get(id_padre=None,id_progetto=r['id_figlio'])
+#
+#                     donazione.save()
+#
+#                     self.logger.info("%s - %s: donazione aggiornata: %s" % ( c, r['id'],donazione))
+#                 else:
+#                     self.logger.info("%s - %s: donazione non aggiornata: %s" % ( c, r['id'], donazione))
+#             else:
+#                 self.logger.debug("%s: donazione non trovata: %s" % (c, r['id_progetto']))
+#
+#             c += 1
 
 
 #    import Territorio IBAN

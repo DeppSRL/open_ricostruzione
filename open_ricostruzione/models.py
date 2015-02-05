@@ -228,39 +228,13 @@ class Territorio(models.Model):
 
 class Progetto(models.Model):
 
-    id_progetto = models.CharField(max_length=6)
-    id_padre = models.CharField(max_length=6, blank=True, null=True)
     territorio = models.ForeignKey('Territorio', null=True)
     importo_previsto = models.TextField(max_length=4096)
-    riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
     denominazione = models.TextField(max_length=4096)
     slug = models.SlugField(max_length=60)
-    parent = models.ForeignKey('Progetto', null=True)
-    ubicazione = models.CharField(max_length=500)
-    tempi_di_realizzazione = models.TextField()
-    stato_attuale = models.TextField()
-    interventi_previsti = models.TextField()
-    epoca = models.TextField()
-    cenni_storici = models.TextField()
-    ulteriori_info = models.TextField()
-
-
-#    ritorna l'importo lavori in formato italiano
-    def get_riepilogo_importi_ita(self):
-        if self.riepilogo_importi:
-            return moneyfmt(self.riepilogo_importi,2,"",".",",")
-        else:
-            return "0,00"
-
-    def get_donazioni_ita(self):
-        donazioni_p = Donazione.objects.filter(progetto=self).aggregate(sum=Sum('importo')).values()
-        if donazioni_p[0]:
-            return moneyfmt(donazioni_p[0],2,"",".",",")
-        else:
-            return "0,00"
 
     def __unicode__(self):
-        return u"%s ID: %s, TIPOLOGIA: %s, PADRE: [%s]" % (self.denominazione, self.id_progetto, self.tipologia, self.parent)
+        return u"{}".format(self.denominazione)
 
     class Meta:
         verbose_name_plural = u'Progetti'
@@ -284,12 +258,11 @@ class Donazione(models.Model):
     informazioni = models.TextField(max_length=800, blank=True, null=True, default=None)
     tipologia_cedente = models.CharField(max_length=2, choices=TIPO_CEDENTE, blank=False, null=False, default='')
     tipologia_donazione = models.CharField(max_length=2, choices=TIPO_DONAZIONE, blank=False, null=False, default='')
-    data = models.DateField()
+    data = models.DateField(null=True, blank=True)
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False,)
 
     def __unicode__(self):
-        if self.progetto is None:
-            return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
+        return "{}".format(self.denominazione)
 
     #    ritorna l'importo lavori in formato italiano
     def get_importo_ita(self):
