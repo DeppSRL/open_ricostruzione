@@ -3,14 +3,11 @@ import csv
 from django.core.management.base import BaseCommand, CommandError
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.transaction import set_autocommit, commit
 import xlrd
-from open_ricostruzione import utils
 from open_ricostruzione.models import Donazione, Territorio
 from optparse import make_option
 import logging
 from datetime import datetime
-from django.utils import timezone
 
 
 class Command(BaseCommand):

@@ -3,14 +3,14 @@
 *.pyc
 .htdigest
 log/*
-open_ricostruzione/log/logfile
+open_ricostruzione/log/*
 csv/*
 requirements/local.txt
 open_ricostruzione/settings_local.py
 open_ricostruzione/sitestatic
 open_ricostruzione/media
 sqlite.db*
-open_ricostruzione/static/js/leaflet.js
+open_ricostruzione/static/*
 open_ricostruzione/migrations
 open_ricostruzione/migrations/*
 open_ricostruzione/csv/*
