@@ -26,17 +26,16 @@ ADMINS = (
     ('Stefano Vergani', 'stefano.vergani.it@gmail.com'),
 )
 
-
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'NAME': '', # Or path to database file if using sqlite3.
+        'USER': '', # Not used with sqlite3.
+        'PASSWORD': '', # Not used with sqlite3.
+        'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '', # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -86,9 +85,9 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+# Put strings here, like "/home/html/static" or "C:/www/django/static".
+# Always use forward slashes, even on Windows.
+# Don't forget to use absolute paths, not relative paths.
 )
 
 # List of finder classes that know how to find static files in
@@ -96,7 +95,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -106,7 +105,7 @@ SECRET_KEY = None
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -130,7 +129,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_ROOT, 'templates'),
-    )
+)
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -161,6 +160,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'open_ricostruzione.depp_humanize',
     # 'disqus',
+    'rest_framework',
 )
 
 
@@ -174,50 +174,56 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'standard': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
-        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
     'handlers': {
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
             'formatter': 'standard'
         },
         'logfile': {
-            'level':'INFO',
-            'class':'logging.handlers.RotatingFileHandler',
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': REPO_ROOT + "/log/logfile",
             'maxBytes': 10000000,
             'backupCount': 10,
             'formatter': 'standard',
-            },
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
-        },
+    },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
-            },
+        },
         'csvimport': {
             'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
             'propagate': True,
-            }
+        }
     }
 }
 
-COMUNI_CRATERE=[u'037002', u'037003', u'037005', u'037017', u'037019', u'037024', u'037028', u'037035', u'037038', u'037039', u'037048', u'037050', u'037052', u'037053', u'037055', u'037056', u'037006', u'037009', u'037032', u'037037', u'038003', u'038004', u'038016', u'038018', u'038021', u'038022', u'038008', u'038001', u'036001', u'036002', u'036003', u'036004', u'036005', u'036006', u'036009', u'036010', u'036012', u'036021', u'036022', u'036027', u'036028', u'036034', u'036037', u'036038', u'036039', u'036044', u'036023', u'035005', u'035006', u'035020', u'035021', u'035023', u'035024', u'035026', u'035028', u'035032', u'035034', u'035035', u'035037', u'035009', u'035033']
+COMUNI_CRATERE = [u'037002', u'037003', u'037005', u'037017', u'037019', u'037024', u'037028', u'037035', u'037038',
+                  u'037039', u'037048', u'037050', u'037052', u'037053', u'037055', u'037056', u'037006', u'037009',
+                  u'037032', u'037037', u'038003', u'038004', u'038016', u'038018', u'038021', u'038022', u'038008',
+                  u'038001', u'036001', u'036002', u'036003', u'036004', u'036005', u'036006', u'036009', u'036010',
+                  u'036012', u'036021', u'036022', u'036027', u'036028', u'036034', u'036037', u'036038', u'036039',
+                  u'036044', u'036023', u'035005', u'035006', u'035020', u'035021', u'035023', u'035024', u'035026',
+                  u'035028', u'035032', u'035034', u'035035', u'035037', u'035009', u'035033']
 
 DISQUS_WEBSITE_SHORTNAME = env('DISQUS_WEBSITE_SHORTNAME')
 
@@ -226,11 +232,17 @@ DISQUS_API_KEY = env('DISQUS_API_KEY')
 OR_BLOG_FEED = 'http://blog.openricostruzione.it/?feed=rss2'
 
 OP_API = {
-  'base_url': env('OP_API_DOMAIN'),
-  'username': env('OP_API_USERNAME'),
-  'password': env('OP_API_PASSWORD'),
+    'base_url': env('OP_API_DOMAIN'),
+    'username': env('OP_API_USERNAME'),
+    'password': env('OP_API_PASSWORD'),
 }
 
-
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 

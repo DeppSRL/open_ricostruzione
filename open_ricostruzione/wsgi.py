@@ -22,8 +22,6 @@ env = environ.Env(
 env.read_env(root('.env'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", env('DJANGO_SETTINGS_MODULE'))
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "open_ricostruzione.settings_local")
-
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
