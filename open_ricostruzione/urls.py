@@ -6,19 +6,47 @@ from django.conf import settings
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 
+
+
+
+# django rest api
+
+from django.conf.urls import url, include
+from django.contrib.auth.models import User
+from rest_framework import routers, serializers, viewsets
+
+# Serializers define the API representation.
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ('url', 'username', 'email', 'is_staff')
+
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+
+# django rest api
+
+
 admin.autodiscover()
 urlpatterns = patterns('',
-
                        # Uncomment the admin/doc line below to enable admin documentation:
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        # Uncomment the next line to enable the admin:
                        url(r'^admin/', include(admin.site.urls)),
 
                        # Django REST FRAMEWORK API urls
+
+                       url(r'^api/', include(router.urls)),
                        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
                        # Work in progress url
-                       url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
+                       # url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
 
                        url(r'^$', HomeView.as_view(), name='home'),
                        url(r'^progetto/(?P<slug>[-\w]+)$', ProgettoView.as_view(), name="progetto_detail"),
