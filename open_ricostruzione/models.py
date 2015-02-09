@@ -34,7 +34,7 @@ class Territorio(models.Model):
         verbose_name_plural = u'Territori'
 
     def get_danno(self):
-        return Progetto.objects.filter(territorio=self, id_padre__isnull=True). \
+        return InterventiAProgramma.objects.filter(territorio=self, id_padre__isnull=True). \
             aggregate(s=Sum('riepilogo_importi')).values()[0]
 
     def get_donazioni(self):
@@ -54,7 +54,6 @@ class Territorio(models.Model):
             return moneyfmt(self.get_donazioni(), 2, "", ".", ",")
         else:
             return "0,00"
-
 
     def get_percentuale_donazioni(self):
 
@@ -76,23 +75,23 @@ class Territorio(models.Model):
         else:
             return None
 
-    def get_marker_size(self):
-
-        biggest_damage = Territorio.objects. \
-            filter(cod_comune__in=Territorio.get_territori_attivi()). \
-            annotate(s=Sum('progetto__riepilogo_importi')).order_by('-s'). \
-            values_list('s', flat=True)[0]
-        danno = self.get_danno()
-        if danno and biggest_damage:
-            return self.marker_min_size + ((danno / biggest_damage) * self.marker_max_size) * Decimal('0.45')
-        else:
-            return 0
-
-
-    def get_comuni_with_progetti(self):
-        return Territorio.objects.filter(tipo_territorio="C", cod_provincia=self.cod_provincia). \
-            filter(progetto__isnull=False). \
-            order_by("denominazione").distinct()
+    # def get_marker_size(self):
+    #
+    #     biggest_damage = Territorio.objects. \
+    #         filter(cod_comune__in=Territorio.get_territori_attivi()). \
+    #         annotate(s=Sum('progetto__riepilogo_importi')).order_by('-s'). \
+    #         values_list('s', flat=True)[0]
+    #     danno = self.get_danno()
+    #     if danno and biggest_damage:
+    #         return self.marker_min_size + ((danno / biggest_damage) * self.marker_max_size) * Decimal('0.45')
+    #     else:
+    #         return 0
+    #
+    #
+    # def get_comuni_with_progetti(self):
+    #     return Territorio.objects.filter(tipo_territorio="C", cod_provincia=self.cod_provincia). \
+    #         filter(progetto__isnull=False). \
+    #         order_by("denominazione").distinct()
 
     def get_provincia(self):
         if self.tipo_territorio != "P":
@@ -167,14 +166,6 @@ class Territorio(models.Model):
 
         return donazioni_spline
 
-    #    get_territori_attivi restituisce la lista dei codici comune dei territori in cui abbiamo almeno un progetto attivo
-    @classmethod
-    def get_territori_attivi(cls):
-        return Territorio.objects.filter(tipo_territorio="C", cod_comune__in=settings.COMUNI_CRATERE). \
-            annotate(c=Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',
-                                                                                                 flat=True)
-
-
     @classmethod
     def get_boundingbox_minlat(cls):
         return Territorio.objects. \
@@ -223,7 +214,7 @@ class Territorio(models.Model):
             return None
 
 
-class Progetto(models.Model):
+class InterventiAProgramma(models.Model):
     territorio = models.ForeignKey('Territorio', null=True)
     importo_previsto = models.TextField(max_length=4096)
     denominazione = models.TextField(max_length=4096)
@@ -233,7 +224,7 @@ class Progetto(models.Model):
         return u"{}".format(self.denominazione)
 
     class Meta:
-        verbose_name_plural = u'Progetti'
+        verbose_name_plural = u'Interventi a programma'
 
 
 class Donazione(models.Model):

@@ -34,6 +34,17 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        verbosity = options['verbosity']
+        if verbosity == '0':
+            self.logger.setLevel(logging.ERROR)
+        elif verbosity == '1':
+            self.logger.setLevel(logging.WARNING)
+        elif verbosity == '2':
+            self.logger.setLevel(logging.INFO)
+        elif verbosity == '3':
+            self.logger.setLevel(logging.DEBUG)
+
+
         self.input_file = options['file']
         self.delete = options['delete']
         self.logger.info('Input file:{}'.format(self.input_file))

@@ -262,7 +262,7 @@ class HomeView(TemplateView):
 
 
 class ProgettoView(DetailView):
-    model = Progetto
+    model = InterventiAProgramma
     context_object_name = "progetto"
     template_name = 'progetto.html'
 
@@ -271,12 +271,12 @@ class ProgettoView(DetailView):
         context = super(ProgettoView, self).get_context_data(**kwargs)
 
         #sotto progetti
-        sottoprogetti = Progetto.objects.filter(id_padre=p.id_progetto).order_by('denominazione')
+        sottoprogetti = InterventiAProgramma.objects.filter(id_padre=p.id_progetto).order_by('denominazione')
         if sottoprogetti:
             context['sottoprogetti']=sottoprogetti
 
         # importi progetto
-        stima_danno = Progetto.objects.filter(id_progetto=p.id_progetto).\
+        stima_danno = InterventiAProgramma.objects.filter(id_progetto=p.id_progetto).\
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
@@ -291,7 +291,7 @@ class ProgettoView(DetailView):
 
 
         context['territorio_nome'] = p.territorio.denominazione
-        iban =  Progetto.objects.get(pk = p.pk).territorio.iban
+        iban =  InterventiAProgramma.objects.get(pk = p.pk).territorio.iban
         if iban:
             context['iban'] = iban
 
@@ -305,7 +305,7 @@ class ProgettoView(DetailView):
 
 
 class ProgettoListView(ListView):
-    model=Progetto
+    model=InterventiAProgramma
     template_name = "tipologieprogetto.html"
 
     def get_context_data(self, **kwargs):
@@ -318,9 +318,9 @@ class ProgettoListView(ListView):
 
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
-            return Progetto.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
+            return InterventiAProgramma.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
         else:
-           return  Progetto.objects.all()[0:50]
+           return  InterventiAProgramma.objects.all()[0:50]
 
 
 class TerritorioListView(ListView):
@@ -348,16 +348,16 @@ class TerritorioView(DetailView):
         context['sigla_provincia'] = Territorio.objects.get(tipo_territorio = 'P', cod_provincia = t.cod_provincia, cod_comune = "0").sigla_provincia
 
         #numero progetti
-        context['n_progetti']=  Progetto.objects.filter(territorio=t, id_padre__isnull = True).count()
+        context['n_progetti']=  InterventiAProgramma.objects.filter(territorio=t, id_padre__isnull = True).count()
         # importi progetti totale
-        stima_danno = Progetto.objects.filter(territorio=t, id_padre__isnull = True).\
+        stima_danno = InterventiAProgramma.objects.filter(territorio=t, id_padre__isnull = True).\
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
             # importi dei progetti per categorie
             progetti_categorie_list =\
-                Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
+                InterventiAProgramma.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
                 annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
 
             for p in progetti_categorie_list:
@@ -366,7 +366,7 @@ class TerritorioView(DetailView):
             context['progetti_categorie_list']=progetti_categorie_list
 
             progetti_categorie_pie=\
-                Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
+                InterventiAProgramma.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
                 annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
             for p in progetti_categorie_pie:
                 p['sum'] =moneyfmt(p['sum'] ,2,"","",".")
@@ -383,7 +383,7 @@ class TerritorioView(DetailView):
         context['donazioni_comune'] = Donazione.objects.filter(confermato = True).filter(territorio=t)
 
         #lista progetti per questo territorio in ordine di costo decrescente
-        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
+        projects = InterventiAProgramma.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
 
         if projects:
             for p in projects:
@@ -477,9 +477,9 @@ class DonazioneView(TemplateView):
             context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         #numero progetti
-        context['n_progetti']=  Progetto.objects.filter( id_padre__isnull = True).count()
+        context['n_progetti']=  InterventiAProgramma.objects.filter( id_padre__isnull = True).count()
         # importi progetti totale
-        stima_danno = Progetto.objects.filter( id_padre__isnull = True).\
+        stima_danno = InterventiAProgramma.objects.filter( id_padre__isnull = True).\
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
@@ -615,7 +615,7 @@ class FaqView(TemplateView):
             annotate(c = Count("donazione")).filter(c__gt=0).count()
 
         #numero progetti
-        context['n_progetti']=  Progetto.objects.filter(id_padre__isnull = True).count()
+        context['n_progetti']=  InterventiAProgramma.objects.filter(id_padre__isnull = True).count()
         return context
 
 
@@ -808,7 +808,7 @@ class ProgettiTipologiaComune(TipologieProgettoView):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= Progetto.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti= InterventiAProgramma.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiTipologiaComune, self).get_context_data(**kwargs)
 
@@ -823,7 +823,7 @@ class ProgettiTipologia(TipologieProgettoView):
     def get_context_data(self, **kwargs):
 
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= Progetto.objects.filter(tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti= InterventiAProgramma.objects.filter(tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
 
         self.context = super(ProgettiTipologia, self).get_context_data(**kwargs)
@@ -838,7 +838,7 @@ class ProgettiComune(TipologieProgettoView):
     def get_context_data(self, **kwargs):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
-        self.progetti= Progetto.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti= InterventiAProgramma.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
 
