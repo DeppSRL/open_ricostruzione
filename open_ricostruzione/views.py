@@ -3,12 +3,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
 from django.conf import settings
-from open_ricostruzione.models import *
+from open_ricostruzione.models import InterventiAProgramma, Donazione
+from territori.models import Territorio
 from django.db import connections
 import datetime
 import time
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
-from open_ricostruzione.utils import remove_img_tags
 from datetime import timedelta
 import json
 from json.encoder import JSONEncoder
@@ -18,9 +18,6 @@ from django.utils.functional import curry
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.defaultfilters import date as _date
-import socket
-import feedparser
-from BeautifulSoup import BeautifulSoup
 
 class HomeView(TemplateView):
     template_name = "home.html"

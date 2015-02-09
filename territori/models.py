@@ -74,9 +74,6 @@ class Territorio(models.Model):
         (u'9', u"500001_", u'Oltre i 500.000 abitanti'),
     )
 
-    # codice sito Finanza Locale
-    cod_finloc = models.CharField(max_length=128, blank=True, null=True, db_index=True, unique=True)
-
     # codice Openpolis
     op_id = models.CharField(max_length=128, blank=True, null=True, db_index=True)
 
@@ -91,8 +88,8 @@ class Territorio(models.Model):
     geom = models.MultiPolygonField(srid=4326, null=True, blank=True)
     cluster = models.CharField(max_length=1, choices=CLUSTER, db_index=True)
     objects = TerritoriManager()
-    # gps_lat = models.FloatField(null=True, blank=True)
-    # gps_lon = models.FloatField(null=True, blank=True)
+    gps_lat = models.FloatField(null=True, blank=True)
+    gps_lon = models.FloatField(null=True, blank=True)
 
 
     @property

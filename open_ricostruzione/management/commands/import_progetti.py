@@ -4,7 +4,8 @@ from django.core.management.base import BaseCommand, CommandError
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 import xlrd
-from open_ricostruzione.models import Donazione, Territorio, InterventiAProgramma
+from open_ricostruzione.models import Donazione, InterventiAProgramma
+from territori.models import Territorio
 from optparse import make_option
 import logging
 from datetime import datetime
@@ -65,7 +66,7 @@ class Command(BaseCommand):
         for intervento_a_programma in data['interventi_a_programma']:
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
             try:
-                territorio = Territorio.objects.get(cod_comune=istat_comune)
+                territorio = Territorio.objects.get(istat_id=istat_comune)
             except ObjectDoesNotExist:
                 self.logger.error("Territorio does not exist:{}".format(istat_comune))
                 if istat_comune not in not_found_istat:

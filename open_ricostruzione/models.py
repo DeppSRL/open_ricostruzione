@@ -4,7 +4,6 @@ import time
 from django.db import models
 from django.conf import settings
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
-from territori.models import Territorio
 
 
 class InterventiAProgramma(models.Model):
