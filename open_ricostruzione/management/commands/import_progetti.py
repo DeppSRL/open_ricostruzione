@@ -43,11 +43,11 @@ class Command(BaseCommand):
         elif verbosity == '3':
             self.logger.setLevel(logging.DEBUG)
 
-
         self.input_file = options['file']
         self.delete = options['delete']
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
+        not_found_istat=[]
         # read file
         try:
             json_file = open(self.input_file)
@@ -68,5 +68,12 @@ class Command(BaseCommand):
                 territorio = Territorio.objects.get(cod_comune=istat_comune)
             except ObjectDoesNotExist:
                 self.logger.error("Territorio does not exist:{}".format(istat_comune))
+                if istat_comune not in not_found_istat:
+                    not_found_istat.append(istat_comune)
+                continue
             else:
                 self.logger.debug(u"Territorio found:{}".format(territorio.denominazione))
+
+
+        for k in not_found_istat:
+            self.logger.info("{}".format(k))

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from open_ricostruzione.models import Donazione, InterventiAProgramma, Territorio
+from open_ricostruzione.models import Donazione, InterventiAProgramma
+from territori.models import Territorio
 
 
 class ProgettoAdmin(admin.ModelAdmin):
