@@ -1,16 +1,10 @@
 from django.contrib import admin
 from open_ricostruzione.models import Donazione, InterventiAProgramma
-from territori.models import Territorio
 
 
 class ProgettoAdmin(admin.ModelAdmin):
     model = InterventiAProgramma
     search_fields = ['^denominazione',]
-
-
-class TerritorioAdmin(admin.ModelAdmin):
-    model = Territorio
-    search_fields = ['^denominazione', ]
 
 
 class DonazioneAdmin(admin.ModelAdmin):
@@ -19,5 +13,4 @@ class DonazioneAdmin(admin.ModelAdmin):
 
 
 admin.site.register(InterventiAProgramma, ProgettoAdmin)
-admin.site.register(Territorio, TerritorioAdmin)
 admin.site.register(Donazione, DonazioneAdmin)

@@ -160,6 +160,7 @@ INSTALLED_APPS = (
     'open_ricostruzione.depp_humanize',
     # 'disqus',
     'rest_framework',
+    'django.contrib.gis',
     'territori',
     'open_ricostruzione',
 

@@ -87,19 +87,19 @@ class Territorio(models.Model):
     regione = models.CharField(max_length=32, blank=True, null=True)
     denominazione = models.CharField(max_length=128, db_index=True)
     slug = models.SlugField(max_length=256, null=True, blank=True, db_index=True)
-    territorio = models.CharField(max_length=1, choices=TERRITORIO, db_index=True)
+    tipologia = models.CharField(max_length=1, choices=TERRITORIO, db_index=True)
     geom = models.MultiPolygonField(srid=4326, null=True, blank=True)
     cluster = models.CharField(max_length=1, choices=CLUSTER, db_index=True)
     objects = TerritoriManager()
-    gps_lat = models.FloatField(null=True, blank=True)
-    gps_lon = models.FloatField(null=True, blank=True)
+    # gps_lat = models.FloatField(null=True, blank=True)
+    # gps_lon = models.FloatField(null=True, blank=True)
 
 
     @property
     def codice(self):
-        if self.territorio == u'C':
+        if self.tipologia == u'C':
             return self.cod_com
-        elif self.territorio == u'P':
+        elif self.tipologia == u'P':
             return self.cod_prov
         else:
             return self.cod_reg
@@ -108,16 +108,16 @@ class Territorio(models.Model):
         """
         returns the list of parent objects (me included)
         """
-        if self.territorio == self.TERRITORIO.R:
+        if self.tipologia == self.TERRITORIO.R:
             return [self]
-        elif self.territorio == self.TERRITORIO.P:
+        elif self.tipologia == self.TERRITORIO.P:
             regione = Territorio.objects.regioni().get(cod_reg=self.cod_reg)
             return [regione, self]
-        elif self.territorio == self.TERRITORIO.C:
+        elif self.tipologia == self.TERRITORIO.C:
             regione = Territorio.objects.regioni().get(cod_reg=self.cod_reg)
             provincia = Territorio.objects.provincie().get(cod_prov=self.cod_prov)
             return [regione, provincia, self]
-        elif self.territorio == self.TERRITORIO.N:
+        elif self.tipologia == self.TERRITORIO.N:
             return [self]
 
     def get_breadcrumbs(self):
@@ -129,7 +129,7 @@ class Territorio(models.Model):
 
     @property
     def nome_con_provincia(self):
-        if self.territorio == self.TERRITORIO.P:
+        if self.tipologia == self.TERRITORIO.P:
             return u"{0} (Provincia)".format(self.nome)
         else:
             return u"{0} ({1})".format(self.nome, self.prov)

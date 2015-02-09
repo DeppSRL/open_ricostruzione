@@ -2,24 +2,17 @@ from django.conf.urls import patterns, include, url
 from open_ricostruzione.views import *
 from django.views.generic.base import RedirectView
 from django.conf import settings
-
-# Uncomment the next two lines to enable the admin:
-from django.contrib import admin
-
-
-
-
-# django rest api
-
-from django.conf.urls import url, include
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
+from django.contrib import admin
+
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'is_staff')
+
 
 # ViewSets define the view behavior.
 class UserViewSet(viewsets.ModelViewSet):
@@ -29,8 +22,6 @@ class UserViewSet(viewsets.ModelViewSet):
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
-
-# django rest api
 
 
 admin.autodiscover()
