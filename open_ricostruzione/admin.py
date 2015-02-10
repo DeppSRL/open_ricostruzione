@@ -4,6 +4,7 @@ from open_ricostruzione.models import Donazione, InterventoAProgramma, Intervent
 
 class InterventoAProgettoAdmin(admin.ModelAdmin):
     model = InterventoAProgramma
+    ordering = ['n_ordine']
     search_fields = ['^denominazione', ]
 
 

@@ -4,11 +4,12 @@ from django.core.management.base import BaseCommand, CommandError
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 import xlrd
-from open_ricostruzione.models import Donazione, InterventoAProgramma
+from open_ricostruzione.models import Donazione, InterventoAProgramma, Cofinanziamento
 from territori.models import Territorio
 from optparse import make_option
 import logging
 from datetime import datetime
+
 
 class Command(BaseCommand):
     help = 'Import progetti data from JSON file'
@@ -21,13 +22,13 @@ class Command(BaseCommand):
         make_option('--delete',
                     dest='delete',
                     action='store_true',
-                    default=False,
+                    default=True,
                     help='Delete Existing Records'),
 
     )
 
-    input_file = ''
-    delete = ''
+    input_file = None
+    delete = False
     encoding = 'latin-1'
     logger = logging.getLogger('csvimport')
     unicode_reader = None
@@ -48,7 +49,7 @@ class Command(BaseCommand):
         self.delete = options['delete']
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
-        not_found_istat=[]
+        not_found_istat = []
         # read file
         try:
             json_file = open(self.input_file)
@@ -87,5 +88,23 @@ class Command(BaseCommand):
                     territorio.save()
 
                 iap = InterventoAProgramma()
-                iap.denominazione = intervento_a_programma['denominazione']
+                iap.id_progr = intervento_a_programma['id_progr']
+                iap.id_interv_a_progr = intervento_a_programma['id_interv_a_progr']
+                iap.n_ordine = intervento_a_programma['n_ordine'].strip()
+                iap.importo_generale = Decimal(intervento_a_programma['imp_gen'])
+                iap.importo_a_programma = Decimal(intervento_a_programma['imp_a_progr'])
+                iap.denominazione = intervento_a_programma['denominazione'].strip()
+                iap.id_sogg_att = intervento_a_programma['id_sogg_att']
+                iap.territorio = territorio
+                iap.id_tipo_imm = intervento_a_programma['id_tipo_imm']
+                iap.id_categ_imm = intervento_a_programma['id_categ_imm']
+                iap.id_propr_imm = intervento_a_programma['id_propr_imm']
                 iap.save()
+
+                # save cofinanziamenti
+                for cofinanziamento in intervento_a_programma['cofinanziamenti']:
+                    cof = Cofinanziamento()
+                    cof.intervento_a_programma = iap
+                    cof.tipologia = cofinanziamento['id_tipo_cofin']
+                    cof.importo = cofinanziamento['importo']
+                    cof.save()
