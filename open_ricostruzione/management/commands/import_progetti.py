@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 import xlrd
-from open_ricostruzione.models import Donazione, InterventiAProgramma
+from open_ricostruzione.models import Donazione, InterventoAProgramma
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -59,9 +59,8 @@ class Command(BaseCommand):
 
         if self.delete:
             self.logger.info("Deleting all previous records...")
-            InterventiAProgramma.objects.all().delete()
+            InterventoAProgramma.objects.all().delete()
             self.logger.info("Done")
-
 
         for intervento_a_programma in data['interventi_a_programma']:
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
@@ -75,6 +74,18 @@ class Command(BaseCommand):
             else:
                 self.logger.debug(u"Territorio found:{}".format(territorio.denominazione))
 
+                got_gps_data = False
+                if territorio.gps_lon is None:
+                    territorio.gps_lon = intervento_a_programma['comune']['long']
+                    got_gps_data = True
 
-        for k in not_found_istat:
-            self.logger.info("{}".format(k))
+                if territorio.gps_lat is None:
+                    territorio.gps_lat = intervento_a_programma['comune']['lat']
+                    got_gps_data = True
+
+                if got_gps_data:
+                    territorio.save()
+
+                iap = InterventoAProgramma()
+                iap.denominazione = intervento_a_programma['denominazione']
+                iap.save()
