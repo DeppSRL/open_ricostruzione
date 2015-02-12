@@ -1,15 +1,26 @@
 from django.contrib import admin
-from open_ricostruzione.models import Donazione, InterventoAProgramma, InterventoAPiano, Cofinanziamento, EventoContrattuale, QuadroEconomico, Intervento, Liquidazione, Impresa, Progetto
+from open_ricostruzione.models import Donazione, InterventoProgramma, InterventoPiano, Cofinanziamento, \
+    EventoContrattuale, QuadroEconomico, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano
 
 
 class InterventoAProgettoAdmin(admin.ModelAdmin):
-    model = InterventoAProgramma
+    model = InterventoProgramma
     ordering = ['n_ordine']
+    list_filter = ['tipo_immobile', ]
     search_fields = ['^denominazione', ]
 
 
 class InterventoAdmin(admin.ModelAdmin):
     model = Intervento
+
+
+class ProgrammaAdmin(admin.ModelAdmin):
+    model = Programma
+
+
+class PianoAdmin(admin.ModelAdmin):
+    model = Piano
+    ordering = ['id_piano']
 
 
 class LiquidazioneAdmin(admin.ModelAdmin):
@@ -25,7 +36,7 @@ class ProgettoAdmin(admin.ModelAdmin):
 
 
 class InterventoAPianoAdmin(admin.ModelAdmin):
-    model = InterventoAPiano
+    model = InterventoPiano
 
 
 class QuadroEconomicoAdmin(admin.ModelAdmin):
@@ -47,11 +58,13 @@ class DonazioneAdmin(admin.ModelAdmin):
 
 admin.site.register(Liquidazione, LiquidazioneAdmin)
 admin.site.register(Progetto, ProgettoAdmin)
+admin.site.register(Piano, PianoAdmin)
+admin.site.register(Programma, ProgrammaAdmin)
 admin.site.register(Impresa, ImpresaAdmin)
 admin.site.register(QuadroEconomico, QuadroEconomicoAdmin)
 admin.site.register(Cofinanziamento, CofinanziamentoAdmin)
 admin.site.register(EventoContrattuale, EventoContrattualeAdmin)
-admin.site.register(InterventoAPiano, InterventoAPianoAdmin)
-admin.site.register(InterventoAProgramma, InterventoAProgettoAdmin)
+admin.site.register(InterventoPiano, InterventoAPianoAdmin)
+admin.site.register(InterventoProgramma, InterventoAProgettoAdmin)
 admin.site.register(Intervento, InterventoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
 from django.core.management.base import BaseCommand, CommandError
+from django.db.transaction import set_autocommit, commit
+from django.template.defaultfilters import slugify
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 import xlrd
-from open_ricostruzione.models import Donazione, InterventoAProgramma, Cofinanziamento
+from open_ricostruzione.models import Donazione, InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, Piano, Intervento
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -60,9 +62,10 @@ class Command(BaseCommand):
 
         if self.delete:
             self.logger.info("Deleting all previous records...")
-            InterventoAProgramma.objects.all().delete()
+            InterventoProgramma.objects.all().delete()
             self.logger.info("Done")
 
+        set_autocommit(False)
         for intervento_a_programma in data['interventi_a_programma']:
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
             try:
@@ -87,24 +90,54 @@ class Command(BaseCommand):
                 if got_gps_data:
                     territorio.save()
 
-                iap = InterventoAProgramma()
-                iap.id_progr = intervento_a_programma['id_progr']
-                iap.id_interv_a_progr = intervento_a_programma['id_interv_a_progr']
-                iap.n_ordine = intervento_a_programma['n_ordine'].strip()
-                iap.importo_generale = Decimal(intervento_a_programma['imp_gen'])
-                iap.importo_a_programma = Decimal(intervento_a_programma['imp_a_progr'])
-                iap.denominazione = intervento_a_programma['denominazione'].strip()
-                iap.id_sogg_att = intervento_a_programma['id_sogg_att']
-                iap.territorio = territorio
-                iap.id_tipo_imm = intervento_a_programma['id_tipo_imm']
-                iap.id_categ_imm = intervento_a_programma['id_categ_imm']
-                iap.id_propr_imm = intervento_a_programma['id_propr_imm']
-                iap.save()
+                int_programma = InterventoProgramma()
+                programma, is_created = Programma.objects.get_or_create(id_progr=intervento_a_programma['id_progr'], tipologia='')
+                int_programma.programma = programma
+                int_programma.id_interv_a_progr = intervento_a_programma['id_interv_a_progr']
+                int_programma.n_ordine = intervento_a_programma['n_ordine'].strip()
+                int_programma.importo_generale = Decimal(intervento_a_programma['imp_gen'])
+                int_programma.importo_a_programma = Decimal(intervento_a_programma['imp_a_progr'])
+                int_programma.denominazione = intervento_a_programma['denominazione'].strip()
+                int_programma.id_sogg_att = intervento_a_programma['id_sogg_att']
+                int_programma.territorio = territorio
+                int_programma.id_tipo_imm = intervento_a_programma['id_tipo_imm']
+                int_programma.id_categ_imm = intervento_a_programma['id_categ_imm']
+                int_programma.id_propr_imm = intervento_a_programma['id_propr_imm']
+                int_programma.slug = slugify(u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_interv_a_progr)))
+                int_programma.tipo_immobile = intervento_a_programma['id_tipo_imm']
+                int_programma.save()
+                self.logger.info(u"Import IAP:{}".format(int_programma.slug))
 
                 # save cofinanziamenti
-                for cofinanziamento in intervento_a_programma['cofinanziamenti']:
+                for cofinanziamento in list(filter(lambda x: x['importo'] > 0, intervento_a_programma['cofinanziamenti'])):
                     cof = Cofinanziamento()
-                    cof.intervento_a_programma = iap
+                    cof.intervento_programma = int_programma
                     cof.tipologia = cofinanziamento['id_tipo_cofin']
                     cof.importo = cofinanziamento['importo']
                     cof.save()
+
+                # save interventi a piano
+                for intervento_a_piano in intervento_a_programma['interventi_a_piano']:
+                    int_piano = InterventoPiano()
+                    int_piano.intervento_programma = int_programma
+                    int_piano.id_interv_a_piano = intervento_a_piano['id_interv_a_piano']
+                    int_piano.imp_a_piano = intervento_a_piano['imp_a_piano']
+                    # gets or create a Piano
+                    piano, is_created = Piano.objects.get_or_create(id_piano=intervento_a_piano['piano']['id_piano'], tipologia=intervento_a_piano['piano']['id_tipo_piano'])
+                    int_piano.piano = piano
+                    int_piano.save()
+
+                    # save interventi
+                    for intervento in intervento_a_piano['interventi']:
+                        intr = Intervento()
+                        intr.intervento_programma = int_programma
+                        intr.id_interv = intervento['id_interv']
+                        intr.is_variante = intervento['variante']
+                        intr.imp_congr_spesa = Decimal(intervento['imp_congr_spesa'])
+                        intr.denominazione = intervento['denominazione']
+                        intr.tipologia = intervento['id_tipo_interv']
+                        intr.stato = intervento['id_stato_interv']
+                        intr.gps_lat = intervento['lat']
+                        intr.gps_long = intervento['long']
+                        intr.save()
+        commit()

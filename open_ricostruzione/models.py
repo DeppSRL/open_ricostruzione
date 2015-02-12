@@ -6,27 +6,81 @@ from django.conf import settings
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
 
 
-class InterventoAProgramma(models.Model):
-    id_progr = models.SmallIntegerField(null=False, blank=False)
-    id_interv_a_progr = models.SmallIntegerField(null=False, blank=False)
+class InterventoProgramma(models.Model):
+    TIPO_IMMOBILE = Choices(
+        ('1', 'ALTRO', 'ATTR. INFRASTRUTTURE E MOBILITA'),
+        ('2', 'ATTR_INFRASTRUTTURE', 'ATTR. INFRASTRUTTURE E MOBILITA'),
+        ('3', 'ATTR_INFRASTRUTTURE_FC', 'ATTR. INFRASTRUTTURE E MOBILITA\' - FUORI CRATERE'),
+        ('4', 'ATTR_SANITARIE', 'ATTR. SANITARIE E/O SOCIO SANITARIE'),
+        ('5', 'ATTR_CIMITERIALI', 'ATTREZZATURE CIMITERIALI'),
+        ('6', 'ATTR_CULTURALI', 'ATTREZZATURE CULTURALI'),
+        ('7', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE E RICREATIVE'),
+        ('8', 'BENE_RELIGIOSO', 'BENE RELIGIOSO DI PROPRIETA\' DI ENTE PUBBLICO'),
+        ('9', 'BENI_DEMANIALI', 'BENI DEMANIALI'),
+        ('10', 'BENI_ECCLESIASTICI', 'BENI ECCLESIASTICI'),
+        ('11', 'CANONICA_ORATORIO', 'CANONICA/ORATORIO'),
+        ('12', 'CHIESA', 'CHIESA'),
+        ('13', 'EDILIZIA_SCOLASTICA', 'EDILIZIA SCOLASTICA'),
+        ('14', 'EDILIZIA_SOCIALE', 'EDILIZIA SOCIALE'),
+        ('15', 'EX_CHIESA', 'EX CHIESA/MONASTERO/ CONVENTO'),
+        ('16', 'EX_SCUOLA', 'EX SCUOLA'),
+        ('17', 'IMPIANTI_A_RETE', 'IMPIANTI A RETE'),
+        ('18', 'MAGAZZINO', 'MAGAZZINO'),
+        ('19', 'MONASTERO_CONVENTO_SINAGOGA', 'MONASTERO / CONVENTO / SINAGOGA'),
+        ('20', 'MUNICIPI', 'MUNICIPI - UFFICI E ALTRI ENTI PUBBLICI'),
+        ('21', 'OPERE_BONIFICA', 'OPERE DI BONIFICA E IRRIGAZIONE'),
+        ('22', 'OPERE_BONIFICA_FC', 'OPERE DI BONIFICA E IRRIGAZIONE - FUORI CRATERE'),
+        ('23', 'UNIVERSITA', 'UNIVERSITA'),
+        ('24', 'ATTR_RICREATIVE', 'ATTREZZATURE RICREATIVE'),
+        ('25', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE'),
+        ('26', 'MONASTERO_CONVENTO', 'MONASTERO / CONVENTO'),
+        ('27', 'BENI_PRIVATI', 'BENI PRIVATI'),
+    )
+
+    CATEGORIA_IMMOBILE = Choices(
+        ('1', 'BENI_DEMANIALI', 'Beni Demaniali e Beni ecclesiastici di prop. Pubbl.'),
+        ('2', 'ATTR_INFRASTRUTTURE', 'ATTR. INFRASTRUTTURE E MOBILITA'),
+        ('3', 'ATTR_INFRASTRUTTURE_FC', 'ATTR. INFRASTRUTTURE E MOBILITA\' - FUORI CRATERE'),
+        ('4', 'ATTR_SANITARIE', 'ATTR. SANITARIE E/O SOCIO SANITARIE'),
+        ('5', 'ATTR_CIMITERIALI', 'ATTREZZATURE CIMITERIALI'),
+        ('6', 'ATTR_CULTURALI', 'ATTREZZATURE CULTURALI'),
+        ('7', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE E RICREATIVE'),
+        ('8', 'BENE_RELIGIOSO', 'BENE RELIGIOSO DI PROPRIETA\' DI ENTE PUBBLICO'),
+    )
+
+    programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
+    # id_interv_a_progr = id fenice per l'intervento
+    id_interv_a_progr = models.PositiveSmallIntegerField(null=False, blank=False)
+    id_sogg_att = models.PositiveSmallIntegerField(null=False, blank=False)
+    # id_propr_imm = id fenice per l'immobile
+    id_propr_imm = models.PositiveSmallIntegerField(null=False, blank=False)
     n_ordine = models.CharField(max_length=20, null=False, blank=False)
     importo_generale = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     importo_a_programma = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
-    id_sogg_att = models.SmallIntegerField(null=False, blank=False)
     territorio = models.ForeignKey('territori.Territorio', null=True)
-
-    id_tipo_imm = models.SmallIntegerField(null=False, blank=False)
-    id_categ_imm = models.SmallIntegerField(null=True, blank=True)
-    id_propr_imm = models.SmallIntegerField(null=False, blank=False)
-
-    slug = models.SlugField(max_length=60)
+    tipo_immobile = models.CharField(max_length=2, choices=TIPO_IMMOBILE, blank=False, null=False, default='')
+    categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
+    slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
     def __unicode__(self):
         return u"{}".format(self.denominazione)
 
     class Meta:
         verbose_name_plural = u'Interventi a programma'
+
+
+class Programma(models.Model):
+    TIPO_PROGRAMMA = Choices()
+    denominazione = models.TextField(max_length=50)
+    id_progr = models.PositiveSmallIntegerField(null=True, blank=True)
+    tipologia = models.CharField(max_length=2, choices=TIPO_PROGRAMMA, blank=False, null=False, default='')
+
+    def __unicode__(self):
+        return u"id:{} - denominazione:{}".format(self.id_progr, self.denominazione)
+
+    class Meta:
+        verbose_name_plural = u'Programmi'
 
 
 class Cofinanziamento(models.Model):
@@ -41,10 +95,10 @@ class Cofinanziamento(models.Model):
 
     tipologia = models.CharField(max_length=2, choices=TIPO_COFINANZIAMENTO, blank=False, null=False, default='')
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
-    intervento_a_programma = models.ForeignKey('InterventoAProgramma', null=False, blank=False)
+    intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
 
     def __unicode__(self):
-        return u"{},{},{}".format(self.intervento_a_programma.pk, self.tipologia, self.importo)
+        return u"({}) {} - {}E".format(self.intervento_programma.pk, self.TIPO_COFINANZIAMENTO[self.tipologia], self.importo)
 
     class Meta:
         verbose_name_plural = u'Cofinanziamenti'
@@ -57,18 +111,25 @@ class Piano(models.Model):
         ('3', 'EDILIZIA_SCOLASTICA', 'Piano edilizia scolastica ed universita'),
         ('4', 'MISTI', 'Piano UMI - misti'),
     )
-
+    # id_piano = id fenice x il piano
+    id_piano = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
     tipologia = models.CharField(max_length=2, choices=TIPO_PIANO, blank=False, null=False, default='')
 
+    def __unicode__(self):
+        return u"({}) {}".format(self.id_piano, self.TIPO_PIANO[self.tipologia])
 
-class InterventoAPiano(models.Model):
-    intervento_a_programma = models.ForeignKey('InterventoAProgramma', null=False, blank=False)
-    id_interv_a_piano = models.SmallIntegerField(null=False, blank=False)
+    class Meta:
+        verbose_name_plural = u'Piani'
+
+
+class InterventoPiano(models.Model):
+    intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
+    id_interv_a_piano = models.PositiveSmallIntegerField(null=False, blank=False)
     imp_a_piano = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     piano = models.ForeignKey('Piano', null=False, blank=False)
 
     def __unicode__(self):
-        return u"{},{},{},{}".format(self.piano, self.intervento_a_programma.pk, self.id_interv_a_piano,
+        return u"{},{},{},{}".format(self.piano, self.intervento_programma.pk, self.id_interv_a_piano,
                                      self.imp_a_piano)
 
     class Meta:
@@ -98,14 +159,16 @@ class Intervento(models.Model):
         ('12', 'SOSTITUITO', 'Sostituito da variante'),
     )
 
-    intervento_a_programma = models.ForeignKey('InterventoAPiano', null=False, blank=False)
-    id_interv = models.SmallIntegerField(null=False, blank=False)
+    intervento_programma = models.ForeignKey('InterventoPiano', null=False, blank=False)
+    # id_interv = id fenice per l'intervento
+    id_interv = models.PositiveSmallIntegerField(null=False, blank=False)
     is_variante = models.BooleanField(null=False, blank=False, default=False)
     imp_congr_spesa = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
     tipologia = models.CharField(max_length=2, choices=TIPO_INTERVENTO, null=False, blank=False, default='')
     stato = models.CharField(max_length=3, choices=STATO_INTERVENTO, null=False, blank=False, default='')
-
+    gps_lat = models.FloatField(null=True, blank=True)
+    gps_lon = models.FloatField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = u'Interventi'
