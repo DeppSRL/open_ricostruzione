@@ -6,7 +6,8 @@ from django.template.defaultfilters import slugify
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 import xlrd
-from open_ricostruzione.models import Donazione, InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, Piano, Intervento
+from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
+    Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, Impresa
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -33,6 +34,7 @@ class Command(BaseCommand):
     delete = False
     encoding = 'latin-1'
     logger = logging.getLogger('csvimport')
+    date_format = '%d/%M/%Y'
     unicode_reader = None
 
     def handle(self, *args, **options):
@@ -91,7 +93,8 @@ class Command(BaseCommand):
                     territorio.save()
 
                 int_programma = InterventoProgramma()
-                programma, is_created = Programma.objects.get_or_create(id_progr=intervento_a_programma['id_progr'], tipologia='')
+                programma, is_created = Programma.objects.get_or_create(id_progr=intervento_a_programma['id_progr'],
+                                                                        tipologia='')
                 int_programma.programma = programma
                 int_programma.id_interv_a_progr = intervento_a_programma['id_interv_a_progr']
                 int_programma.n_ordine = intervento_a_programma['n_ordine'].strip()
@@ -103,13 +106,15 @@ class Command(BaseCommand):
                 int_programma.id_tipo_imm = intervento_a_programma['id_tipo_imm']
                 int_programma.id_categ_imm = intervento_a_programma['id_categ_imm']
                 int_programma.id_propr_imm = intervento_a_programma['id_propr_imm']
-                int_programma.slug = slugify(u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_interv_a_progr)))
+                int_programma.slug = slugify(
+                    u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_interv_a_progr)))
                 int_programma.tipo_immobile = intervento_a_programma['id_tipo_imm']
                 int_programma.save()
                 self.logger.info(u"Import IAP:{}".format(int_programma.slug))
 
                 # save cofinanziamenti
-                for cofinanziamento in list(filter(lambda x: x['importo'] > 0, intervento_a_programma['cofinanziamenti'])):
+                for cofinanziamento in list(
+                        filter(lambda x: x['importo'] > 0, intervento_a_programma['cofinanziamenti'])):
                     cof = Cofinanziamento()
                     cof.intervento_programma = int_programma
                     cof.tipologia = cofinanziamento['id_tipo_cofin']
@@ -123,21 +128,77 @@ class Command(BaseCommand):
                     int_piano.id_interv_a_piano = intervento_a_piano['id_interv_a_piano']
                     int_piano.imp_a_piano = intervento_a_piano['imp_a_piano']
                     # gets or create a Piano
-                    piano, is_created = Piano.objects.get_or_create(id_piano=intervento_a_piano['piano']['id_piano'], tipologia=intervento_a_piano['piano']['id_tipo_piano'])
+                    piano, is_created = Piano.objects.get_or_create(id_piano=intervento_a_piano['piano']['id_piano'],
+                                                                    tipologia=intervento_a_piano['piano'][
+                                                                        'id_tipo_piano'])
                     int_piano.piano = piano
                     int_piano.save()
 
                     # save interventi
                     for intervento in intervento_a_piano['interventi']:
                         intr = Intervento()
-                        intr.intervento_programma = int_programma
+                        intr.intervento_piano = int_piano
                         intr.id_interv = intervento['id_interv']
                         intr.is_variante = intervento['variante']
-                        intr.imp_congr_spesa = Decimal(intervento['imp_congr_spesa'])
+
+                        intr.imp_congr_spesa = Decimal(0)
+                        if intervento['imp_congr_spesa']:
+                            intr.imp_congr_spesa = Decimal(intervento['imp_congr_spesa'])
+
                         intr.denominazione = intervento['denominazione']
                         intr.tipologia = intervento['id_tipo_interv']
                         intr.stato = intervento['id_stato_interv']
                         intr.gps_lat = intervento['lat']
                         intr.gps_long = intervento['long']
                         intr.save()
+
+                        # save quadro economico for Intervento
+                        for qe_intervento in intervento['qe']:
+                            QuadroEconomicoIntervento(**{
+                                'intervento': intr,
+                                'tipologia': qe_intervento['id_tipo_qe'],
+                                'importo': Decimal(qe_intervento['imp_qe']),
+                            }).save()
+
+                        #     import progetti
+                        for progetto in intervento['progetti']:
+                            prog = Progetto(**{
+                                'intervento': intr,
+                                'tipologia': progetto['id_tipo_prog'],
+                                'stato_progetto': progetto['id_stato_prog'],
+                                'data_deposito': datetime.strptime(progetto['data_dep'], self.date_format)
+                            })
+                            prog.save()
+                            # save quadro economico for Progetto
+                            for qe_progetto in progetto['qe']:
+                                qep = QuadroEconomicoProgetto(**{
+                                    'progetto': prog,
+                                    'tipologia': qe_progetto['id_tipo_qe'],
+                                    'importo': Decimal(qe_progetto['imp_qe']),
+                                }).save()
+
+                        #  import liquidazioni
+                        for liquidazione in intervento['liquidazioni']:
+                            Liquidazione(**{
+                                'intervento': intr,
+                                'tipologia': liquidazione['id_tipo_liq'],
+                                'data': datetime.strptime(liquidazione['data_ord'], self.date_format),
+                                'importo': Decimal(liquidazione['imp_ord'])
+                            }).save()
+
+                        #  Eventi contr.
+                        for evento_contr in intervento['eventi_contrattuali']:
+                            EventoContrattuale(**{
+                                'intervento': intr,
+                                'tipologia': evento_contr['id_tipo_evento_contr'],
+                                'data': datetime.strptime(evento_contr['data'], self.date_format),
+                            }).save()
+
+                        #     imprese
+                        for impresa in intervento['imprese']:
+                            Impresa(**{
+                                'intervento': intr,
+                                'ragione_sociale':impresa['rag_soc'],
+                                'partita_iva':impresa['p_iva']
+                            }).save()
         commit()

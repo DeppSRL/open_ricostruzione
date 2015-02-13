@@ -98,7 +98,8 @@ class Cofinanziamento(models.Model):
     intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
 
     def __unicode__(self):
-        return u"({}) {} - {}E".format(self.intervento_programma.pk, self.TIPO_COFINANZIAMENTO[self.tipologia], self.importo)
+        return u"({}) {} - {}E".format(self.intervento_programma.pk, self.TIPO_COFINANZIAMENTO[self.tipologia],
+                                       self.importo)
 
     class Meta:
         verbose_name_plural = u'Cofinanziamenti'
@@ -159,7 +160,7 @@ class Intervento(models.Model):
         ('12', 'SOSTITUITO', 'Sostituito da variante'),
     )
 
-    intervento_programma = models.ForeignKey('InterventoPiano', null=False, blank=False)
+    intervento_piano = models.ForeignKey('InterventoPiano', null=False, blank=False)
     # id_interv = id fenice per l'intervento
     id_interv = models.PositiveSmallIntegerField(null=False, blank=False)
     is_variante = models.BooleanField(null=False, blank=False, default=False)
@@ -198,7 +199,12 @@ class Liquidazione(models.Model):
 
 
 class EventoContrattuale(models.Model):
-    TIPO_EVENTO = Choices()
+    TIPO_EVENTO = Choices(
+         ('1', 'STIPULA_CONTRATTO', 'Stipula contratto'),
+        ('2', 'INIZIO_LAVORI', 'Inizio lavori'),
+        ('3', 'FINE_LAVORI', 'Fine lavori come da Capitolato'),
+        ('4', 'VERBALE_CONSEGNA', 'Verbale di consegna lavori'),
+    )
     intervento = models.ForeignKey('Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=2, choices=TIPO_EVENTO, null=False, blank=False, default='')
     data = models.DateField(blank=False, null=False)
@@ -217,13 +223,51 @@ class Impresa(models.Model):
 
 
 class QuadroEconomico(models.Model):
-    TIPO_QUADRO_ECONOMICO = Choices()
-    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+    TIPO_QUADRO_ECONOMICO = Choices(
+        ('1', 'SPESA_COMPLESSIVA', 'Quadro sommario della spesa complessiva'),
+        ('2', 'COFINANZIAMENTO_RIMBORSO', 'Quadro sommario del cofinanziamento da Rimborso assicurativo'),
+        ('3', 'COFINANZIAMENTO_DONAZIONI', 'Quadro sommario del cofinanziamento da Donazioni'),
+        ('4', 'COFINANZIAMENTO_OPERE', 'Quadro sommario del cofinanziamento da Opere provvisionali'),
+        ('5', 'COFINANZIAMENTO_MESSE_SICUREZZA', 'Quadro sommario del cofinanziamento da Messe in sicurezza'),
+        ('6', 'COFINANZIAMENTO_EDIFICI_SCOLASTICI',
+         'Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici'),
+        ('7', 'COFINANZIAMENTO_FONDI_PROPRI', 'Quadro sommario del cofinanziamento da Fondi propri (e altro)'),
+        ('8', 'SOMMARIO_GENERALE', 'Quadro sommario generale riepilogativo'),
+        ('9', 'QTE_COMMISSARIO', 'Q.T.E. relativo al finanziamento del Commissario'),
+        ('10', 'QTE_ASSICURATIVO', 'Q.T.E. riferito al cofinanziamento da Rimborso assicurativo'),
+        ('11', 'QTE_DONAZIONI', 'Q.T.E. riferito al cofinanziamento da Donazioni'),
+        ('12', 'QTE_OPERE', 'Q.T.E. riferito al cofinanziamento da Opere provvisionali'),
+        ('13', 'QTE_MESSE_SICUREZZA', 'Q.T.E. riferito al cofinanziamento da Messe in sicurezza'),
+        ('14', 'QTE_EDIFICI_SCOLASTICI', 'Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici'),
+        ('15', 'QTE_FONDI_PROPRI', 'Q.T.E. riferito al cofinanziamento da Fondi propri (e altro)'),
+        ('16', 'QTE_GENERALE', 'Q.T.E. generale riepilogativo'),
+        ('17', 'QTE_RIMODULATO_COMMISSARIO', 'Q.T.E. rimodulato relativo al finanziamento del Commissario'),
+    )
     tipologia = models.CharField(max_length=2, choices=TIPO_QUADRO_ECONOMICO, blank=False, null=False, default='')
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
 
     class Meta:
-        verbose_name_plural = u'Quadro economico'
+        abstract = True
+
+
+class QuadroEconomicoProgetto(QuadroEconomico):
+    progetto = models.ForeignKey('Progetto', null=False, blank=False)
+
+    class Meta:
+        verbose_name_plural = u'Quadro Economico Progetto'
+
+    def __unicode__(self):
+        return "({}) {} - {} E".format(self.progetto.pk, self.TIPO_QUADRO_ECONOMICO[self.tipologia], self.importo)
+
+
+class QuadroEconomicoIntervento(QuadroEconomico):
+    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+
+    class Meta:
+        verbose_name_plural = u'Quadro Economico Intervento'
+
+    def __unicode__(self):
+        return "({}) {} - {} E".format(self.intervento.pk, self.TIPO_QUADRO_ECONOMICO[self.tipologia], self.importo)
 
 
 class Progetto(models.Model):

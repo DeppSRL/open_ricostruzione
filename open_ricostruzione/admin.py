@@ -1,6 +1,7 @@
 from django.contrib import admin
 from open_ricostruzione.models import Donazione, InterventoProgramma, InterventoPiano, Cofinanziamento, \
-    EventoContrattuale, QuadroEconomico, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano
+    EventoContrattuale, QuadroEconomico, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
+    QuadroEconomicoProgetto, QuadroEconomicoIntervento
 
 
 class InterventoAProgettoAdmin(admin.ModelAdmin):
@@ -39,10 +40,6 @@ class InterventoAPianoAdmin(admin.ModelAdmin):
     model = InterventoPiano
 
 
-class QuadroEconomicoAdmin(admin.ModelAdmin):
-    model = QuadroEconomico
-
-
 class CofinanziamentoAdmin(admin.ModelAdmin):
     model = Cofinanziamento
 
@@ -56,12 +53,21 @@ class DonazioneAdmin(admin.ModelAdmin):
     search_fields = ['^denominazione', ]
 
 
+class QEProgettoAdmin(admin.ModelAdmin):
+    model = QuadroEconomicoProgetto
+
+
+class QEInterventoAdmin(admin.ModelAdmin):
+    model = QuadroEconomicoIntervento
+
+
+admin.site.register(QuadroEconomicoIntervento, QEInterventoAdmin)
+admin.site.register(QuadroEconomicoProgetto, QEProgettoAdmin)
 admin.site.register(Liquidazione, LiquidazioneAdmin)
 admin.site.register(Progetto, ProgettoAdmin)
 admin.site.register(Piano, PianoAdmin)
 admin.site.register(Programma, ProgrammaAdmin)
 admin.site.register(Impresa, ImpresaAdmin)
-admin.site.register(QuadroEconomico, QuadroEconomicoAdmin)
 admin.site.register(Cofinanziamento, CofinanziamentoAdmin)
 admin.site.register(EventoContrattuale, EventoContrattualeAdmin)
 admin.site.register(InterventoPiano, InterventoAPianoAdmin)
