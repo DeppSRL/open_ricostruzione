@@ -79,7 +79,6 @@ class Territorio(models.Model):
 
     # codice Istat
     istat_id = models.CharField(max_length=20, blank=True, null=True, db_index=True)
-
     prov = models.CharField(max_length=2, blank=True, null=True)
     regione = models.CharField(max_length=32, blank=True, null=True)
     denominazione = models.CharField(max_length=128, db_index=True)
