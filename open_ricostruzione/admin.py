@@ -51,6 +51,7 @@ class EventoContrattualeAdmin(admin.ModelAdmin):
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
     search_fields = ['^denominazione', ]
+    list_filter = ['territorio__denominazione', 'tipologia_cedente']
 
 
 class QEProgettoAdmin(admin.ModelAdmin):

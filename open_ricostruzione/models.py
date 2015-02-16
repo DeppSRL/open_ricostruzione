@@ -317,7 +317,7 @@ class Donazione(models.Model):
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False, )
 
     def __unicode__(self):
-        return "{}".format(self.denominazione)
+        return u"{}".format(self.denominazione)
 
     #    ritorna l'importo lavori in formato italiano
     def get_importo_ita(self):
