@@ -1,23 +1,36 @@
 from decimal import Decimal
+import datetime
+from datetime import timedelta
+import json
+from json.encoder import JSONEncoder
+import time
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
 from django.conf import settings
-from open_ricostruzione.models import InterventoProgramma, Donazione
-from territori.models import Territorio
+from rest_framework import generics
 from django.db import connections
-import datetime
-import time
-from open_ricostruzione.utils.moneydate import moneyfmt, add_months
-from datetime import timedelta
-import json
-from json.encoder import JSONEncoder
 from django.db.models.query import QuerySet
 from django.core.serializers import serialize
 from django.utils.functional import curry
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.defaultfilters import date as _date
+from open_ricostruzione.models import InterventoProgramma, Donazione
+from territori.models import Territorio
+from .serializers import DonazioneSerializer
+from open_ricostruzione.utils.moneydate import moneyfmt, add_months
+
+
+class DonazioneApiView(generics.ListAPIView):
+    """
+    Returns a list of all authors.
+    """
+    model = Donazione
+    serializer_class = DonazioneSerializer
+
+    def get_queryset(self):
+        return Donazione.objects.all()
 
 class HomeView(TemplateView):
     template_name = "home.html"

@@ -34,6 +34,7 @@ urlpatterns = patterns('',
                        # Django REST FRAMEWORK API urls
 
                        url(r'^api/', include(router.urls)),
+                       url(r'^api/donazioni/$', DonazioneApiView.as_view(), name='api-donazioni-list'),
                        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
                        # Work in progress url
