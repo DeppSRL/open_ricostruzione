@@ -305,7 +305,14 @@ class Donazione(models.Model):
     )
 
     TIPO_CEDENTE = Choices(
-        (u'0', u'privato', u'privato'),
+        (u'0', u'ALTRO', u'Altro'),
+        (u'1', u'ASSOCIAZIONI', u'Associazioni'),
+        (u'2', u'ENTI_PUBBLICI', u'ENTI PUBBLICI'),
+        (u'3', u'COMUNI', u'COMUNI'),
+        (u'4', u'CITTADINI', u'CITTADINI'),
+        (u'5', u'AZIENDE', u'AZIENDE'),
+        (u'6', u'REGIONI', u'REGIONI'),
+        (u'7', u'PROVINCE', u'PROVINCE'),
     )
 
     territorio = models.ForeignKey('territori.Territorio')

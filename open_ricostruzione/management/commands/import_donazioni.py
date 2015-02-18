@@ -25,6 +25,25 @@ class RowData(object):
     logger = logging.getLogger('csvimport')
     # define date format
     date_formats = ['%Y-%M-%d', '%d/%M/%Y', '%Y-%M-%d']
+    tipologia_cedente_map = {
+        '': Donazione.TIPO_CEDENTE.ALTRO,
+        'ALTRO': Donazione.TIPO_CEDENTE.ALTRO,
+        'DONAZIONI ESTERO': Donazione.TIPO_CEDENTE.ALTRO,
+        'ASSOCIAZIONE': Donazione.TIPO_CEDENTE.ASSOCIAZIONI,
+        'ALTRI ENTI PUBBLICI': Donazione.TIPO_CEDENTE.ENTI_PUBBLICI,
+        'ALTRO ENTE PUBBLICO': Donazione.TIPO_CEDENTE.ENTI_PUBBLICI,
+        'COMUNE': Donazione.TIPO_CEDENTE.COMUNI,
+        'CITTADINO/PUBBLICO': Donazione.TIPO_CEDENTE.CITTADINI,
+        'COMUNI': Donazione.TIPO_CEDENTE.COMUNI,
+        'SRL': Donazione.TIPO_CEDENTE.AZIENDE,
+        'SPS': Donazione.TIPO_CEDENTE.AZIENDE,
+        'CITTADINO/PRIVATO': Donazione.TIPO_CEDENTE.CITTADINI,
+        'SPA': Donazione.TIPO_CEDENTE.AZIENDE,
+        'REGIONE': Donazione.TIPO_CEDENTE.REGIONI,
+        'PRIVATO': Donazione.TIPO_CEDENTE.CITTADINI,
+        'ALTRE IMPR./SOC./COOP./SAS': Donazione.TIPO_CEDENTE.AZIENDE,
+        'PROVINCE': Donazione.TIPO_CEDENTE.PROVINCE,
+    }
 
     # COLUMNS
     #    {'Comune Ricevent': u'Baricella',
@@ -37,11 +56,12 @@ class RowData(object):
 
     def __init__(self, row):
 
-        self.tipologia_cedente = row['Tipologia del Cedente (1)'].strip()
+        tipologia_cedente_string = row['Tipologia del Cedente (1)'].strip()
+        self.tipologia_cedente = self.tipologia_cedente_map[tipologia_cedente_string]
         self.denominazione = row['Denominazione Cedente (2)'].strip()
         self.territorio = row.get('Comune Ricevent', None)
         if self.territorio is None:
-            pprint(row)
+            self.logger.error("Territorio data not found! Quit")
             exit()
         else:
             self.territorio = self.territorio.strip()
@@ -105,8 +125,6 @@ class Command(BaseCommand):
     logger = logging.getLogger('csvimport')
     bulk_create = True
     unicode_reader = None
-    wrong_date_counter = 0
-    missing_date_counter = 0
     default_date = datetime.strptime("2012-09-01", "%Y-%M-%d")
 
     def print_wrong_line(self, row, row_counter):
@@ -130,9 +148,10 @@ class Command(BaseCommand):
         self.bulk_create = not options['no_bulk']
         self.logger.info('Input file:{}'.format(self.input_file))
         udr = None
-        tipologia_cedente_dict = {}
         territori_not_found = {}
         wrong_dates = {}
+        wrong_date_counter = 0
+        missing_date_counter = 0
         # read file
         try:
             udr = UnicodeDictReader(f=open(self.input_file), encoding=self.encoding)
@@ -154,23 +173,18 @@ class Command(BaseCommand):
             self.logger.info(u"Import donazione (Line {}) {}".format(row_counter, rowdata.denominazione))
 
             if type(rowdata.data) == str:
-                self.wrong_date_counter += 1
+                wrong_date_counter += 1
 
                 # adds wrong date to dict
                 if rowdata.data not in wrong_dates:
-                    wrong_dates[rowdata.data ] = 1
+                    wrong_dates[rowdata.data] = 1
                 else:
-                    wrong_dates[rowdata.data ] += 1
+                    wrong_dates[rowdata.data] += 1
 
                 rowdata.data = None
             elif rowdata.data is None:
-                self.missing_date_counter += 1
+                missing_date_counter += 1
                 rowdata.data = None
-
-            if rowdata.tipologia_cedente not in tipologia_cedente_dict:
-                tipologia_cedente_dict[rowdata.tipologia_cedente] = 1
-            else:
-                tipologia_cedente_dict[rowdata.tipologia_cedente] += 1
 
             territorio = None
             try:
@@ -224,17 +238,13 @@ class Command(BaseCommand):
         if self.bulk_create:
             # save all donazioni in a bulk create
             Donazione.objects.bulk_create(donazioni_list)
-        self.logger.info("Found {} wrong dates".format(self.wrong_date_counter))
-        if self.wrong_date_counter > 0:
+        self.logger.info("Found {} wrong dates".format(wrong_date_counter))
+        if wrong_date_counter > 0:
             self.logger.info("********** Wrong dates found ***********")
             for key, value in wrong_dates.iteritems():
                 self.logger.info("{}:{}".format(key, value))
 
-        self.logger.info("Found {} missing dates".format(self.missing_date_counter))
-        # tipologia cedente found output
-        self.logger.info("********** Found following tipologia cedente ***********")
-        for tc, counter in tipologia_cedente_dict.iteritems():
-            self.logger.info("{}:{}".format(tc, counter))
+        self.logger.info("Found {} missing dates".format(missing_date_counter))
 
         if len(territori_not_found.keys()):
             self.logger.info("********** Territori not found ***********")
