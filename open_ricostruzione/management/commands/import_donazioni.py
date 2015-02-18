@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import csv
 from pprint import pprint
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import xlrd
 from django.conf import settings
 from open_ricostruzione.models import Donazione
+from open_ricostruzione.utils import UnicodeDictReader
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -21,31 +22,60 @@ class RowData(object):
     importo = None
     info = None
     tipologia_donazione = None
+    logger = logging.getLogger('csvimport')
+    # define date format
+    date_formats = ['%Y-%M-%d', '%d/%M/%Y', '%Y-%M-%d']
+
     # COLUMNS
-    # 0: tipologia cedente
-    # 1: denominazione cedente
-    # 2: comune
-    # 3: data
-    # 4: importo
-    # 5: ulteriori info
-    # 6: tipologia (1=diretta, 2=dalla regione)
+    #    {'Comune Ricevent': u'Baricella',
+    # 'Data Comunicazione (3)': u'06/07/2012',
+    # 'Denominazione Cedente (2)': u'PAM PANORAMA S.P.A.',
+    # 'Importo': u'\xe2\x82\xac 54.759,00',
+    # 'Tipologia (1=diretta,2=tramite regione)': u'2',
+    # 'Tipologia del Cedente (1)': u'SPA',
+    # 'Ulteriori informazioni': u''}
 
     def __init__(self, row):
-        self.tipologia_cedente = row[0].strip()
-        self.denominazione = row[1].strip()
-        self.territorio = row[2].strip()
-        # todo add data import
-        # if row[3] != '':
-        #     try:
-        #         data = datetime.strptime(row[3], date_format)
-        #     except (TypeError, ValueError):
-        #         self.logger.error(u"Invalid date value:{}".format(row[3]))
-        #
-        #         continue
-        self.data = row[3]
-        self.importo = row[4]
-        self.info = row[5].strip()
-        self.tipologia_donazione = str(int(row[6]))
+
+        self.tipologia_cedente = row['Tipologia del Cedente (1)'].strip()
+        self.denominazione = row['Denominazione Cedente (2)'].strip()
+        self.territorio = row.get('Comune Ricevent', None)
+        if self.territorio is None:
+            pprint(row)
+            exit()
+        else:
+            self.territorio = self.territorio.strip()
+
+        # date conversion
+        data = ''
+        if row['Data Comunicazione (3)'] != '':
+            date_imported = False
+            for date_format in self.date_formats:
+                try:
+                    data = datetime.strptime(row['Data Comunicazione (3)'], date_format)
+                except (TypeError, ValueError):
+                    continue
+                else:
+                    date_imported = True
+                    break
+
+            if date_imported is False:
+                # try to import only month and day
+                try:
+                    data = datetime.strptime("{}{}".format(row['Data Comunicazione (3)'][:-2], "28"),
+                                             self.date_formats[2])
+                except ValueError:
+                    self.logger.error(u"Invalid date value:{}".format(row['Data Comunicazione (3)']))
+
+        else:
+            data = None
+
+        self.data = data
+        self.importo = row['Importo'].strip().replace(u'\xe2\x82\xac', '').replace(' ', '').replace('.', '').replace(
+            ',', '.')
+        self.importo = Decimal(self.importo)
+        self.info = row['Ulteriori informazioni'].strip()
+        self.tipologia_donazione = str(int(row['Tipologia (1=diretta,2=tramite regione)']))
 
 
 class Command(BaseCommand):
@@ -55,7 +85,7 @@ class Command(BaseCommand):
         make_option('--file',
                     dest='file',
                     default='',
-                    help='Path to xls file'),
+                    help='Path to file'),
         make_option('--delete',
                     dest='delete',
                     action='store_true',
@@ -75,22 +105,12 @@ class Command(BaseCommand):
     logger = logging.getLogger('csvimport')
     bulk_create = True
     unicode_reader = None
+    wrong_date_counter = 0
+    missing_date_counter = 0
+    default_date = datetime.strptime("2012-09-01", "%Y-%M-%d")
 
     def print_wrong_line(self, row, row_counter):
         self.logger.error("Row {}:{}".format(row_counter, row))
-
-    # converts worksheet to a list of RowData obj
-    def worksheet_2_list(self, worksheet):
-        rowlist = []
-        for row_counter in range(worksheet.nrows):
-            row = []
-            if row_counter == 0:
-                # header row
-                continue
-            for col_counter in range(worksheet.ncols):
-                row.append(worksheet.cell_value(row_counter, col_counter))
-            rowlist.append(RowData(row))
-        return rowlist
 
     def handle(self, *args, **options):
 
@@ -109,31 +129,43 @@ class Command(BaseCommand):
         # if no bulk is TRUE -> bulk create is FALSE
         self.bulk_create = not options['no_bulk']
         self.logger.info('Input file:{}'.format(self.input_file))
-        book = None
+        udr = None
         tipologia_cedente_dict = {}
-        territori_not_found= {}
+        territori_not_found = {}
+        wrong_dates = {}
         # read file
         try:
-            book = xlrd.open_workbook(self.input_file)
+            udr = UnicodeDictReader(f=open(self.input_file), encoding=self.encoding)
         except IOError:
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
-        except csv.Error, e:
-            self.logger.error("Error while reading %s: %s\n" % (self.input_file, e.message))
 
         if self.delete:
             self.logger.info("Deleting all previous records...")
             Donazione.objects.all().delete()
             self.logger.info("Done")
 
-        # todo: define date format
-        date_format = '%Y-%M-%d'
-        worksheet = book.sheet_by_index(0)
-        row_list = self.worksheet_2_list(worksheet)
         donation_counter = 0
         donazioni_list = []
-        for row_counter, rowdata in enumerate(row_list):
-            self.logger.info(u"Import donazione:{}".format(rowdata.denominazione))
+        row_counter = -1
+        for row in udr:
+            row_counter += 1
+            rowdata = RowData(row)
+            self.logger.info(u"Import donazione (Line {}) {}".format(row_counter, rowdata.denominazione))
+
+            if type(rowdata.data) == str:
+                self.wrong_date_counter += 1
+
+                # adds wrong date to dict
+                if rowdata.data not in wrong_dates:
+                    wrong_dates[rowdata.data ] = 1
+                else:
+                    wrong_dates[rowdata.data ] += 1
+
+                rowdata.data = None
+            elif rowdata.data is None:
+                self.missing_date_counter += 1
+                rowdata.data = None
 
             if rowdata.tipologia_cedente not in tipologia_cedente_dict:
                 tipologia_cedente_dict[rowdata.tipologia_cedente] = 1
@@ -147,7 +179,8 @@ class Command(BaseCommand):
                 # try with the Comuni in cratere starting with territorio name
 
                 try:
-                    territorio = Territorio.objects.filter(istat_id__in=settings.COMUNI_CRATERE).get(denominazione__startswith=rowdata.territorio)
+                    territorio = Territorio.objects.filter(istat_id__in=settings.COMUNI_CRATERE).get(
+                        denominazione__startswith=rowdata.territorio)
                 except ObjectDoesNotExist:
                     self.logger.error(u"Could not find Territorio with denominazione:{}".format(rowdata.territorio))
                     self.print_wrong_line(rowdata, row_counter)
@@ -161,8 +194,6 @@ class Command(BaseCommand):
             except MultipleObjectsReturned:
                 self.logger.error(u"Multiple obj found for Territorio with denominazione:{}".format(rowdata.territorio))
                 exit()
-
-            data = None
 
             if rowdata.tipologia_donazione != '1' and rowdata.tipologia_donazione != '2':
                 self.logger.error(u"Tipologia donazione value is not accepted:{}".format(rowdata.tipologia_donazione))
@@ -178,8 +209,8 @@ class Command(BaseCommand):
                 'denominazione': rowdata.denominazione,
                 'tipologia_cedente': tipologia_cedente,
                 'tipologia_donazione': rowdata.tipologia_donazione,
-                'data': data,
-                'importo': Decimal(rowdata.importo),
+                'data': rowdata.data,
+                'importo': rowdata.importo,
 
             }
             if self.bulk_create:
@@ -188,12 +219,18 @@ class Command(BaseCommand):
                 d = Donazione(**don_dict)
                 d.save()
 
-            donation_counter+=1
+            donation_counter += 1
 
         if self.bulk_create:
             # save all donazioni in a bulk create
             Donazione.objects.bulk_create(donazioni_list)
+        self.logger.info("Found {} wrong dates".format(self.wrong_date_counter))
+        if self.wrong_date_counter > 0:
+            self.logger.info("********** Wrong dates found ***********")
+            for key, value in wrong_dates.iteritems():
+                self.logger.info("{}:{}".format(key, value))
 
+        self.logger.info("Found {} missing dates".format(self.missing_date_counter))
         # tipologia cedente found output
         self.logger.info("********** Found following tipologia cedente ***********")
         for tc, counter in tipologia_cedente_dict.iteritems():
@@ -203,6 +240,5 @@ class Command(BaseCommand):
             self.logger.info("********** Territori not found ***********")
             for t, counter in territori_not_found.iteritems():
                 self.logger.info("{}:{}".format(t, counter))
-
 
         self.logger.info("Imported {} donazioni".format(donation_counter))
