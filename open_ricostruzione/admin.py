@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from open_ricostruzione.models import Donazione, InterventoProgramma, InterventoPiano, Cofinanziamento, \
     EventoContrattuale, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
     QuadroEconomicoProgetto, QuadroEconomicoIntervento, DonazioneInterventoProgramma
@@ -11,6 +12,14 @@ class InterventoProgettoAdmin(admin.ModelAdmin):
     ordering = ['n_ordine']
     list_filter = ['programma', TerritorioWithIntervento, 'tipo_immobile', ]
     search_fields = ['^denominazione', ]
+
+
+class DonazioneInterventoProgrammaAdmin(ForeignKeyAutocompleteAdmin):
+    related_search_fields = {
+        'intervento_programma': ('n_ordine', 'denominazione'),
+        'donazione': ('denominazione', 'territorio__denominazione'),
+    }
+    fields = ('donazione','intervento_programma', 'importo', )
 
 
 class DonazioneInterventoProgrammaAdminInline(admin.TabularInline):
@@ -72,6 +81,7 @@ class QEInterventoAdmin(admin.ModelAdmin):
     model = QuadroEconomicoIntervento
 
 
+admin.site.register(DonazioneInterventoProgramma, DonazioneInterventoProgrammaAdmin)
 admin.site.register(QuadroEconomicoIntervento, QEInterventoAdmin)
 admin.site.register(QuadroEconomicoProgetto, QEProgettoAdmin)
 admin.site.register(Liquidazione, LiquidazioneAdmin)
