@@ -84,7 +84,7 @@ class InterventoProgramma(models.Model):
 
 class Programma(models.Model):
     TIPO_PROGRAMMA = Choices()
-    denominazione = models.TextField(max_length=50)
+    denominazione = models.TextField(max_length=120)
     id_progr = models.PositiveSmallIntegerField(null=True, blank=True)
     tipologia = models.CharField(max_length=2, choices=TIPO_PROGRAMMA, blank=False, null=False, default='')
 
@@ -127,6 +127,8 @@ class Piano(models.Model):
     # id_piano = id fenice x il piano
     id_piano = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
     tipologia = models.CharField(max_length=2, choices=TIPO_PIANO, blank=False, null=False, default='')
+    programma = models.ForeignKey('Programma', null=False, blank=False)
+    denominazione = models.TextField(max_length=120, default=u'')
 
     def __unicode__(self):
         return u"({}) {}".format(self.id_piano, self.TIPO_PIANO[self.tipologia])
@@ -139,7 +141,7 @@ class InterventoPiano(models.Model):
     intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
     id_interv_a_piano = models.PositiveSmallIntegerField(null=False, blank=False)
     imp_a_piano = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
-    piano = models.ForeignKey('Piano', null=False, blank=False)
+    piano = models.ForeignKey('Piano', null=True, blank=True, default=None)
 
     def __unicode__(self):
         return u"{},{},{},{}".format(self.piano, self.intervento_programma.pk, self.id_interv_a_piano,

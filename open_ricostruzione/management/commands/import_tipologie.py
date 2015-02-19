@@ -12,12 +12,6 @@ class Command(BaseCommand):
                     dest='file',
                     default='',
                     help='Path to file'),
-        make_option('--delete',
-                    dest='delete',
-                    action='store_true',
-                    default=True,
-                    help='Delete Existing Records'),
-
     )
 
     input_file = None
@@ -52,7 +46,5 @@ class Command(BaseCommand):
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
 
-        if self.delete:
-            self.logger.info("Deleting all previous records...")
-            # InterventoProgramma.objects.all().delete()
-            self.logger.info("Done")
+
+        self.logger.info("Done")
