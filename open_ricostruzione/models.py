@@ -76,7 +76,7 @@ class InterventoProgramma(models.Model):
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
     def __unicode__(self):
-        return u"{}".format(self.denominazione)
+        return u"{} - {}".format(self.denominazione, self.territorio)
 
     class Meta:
         verbose_name_plural = u'Interventi a programma'
