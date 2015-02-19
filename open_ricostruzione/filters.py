@@ -2,12 +2,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from territori.models import Territorio
 
-
-class TerritorioWithDonazione(SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
+class TerritorioHasObject(SimpleListFilter):
     title = _('Territorio')
-    parameter_name = 'territorio_with_donazione'
+    parameter_name = 'territorio_has_object'
 
     def lookups(self, request, model_admin):
         """
@@ -17,8 +14,7 @@ class TerritorioWithDonazione(SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        t_list = Territorio.objects.filter(donazione__isnull=False, tipologia="C").order_by(
-            'denominazione').distinct().values('denominazione','prov','slug')
+        t_list = self.get_interested_territori()
         territori_tuple = ()
         for t in t_list:
             territori_tuple+= ((t['slug'],"{} ({})".format(t['denominazione'],t['prov'])),)
@@ -34,4 +30,26 @@ class TerritorioWithDonazione(SimpleListFilter):
             return queryset.filter(territorio__slug=self.value())
 
         return queryset
+
+
+class TerritorioWithDonazione(TerritorioHasObject):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+
+    def get_interested_territori(self):
+        return Territorio.objects.filter(donazione__isnull=False, tipologia="C").order_by(
+            'denominazione').distinct().values('denominazione','prov','slug')
+
+
+class TerritorioWithIntervento(TerritorioHasObject):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+
+    def get_interested_territori(self):
+        return Territorio.objects.filter(interventoprogramma__isnull=False, tipologia="C").order_by(
+            'denominazione').distinct().values('denominazione','prov','slug')
+
+
+
+
 

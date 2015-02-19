@@ -6,6 +6,18 @@ from django.conf import settings
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
 
 
+
+class Impresa(models.Model):
+    ragione_sociale = models.CharField(max_length=200, null=False, blank=False)
+    partita_iva = models.CharField(max_length=30, null=False, blank=False)
+
+    class Meta:
+        verbose_name_plural = u'Imprese'
+
+    def __unicode__(self):
+        return u"{},{}".format(self.ragione_sociale, self.partita_iva)
+
+
 class InterventoProgramma(models.Model):
     TIPO_IMMOBILE = Choices(
         ('1', 'ALTRO', 'ATTR. INFRASTRUTTURE E MOBILITA'),
@@ -77,7 +89,7 @@ class Programma(models.Model):
     tipologia = models.CharField(max_length=2, choices=TIPO_PROGRAMMA, blank=False, null=False, default='')
 
     def __unicode__(self):
-        return u"id:{} - denominazione:{}".format(self.id_progr, self.denominazione)
+        return u"{}({})".format(self.denominazione, self.id_progr,)
 
     class Meta:
         verbose_name_plural = u'Programmi'
@@ -170,9 +182,13 @@ class Intervento(models.Model):
     stato = models.CharField(max_length=3, choices=STATO_INTERVENTO, null=False, blank=False, default='')
     gps_lat = models.FloatField(null=True, blank=True)
     gps_lon = models.FloatField(null=True, blank=True)
+    imprese = models.ManyToManyField(Impresa)
 
     class Meta:
         verbose_name_plural = u'Interventi'
+
+    def __unicode__(self):
+        return u"{},{},{}".format(self.intervento_piano_id, self.denominazione, self.stato)
 
 
 class Liquidazione(models.Model):
@@ -197,10 +213,12 @@ class Liquidazione(models.Model):
     class Meta:
         verbose_name_plural = u'Liquidazioni'
 
+    def __unicode__(self):
+        return u"{},{} {}E".format(self.intervento_id, self.data, self.importo)
 
 class EventoContrattuale(models.Model):
     TIPO_EVENTO = Choices(
-         ('1', 'STIPULA_CONTRATTO', 'Stipula contratto'),
+        ('1', 'STIPULA_CONTRATTO', 'Stipula contratto'),
         ('2', 'INIZIO_LAVORI', 'Inizio lavori'),
         ('3', 'FINE_LAVORI', 'Fine lavori come da Capitolato'),
         ('4', 'VERBALE_CONSEGNA', 'Verbale di consegna lavori'),
@@ -212,14 +230,8 @@ class EventoContrattuale(models.Model):
     class Meta:
         verbose_name_plural = u'Eventi contrattuali'
 
-
-class Impresa(models.Model):
-    intervento = models.ForeignKey('Intervento', null=False, blank=False)
-    ragione_sociale = models.CharField(max_length=200, null=False, blank=False)
-    partita_iva = models.CharField(max_length=30, null=False, blank=False)
-
-    class Meta:
-        verbose_name_plural = u'Imprese'
+    def __unicode__(self):
+        return u"{},{},{}".format(self.intervento_id, self.TIPO_EVENTO[self.tipologia], self.data)
 
 
 class QuadroEconomico(models.Model):
@@ -322,9 +334,10 @@ class Donazione(models.Model):
     tipologia_donazione = models.CharField(max_length=2, choices=TIPO_DONAZIONE, blank=False, null=False, default='')
     data = models.DateField(null=True, blank=True)
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False, )
+    interventi_programma = models.ManyToManyField(InterventoProgramma, through='DonazioneInterventoProgramma')
 
     def __unicode__(self):
-        return u"{}".format(self.denominazione)
+        return u"{} - {}".format(self.denominazione, self.territorio)
 
     #    ritorna l'importo lavori in formato italiano
     def get_importo_ita(self):
@@ -332,3 +345,16 @@ class Donazione(models.Model):
 
     class Meta:
         verbose_name_plural = u'Donazioni'
+
+
+class DonazioneInterventoProgramma(models.Model):
+    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False, )
+    donazione = models.ForeignKey('Donazione', blank=False, null=False)
+    intervento_programma = models.ForeignKey('InterventoProgramma', blank=False, null=False)
+
+    class Meta:
+        verbose_name_plural = u'Donazioni a Interventi a programma'
+
+
+    def __unicode__(self):
+        return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.importo)

@@ -3,13 +3,13 @@ from open_ricostruzione.models import Donazione, InterventoProgramma, Intervento
     EventoContrattuale, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
     QuadroEconomicoProgetto, QuadroEconomicoIntervento
 
-from .filters import TerritorioWithDonazione
+from .filters import TerritorioWithDonazione, TerritorioWithIntervento
 
 
 class InterventoAProgettoAdmin(admin.ModelAdmin):
     model = InterventoProgramma
     ordering = ['n_ordine']
-    list_filter = ['tipo_immobile', ]
+    list_filter = ['programma',TerritorioWithIntervento, 'tipo_immobile', ]
     search_fields = ['^denominazione', ]
 
 
