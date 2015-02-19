@@ -1,7 +1,9 @@
 from django.contrib import admin
 from open_ricostruzione.models import Donazione, InterventoProgramma, InterventoPiano, Cofinanziamento, \
-    EventoContrattuale, QuadroEconomico, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
+    EventoContrattuale, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
     QuadroEconomicoProgetto, QuadroEconomicoIntervento
+
+from .filters import TerritorioWithDonazione
 
 
 class InterventoAProgettoAdmin(admin.ModelAdmin):
@@ -51,7 +53,8 @@ class EventoContrattualeAdmin(admin.ModelAdmin):
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
     search_fields = ['^denominazione', ]
-    list_filter = ['territorio__denominazione', 'tipologia_cedente']
+    list_filter = [TerritorioWithDonazione, 'tipologia_cedente']
+    ordering = ['denominazione','territorio__slug']
 
 
 class QEProgettoAdmin(admin.ModelAdmin):
