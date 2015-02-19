@@ -1,16 +1,20 @@
 from django.contrib import admin
 from open_ricostruzione.models import Donazione, InterventoProgramma, InterventoPiano, Cofinanziamento, \
     EventoContrattuale, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
-    QuadroEconomicoProgetto, QuadroEconomicoIntervento
+    QuadroEconomicoProgetto, QuadroEconomicoIntervento, DonazioneInterventoProgramma
 
 from .filters import TerritorioWithDonazione, TerritorioWithIntervento
 
 
-class InterventoAProgettoAdmin(admin.ModelAdmin):
+class InterventoProgettoAdmin(admin.ModelAdmin):
     model = InterventoProgramma
     ordering = ['n_ordine']
-    list_filter = ['programma',TerritorioWithIntervento, 'tipo_immobile', ]
+    list_filter = ['programma', TerritorioWithIntervento, 'tipo_immobile', ]
     search_fields = ['^denominazione', ]
+
+
+class DonazioneInterventoProgrammaAdminInline(admin.TabularInline):
+    model = DonazioneInterventoProgramma
 
 
 class InterventoAdmin(admin.ModelAdmin):
@@ -26,6 +30,16 @@ class PianoAdmin(admin.ModelAdmin):
     ordering = ['id_piano']
 
 
+class DonazioneAdmin(admin.ModelAdmin):
+    model = Donazione
+    search_fields = ['^denominazione', ]
+    list_filter = [TerritorioWithDonazione, 'tipologia_cedente']
+    ordering = ['denominazione', 'territorio__slug']
+    inlines = [
+        DonazioneInterventoProgrammaAdminInline,
+    ]
+
+
 class LiquidazioneAdmin(admin.ModelAdmin):
     model = Liquidazione
 
@@ -38,7 +52,7 @@ class ProgettoAdmin(admin.ModelAdmin):
     model = Progetto
 
 
-class InterventoAPianoAdmin(admin.ModelAdmin):
+class InterventoPianoAdmin(admin.ModelAdmin):
     model = InterventoPiano
 
 
@@ -48,13 +62,6 @@ class CofinanziamentoAdmin(admin.ModelAdmin):
 
 class EventoContrattualeAdmin(admin.ModelAdmin):
     model = EventoContrattuale
-
-
-class DonazioneAdmin(admin.ModelAdmin):
-    model = Donazione
-    search_fields = ['^denominazione', ]
-    list_filter = [TerritorioWithDonazione, 'tipologia_cedente']
-    ordering = ['denominazione','territorio__slug']
 
 
 class QEProgettoAdmin(admin.ModelAdmin):
@@ -74,7 +81,7 @@ admin.site.register(Programma, ProgrammaAdmin)
 admin.site.register(Impresa, ImpresaAdmin)
 admin.site.register(Cofinanziamento, CofinanziamentoAdmin)
 admin.site.register(EventoContrattuale, EventoContrattualeAdmin)
-admin.site.register(InterventoPiano, InterventoAPianoAdmin)
-admin.site.register(InterventoProgramma, InterventoAProgettoAdmin)
+admin.site.register(InterventoPiano, InterventoPianoAdmin)
+admin.site.register(InterventoProgramma, InterventoProgettoAdmin)
 admin.site.register(Intervento, InterventoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)
