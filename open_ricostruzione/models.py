@@ -360,3 +360,24 @@ class DonazioneInterventoProgramma(models.Model):
 
     def __unicode__(self):
         return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.importo)
+
+
+
+##
+# ANAGRAFICHE
+##
+
+class Anagrafica(models.Model):
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
+
+class SoggettoAttuatore(Anagrafica):
+    denominazione = models.CharField(max_length=256)
+
+class ProprietarioImmobile(Anagrafica):
+    denominazione = models.CharField(max_length=256)
+
+
+class RUP(Anagrafica):
+    nome = models.CharField(max_length=256)
+    cognome = models.CharField(max_length=256)
+    cf = models.CharField(max_length=256)
