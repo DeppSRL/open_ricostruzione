@@ -305,8 +305,8 @@ class Donazione(models.Model):
     )
 
     TIPO_CEDENTE = Choices(
-        (u'0', u'ALTRO', u'Altro'),
-        (u'1', u'ASSOCIAZIONI', u'Associazioni'),
+        (u'0', u'ALTRO', u'ALTRO'),
+        (u'1', u'ASSOCIAZIONI', u'ASSOCIAZIONI'),
         (u'2', u'ENTI_PUBBLICI', u'ENTI PUBBLICI'),
         (u'3', u'COMUNI', u'COMUNI'),
         (u'4', u'CITTADINI', u'CITTADINI'),
