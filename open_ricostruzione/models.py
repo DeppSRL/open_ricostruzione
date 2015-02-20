@@ -83,10 +83,8 @@ class InterventoProgramma(models.Model):
 
 
 class Programma(models.Model):
-    TIPO_PROGRAMMA = Choices()
     denominazione = models.TextField(max_length=120)
     id_progr = models.PositiveSmallIntegerField(null=True, blank=True)
-    tipologia = models.CharField(max_length=2, choices=TIPO_PROGRAMMA, blank=False, null=False, default='')
 
     def __unicode__(self):
         return u"{}({})".format(self.denominazione, self.id_progr,)

@@ -2,6 +2,7 @@ import json
 import logging
 from optparse import make_option
 from django.core.management import BaseCommand
+from open_ricostruzione.models import Programma, Piano, RUP, ProprietarioImmobile, SoggettoAttuatore
 
 
 class Command(BaseCommand):
@@ -34,7 +35,6 @@ class Command(BaseCommand):
             self.logger.setLevel(logging.DEBUG)
 
         self.input_file = options['file']
-        self.delete = options['delete']
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
         not_found_istat = []
@@ -46,5 +46,23 @@ class Command(BaseCommand):
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
 
+        codifiche = data['codifiche']
+        ##
+        # Import PROGRAMMI
+        ##
+
+        for programma_json in codifiche['programmi']:
+            Programma.objects.update_or_create(
+                id_progr=programma_json['id'], defaults={'denominazione': programma_json['nome']})
+
+
+        # Check tipo piano
+        n_tipi_piano_json = len(codifiche['tipi_piano'])
+        n_tipi_piano_model = len(Piano.TIPO_PIANO)
+        if n_tipi_piano_json != n_tipi_piano_model:
+            self.logger.error("Found {} tipi piano in Json file, {} tipi piano present in DB Model".format(
+                n_tipi_piano_json, n_tipi_piano_model
+            ))
+            exit()
 
         self.logger.info("Done")
