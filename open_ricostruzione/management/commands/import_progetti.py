@@ -93,8 +93,9 @@ class Command(BaseCommand):
                     territorio.save()
 
                 int_programma = InterventoProgramma()
-                programma, is_created = Programma.objects.get_or_create(id_progr=intervento_a_programma['id_progr'],
-                                                                        tipologia='')
+                programma, is_created = Programma.objects.get_or_create(
+                    id_progr=intervento_a_programma['id_progr'],
+                )
                 int_programma.programma = programma
                 int_programma.id_interv_a_progr = intervento_a_programma['id_interv_a_progr']
                 int_programma.n_ordine = intervento_a_programma['n_ordine'].strip()
@@ -128,9 +129,10 @@ class Command(BaseCommand):
                     int_piano.id_interv_a_piano = intervento_a_piano['id_interv_a_piano']
                     int_piano.imp_a_piano = intervento_a_piano['imp_a_piano']
                     # gets or create a Piano
-                    piano, is_created = Piano.objects.get_or_create(id_piano=intervento_a_piano['piano']['id_piano'],
-                                                                    tipologia=intervento_a_piano['piano'][
-                                                                        'id_tipo_piano'])
+                    piano, is_created = Piano.objects.get_or_create(
+                        id_piano=intervento_a_piano['piano']['id_piano'],
+                        tipologia=intervento_a_piano['piano']['id_tipo_piano']
+                    )
                     int_piano.piano = piano
                     int_piano.save()
 
@@ -196,9 +198,10 @@ class Command(BaseCommand):
 
                         #     imprese
                         for impresa in intervento['imprese']:
-                            Impresa(**{
-                                'intervento': intr,
-                                'ragione_sociale':impresa['rag_soc'],
-                                'partita_iva':impresa['p_iva']
-                            }).save()
+                            impr = Impresa(**{
+                                'ragione_sociale': impresa['rag_soc'],
+                                'partita_iva': impresa['p_iva']
+                            })
+                            impr.save()
+                            intr.imprese.add(impr)
         commit()
