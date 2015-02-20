@@ -51,13 +51,12 @@ class InterventoProgramma(models.Model):
 
     CATEGORIA_IMMOBILE = Choices(
         ('1', 'BENI_DEMANIALI', 'Beni Demaniali e Beni ecclesiastici di prop. Pubbl.'),
-        ('2', 'ATTR_INFRASTRUTTURE', 'ATTR. INFRASTRUTTURE E MOBILITA'),
-        ('3', 'ATTR_INFRASTRUTTURE_FC', 'ATTR. INFRASTRUTTURE E MOBILITA\' - FUORI CRATERE'),
-        ('4', 'ATTR_SANITARIE', 'ATTR. SANITARIE E/O SOCIO SANITARIE'),
-        ('5', 'ATTR_CIMITERIALI', 'ATTREZZATURE CIMITERIALI'),
-        ('6', 'ATTR_CULTURALI', 'ATTREZZATURE CULTURALI'),
-        ('7', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE E RICREATIVE'),
-        ('8', 'BENE_RELIGIOSO', 'BENE RELIGIOSO DI PROPRIETA\' DI ENTE PUBBLICO'),
+        ('2', 'COMUNI_PROVINCE', 'Comuni e Province'),
+        ('3', 'ENTI_RELIGIOSI', 'Enti religiosi'),
+        ('4', 'MONASTERI_CONVENTI', 'Monasteri, Conventi ed ex'),
+        ('5', 'OPERE_BONIFICA', 'Opere di bonifica ed irrigazione'),
+        ('6', 'STRUTTURE_SANITARIE', 'Strutture Sanitarie'),
+        ('7', 'STRUTTURE_SCOLASTICHE', 'Strutture Scolastiche ed Universita'),
     )
 
     programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
@@ -254,6 +253,7 @@ class QuadroEconomico(models.Model):
         ('15', 'QTE_FONDI_PROPRI', 'Q.T.E. riferito al cofinanziamento da Fondi propri (e altro)'),
         ('16', 'QTE_GENERALE', 'Q.T.E. generale riepilogativo'),
         ('17', 'QTE_RIMODULATO_COMMISSARIO', 'Q.T.E. rimodulato relativo al finanziamento del Commissario'),
+        ('18', 'QTE_FINANZIAMENTO_COMMISSARIO', 'Q.T.E. relativo al finanziamento assegnato dal Commissario'),
     )
     tipologia = models.CharField(max_length=2, choices=TIPO_QUADRO_ECONOMICO, blank=False, null=False, default='')
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
