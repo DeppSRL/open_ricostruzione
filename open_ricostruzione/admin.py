@@ -2,7 +2,7 @@ from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from open_ricostruzione.models import Donazione, InterventoProgramma, InterventoPiano, Cofinanziamento, \
     EventoContrattuale, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
-    QuadroEconomicoProgetto, QuadroEconomicoIntervento, DonazioneInterventoProgramma
+    QuadroEconomicoProgetto, QuadroEconomicoIntervento, DonazioneInterventoProgramma, RUP, ProprietarioImmobile, SoggettoAttuatore
 
 from .filters import TerritorioWithDonazione, TerritorioWithIntervento
 
@@ -80,7 +80,19 @@ class QEProgettoAdmin(admin.ModelAdmin):
 class QEInterventoAdmin(admin.ModelAdmin):
     model = QuadroEconomicoIntervento
 
+class SoggettoAttuatoreAdmin(admin.ModelAdmin):
+    model = SoggettoAttuatore
 
+class RUPAdmin(admin.ModelAdmin):
+    model = RUP
+
+class ProprietarioImmobileAdmin(admin.ModelAdmin):
+    model = ProprietarioImmobile
+
+
+admin.site.register(ProprietarioImmobile, ProprietarioImmobileAdmin)
+admin.site.register(RUP, RUPAdmin)
+admin.site.register(SoggettoAttuatore, SoggettoAttuatoreAdmin)
 admin.site.register(DonazioneInterventoProgramma, DonazioneInterventoProgrammaAdmin)
 admin.site.register(QuadroEconomicoIntervento, QEInterventoAdmin)
 admin.site.register(QuadroEconomicoProgetto, QEProgettoAdmin)

@@ -371,11 +371,33 @@ class Anagrafica(models.Model):
 class SoggettoAttuatore(Anagrafica):
     denominazione = models.CharField(max_length=256)
 
+    class Meta:
+        verbose_name_plural = u'Soggetti attuatori'
+
+
+    def __unicode__(self):
+        return u"({}) {}".format(self.id_fenice,self.denominazione)
+
+
+
 class ProprietarioImmobile(Anagrafica):
     denominazione = models.CharField(max_length=256)
 
+    class Meta:
+        verbose_name_plural = u'Proprietari immobile'
+
+
+    def __unicode__(self):
+        return u"({}) {}".format(self.id_fenice,self.denominazione)
 
 class RUP(Anagrafica):
     nome = models.CharField(max_length=256)
     cognome = models.CharField(max_length=256)
     cf = models.CharField(max_length=256)
+
+    class Meta:
+        verbose_name_plural = u'RUP'
+
+
+    def __unicode__(self):
+        return u"({}) {} {} [{}]".format(self.id_fenice,self.nome, self.cognome, self.cf)
