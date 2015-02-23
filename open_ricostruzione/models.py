@@ -85,7 +85,7 @@ class Programma(models.Model):
     id_progr = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __unicode__(self):
-        return u"{}({})".format(self.denominazione, self.id_progr,)
+        return u"{}({})".format(self.denominazione, self.id_progr, )
 
     class Meta:
         verbose_name_plural = u'Programmi'
@@ -213,6 +213,7 @@ class Liquidazione(models.Model):
 
     def __unicode__(self):
         return u"{},{} {}E".format(self.intervento_id, self.data, self.importo)
+
 
 class EventoContrattuale(models.Model):
     TIPO_EVENTO = Choices(
@@ -354,10 +355,8 @@ class DonazioneInterventoProgramma(models.Model):
     class Meta:
         verbose_name_plural = u'Donazioni a Interventi a programma'
 
-
     def __unicode__(self):
         return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.importo)
-
 
 
 ##
@@ -367,16 +366,15 @@ class DonazioneInterventoProgramma(models.Model):
 class Anagrafica(models.Model):
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
 
+
 class SoggettoAttuatore(Anagrafica):
     denominazione = models.CharField(max_length=256)
 
     class Meta:
         verbose_name_plural = u'Soggetti attuatori'
 
-
     def __unicode__(self):
-        return u"({}) {}".format(self.id_fenice,self.denominazione)
-
+        return u"({}) {}".format(self.id_fenice, self.denominazione)
 
 
 class ProprietarioImmobile(Anagrafica):
@@ -387,7 +385,8 @@ class ProprietarioImmobile(Anagrafica):
 
 
     def __unicode__(self):
-        return u"({}) {}".format(self.id_fenice,self.denominazione)
+        return u"({}) {}".format(self.id_fenice, self.denominazione)
+
 
 class RUP(Anagrafica):
     nome = models.CharField(max_length=256)
@@ -399,4 +398,4 @@ class RUP(Anagrafica):
 
 
     def __unicode__(self):
-        return u"({}) {} {} [{}]".format(self.id_fenice,self.nome, self.cognome, self.cf)
+        return u"({}) {} {} [{}]".format(self.id_fenice, self.nome, self.cognome, self.cf)

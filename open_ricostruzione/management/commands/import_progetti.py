@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import json
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db.transaction import set_autocommit, commit
 from django.template.defaultfilters import slugify
+from django.conf import settings
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
-import xlrd
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
-    Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, Impresa
+    Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, Impresa, DonazioneInterventoProgramma, Donazione
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -18,6 +18,7 @@ class Command(BaseCommand):
     help = 'Import progetti data from JSON file'
 
     option_list = BaseCommand.option_list + (
+
         make_option('--file',
                     dest='file',
                     default='',
@@ -35,7 +36,47 @@ class Command(BaseCommand):
     encoding = 'latin-1'
     logger = logging.getLogger('csvimport')
     date_format = '%d/%M/%Y'
-    unicode_reader = None
+    error_logfile = None
+    donazioni_intervento_programma = None
+
+    def dumpDonazioniProgramma(self):
+        self.donazioni_intervento_programma = list(
+            DonazioneInterventoProgramma. \
+            objects.all().order_by('intervento_programma__programma__id'). \
+            values('importo', 'donazione__pk', 'donazione__denominazione',
+                   'intervento_programma__programma__id',
+                   'intervento_programma__id_interv_a_progr',
+                   'intervento_programma__id_sogg_att',
+                   'intervento_programma__id_propr_imm',
+                   'intervento_programma__n_ordine',
+                   'intervento_programma__importo_generale',
+                   'intervento_programma__importo_a_programma',
+                   'intervento_programma__denominazione',
+                   'intervento_programma__territorio__slug',
+                   'intervento_programma__tipo_immobile',
+                   'intervento_programma__slug',
+            )
+        )
+        return
+
+    def associateDonazioniProgramma(self):
+
+        for idx, dip_dict in enumerate(self.donazioni_intervento_programma):
+            iap = None
+            try:
+                iap = InterventoProgramma.objects.get(
+                    id_interv_a_progr=dip_dict['intervento_programma__id_interv_a_progr'])
+            except ObjectDoesNotExist:
+                self.logger.error(u"Cannot find Intervento a programma {}".format(
+                    dip_dict['intervento_programma__id_interv_a_progr']))
+                continue
+            else:
+                dip = DonazioneInterventoProgramma()
+                dip.donazione = Donazione.objects.get(pk=dip_dict['donazione__pk'])
+                dip.importo = dip_dict['importo']
+                dip.intervento_programma = iap
+                dip.save()
+                self.donazioni_intervento_programma.pop(idx)
 
     def handle(self, *args, **options):
 
@@ -51,6 +92,7 @@ class Command(BaseCommand):
 
         self.input_file = options['file']
         self.delete = options['delete']
+        self.error_logfile = "{}/log/import_{}".format(settings.REPO_ROOT,datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
         not_found_istat = []
@@ -59,8 +101,17 @@ class Command(BaseCommand):
             json_file = open(self.input_file)
             data = json.load(json_file, encoding=self.encoding)
         except IOError:
-            self.logger.error("It was impossible to open file {}".format(self.input_file))
+            self.logger.error("It was impossible to open file '{}'".format(self.input_file))
             exit(1)
+
+        ##
+        # dumps all DonazioneProgramma that link Donazione to InterventoProgramma so this obj are not
+        # lost when the script will delete all InterventoProgramma objs.
+        ##
+
+        self.logger.info("Dumping Donazioni Programma before import")
+        self.dumpDonazioniProgramma()
+        self.logger.info("Saved {} Donazioni Programma".format(len(self.donazioni_intervento_programma)))
 
         if self.delete:
             self.logger.info("Deleting all previous records...")
@@ -111,7 +162,7 @@ class Command(BaseCommand):
                     u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_interv_a_progr)))
                 int_programma.tipo_immobile = intervento_a_programma['id_tipo_imm']
                 int_programma.save()
-                self.logger.info(u"Import IAP:{}".format(int_programma.slug))
+                self.logger.info(u"Import Interv.Programma:{}".format(int_programma.slug))
 
                 # save cofinanziamenti
                 for cofinanziamento in list(
@@ -204,4 +255,16 @@ class Command(BaseCommand):
                             })
                             impr.save()
                             intr.imprese.add(impr)
+        commit()
+
+        self.logger.info("Recovering Donazioni Programma...")
+        total_donazioni_intervento = len(self.donazioni_intervento_programma)
+        self.associateDonazioniProgramma()
+        not_associated_donazioni_intervento = len(self.donazioni_intervento_programma)
+        associated_donazioni_intervento = total_donazioni_intervento-not_associated_donazioni_intervento
+        self.logger.info("Correctly associated {} Donazioni Programma".format(associated_donazioni_intervento, ))
+        if not_associated_donazioni_intervento > 0:
+            self.logger.error(u"Could NOT ASSOCIATE {} Donazioni Programma. Dumped error data in file {}".format(not_associated_donazioni_intervento, error_logfile))
+
+
         commit()
