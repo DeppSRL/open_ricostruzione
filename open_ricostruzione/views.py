@@ -1,268 +1,278 @@
 from decimal import Decimal
-from django.core.exceptions import ObjectDoesNotExist
-from django.views.generic import TemplateView, DetailView, ListView
-from django.db.models.aggregates import Count, Sum
-from open_ricostruzione import settings
-from open_ricostruzione.models import *
-from django.db import connections
 import datetime
-import time
-from open_ricostruzione.utils.moneydate import moneyfmt, add_months
-from open_ricostruzione.utils import remove_img_tags
 from datetime import timedelta
 import json
 from json.encoder import JSONEncoder
+import time
+from django.core.exceptions import ObjectDoesNotExist
+from django.views.generic import TemplateView, DetailView, ListView
+from django.db.models.aggregates import Count, Sum
+from django.conf import settings
+from rest_framework import generics
+from django.db import connections
 from django.db.models.query import QuerySet
 from django.core.serializers import serialize
 from django.utils.functional import curry
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseRedirect
-from open_ricostruzione.settings import COMUNI_CRATERE
 from django.template.defaultfilters import date as _date
-import socket
-import feedparser
-from BeautifulSoup import BeautifulSoup
+from open_ricostruzione.models import InterventoProgramma, Donazione
+from territori.models import Territorio
+from .serializers import DonazioneSerializer
+from open_ricostruzione.utils.moneydate import moneyfmt, add_months
+
+
+class DonazioneApiView(generics.ListAPIView):
+    """
+    Returns a list of all authors.
+    """
+    model = Donazione
+    serializer_class = DonazioneSerializer
+
+    def get_queryset(self):
+        return Donazione.objects.all()
 
 class HomeView(TemplateView):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs ):
-        context= {'n_comuni': Territorio.objects.filter(tipo_territorio="C", cod_comune__in=settings.COMUNI_CRATERE). \
-            annotate(c=Count("progetto")).filter(c__gt=0).count(),
-                  'n_progetti': Progetto.objects.filter(id_padre__isnull=True).count()}
-
-        #numero di comuni con almeno 1 progetto attivo
-
-        #numero progetti
-        # importi progetti totale
-        stima_danno = Progetto.objects.filter( id_padre__isnull = True).\
-            aggregate(s=Sum('riepilogo_importi')).values()
-
-        if stima_danno[0]:
-            context['stima_danno'] = stima_danno[0]
-
-        # numero donazioni
-        context['n_donazioni'] = Donazione.objects.filter(confermato=True).count()
-        # donazioni per il territorio considerato
-        tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
-        if tot_donazioni[0]:
-            context['tot_donazioni'] = tot_donazioni[0]
-            context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
-
-        context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
-
-        #news in home page
-
-
-        blogposts = []
-        # sets the timeout for the socket connection
-        socket.setdefaulttimeout(150)
-        feeds = feedparser.parse(settings.OR_BLOG_FEED)
-
-        if feeds is not None:
-            i=0
-            post_counter = 0
-
-            while i<len(feeds.entries) and post_counter < 2 :
-                post={}
-                post['title']=feeds.entries[i]['title']
-
-                post['content'] = remove_img_tags(feeds.entries[i]['content'][0]['value'])
-
-                post_date = time.strptime(feeds.entries[i]['published'], '%a, %d %b %Y %H:%M:%S +0000')
-                post_date_dt = datetime.date.fromtimestamp( time.mktime(post_date))
-                post['month'] = _date(post_date_dt,"M")
-                post['day'] = time.strftime("%d",post_date)
-                post['year'] = time.strftime("%Y",post_date)
-                post['link'] = feeds.entries[i]['link']
-                html_content = BeautifulSoup(feeds.entries[i]['content'][0]['value'])
-                if html_content.p:
-                    if html_content.p.img:
-                        post['thumbnail'] = html_content.p.img['src']
-                    else:
-                        post['thumbnail'] = ''
-
-
-                blogposts.append(post)
-                post_counter += 1
-
-                i += 1
-
-
-
-        context['blogposts']=blogposts
-
-
-
-
-        # importi dei progetti per categorie
-        progetti_categorie_pie =\
-            Progetto.objects.filter( id_padre__isnull = True).values('tipologia__denominazione').\
-            annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
-
-        context['progetti_categorie_pie'] = progetti_categorie_pie
-
-        progetti_categorie_list =\
-            Progetto.objects.filter( id_padre__isnull = True).values('tipologia__denominazione','tipologia__slug').\
-            annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
-
-
-        for value in progetti_categorie_list:
-            value['sum']=moneyfmt(value['sum'],2,"",".",",")
-
-        context['progetti_categorie_list'] =progetti_categorie_list
-
-        # donazioni divise per tipologia cedente
-        donazioni_categorie_pie =\
-            Donazione.objects.all().\
-                filter(confermato = True).values('tipologia__denominazione').\
-                annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
-
-        context['donazioni_categorie_pie'] = donazioni_categorie_pie
-
-
-        donazioni_categorie_list =\
-            Donazione.objects.all().\
-            filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
-            annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
-
-
-        for value in donazioni_categorie_list:
-            value['sum']=moneyfmt(value['sum'],2,"",".",",")
-
-        context['donazioni_categorie_list'] = donazioni_categorie_list
-
-        #trasforma la data di oggi in timestamp come base per creare un indice randomico sulla base del giorno
-        today = int(time.mktime(datetime.date.today().timetuple()))
-
-        #comuni oggi in evidenza
-
-#        comuni con progetti padre con importo maggiore di zero
-        c_progetti=Territorio.objects.\
-           filter(
-            tipo_territorio="C",
-            progetto__parent__isnull=True,
-            progetto__riepilogo_importi__gt=0
-            ).\
-            annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi")).\
-            values_list('cod_comune',flat=True)
-
-#        comuni con donazioni confermate e importo maggiore di zero
-        c_donazioni=Territorio.objects.filter(
-            tipo_territorio="C",
-            progetto__parent__isnull=True,
-            donazione__importo__gt=0,
-            donazione__confermato=True
-            ).annotate(c=Count("donazione"),sum=Sum("donazione__importo")).\
-            values_list('cod_comune',flat=True)
-
-
-        donazioni_considerate_cod=Donazione.objects.filter(
-            importo__gt=0,
-            confermato=True,
-            territorio__cod_comune__in=c_donazioni
-            ).values_list('id_donazione',flat=True)
-
-
-        progetti_considerati_cod=Progetto.objects.\
-            filter(id_padre__isnull=True, riepilogo_importi__gt=0).\
-            values_list('id_progetto',flat=True)
-
-
-
-#        codici dei comuni che sono presenti nei tre insiemi
-        cod_considerati=set.intersection(set(c_donazioni), set(c_progetti),set( COMUNI_CRATERE))
-
-        comuni_considerati = Territorio.objects.\
-            filter(cod_comune__in=cod_considerati, donazione__id_donazione__in=donazioni_considerate_cod).\
-            annotate(c=Count('cod_comune'))
-
-
-        comuni_evidenza=[]
-        #progetti oggi in evidenza
-        c_considerati_num = comuni_considerati.count()
-        i = today%c_considerati_num
-
-        for j in range(1,4):
-            c_evidenza={}
-            try:
-              comune = comuni_considerati[((i+j)%c_considerati_num)]
-              comune_donazioni = Donazione.objects.filter(territorio=comune, id_donazione__in=donazioni_considerate_cod).\
-                aggregate(d_sum=Sum('importo'))
-
-              comune_danno = Progetto.objects.filter(
-                territorio=comune,
-                id_progetto__in=progetti_considerati_cod
-              ).aggregate(p_sum=Sum('riepilogo_importi'))
-
-#             inserisce il comune e le somme di danno e donazioni nel diz. in evidenza e fa lo humanize delle cifre
-              c_evidenza={
-                'comune':comune,
-                'd_sum':moneyfmt(Decimal(comune_donazioni['d_sum']),2,"",".",","),
-                'p_sum':moneyfmt(Decimal(comune_danno['p_sum']),2,"",".",","),
-              }
-
-              comuni_evidenza.append(c_evidenza)
-            except IndexError:
-              pass
-
-        context['comuni_evidenza']=comuni_evidenza
-
-        #progetti oggi in evidenza
-        
-        progetti_considerati = Progetto.objects.filter(id_padre__isnull=True, riepilogo_importi__gt=0)
-
-        i = today%progetti_considerati.count()
-        progetti_evidenza=[]
-        for j in range(1,4):
-            try:
-                progetti_evidenza.append(progetti_considerati[((i+j)%progetti_considerati.count())])
-            except IndexError:
-                pass
-
-
-        #humanize cifre monetarie
-        for val in progetti_evidenza:
-            val.riepilogo_importi=moneyfmt(val.riepilogo_importi,2,"",".",",")
-
-
-        context['progetti_evidenza'] =progetti_evidenza
-
-        donazioni_campovolo=Donazione.objects.filter(tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
-            confermato=True,denominazione="Emilia-Romagna",
-            info__contains="Iniziativa patrocinata dalla Regione Emilia-Romagna - Concerto Campo Volo").\
-            aggregate(sum=Sum('importo')).values()[0]
-
-        donazioni_campovolo= moneyfmt(donazioni_campovolo,2,"",".",",")
-        context['donazioni_campovolo']=donazioni_campovolo
-
-        donazioni_sms = Donazione.objects.\
-            filter(
-                tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
-                confermato=True,denominazione="Emilia-Romagna",
-                modalita_r__exact="SMS"
-            ).\
-            aggregate(sum=Sum('importo')).values()[0]
-
-        donazioni_sms= moneyfmt(donazioni_sms,2,"",".",",")
-        context['donazioni_sms']=donazioni_sms
-
-#       set map center
-        context['map_center_lat']= Territorio.get_map_center_lat()
-        context['map_center_lon']= Territorio.get_map_center_lon()
-
-#        set map bounds
-        context['map_minlat']=Territorio.get_boundingbox_minlat()
-        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
-        context['map_minlon']=Territorio.get_boundingbox_minlon()
-        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
-
+        context = super(HomeView, self).get_context_data(**kwargs)
+
+#         context= {'n_comuni': Territorio.objects.filter(tipo_territorio="C", cod_comune__in=settings.COMUNI_CRATERE). \
+#             annotate(c=Count("progetto")).filter(c__gt=0).count(),
+#                   'n_progetti': Progetto.objects.filter(id_padre__isnull=True).count()}
+#
+#         #numero di comuni con almeno 1 progetto attivo
+#
+#         #numero progetti
+#         # importi progetti totale
+#         stima_danno = Progetto.objects.filter( id_padre__isnull = True).\
+#             aggregate(s=Sum('riepilogo_importi')).values()
+#
+#         if stima_danno[0]:
+#             context['stima_danno'] = stima_danno[0]
+#
+#         # numero donazioni
+#         context['n_donazioni'] = Donazione.objects.filter(confermato=True).count()
+#         # donazioni per il territorio considerato
+#         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
+#         if tot_donazioni[0]:
+#             context['tot_donazioni'] = tot_donazioni[0]
+#             context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
+#
+#         try:
+#             context['ultimo_aggiornamento'] = UltimoAggiornamento.objects.all()[0].data_progetti.date()
+#         except IndexError:
+#             pass
+#
+#         #news in home page
+#         blogposts = []
+#         # sets the timeout for the socket connection
+#         socket.setdefaulttimeout(150)
+#         feeds = feedparser.parse(settings.OR_BLOG_FEED)
+#
+#         if feeds is not None:
+#             i=0
+#             post_counter = 0
+#
+#             while i<len(feeds.entries) and post_counter < 2 :
+#                 post={}
+#                 post['title']=feeds.entries[i]['title']
+#
+#                 post['content'] = remove_img_tags(feeds.entries[i]['content'][0]['value'])
+#
+#                 post_date = time.strptime(feeds.entries[i]['published'], '%a, %d %b %Y %H:%M:%S +0000')
+#                 post_date_dt = datetime.date.fromtimestamp( time.mktime(post_date))
+#                 post['month'] = _date(post_date_dt,"M")
+#                 post['day'] = time.strftime("%d",post_date)
+#                 post['year'] = time.strftime("%Y",post_date)
+#                 post['link'] = feeds.entries[i]['link']
+#                 html_content = BeautifulSoup(feeds.entries[i]['content'][0]['value'])
+#                 if html_content.p:
+#                     if html_content.p.img:
+#                         post['thumbnail'] = html_content.p.img['src']
+#                     else:
+#                         post['thumbnail'] = ''
+#
+#
+#                 blogposts.append(post)
+#                 post_counter += 1
+#
+#                 i += 1
+#
+#         context['blogposts']=blogposts
+#
+#         # importi dei progetti per categorie
+#         progetti_categorie_pie =\
+#             Progetto.objects.filter( id_padre__isnull = True).values('tipologia__denominazione').\
+#             annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+#
+#         context['progetti_categorie_pie'] = progetti_categorie_pie
+#
+#         progetti_categorie_list =\
+#             Progetto.objects.filter( id_padre__isnull = True).values('tipologia__denominazione','tipologia__slug').\
+#             annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+#
+#
+#         for value in progetti_categorie_list:
+#             value['sum']=moneyfmt(value['sum'],2,"",".",",")
+#
+#         context['progetti_categorie_list'] =progetti_categorie_list
+#
+#         # donazioni divise per tipologia cedente
+#         donazioni_categorie_pie =\
+#             Donazione.objects.all().\
+#                 filter(confermato = True).values('tipologia__denominazione').\
+#                 annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+#
+#         context['donazioni_categorie_pie'] = donazioni_categorie_pie
+#
+#
+#         donazioni_categorie_list =\
+#             Donazione.objects.all().\
+#             filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
+#             annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+#
+#
+#         for value in donazioni_categorie_list:
+#             value['sum']=moneyfmt(value['sum'],2,"",".",",")
+#
+#         context['donazioni_categorie_list'] = donazioni_categorie_list
+#
+#         #trasforma la data di oggi in timestamp come base per creare un indice randomico sulla base del giorno
+#         today = int(time.mktime(datetime.date.today().timetuple()))
+#
+#         #comuni oggi in evidenza
+#
+# #        comuni con progetti padre con importo maggiore di zero
+#         c_progetti=Territorio.objects.\
+#            filter(
+#             tipo_territorio="C",
+#             progetto__parent__isnull=True,
+#             progetto__riepilogo_importi__gt=0
+#             ).\
+#             annotate(p=Count("progetto"),p_sum=Sum("progetto__riepilogo_importi")).\
+#             values_list('cod_comune',flat=True)
+#
+# #        comuni con donazioni confermate e importo maggiore di zero
+#         c_donazioni=Territorio.objects.filter(
+#             tipo_territorio="C",
+#             progetto__parent__isnull=True,
+#             donazione__importo__gt=0,
+#             donazione__confermato=True
+#             ).annotate(c=Count("donazione"),sum=Sum("donazione__importo")).\
+#             values_list('cod_comune',flat=True)
+#
+#
+#         donazioni_considerate_cod=Donazione.objects.filter(
+#             importo__gt=0,
+#             confermato=True,
+#             territorio__cod_comune__in=c_donazioni
+#             ).values_list('id_donazione',flat=True)
+#
+#
+#         progetti_considerati_cod=Progetto.objects.\
+#             filter(id_padre__isnull=True, riepilogo_importi__gt=0).\
+#             values_list('id_progetto',flat=True)
+#
+#
+#
+# #        codici dei comuni che sono presenti nei tre insiemi
+#         cod_considerati=set.intersection(set(c_donazioni), set(c_progetti),set( settings.COMUNI_CRATERE))
+#
+#         comuni_considerati = Territorio.objects.\
+#             filter(cod_comune__in=cod_considerati, donazione__id_donazione__in=donazioni_considerate_cod).\
+#             annotate(c=Count('cod_comune'))
+#
+#
+#         comuni_evidenza=[]
+#         #progetti oggi in evidenza
+#         try:
+#             c_considerati_num = comuni_considerati.count()
+#             i = today%c_considerati_num
+#         except ZeroDivisionError:
+#             pass
+#         else:
+#             for j in range(1,4):
+#                 c_evidenza={}
+#                 try:
+#                   comune = comuni_considerati[((i+j)%c_considerati_num)]
+#                   comune_donazioni = Donazione.objects.filter(territorio=comune, id_donazione__in=donazioni_considerate_cod).\
+#                     aggregate(d_sum=Sum('importo'))
+#
+#                   comune_danno = Progetto.objects.filter(
+#                     territorio=comune,
+#                     id_progetto__in=progetti_considerati_cod
+#                   ).aggregate(p_sum=Sum('riepilogo_importi'))
+#
+#     #             inserisce il comune e le somme di danno e donazioni nel diz. in evidenza e fa lo humanize delle cifre
+#                   c_evidenza={
+#                     'comune':comune,
+#                     'd_sum':moneyfmt(Decimal(comune_donazioni['d_sum']),2,"",".",","),
+#                     'p_sum':moneyfmt(Decimal(comune_danno['p_sum']),2,"",".",","),
+#                   }
+#
+#                   comuni_evidenza.append(c_evidenza)
+#                 except IndexError:
+#                   pass
+#
+#             context['comuni_evidenza']=comuni_evidenza
+#
+#             #progetti oggi in evidenza
+#
+#             progetti_considerati = Progetto.objects.filter(id_padre__isnull=True, riepilogo_importi__gt=0)
+#
+#             i = today%progetti_considerati.count()
+#             progetti_evidenza=[]
+#             for j in range(1,4):
+#                 try:
+#                     progetti_evidenza.append(progetti_considerati[((i+j)%progetti_considerati.count())])
+#                 except IndexError:
+#                     pass
+#
+#
+#             #humanize cifre monetarie
+#             for val in progetti_evidenza:
+#                 val.riepilogo_importi=moneyfmt(val.riepilogo_importi,2,"",".",",")
+#
+#             context['progetti_evidenza'] =progetti_evidenza
+#
+#         try:
+#             donazioni_campovolo=Donazione.objects.filter(
+#                 tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
+#                 confermato=True,denominazione="Emilia-Romagna",
+#                 info__contains="Iniziativa patrocinata dalla Regione Emilia-Romagna - Concerto Campo Volo").\
+#                 aggregate(sum=Sum('importo')).values()[0]
+#             donazioni_campovolo= moneyfmt(donazioni_campovolo,2,"",".",",")
+#             context['donazioni_campovolo']=donazioni_campovolo
+#
+#             donazioni_sms = Donazione.objects.\
+#                 filter(
+#                     tipologia=TipologiaCedente.objects.get(denominazione="Regione Emilia-Romagna"),
+#                     confermato=True,denominazione="Emilia-Romagna",
+#                     modalita_r__exact="SMS"
+#                 ).\
+#                 aggregate(sum=Sum('importo')).values()[0]
+#
+#             donazioni_sms= moneyfmt(donazioni_sms,2,"",".",",")
+#             context['donazioni_sms']=donazioni_sms
+#
+#     #       set map center
+#             context['map_center_lat']= Territorio.get_map_center_lat()
+#             context['map_center_lon']= Territorio.get_map_center_lon()
+#
+#     #        set map bounds
+#             context['map_minlat']=Territorio.get_boundingbox_minlat()
+#             context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+#             context['map_minlon']=Territorio.get_boundingbox_minlon()
+#             context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+#         except (IndexError, ObjectDoesNotExist):
+#             pass
         return context
 
 
 class ProgettoView(DetailView):
-    model = Progetto
+    model = InterventoProgramma
     context_object_name = "progetto"
     template_name = 'progetto.html'
 
@@ -271,12 +281,12 @@ class ProgettoView(DetailView):
         context = super(ProgettoView, self).get_context_data(**kwargs)
 
         #sotto progetti
-        sottoprogetti = Progetto.objects.filter(id_padre=p.id_progetto).order_by('denominazione')
+        sottoprogetti = InterventoProgramma.objects.filter(id_padre=p.id_progetto).order_by('denominazione')
         if sottoprogetti:
             context['sottoprogetti']=sottoprogetti
 
         # importi progetto
-        stima_danno = Progetto.objects.filter(id_progetto=p.id_progetto).\
+        stima_danno = InterventoProgramma.objects.filter(id_progetto=p.id_progetto).\
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
@@ -291,7 +301,7 @@ class ProgettoView(DetailView):
 
 
         context['territorio_nome'] = p.territorio.denominazione
-        iban =  Progetto.objects.get(pk = p.pk).territorio.iban
+        iban =  InterventoProgramma.objects.get(pk = p.pk).territorio.iban
         if iban:
             context['iban'] = iban
 
@@ -305,7 +315,7 @@ class ProgettoView(DetailView):
 
 
 class ProgettoListView(ListView):
-    model=Progetto
+    model=InterventoProgramma
     template_name = "tipologieprogetto.html"
 
     def get_context_data(self, **kwargs):
@@ -318,9 +328,9 @@ class ProgettoListView(ListView):
 
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
-            return Progetto.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
+            return InterventoProgramma.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
         else:
-           return  Progetto.objects.all()[0:50]
+           return  InterventoProgramma.objects.all()[0:50]
 
 
 class TerritorioListView(ListView):
@@ -348,16 +358,16 @@ class TerritorioView(DetailView):
         context['sigla_provincia'] = Territorio.objects.get(tipo_territorio = 'P', cod_provincia = t.cod_provincia, cod_comune = "0").sigla_provincia
 
         #numero progetti
-        context['n_progetti']=  Progetto.objects.filter(territorio=t, id_padre__isnull = True).count()
+        context['n_progetti']=  InterventoProgramma.objects.filter(territorio=t, id_padre__isnull = True).count()
         # importi progetti totale
-        stima_danno = Progetto.objects.filter(territorio=t, id_padre__isnull = True).\
+        stima_danno = InterventoProgramma.objects.filter(territorio=t, id_padre__isnull = True).\
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
             # importi dei progetti per categorie
             progetti_categorie_list =\
-                Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
+                InterventoProgramma.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
                 annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
 
             for p in progetti_categorie_list:
@@ -366,7 +376,7 @@ class TerritorioView(DetailView):
             context['progetti_categorie_list']=progetti_categorie_list
 
             progetti_categorie_pie=\
-                Progetto.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
+                InterventoProgramma.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
                 annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
             for p in progetti_categorie_pie:
                 p['sum'] =moneyfmt(p['sum'] ,2,"","",".")
@@ -383,7 +393,7 @@ class TerritorioView(DetailView):
         context['donazioni_comune'] = Donazione.objects.filter(confermato = True).filter(territorio=t)
 
         #lista progetti per questo territorio in ordine di costo decrescente
-        projects = Progetto.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
+        projects = InterventoProgramma.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
 
         if projects:
             for p in projects:
@@ -477,9 +487,9 @@ class DonazioneView(TemplateView):
             context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
 
         #numero progetti
-        context['n_progetti']=  Progetto.objects.filter( id_padre__isnull = True).count()
+        context['n_progetti']=  InterventoProgramma.objects.filter( id_padre__isnull = True).count()
         # importi progetti totale
-        stima_danno = Progetto.objects.filter( id_padre__isnull = True).\
+        stima_danno = InterventoProgramma.objects.filter( id_padre__isnull = True).\
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
@@ -597,33 +607,6 @@ class DonazioneView(TemplateView):
 
         return context
 
-class EntryView(DetailView):
-    model = Entry
-    context_object_name = "entry"
-    template_name = "news.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(EntryView, self).get_context_data(**kwargs)
-        entry = self.get_object()
-
-
-        news_temp = Entry.objects.\
-                    exclude(pk=entry.pk).\
-                    filter(published=True).order_by('-published_at')[0:2]
-        news_altre=[]
-        for idx, val in enumerate(news_temp):
-            news_altre.append(
-                {'day':val.published_at.day,
-                 'month':_date(val.published_at,"M"),
-                 'year':val.published_at.year,
-                 'title':val.title,
-                 'body_html': val.body_html,
-                 'slug':val.slug,
-                 }
-            )
-
-        context['altrenews']=news_altre
-        return context
 
 class FaqView(TemplateView):
     template_name = "faq.html"
@@ -642,7 +625,7 @@ class FaqView(TemplateView):
             annotate(c = Count("donazione")).filter(c__gt=0).count()
 
         #numero progetti
-        context['n_progetti']=  Progetto.objects.filter(id_padre__isnull = True).count()
+        context['n_progetti']=  InterventoProgramma.objects.filter(id_padre__isnull = True).count()
         return context
 
 
@@ -835,7 +818,7 @@ class ProgettiTipologiaComune(TipologieProgettoView):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= Progetto.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti= InterventoProgramma.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiTipologiaComune, self).get_context_data(**kwargs)
 
@@ -850,7 +833,7 @@ class ProgettiTipologia(TipologieProgettoView):
     def get_context_data(self, **kwargs):
 
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= Progetto.objects.filter(tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti= InterventoProgramma.objects.filter(tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
 
         self.context = super(ProgettiTipologia, self).get_context_data(**kwargs)
@@ -865,7 +848,7 @@ class ProgettiComune(TipologieProgettoView):
     def get_context_data(self, **kwargs):
 
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
-        self.progetti= Progetto.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti= InterventoProgramma.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
 

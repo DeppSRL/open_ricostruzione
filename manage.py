@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 import os
 import sys
+import environ
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "open_ricostruzione.settings_local")
-
+    root = environ.Path(__file__) - 1  # (/open_ricostruzione/ - 1 = /)
+    env = environ.Env(
+        DEBUG=(bool, True),
+    )
+    env.read_env(root('.env'))
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", env('DJANGO_SETTINGS_MODULE'))
     from django.core.management import execute_from_command_line
 
     execute_from_command_line(sys.argv)

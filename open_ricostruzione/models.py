@@ -1,388 +1,401 @@
 from decimal import Decimal
-from django.contrib.markup.templatetags.markup import markdown
-from django.db import models
-from django.db import connections
-from datetime import datetime
+from model_utils import Choices
 import time
-from open_ricostruzione.utils.moneydate import moneyfmt,add_months
-from django.db.models.aggregates import Sum, Count
-from datetime import timedelta
-from django.template.defaultfilters import slugify
-from django.template.defaultfilters import date as _date
+from django.db import models
 from django.conf import settings
+from open_ricostruzione.utils.moneydate import moneyfmt, add_months
 
 
-class UltimoAggiornamento(models.Model):
-    data_progetti = models.DateTimeField()
-    data_donazioni = models.DateTimeField()
+class Impresa(models.Model):
+    ragione_sociale = models.CharField(max_length=200, null=False, blank=False)
+    partita_iva = models.CharField(max_length=30, null=False, blank=False)
 
     class Meta:
-        verbose_name_plural = u'Ultimo Aggiornamento'
+        verbose_name_plural = u'Imprese'
+
+    def __unicode__(self):
+        return u"{},{}".format(self.ragione_sociale, self.partita_iva)
 
 
-class Territorio(models.Model):
+class InterventoProgramma(models.Model):
+    TIPO_IMMOBILE = Choices(
+        ('1', 'ALTRO', 'ATTR. INFRASTRUTTURE E MOBILITA'),
+        ('2', 'ATTR_INFRASTRUTTURE', 'ATTR. INFRASTRUTTURE E MOBILITA'),
+        ('3', 'ATTR_INFRASTRUTTURE_FC', 'ATTR. INFRASTRUTTURE E MOBILITA\' - FUORI CRATERE'),
+        ('4', 'ATTR_SANITARIE', 'ATTR. SANITARIE E/O SOCIO SANITARIE'),
+        ('5', 'ATTR_CIMITERIALI', 'ATTREZZATURE CIMITERIALI'),
+        ('6', 'ATTR_CULTURALI', 'ATTREZZATURE CULTURALI'),
+        ('7', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE E RICREATIVE'),
+        ('8', 'BENE_RELIGIOSO', 'BENE RELIGIOSO DI PROPRIETA\' DI ENTE PUBBLICO'),
+        ('9', 'BENI_DEMANIALI', 'BENI DEMANIALI'),
+        ('10', 'BENI_ECCLESIASTICI', 'BENI ECCLESIASTICI'),
+        ('11', 'CANONICA_ORATORIO', 'CANONICA/ORATORIO'),
+        ('12', 'CHIESA', 'CHIESA'),
+        ('13', 'EDILIZIA_SCOLASTICA', 'EDILIZIA SCOLASTICA'),
+        ('14', 'EDILIZIA_SOCIALE', 'EDILIZIA SOCIALE'),
+        ('15', 'EX_CHIESA', 'EX CHIESA/MONASTERO/ CONVENTO'),
+        ('16', 'EX_SCUOLA', 'EX SCUOLA'),
+        ('17', 'IMPIANTI_A_RETE', 'IMPIANTI A RETE'),
+        ('18', 'MAGAZZINO', 'MAGAZZINO'),
+        ('19', 'MONASTERO_CONVENTO_SINAGOGA', 'MONASTERO / CONVENTO / SINAGOGA'),
+        ('20', 'MUNICIPI', 'MUNICIPI - UFFICI E ALTRI ENTI PUBBLICI'),
+        ('21', 'OPERE_BONIFICA', 'OPERE DI BONIFICA E IRRIGAZIONE'),
+        ('22', 'OPERE_BONIFICA_FC', 'OPERE DI BONIFICA E IRRIGAZIONE - FUORI CRATERE'),
+        ('23', 'UNIVERSITA', 'UNIVERSITA'),
+        ('24', 'ATTR_RICREATIVE', 'ATTREZZATURE RICREATIVE'),
+        ('25', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE'),
+        ('26', 'MONASTERO_CONVENTO', 'MONASTERO / CONVENTO'),
+        ('27', 'BENI_PRIVATI', 'BENI PRIVATI'),
+    )
 
-    tipo_territorio = models.CharField(max_length=2)
-    cod_comune = models.CharField(max_length=10)
-    cod_provincia = models.CharField(max_length=3)
-    denominazione = models.CharField(max_length=255)
-    iban = models.CharField(max_length=30, null=True, blank=True)
-    tipologia_cc = models.CharField(max_length=2, null=True, blank=True)
-    slug = models.SlugField(max_length=60)
-    sigla_provincia = models.CharField(max_length=3, null=True, blank=True)
+    CATEGORIA_IMMOBILE = Choices(
+        ('1', 'BENI_DEMANIALI', 'Beni Demaniali e Beni ecclesiastici di prop. Pubbl.'),
+        ('2', 'COMUNI_PROVINCE', 'Comuni e Province'),
+        ('3', 'ENTI_RELIGIOSI', 'Enti religiosi'),
+        ('4', 'MONASTERI_CONVENTI', 'Monasteri, Conventi ed ex'),
+        ('5', 'OPERE_BONIFICA', 'Opere di bonifica ed irrigazione'),
+        ('6', 'STRUTTURE_SANITARIE', 'Strutture Sanitarie'),
+        ('7', 'STRUTTURE_SCOLASTICHE', 'Strutture Scolastiche ed Universita'),
+    )
+
+    programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
+    # id_interv_a_progr = id fenice per l'intervento
+    id_interv_a_progr = models.PositiveSmallIntegerField(null=False, blank=False)
+    id_sogg_att = models.PositiveSmallIntegerField(null=False, blank=False)
+    # id_propr_imm = id fenice per l'immobile
+    id_propr_imm = models.PositiveSmallIntegerField(null=False, blank=False)
+    n_ordine = models.CharField(max_length=20, null=False, blank=False)
+    importo_generale = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+    importo_a_programma = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+    denominazione = models.TextField(max_length=400)
+    territorio = models.ForeignKey('territori.Territorio', null=True)
+    tipo_immobile = models.CharField(max_length=2, choices=TIPO_IMMOBILE, blank=False, null=False, default='')
+    categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
+    slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
+
+    def __unicode__(self):
+        return u"{} - {}".format(self.denominazione, self.territorio)
+
+    class Meta:
+        verbose_name_plural = u'Interventi a programma'
+
+
+class Programma(models.Model):
+    denominazione = models.TextField(max_length=120)
+    id_progr = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    def __unicode__(self):
+        return u"{}({})".format(self.denominazione, self.id_progr, )
+
+    class Meta:
+        verbose_name_plural = u'Programmi'
+
+
+class Cofinanziamento(models.Model):
+    TIPO_COFINANZIAMENTO = Choices(
+        ('1', 'ASSICURAZIONE', 'Assicurazione'),
+        ('2', 'DONAZIONI', 'Donazioni'),
+        ('3', 'OPERE_PROVVISIONALI', 'Opere provvisionali'),
+        ('4', 'MESSA_IN_SICUREZZA', 'Messa in sicurezza'),
+        ('5', 'FONDI_PROPRI', 'Fondi propri'),
+        ('6', 'EDILIZIA_SCOLASTICA', 'Edilizia scolastica'),
+    )
+
+    tipologia = models.CharField(max_length=2, choices=TIPO_COFINANZIAMENTO, blank=False, null=False, default='')
+    importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+    intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
+
+    def __unicode__(self):
+        return u"({}) {} - {}E".format(self.intervento_programma.pk, self.TIPO_COFINANZIAMENTO[self.tipologia],
+                                       self.importo)
+
+    class Meta:
+        verbose_name_plural = u'Cofinanziamenti'
+
+
+class Piano(models.Model):
+    TIPO_PIANO = Choices(
+        ('1', 'OPERE_PUBBLICHE', 'Piano opere pubbliche'),
+        ('2', 'BENI_CULTURALI', 'Piano beni culturali'),
+        ('3', 'EDILIZIA_SCOLASTICA', 'Piano edilizia scolastica ed universita'),
+        ('4', 'MISTI', 'Piano UMI - misti'),
+    )
+    # id_piano = id fenice x il piano
+    id_piano = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
+    tipologia = models.CharField(max_length=2, choices=TIPO_PIANO, blank=False, null=False, default='')
+    programma = models.ForeignKey('Programma', null=False, blank=False)
+    denominazione = models.TextField(max_length=120, default=u'')
+
+    def __unicode__(self):
+        return u"({}) {}".format(self.id_piano, self.TIPO_PIANO[self.tipologia])
+
+    class Meta:
+        verbose_name_plural = u'Piani'
+
+
+class InterventoPiano(models.Model):
+    intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
+    id_interv_a_piano = models.PositiveSmallIntegerField(null=False, blank=False)
+    imp_a_piano = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+    piano = models.ForeignKey('Piano', null=True, blank=True, default=None)
+
+    def __unicode__(self):
+        return u"{},{},{},{}".format(self.piano, self.intervento_programma.pk, self.id_interv_a_piano,
+                                     self.imp_a_piano)
+
+    class Meta:
+        verbose_name_plural = u'Interventi a piano'
+
+
+class Intervento(models.Model):
+    TIPO_INTERVENTO = Choices(
+        ('1', 'RIPARAZIONE_RAFFORZAMENTO', 'Riparazione con rafforzamento locale'),
+        ('2', 'RIPRISTINO', 'Ripristino con miglioramento sismico'),
+        ('3', 'DEMOLIZIONE', 'Demolizione e ricostruzione e/o nuova costruzione'),
+        ('4', 'NON_STRUTTURALE', 'Intervento non strutturale'),
+    )
+
+    STATO_INTERVENTO = Choices(
+        ('1', 'A_PIANO', 'A piano'),
+        ('2', 'BOZZA', 'In bozza'),
+        ('3', 'PRESENTATO', 'Presentato'),
+        ('4', 'AMMESSO', 'Ammesso'),
+        ('5', 'RESPINTO', 'Respinto'),
+        ('6', 'FONDI_ASSEGNATI', 'Fondi assegnati'),
+        ('7', 'RINUNCIATO', 'Rinunciato'),
+        ('8', '2_ACCONTO', '2 acconto'),
+        ('9', '3_ACCONTO', '3 acconto'),
+        ('10', 'SALDO', 'Saldo'),
+        ('11', 'CHIUSO', 'Chiuso'),
+        ('12', 'SOSTITUITO', 'Sostituito da variante'),
+    )
+
+    intervento_piano = models.ForeignKey('InterventoPiano', null=False, blank=False)
+    # id_interv = id fenice per l'intervento
+    id_interv = models.PositiveSmallIntegerField(null=False, blank=False)
+    is_variante = models.BooleanField(null=False, blank=False, default=False)
+    imp_congr_spesa = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+    denominazione = models.TextField(max_length=400)
+    tipologia = models.CharField(max_length=2, choices=TIPO_INTERVENTO, null=False, blank=False, default='')
+    stato = models.CharField(max_length=3, choices=STATO_INTERVENTO, null=False, blank=False, default='')
     gps_lat = models.FloatField(null=True, blank=True)
     gps_lon = models.FloatField(null=True, blank=True)
-    marker_max_size= 8000
-    marker_min_size= 1000
-
-    def __unicode__(self):
-        return u"%s (%s)" % (self.denominazione, self.cod_comune)
+    imprese = models.ManyToManyField(Impresa)
 
     class Meta:
-        verbose_name_plural = u'Territori'
-
-    def get_danno(self):
-        return Progetto.objects.filter(territorio=self, id_padre__isnull = True).\
-               aggregate(s=Sum('riepilogo_importi')).values()[0]
-
-    def get_donazioni(self):
-        return Donazione.objects.filter(territorio=self, confermato = True).aggregate(s=Sum('importo')).values()[0]
-
-
-    #    ritorna l'importo del danno in formato italiano
-    def get_danno_ita(self):
-        if self.get_danno():
-            return moneyfmt(self.get_danno(),2,"",".",",")
-        else:
-            return "0,00"
-
-    #    ritorna l'importo delle donazioni in formato italiano
-    def get_donazioni_ita(self):
-        if self.get_donazioni():
-            return moneyfmt(self.get_donazioni(),2,"",".",",")
-        else:
-            return "0,00"
-
-
-
-    def get_percentuale_donazioni(self):
-
-        danno = self.get_danno()
-        donazioni =  self.get_donazioni()
-        if danno:
-            if donazioni:
-                return (100 * donazioni)/danno
-            else:
-                return 0
-        else:
-            return None
-
-    def get_angolo_donazioni(self):
-
-        perc =  self.get_percentuale_donazioni()
-        if perc:
-            return (perc*360)/100
-        else:
-            return None
-
-    def get_marker_size(self):
-
-        biggest_damage=Territorio.objects.\
-                       filter(cod_comune__in=Territorio.get_territori_attivi()).\
-                        annotate(s=Sum('progetto__riepilogo_importi')).order_by('-s').\
-                        values_list('s',flat=True)[0]
-        danno=self.get_danno()
-        if danno and biggest_damage:
-            return self.marker_min_size+((danno/biggest_damage)*self.marker_max_size)*Decimal('0.45')
-        else:
-            return 0
-
-
-
-    def get_comuni_with_progetti(self):
-        return Territorio.objects.filter(tipo_territorio="C", cod_provincia = self.cod_provincia).\
-                filter(progetto__isnull = False).\
-                order_by("denominazione").distinct()
-
-    def get_provincia(self):
-        if self.tipo_territorio != "P":
-            return Territorio.objects.get(tipo_territorio="P", cod_provincia = self.cod_provincia)
-        else:
-            return None
-
-
-
-    def get_spline_data(self):
-
-        #tutte le donazioni nel tempo per il comune self
-        #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
-        # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
-
-        donazioni_mese = Donazione.objects.filter(territorio = self).\
-            extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
-            values('date').annotate(sum = Sum('importo')).order_by('date')
-
-        donazioni_spline =[]
-        j = 0
-
-
-        for idx, val in enumerate(donazioni_mese):
-##            converto la data nel formato  Nome mese - Anno
-            if type(val['date']).__name__=="datetime":
-                val_date_obj = val['date']
-            else:
-                val_date_obj = datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
-
-            val_date_print=_date(val_date_obj,"M - Y")
-
-            if idx is not 0:
-#                se le due date sono piu' distanti di un mese
-#                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
-#                per creare un grafico piatto
-                if type(val['date']).__name__=="datetime":
-                    donazioni_date_obj = donazioni_mese[idx-1]['date']
-                else:
-                    donazioni_date_obj = datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
-
-                if (val_date_obj-donazioni_date_obj) > timedelta(31):
-                    n_mesi = (val_date_obj - donazioni_date_obj).days / 28
-                    for k in range(1, n_mesi):
-                        new_month_obj = add_months(donazioni_date_obj,k)
-                        new_month_print = _date(new_month_obj,"M - Y")
-
-                        donazioni_spline.append({
-                            'month':new_month_print,
-                            'sum':Decimal(donazioni_spline[j-1]['sum']),
-                            'sum_ita':None,
-                        })
-                        j += 1
-
-#               inserisce il dato del mese corrente
-                donazioni_spline.append({
-                    'month':val_date_print,
-                    'sum':Decimal(donazioni_spline[j-1]['sum'])+Decimal(val['sum']),
-                    'sum_ita':None,
-                })
-                j += 1
-
-            else:
-                donazioni_spline.append({
-                    'month':val_date_print,
-                    'sum':Decimal(val['sum']),
-                    'sum_ita':None,
-                })
-                j += 1
-
-
-        for d in donazioni_spline:
-            d['sum']=moneyfmt(Decimal(d['sum']),2,"","",".")
-            d['sum_ita']=moneyfmt(Decimal(d['sum']),2,"",".",",")
-
-        return donazioni_spline
-
-#    get_territori_attivi restituisce la lista dei codici comune dei territori in cui abbiamo almeno un progetto attivo
-    @classmethod
-    def get_territori_attivi(cls):
-        return Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
-            annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',flat=True)
-
-
-    @classmethod
-    def get_boundingbox_minlat(cls):
-        return Territorio.objects.\
-               filter(gps_lat__gt=0).order_by('gps_lat').values_list('gps_lat',flat=True)[0]
-    @classmethod
-    def get_boundingbox_maxlat(cls):
-        return Territorio.objects.\
-               filter(gps_lat__gt=0).order_by('-gps_lat').values_list('gps_lat',flat=True)[0]
-
-    @classmethod
-    def get_boundingbox_minlon(cls):
-        return Territorio.objects.\
-               filter(gps_lat__gt=0).order_by('gps_lon').values_list('gps_lon',flat=True)[0]
-    @classmethod
-    def get_boundingbox_maxlon(cls):
-        return Territorio.objects.\
-               filter(gps_lat__gt=0).order_by('-gps_lon').values_list('gps_lon',flat=True)[0]
-
-
-
-
-    @classmethod
-    def get_map_center_lat(cls):
-        lat_max=Territorio.objects.\
-            filter(cod_comune__in=Territorio.get_territori_attivi()).\
-            filter(gps_lat__gt=0).order_by('-gps_lat').values_list('gps_lat',flat=True)[0]
-
-        lat_min=Territorio.objects.\
-                filter(cod_comune__in=Territorio.get_territori_attivi()).\
-                filter(gps_lat__gt=0).order_by('gps_lat').values_list('gps_lat',flat=True)[0]
-        if lat_max and lat_min:
-            return lat_min+(lat_max-lat_min)/2
-        else:
-            return None
-
-    @classmethod
-    def get_map_center_lon(cls):
-        lon_max=Territorio.objects.\
-            filter(cod_comune__in=Territorio.get_territori_attivi()).\
-            filter(gps_lon__gt=0).order_by('-gps_lon').values_list('gps_lon',flat=True)[0]
-        lon_min=Territorio.objects.\
-            filter(cod_comune__in=Territorio.get_territori_attivi()).\
-            filter(gps_lon__gt=0).order_by('gps_lon').values_list('gps_lon',flat=True)[0]
-        if lon_max and lon_min:
-            return lon_min+(lon_max-lon_min)/2
-        else:
-            return None
-
-
-
-class TipologiaProgetto(models.Model):
-    codice = models.SmallIntegerField(null=True, blank=True)
-    denominazione = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=100)
+        verbose_name_plural = u'Interventi'
 
     def __unicode__(self):
-        return u"%s" % self.denominazione
+        return u"{},{},{}".format(self.intervento_piano_id, self.denominazione, self.stato)
+
+
+class Liquidazione(models.Model):
+    TIPO_LIQUIDAZIONE = Choices(
+        ('1000', 'PRIMO_ACCONTO', 'Primo acconto'),
+        ('1100', 'BOZZA', 'In bozza'),
+        ('1110', 'PRESENTATO', 'Presentato'),
+        ('1111', 'AMMESSO', 'Ammesso'),
+        ('0100', 'RESPINTO', 'Respinto'),
+        ('0010', 'FONDI_ASSEGNATI', 'Fondi assegnati'),
+        ('0001', 'RINUNCIATO', 'Rinunciato'),
+        ('0110', '2_ACCONTO', '2 acconto'),
+        ('0111', '3_ACCONTO', '3 acconto'),
+        ('0011', 'SALDO', 'Saldo'),
+    )
+
+    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+    tipologia = models.CharField(max_length=5, choices=TIPO_LIQUIDAZIONE, null=False, blank=False, default='')
+    data = models.DateField(blank=False, null=False)
+    importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
 
     class Meta:
-        verbose_name_plural = u'Tipologia Progetti'
+        verbose_name_plural = u'Liquidazioni'
+
+    def __unicode__(self):
+        return u"{},{} {}E".format(self.intervento_id, self.data, self.importo)
+
+
+class EventoContrattuale(models.Model):
+    TIPO_EVENTO = Choices(
+        ('1', 'STIPULA_CONTRATTO', 'Stipula contratto'),
+        ('2', 'INIZIO_LAVORI', 'Inizio lavori'),
+        ('3', 'FINE_LAVORI', 'Fine lavori come da Capitolato'),
+        ('4', 'VERBALE_CONSEGNA', 'Verbale di consegna lavori'),
+    )
+    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+    tipologia = models.CharField(max_length=2, choices=TIPO_EVENTO, null=False, blank=False, default='')
+    data = models.DateField(blank=False, null=False)
+
+    class Meta:
+        verbose_name_plural = u'Eventi contrattuali'
+
+    def __unicode__(self):
+        return u"{},{},{}".format(self.intervento_id, self.TIPO_EVENTO[self.tipologia], self.data)
+
+
+class QuadroEconomico(models.Model):
+    TIPO_QUADRO_ECONOMICO = Choices(
+        ('1', 'SPESA_COMPLESSIVA', 'Quadro sommario della spesa complessiva'),
+        ('2', 'COFINANZIAMENTO_RIMBORSO', 'Quadro sommario del cofinanziamento da Rimborso assicurativo'),
+        ('3', 'COFINANZIAMENTO_DONAZIONI', 'Quadro sommario del cofinanziamento da Donazioni'),
+        ('4', 'COFINANZIAMENTO_OPERE', 'Quadro sommario del cofinanziamento da Opere provvisionali'),
+        ('5', 'COFINANZIAMENTO_MESSE_SICUREZZA', 'Quadro sommario del cofinanziamento da Messe in sicurezza'),
+        ('6', 'COFINANZIAMENTO_EDIFICI_SCOLASTICI',
+         'Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici'),
+        ('7', 'COFINANZIAMENTO_FONDI_PROPRI', 'Quadro sommario del cofinanziamento da Fondi propri (e altro)'),
+        ('8', 'SOMMARIO_GENERALE', 'Quadro sommario generale riepilogativo'),
+        ('9', 'QTE_COMMISSARIO', 'Q.T.E. relativo al finanziamento del Commissario'),
+        ('10', 'QTE_ASSICURATIVO', 'Q.T.E. riferito al cofinanziamento da Rimborso assicurativo'),
+        ('11', 'QTE_DONAZIONI', 'Q.T.E. riferito al cofinanziamento da Donazioni'),
+        ('12', 'QTE_OPERE', 'Q.T.E. riferito al cofinanziamento da Opere provvisionali'),
+        ('13', 'QTE_MESSE_SICUREZZA', 'Q.T.E. riferito al cofinanziamento da Messe in sicurezza'),
+        ('14', 'QTE_EDIFICI_SCOLASTICI', 'Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici'),
+        ('15', 'QTE_FONDI_PROPRI', 'Q.T.E. riferito al cofinanziamento da Fondi propri (e altro)'),
+        ('16', 'QTE_GENERALE', 'Q.T.E. generale riepilogativo'),
+        ('17', 'QTE_RIMODULATO_COMMISSARIO', 'Q.T.E. rimodulato relativo al finanziamento del Commissario'),
+        ('18', 'QTE_FINANZIAMENTO_COMMISSARIO', 'Q.T.E. relativo al finanziamento assegnato dal Commissario'),
+    )
+    tipologia = models.CharField(max_length=2, choices=TIPO_QUADRO_ECONOMICO, blank=False, null=False, default='')
+    importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+
+    class Meta:
+        abstract = True
+
+
+class QuadroEconomicoProgetto(QuadroEconomico):
+    progetto = models.ForeignKey('Progetto', null=False, blank=False)
+
+    class Meta:
+        verbose_name_plural = u'Quadro Economico Progetto'
+
+    def __unicode__(self):
+        return "({}) {} - {} E".format(self.progetto.pk, self.TIPO_QUADRO_ECONOMICO[self.tipologia], self.importo)
+
+
+class QuadroEconomicoIntervento(QuadroEconomico):
+    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+
+    class Meta:
+        verbose_name_plural = u'Quadro Economico Intervento'
+
+    def __unicode__(self):
+        return "({}) {} - {} E".format(self.intervento.pk, self.TIPO_QUADRO_ECONOMICO[self.tipologia], self.importo)
+
 
 class Progetto(models.Model):
+    TIPO_PROGETTO = Choices(
+        ('1', 'PROGETTO_PRELIMINARE', 'Progetto preliminare'),
+        ('2', 'PROGETTO_DEFINITIVO', 'Progetto definitivo'),
+        ('3', 'PROGETTO_ESECUTIVO', 'Progetto esecutivo'),
+        ('4', 'PERIZIA_SISMICA', 'Perizia sismica'),
+        ('5', 'PERIZIA_DEMOLIZIONE_RIPRISTINO', 'Perizia demolizione con progetto di ripristino'),
+        ('6', 'PERIZIA_DEMOLIZIONE_CONVENZIONALE', 'Perizia demolizione con calcolo convenzionale'),
+        ('7', 'CALCOLO_CONVENZIONALE', 'Calcolo convenzionale'),
+    )
 
-    id_progetto = models.CharField(max_length=6)
-    id_padre = models.CharField(max_length=6, blank=True, null=True)
-    tipologia = models.ForeignKey('TipologiaProgetto', null=False)
-    territorio = models.ForeignKey('Territorio', null=True)
-    importo_previsto = models.TextField(max_length=4096)
-    riepilogo_importi = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
-    denominazione = models.TextField(max_length=4096)
-    slug = models.SlugField(max_length=60)
-    parent = models.ForeignKey('Progetto', null=True)
-    ubicazione = models.CharField(max_length=500)
-    tempi_di_realizzazione = models.TextField()
-    stato_attuale = models.TextField()
-    interventi_previsti = models.TextField()
-    epoca = models.TextField()
-    cenni_storici = models.TextField()
-    ulteriori_info = models.TextField()
-
-
-#    ritorna l'importo lavori in formato italiano
-    def get_riepilogo_importi_ita(self):
-        if self.riepilogo_importi:
-            return moneyfmt(self.riepilogo_importi,2,"",".",",")
-        else:
-            return "0,00"
-
-    def get_donazioni_ita(self):
-        donazioni_p = Donazione.objects.filter(progetto=self).aggregate(sum=Sum('importo')).values()
-        if donazioni_p[0]:
-            return moneyfmt(donazioni_p[0],2,"",".",",")
-        else:
-            return "0,00"
-
-    def __unicode__(self):
-        return u"%s ID: %s, TIPOLOGIA: %s, PADRE: [%s]" % (self.denominazione, self.id_progetto, self.tipologia, self.parent)
+    STATO_PROGETTO = Choices(
+        ('1', 'BOZZA', 'In bozza'),
+        ('2', 'PRESENTATO', 'Presentato'),
+        ('3', 'PRESO_IN_CARICO', 'Preso in carico'),
+        ('4', 'ISTRUTTORIA', 'In istruttoria'),
+        ('5', 'RESPINTO', 'Respinto'),
+        ('6', 'AMMESSO', 'Ammesso'),
+    )
+    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+    tipologia = models.CharField(max_length=2, choices=TIPO_PROGETTO, blank=False, null=False, default='')
+    stato_progetto = models.CharField(max_length=2, choices=STATO_PROGETTO, blank=False, null=False, default='')
+    data_deposito = models.DateField(blank=False, null=False)
 
     class Meta:
         verbose_name_plural = u'Progetti'
 
 
-class TipologiaCedente(models.Model):
-    codice = models.SmallIntegerField(null=True, blank=True)
-    denominazione = models.CharField(max_length=255)
-    slug=models.SlugField(max_length=60)
-
-    def __unicode__(self):
-        return u"%s - %s" % (self.codice, self.denominazione)
-
-    class Meta:
-        verbose_name_plural = u'Tipologia Cedenti'
-
-
 class Donazione(models.Model):
+    TIPO_DONAZIONE = Choices(
+        (u'1', u'Diretta', u'Diretta'),
+        (u'2', u'Regione', u'Regione'),
+    )
 
-    id_donazione = models.CharField(max_length=6)
-    territorio = models.ForeignKey('Territorio')
-    denominazione = models.TextField(max_length=1000)
-    info = models.TextField(max_length=1000,null=True, blank=True)
-    modalita_r = models.TextField(max_length=20,null=True, blank=True)
-    tipologia = models.ForeignKey('TipologiaCedente')
-    data = models.DateField()
-    avvenuto = models.BooleanField()
-    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, null=True, blank=True)
-    confermato = models.BooleanField()
-    progetto = models.ForeignKey('Progetto',null=True, blank=True)
+    TIPO_CEDENTE = Choices(
+        (u'0', u'ALTRO', u'ALTRO'),
+        (u'1', u'ASSOCIAZIONI', u'ASSOCIAZIONI'),
+        (u'2', u'ENTI_PUBBLICI', u'ENTI PUBBLICI'),
+        (u'3', u'COMUNI', u'COMUNI'),
+        (u'4', u'CITTADINI', u'CITTADINI'),
+        (u'5', u'AZIENDE', u'AZIENDE'),
+        (u'6', u'REGIONI', u'REGIONI'),
+        (u'7', u'PROVINCE', u'PROVINCE'),
+    )
+
+    territorio = models.ForeignKey('territori.Territorio')
+    denominazione = models.CharField(max_length=256)
+    informazioni = models.TextField(max_length=800, blank=True, null=True, default=None)
+    tipologia_cedente = models.CharField(max_length=2, choices=TIPO_CEDENTE, blank=False, null=False, default='')
+    tipologia_donazione = models.CharField(max_length=2, choices=TIPO_DONAZIONE, blank=False, null=False, default='')
+    data = models.DateField(null=True, blank=True)
+    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False, )
+    interventi_programma = models.ManyToManyField(InterventoProgramma, through='DonazioneInterventoProgramma')
 
     def __unicode__(self):
-        if self.progetto is None:
-            return u"%s (ID: %s, Data:%s)" % (self.denominazione, self.id, self.data)
-        else:
-            return u"%s (ID: %s, Data:%s) Progetto:%s" % (self.denominazione, self.id, self.data, self.progetto.denominazione)
+        return u"{} - {}".format(self.denominazione, self.territorio)
+
     #    ritorna l'importo lavori in formato italiano
     def get_importo_ita(self):
-        return moneyfmt(self.importo,2,"",".",",")
-
-    def detail(self):
-        return u"%s (ID: %s, territorio:%s, tipologia:%s, progetto:%s, avvenuto:%s, conf:%s)" % (self.denominazione, self.id, self.territorio_id, self.tipologia_id, self.progetto_id, self.avvenuto, self.confermato)
-
+        return moneyfmt(self.importo, 2, "", ".", ",")
 
     class Meta:
         verbose_name_plural = u'Donazioni'
 
 
-class Entry(models.Model):
+class DonazioneInterventoProgramma(models.Model):
+    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False, )
+    donazione = models.ForeignKey('Donazione', blank=False, null=False)
+    intervento_programma = models.ForeignKey('InterventoProgramma', blank=False, null=False)
 
-    title= models.CharField(max_length=255)
-    author=models.CharField(max_length=255, null=True, blank=True)
-    body= models.TextField()
-    body_html = models.TextField(editable=False, default="")
-    published_at= models.DateTimeField(default=datetime.now())
-    slug=models.SlugField(max_length=60, blank=True)
-    published=models.BooleanField(default=False)
-    big_news=models.BooleanField(default=False)
+    class Meta:
+        verbose_name_plural = u'Donazioni a Interventi a programma'
 
     def __unicode__(self):
-        if self.big_news:
-            return u"%s - %s - BIG NEWS" %(self.published_at.date(), self.title)
-        else:
-            return u"%s - %s" %(self.published_at.date(), self.title)
+        return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.importo)
 
 
-    class Meta():
-        verbose_name= 'articolo'
-        verbose_name_plural= 'News'
+##
+# ANAGRAFICHE
+##
 
-    def save(self):
-        super(Entry, self).save()
-        if self.body:
-            self.body_html= markdown(self.body)
-
-        if self.published_at:
-            self.slug = '%s-%s%s%s-%i' % (
-                slugify(self.title), self.published_at.day,self.published_at.month,self.published_at.year, self.id
-            )
-        else:
-            self.slug = '%s-%i' % (
-                slugify(self.title), self.id
-                )
-        super(Entry, self).save()
+class Anagrafica(models.Model):
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
 
 
-class Blog(object):
+class SoggettoAttuatore(Anagrafica):
+    denominazione = models.CharField(max_length=256)
 
-    @staticmethod
-    def get_latest_entries(qnt=10, end_date=None, start_date=None, single=False):
-        end_date = end_date or datetime.now()
-        qnt = qnt if not single else 1
+    class Meta:
+        verbose_name_plural = u'Soggetti attuatori'
 
-        if start_date:
-            entries = Entry.objects.filter(published_at__range=(start_date, end_date))[:qnt]
-        else :
-            entries = Entry.objects.filter(published_at__lte=end_date)[:qnt]
+    def __unicode__(self):
+        return u"({}) {}".format(self.id_fenice, self.denominazione)
 
-        if single :
-            return entries[0] if entries else None
 
-        return entries
+class ProprietarioImmobile(Anagrafica):
+    denominazione = models.CharField(max_length=256)
+
+    class Meta:
+        verbose_name_plural = u'Proprietari immobile'
+
+
+    def __unicode__(self):
+        return u"({}) {}".format(self.id_fenice, self.denominazione)
+
+
+class RUP(Anagrafica):
+    nome = models.CharField(max_length=256)
+    cognome = models.CharField(max_length=256)
+    cf = models.CharField(max_length=256)
+
+    class Meta:
+        verbose_name_plural = u'RUP'
+
+
+    def __unicode__(self):
+        return u"({}) {} {} [{}]".format(self.id_fenice, self.nome, self.cognome, self.cf)

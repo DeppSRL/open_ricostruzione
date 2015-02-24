@@ -18,7 +18,7 @@
     <strong>
         {% if tipologia or comune %}
             Donazioni
-            {% if tipologia %}da <a href="{% url donazioni-tipologia tipologia.slug %}">{{tipologia.denominazione}}</a>{% endif %}{% if comune %} per il <a href="{% url territorio_detail comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
+            {% if tipologia %}da <a href="{% url "donazioni-tipologia" tipologia.slug %}">{{tipologia.denominazione}}</a>{% endif %}{% if comune %} per il <a href="{% url "territorio_detail" comune.slug %} ">Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})</a>{% endif %},
          {% else %}
             Tutte le donazioni
         {% endif %}
@@ -72,7 +72,7 @@
                         <div class="row">
                             <div class="span4">
                                 Per il Comune di
-                                <a href="{% url territorio_detail result.donazione.territorio.slug %}" >
+                                <a href="{% url "territorio_detail" result.donazione.territorio.slug %}" >
                                     {{ result.donazione.territorio.denominazione }}
                                     ({{ result.donazione.territorio.get_provincia.sigla_provincia}})
                                 </a>
@@ -106,12 +106,12 @@
             </div>
             Non è stata trovata nessuna donazione
             {% if tipologia %}da
-                <a href="{% url donazioni-tipologia tipologia.slug %}">
+                <a href="{% url "donazioni-tipologia" tipologia.slug %}">
                     {{tipologia.denominazione}}
                 </a>
             {% endif %}
             {% if comune %} per il
-                <a href="{% url territorio_detail comune.slug %} ">
+                <a href="{% url "territorio_detail" comune.slug %} ">
                     Comune di {{ comune.denominazione }} ({{ comune.get_provincia.sigla_provincia }})
                 </a>
             {% endif %},

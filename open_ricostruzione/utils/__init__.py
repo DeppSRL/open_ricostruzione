@@ -2,6 +2,7 @@ from _csv import register_dialect, QUOTE_ALL
 import csv
 import codecs
 import cStringIO
+from HTMLParser import HTMLParser
 import re
 
 class UTF8Recoder:
@@ -60,12 +61,12 @@ class UnicodeDictWriter(object):
             self.writerow(D)
 
 
-class excel_semicolon(csv.excel):
+class ExcelSemicolon(csv.excel):
     """Extends excel Dialect in order to set semicolon as delimiter."""
     delimiter = ';'
     quoting = QUOTE_ALL
 
-register_dialect("excel_semicolon", excel_semicolon)
+register_dialect("excel_semicolon", ExcelSemicolon)
 
 
 class UnicodeWriter:
@@ -101,3 +102,22 @@ class UnicodeWriter:
 def remove_img_tags(data):
     p = re.compile(r'<img.*?/>')
     return p.sub('', data)
+
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+
+    def handle_data(self, d):
+        self.fed.append(d)
+
+    def get_data(self):
+        return ' '.join(self.fed)
+
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
+

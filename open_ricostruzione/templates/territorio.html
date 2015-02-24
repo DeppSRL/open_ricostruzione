@@ -44,7 +44,7 @@
                             </a>
                         </div>
                         <div class="tipologia">
-                            <a href="{% url progetti-tipologia-comune p.tipologia.slug territorio.slug %} ">
+                            <a href="{% url "progetti-tipologia"-comune p.tipologia.slug territorio.slug %} ">
                                 {{  p.tipologia }}
                             </a>
                         </div>
@@ -62,7 +62,7 @@
             </div>
             <div>
             {% if n_progetti > 10 %}
-                <a href="{% url progetti-comune territorio.slug %}" >Vedi tutti i {{ n_progetti }} progetti</a>
+                <a href="{% url "progetti-comune" territorio.slug %}" >Vedi tutti i {{ n_progetti }} progetti</a>
             {% endif %}
             </div>
         </div>
@@ -99,7 +99,7 @@
                                     <span class="cypher">
                                         {{ p.c }}
                                     </span>
-                                    <a href="{% url progetti-tipologia-comune p.tipologia__slug territorio.slug %}">{{ p.tipologia__denominazione }}</a></div>
+                                    <a href="{% url "progetti-tipologia"-comune p.tipologia__slug territorio.slug %}">{{ p.tipologia__denominazione }}</a></div>
 
                                 <div class="importo">
                                     {% ifnotequal p.sum "0,00" %}
@@ -134,7 +134,7 @@
                                                 da
                                             </span>
                                             {% if p.tipologia__denominazione != tipologia_privati.denominazione and  p.tipologia__denominazione != tipologia_altro.denominazione %}
-                                                <a href="{% url donazioni-tipologia-comune p.tipologia__slug territorio.slug %} ">
+                                                <a href="{% url "donazioni-tipologia-comune" p.tipologia__slug territorio.slug %} ">
                                                     {{ p.tipologia__denominazione }}
                                                 </a>
                                                 {% if p.tipologia__denominazione == tipologia_regione_emilia.denominazione %}
@@ -156,7 +156,7 @@
                                     <span class="cypher">
                                         {{ n_donazioni }}
                                     </span>
-                                    <a href="{% url donazioni-comune territorio.slug %} ">
+                                    <a href="{% url "donazioni-comune" territorio.slug %} ">
                                          Donazioni totali
                                     </a>
                                 </div>
@@ -190,7 +190,7 @@
                                         Da
                                         <strong>
                                             {% if p.tipologia.denominazione != tipologia_privati.denominazione and  p.tipologia.denominazione != tipologia_altro.denominazione %}
-                                                <a href="{% url donazioni-tipologia-comune p.slug territorio.slug %}">
+                                                <a href="{% url "donazioni-tipologia-comune" p.slug territorio.slug %}">
                                                     {{ p.tipologia.denominazione }}
                                                 </a>
                                             {% else %}
@@ -430,7 +430,7 @@
 {% endblock %}
 
 {% block comment %}
-    {% load disqus_tags %}
-    {% disqus_show_comments %}
+{#    {% load disqus_tags %}#}
+{#    {% disqus_show_comments %}#}
 {% endblock %}
 

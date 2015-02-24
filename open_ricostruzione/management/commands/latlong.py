@@ -33,7 +33,7 @@ class Command(NoArgsCommand):
           comune.gps_lon=float(c['gps_lon'])
           comune.save()
           if options['verbose']:
-          	print "Comune: %s (%s, %s)" % (comune.denominazione, comune.gps_lat, comune.gps_lon)
+            print "Comune: %s (%s, %s)" % (comune.denominazione, comune.gps_lat, comune.gps_lon)
 
 
       print "Import latlon terminato"

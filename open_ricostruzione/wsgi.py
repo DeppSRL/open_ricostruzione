@@ -14,8 +14,13 @@ framework.
 
 """
 import os
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "open_ricostruzione.settings_local")
+import environ
+root = environ.Path(__file__) - 2  # (/open_ricostruzione/ - 1 = /)
+env = environ.Env(
+    DEBUG=(bool, True),
+)
+env.read_env(root('.env'))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", env('DJANGO_SETTINGS_MODULE'))
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION

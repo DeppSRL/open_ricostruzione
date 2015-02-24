@@ -1,11 +1,10 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
+from territori.models import Territorio
 
-class HasProgetto(SimpleListFilter):
-    # Human-readable title which will be displayed in the
-    # right admin sidebar just above the filter options.
-    title = _('Associata a un Progetto')
-    parameter_name = 'has_progetto'
+class TerritorioHasObject(SimpleListFilter):
+    title = _('Territorio')
+    parameter_name = 'territorio_has_object'
 
     def lookups(self, request, model_admin):
         """
@@ -15,10 +14,11 @@ class HasProgetto(SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        return (
-            ('yes', _('si')),
-            ('no', _('no')),
-        )
+        t_list = self.get_interested_territori()
+        territori_tuple = ()
+        for t in t_list:
+            territori_tuple+= ((t['slug'],"{} ({})".format(t['denominazione'],t['prov'])),)
+        return territori_tuple
 
     def queryset(self, request, queryset):
         """
@@ -26,8 +26,30 @@ class HasProgetto(SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
-        if self.value() == 'yes':
-            return queryset.exclude(progetto__isnull=True)
+        if self.value():
+            return queryset.filter(territorio__slug=self.value())
 
-        if self.value() == 'no':
-            return queryset.filter(progetto__isnull=True)
+        return queryset
+
+
+class TerritorioWithDonazione(TerritorioHasObject):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+
+    def get_interested_territori(self):
+        return Territorio.objects.filter(donazione__isnull=False, tipologia="C").order_by(
+            'denominazione').distinct().values('denominazione','prov','slug')
+
+
+class TerritorioWithIntervento(TerritorioHasObject):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+
+    def get_interested_territori(self):
+        return Territorio.objects.filter(interventoprogramma__isnull=False, tipologia="C").order_by(
+            'denominazione').distinct().values('denominazione','prov','slug')
+
+
+
+
+
