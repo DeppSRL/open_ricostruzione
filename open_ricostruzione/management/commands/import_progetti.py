@@ -14,6 +14,16 @@ import logging
 from datetime import datetime
 
 
+class DecimalEncoder(json.JSONEncoder):
+    def _iterencode(self, o, markers=None):
+        if isinstance(o, Decimal):
+            # wanted a simple yield str(o) in the next line,
+            # but that would mean a yield on the line with super(...),
+            # which wouldn't work (see my comment below), so...
+            return (str(o) for o in [o])
+        return super(DecimalEncoder, self)._iterencode(o, markers)
+
+
 class Command(BaseCommand):
     help = 'Import progetti data from JSON file'
 
@@ -39,27 +49,32 @@ class Command(BaseCommand):
     error_logfile = None
     donazioni_intervento_programma = None
 
-    def dumpDonazioniProgramma(self):
+    def dump_error_don(self):
+        with open(self.error_logfile, 'w') as outfile:
+            json.dumps(self.donazioni_intervento_programma, outfile, use_decimal=True)
+        return
+
+    def store_don_progr(self):
         self.donazioni_intervento_programma = list(
             DonazioneInterventoProgramma. \
-            objects.all().order_by('intervento_programma__programma__id'). \
-            values('importo', 'donazione__pk', 'donazione__denominazione',
-                   'intervento_programma__programma__id',
-                   'intervento_programma__id_interv_a_progr',
-                   'intervento_programma__id_sogg_att',
-                   'intervento_programma__id_propr_imm',
-                   'intervento_programma__n_ordine',
-                   'intervento_programma__importo_generale',
-                   'intervento_programma__importo_a_programma',
-                   'intervento_programma__denominazione',
-                   'intervento_programma__territorio__slug',
-                   'intervento_programma__tipo_immobile',
-                   'intervento_programma__slug',
+                objects.all().order_by('intervento_programma__programma__id'). \
+                values('importo', 'donazione__pk', 'donazione__denominazione',
+                       'intervento_programma__programma__id',
+                       'intervento_programma__id_interv_a_progr',
+                       'intervento_programma__id_sogg_att',
+                       'intervento_programma__id_propr_imm',
+                       'intervento_programma__n_ordine',
+                       'intervento_programma__importo_generale',
+                       'intervento_programma__importo_a_programma',
+                       'intervento_programma__denominazione',
+                       'intervento_programma__territorio__slug',
+                       'intervento_programma__tipo_immobile',
+                       'intervento_programma__slug',
             )
         )
         return
 
-    def associateDonazioniProgramma(self):
+    def associate_don_progr(self):
 
         for idx, dip_dict in enumerate(self.donazioni_intervento_programma):
             iap = None
@@ -67,8 +82,10 @@ class Command(BaseCommand):
                 iap = InterventoProgramma.objects.get(
                     id_interv_a_progr=dip_dict['intervento_programma__id_interv_a_progr'])
             except ObjectDoesNotExist:
-                self.logger.error(u"Cannot find Intervento a programma {}".format(
-                    dip_dict['intervento_programma__id_interv_a_progr']))
+                self.logger.error(
+                    u"Cannot find Intervento a programma id_interv_progr:{} to associate with Donazione {}({})".format(
+                        dip_dict['intervento_programma__id_interv_a_progr'], dip_dict['donazione__denominazione'],
+                        dip_dict['donazione__pk']))
                 continue
             else:
                 dip = DonazioneInterventoProgramma()
@@ -92,7 +109,8 @@ class Command(BaseCommand):
 
         self.input_file = options['file']
         self.delete = options['delete']
-        self.error_logfile = "{}/log/import_{}".format(settings.REPO_ROOT,datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
+        self.error_logfile = "{}/log/import_{}".format(settings.REPO_ROOT,
+                                                       datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
         not_found_istat = []
@@ -110,7 +128,7 @@ class Command(BaseCommand):
         ##
 
         self.logger.info("Dumping Donazioni Programma before import")
-        self.dumpDonazioniProgramma()
+        self.store_don_progr()
         self.logger.info("Saved {} Donazioni Programma".format(len(self.donazioni_intervento_programma)))
 
         if self.delete:
@@ -120,6 +138,10 @@ class Command(BaseCommand):
 
         set_autocommit(False)
         for intervento_a_programma in data['interventi_a_programma']:
+            # debug
+            # if intervento_a_programma['id_interv_a_progr'] == 31:
+            #     continue
+
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
             try:
                 territorio = Territorio.objects.get(istat_id=istat_comune)
@@ -259,12 +281,13 @@ class Command(BaseCommand):
 
         self.logger.info("Recovering Donazioni Programma...")
         total_donazioni_intervento = len(self.donazioni_intervento_programma)
-        self.associateDonazioniProgramma()
+        self.associate_don_progr()
         not_associated_donazioni_intervento = len(self.donazioni_intervento_programma)
-        associated_donazioni_intervento = total_donazioni_intervento-not_associated_donazioni_intervento
+        associated_donazioni_intervento = total_donazioni_intervento - not_associated_donazioni_intervento
         self.logger.info("Correctly associated {} Donazioni Programma".format(associated_donazioni_intervento, ))
         if not_associated_donazioni_intervento > 0:
-            self.logger.error(u"Could NOT ASSOCIATE {} Donazioni Programma. Dumped error data in file {}".format(not_associated_donazioni_intervento, error_logfile))
-
+            self.logger.error(u"Could NOT ASSOCIATE {} Donazioni Programma. Dumped error data in file {}".
+                format(not_associated_donazioni_intervento, self.error_logfile))
+            self.dump_error_don()
 
         commit()
