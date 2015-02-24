@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from django.conf import settings
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
     Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, Impresa, DonazioneInterventoProgramma, Donazione
 from territori.models import Territorio
@@ -51,14 +52,17 @@ class Command(BaseCommand):
 
     def dump_error_don(self):
         with open(self.error_logfile, 'w') as outfile:
-            json.dumps(self.donazioni_intervento_programma, outfile, use_decimal=True)
+            json.dump(self.donazioni_intervento_programma, outfile, indent=4, cls=DjangoJSONEncoder)
         return
 
     def store_don_progr(self):
         self.donazioni_intervento_programma = list(
             DonazioneInterventoProgramma. \
                 objects.all().order_by('intervento_programma__programma__id'). \
-                values('importo', 'donazione__pk', 'donazione__denominazione',
+                values(
+                        'importo',
+                       'donazione__pk',
+                       'donazione__denominazione',
                        'intervento_programma__programma__id',
                        'intervento_programma__id_interv_a_progr',
                        'intervento_programma__id_sogg_att',
@@ -72,7 +76,6 @@ class Command(BaseCommand):
                        'intervento_programma__slug',
             )
         )
-        return
 
     def associate_don_progr(self):
 
@@ -109,7 +112,7 @@ class Command(BaseCommand):
 
         self.input_file = options['file']
         self.delete = options['delete']
-        self.error_logfile = "{}/log/import_{}".format(settings.REPO_ROOT,
+        self.error_logfile = "{}/log/import_{}.json".format(settings.REPO_ROOT,
                                                        datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
@@ -138,10 +141,6 @@ class Command(BaseCommand):
 
         set_autocommit(False)
         for intervento_a_programma in data['interventi_a_programma']:
-            # debug
-            # if intervento_a_programma['id_interv_a_progr'] == 31:
-            #     continue
-
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
             try:
                 territorio = Territorio.objects.get(istat_id=istat_comune)
