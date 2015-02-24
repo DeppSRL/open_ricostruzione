@@ -8,25 +8,16 @@ from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
-    Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, Impresa, DonazioneInterventoProgramma, Donazione
+    Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, \
+    Impresa, DonazioneInterventoProgramma, Donazione
 from territori.models import Territorio
 from optparse import make_option
 import logging
 from datetime import datetime
 
 
-class DecimalEncoder(json.JSONEncoder):
-    def _iterencode(self, o, markers=None):
-        if isinstance(o, Decimal):
-            # wanted a simple yield str(o) in the next line,
-            # but that would mean a yield on the line with super(...),
-            # which wouldn't work (see my comment below), so...
-            return (str(o) for o in [o])
-        return super(DecimalEncoder, self)._iterencode(o, markers)
-
-
 class Command(BaseCommand):
-    help = 'Import progetti data from JSON file'
+    help = 'Import interventi data from JSON file'
 
     option_list = BaseCommand.option_list + (
 
@@ -34,24 +25,18 @@ class Command(BaseCommand):
                     dest='file',
                     default='',
                     help='Path to file'),
-        make_option('--delete',
-                    dest='delete',
-                    action='store_true',
-                    default=True,
-                    help='Delete Existing Records'),
-
     )
 
     input_file = None
-    delete = False
     encoding = 'latin-1'
     logger = logging.getLogger('csvimport')
     date_format = '%d/%M/%Y'
     error_logfile = None
+    temp_logfile = None
     donazioni_intervento_programma = None
 
-    def dump_error_don(self):
-        with open(self.error_logfile, 'w') as outfile:
+    def dump_don_json(self, logfile_name):
+        with open(logfile_name, 'w') as outfile:
             json.dump(self.donazioni_intervento_programma, outfile, indent=4, cls=DjangoJSONEncoder)
         return
 
@@ -111,8 +96,9 @@ class Command(BaseCommand):
             self.logger.setLevel(logging.DEBUG)
 
         self.input_file = options['file']
-        self.delete = options['delete']
         self.error_logfile = "{}/log/import_{}.json".format(settings.REPO_ROOT,
+                                                       datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
+        self.temp_logfile= "{}/log/import_{}_temp.json".format(settings.REPO_ROOT,
                                                        datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
@@ -130,14 +116,19 @@ class Command(BaseCommand):
         # lost when the script will delete all InterventoProgramma objs.
         ##
 
-        self.logger.info("Dumping Donazioni Programma before import")
+        self.logger.info("Checking Donazioni Programma before import...")
         self.store_don_progr()
-        self.logger.info("Saved {} Donazioni Programma".format(len(self.donazioni_intervento_programma)))
+        if len(self.donazioni_intervento_programma)>0:
+            self.dump_don_json(self.temp_logfile)
+            self.logger.info("Saved {} Donazioni Programma".format(len(self.donazioni_intervento_programma)))
+            self.logger.info("Dumped ALL Donazioni Programma in temp file:{}".format(self.temp_logfile))
+        else:
+            self.logger.info("No Donazioni Programma found")
 
-        if self.delete:
-            self.logger.info("Deleting all previous records...")
-            InterventoProgramma.objects.all().delete()
-            self.logger.info("Done")
+
+        self.logger.info("Deleting all previous records...")
+        InterventoProgramma.objects.all().delete()
+        self.logger.info("Done")
 
         set_autocommit(False)
         for intervento_a_programma in data['interventi_a_programma']:
@@ -278,15 +269,17 @@ class Command(BaseCommand):
                             intr.imprese.add(impr)
         commit()
 
-        self.logger.info("Recovering Donazioni Programma...")
+        self.logger.info("Recovering Donazioni Programma if present...")
         total_donazioni_intervento = len(self.donazioni_intervento_programma)
         self.associate_don_progr()
         not_associated_donazioni_intervento = len(self.donazioni_intervento_programma)
         associated_donazioni_intervento = total_donazioni_intervento - not_associated_donazioni_intervento
-        self.logger.info("Correctly associated {} Donazioni Programma".format(associated_donazioni_intervento, ))
+        if associated_donazioni_intervento > 0:
+            self.logger.info("Correctly associated {} Donazioni Programma".format(associated_donazioni_intervento, ))
         if not_associated_donazioni_intervento > 0:
-            self.logger.error(u"Could NOT ASSOCIATE {} Donazioni Programma. Dumped error data in file {}".
+            self.logger.error(u"Could NOT ASSOCIATE {} Donazioni Programma. Dumped ONLY ERROR DATA in file {}".
                 format(not_associated_donazioni_intervento, self.error_logfile))
-            self.dump_error_don()
+            self.dump_don_json(self.error_logfile)
 
+        self.logger.info("Done")
         commit()
