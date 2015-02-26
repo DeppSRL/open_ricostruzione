@@ -1,4 +1,6 @@
 from decimal import Decimal
+from django.core.exceptions import ValidationError
+from django.db.models import Sum
 from model_utils import Choices
 import time
 from django.db import models
@@ -348,7 +350,7 @@ class Donazione(models.Model):
 
 
 class DonazioneInterventoProgramma(models.Model):
-    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False, )
+    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False)
     donazione = models.ForeignKey('Donazione', blank=False, null=False)
     intervento_programma = models.ForeignKey('InterventoProgramma', blank=False, null=False)
 
@@ -357,6 +359,23 @@ class DonazioneInterventoProgramma(models.Model):
 
     def __unicode__(self):
         return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.importo)
+
+    def clean(self):
+        # Check that SUM(importo donazioni intervento) <= donazione.importo and that self.import >0
+
+        if self.importo == Decimal(0):
+            raise ValidationError("L'importo deve essere maggiore di zero")
+
+        importo_donazioni_intervento = DonazioneInterventoProgramma.\
+            objects.filter(donazione=self.donazione).exclude(pk=self.pk).aggregate(Sum('importo'))['importo__sum']
+
+        if not importo_donazioni_intervento:
+            importo_donazioni_intervento = 0
+
+        difference = self.donazione.importo - Decimal(importo_donazioni_intervento)
+        if difference < self.importo:
+            raise ValidationError('Importo massimo disponibile per la donazione a intervento:{}'.format(difference))
+
 
 
 ##
