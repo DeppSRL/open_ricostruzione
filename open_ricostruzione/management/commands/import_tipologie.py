@@ -55,7 +55,7 @@ class Command(BaseCommand):
         for piano_json in self.codifiche['piani']:
             programma_piano = None
             try:
-                programma_piano = Programma.objects.get(id_progr=piano_json['id_progr'])
+                programma_piano = Programma.objects.get(id_fenice=piano_json['id_progr'])
             except ObjectDoesNotExist:
                 self.logger.error("Programma not found for Piano with id:{}".format(piano_json['id']))
                 exit()
