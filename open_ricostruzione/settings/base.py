@@ -18,7 +18,7 @@ TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', False)
 ########## END DEBUG CONFIGURATION
 
 DEVELOPMENT = False
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
 
 ADMINS = (
