@@ -36,7 +36,7 @@ class ProgrammaAdmin(admin.ModelAdmin):
 
 class PianoAdmin(admin.ModelAdmin):
     model = Piano
-    ordering = ['id_piano']
+    ordering = ['id_fenice']
 
 
 class DonazioneAdmin(admin.ModelAdmin):
@@ -82,6 +82,7 @@ class QEInterventoAdmin(admin.ModelAdmin):
 
 class SoggettoAttuatoreAdmin(admin.ModelAdmin):
     model = SoggettoAttuatore
+    ordering = ('denominazione',)
 
 class RUPAdmin(admin.ModelAdmin):
     model = RUP
