@@ -61,7 +61,7 @@ class Command(BaseCommand):
                 exit()
 
             Piano.objects.update_or_create(
-                id_piano=piano_json['id'],
+                id_fenice=piano_json['id'],
                 programma=programma_piano,
                 tipologia=piano_json['id_tipo_piano'],
                 defaults={
@@ -72,7 +72,7 @@ class Command(BaseCommand):
     def import_programmi(self):
         for programma_json in self.codifiche['programmi']:
             Programma.objects.update_or_create(
-                id_progr=programma_json['id'],
+                id_fenice=programma_json['id'],
                 defaults={
                     'denominazione': programma_json['nome']
                 }
