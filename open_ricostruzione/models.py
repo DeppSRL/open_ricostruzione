@@ -377,6 +377,15 @@ class DonazioneInterventoProgramma(models.Model):
             raise ValidationError('Importo massimo disponibile per la donazione a intervento:{}'.format(difference))
 
 
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        
+        # before saving calls validation function
+        self.full_clean()
+
+        super(DonazioneInterventoProgramma, self).save()
+
+
 
 ##
 # ANAGRAFICHE
