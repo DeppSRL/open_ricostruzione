@@ -477,133 +477,133 @@ class DonazioneView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(DonazioneView, self).get_context_data(**kwargs)
 
-        # numero donazioni
-        context['n_donazioni'] = Donazione.objects.filter(confermato = True).count()
-
-        # tutte le donazioni
-        tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
-        if tot_donazioni[0]:
-            context['tot_donazioni'] = tot_donazioni[0]
-            context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
-
-        #numero progetti
-        context['n_progetti']=  InterventoProgramma.objects.filter( id_padre__isnull = True).count()
-        # importi progetti totale
-        stima_danno = InterventoProgramma.objects.filter( id_padre__isnull = True).\
-            aggregate(s=Sum('riepilogo_importi')).values()
-
-        if stima_danno[0]:
-            context['stima_danno'] = stima_danno[0]
-
-        #tutte le donazioni nel tempo
-        #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
-        # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
-
-        donazioni_mese = Donazione.objects.filter(confermato = True).\
-                        extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
-                        order_by('date').\
-                        values('date').annotate(sum = Sum('importo'))
-
-        donazioni_spline =[]
-        j = 0
-
-        for idx, val in enumerate(donazioni_mese):
-##            converto la data nel formato  Nome mese - Anno
-            if type(val['date']).__name__=="datetime":
-                val_date_obj = val['date']
-            else:
-                val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
-
-            val_date_print=_date(val_date_obj,"M - Y")
-
-            if idx is not 0:
-#                se le due date sono piu' distanti di un mese
-#                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
-#                per creare un grafico piatto
-                if type(donazioni_mese[idx-1]['date']).__name__=="datetime":
-                    donazioni_date_obj=donazioni_mese[idx-1]['date']
-                else:
-                    donazioni_date_obj = datetime.datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
-
-                if (val_date_obj-donazioni_date_obj) > timedelta(31):
-                    n_mesi = (val_date_obj - donazioni_date_obj).days / 28
-                    for k in range(1, n_mesi):
-                        new_month_obj = add_months(donazioni_date_obj,k)
-                        new_month_print = _date(new_month_obj,"M - Y")
-                        donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum'],'sum_ita':None})
-                        j += 1
-
-#               inserisce il dato del mese corrente
-                donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum']),'sum_ita':None})
-                j += 1
-
-            else:
-                donazioni_spline.append({'month':val_date_print,'sum':val['sum'],'sum_ita':None})
-                j += 1
-
-
-        if donazioni_spline and len(donazioni_spline)>1:
-#            rende i numeri Decimal delle stringhe per il grafico
-
-            for value in donazioni_spline:
-                value['sum_ita']=moneyfmt(value['sum'],2,"",".",",")
-                value['sum']=moneyfmt(value['sum'],2,"","",".")
-
-            context['donazioni_spline'] = donazioni_spline
-
-        #donazioni per tipologia
-        donazioni_categorie_list = Donazione.objects.all().\
-            filter(confermato=True).values('tipologia__denominazione','tipologia__slug').\
-            annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo')).order_by('-sum')
-
-        for idx, val in enumerate(donazioni_categorie_list):
-            val['sum'] = moneyfmt(val['sum'],2,"",".",",")
-
-        context['donazioni_categorie_list']=donazioni_categorie_list
-
-        #donazioni per tipologia
-        donazioni_categorie_pie = Donazione.objects.all().\
-            filter(confermato=True).values('tipologia__denominazione').\
-            annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
-
-        for idx, val in enumerate(donazioni_categorie_pie):
-            val['sum'] = moneyfmt(val['sum'],2,"","",".")
-
-        context['donazioni_categorie_pie']=donazioni_categorie_pie
-
-        #       ultime donazioni per il comune considerato
-        donazioni_temp = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
-        donazioni_last=[]
-
-        for idx, val in enumerate(donazioni_temp):
-        ##            converto la data nel formato  Nome mese - Anno
-            val_date_day = val.data.day
-            val_date_month= _date(val.data,"M")
-            val_date_year = time.strftime("%Y", val.data.timetuple())
-            donazioni_last.append({'day':val_date_day,
-                                   'month':val_date_month,
-                                   'year':val_date_year,
-                                   'tipologia':val.tipologia,
-                                   'importo':moneyfmt(val.importo,2,"",".",","),
-                                   'slug':val.tipologia.slug
-            })
-
-        context['donazioni_last'] = donazioni_last
-
-        context['n_comuni_donazioni'] =\
-            Territorio.objects.\
-            filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
-            annotate(c = Count("donazione")).filter(c__gt=0).count()
-
-        #       set map center
-        context['map_center_lat']= Territorio.get_map_center_lat()
-        context['map_center_lon']= Territorio.get_map_center_lon()
-
-        #        set map bounds
-        context['map_minlat']=Territorio.get_boundingbox_minlat()
-        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
-        context['map_minlon']=Territorio.get_boundingbox_minlon()
-        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+#         # numero donazioni
+#         context['n_donazioni'] = Donazione.objects.filter(confermato = True).count()
+#
+#         # tutte le donazioni
+#         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
+#         if tot_donazioni[0]:
+#             context['tot_donazioni'] = tot_donazioni[0]
+#             context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
+#
+#         #numero progetti
+#         context['n_progetti']=  InterventoProgramma.objects.filter( id_padre__isnull = True).count()
+#         # importi progetti totale
+#         stima_danno = InterventoProgramma.objects.filter( id_padre__isnull = True).\
+#             aggregate(s=Sum('riepilogo_importi')).values()
+#
+#         if stima_danno[0]:
+#             context['stima_danno'] = stima_danno[0]
+#
+#         #tutte le donazioni nel tempo
+#         #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
+#         # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
+#
+#         donazioni_mese = Donazione.objects.filter(confermato = True).\
+#                         extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
+#                         order_by('date').\
+#                         values('date').annotate(sum = Sum('importo'))
+#
+#         donazioni_spline =[]
+#         j = 0
+#
+#         for idx, val in enumerate(donazioni_mese):
+# ##            converto la data nel formato  Nome mese - Anno
+#             if type(val['date']).__name__=="datetime":
+#                 val_date_obj = val['date']
+#             else:
+#                 val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+#
+#             val_date_print=_date(val_date_obj,"M - Y")
+#
+#             if idx is not 0:
+# #                se le due date sono piu' distanti di un mese
+# #                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
+# #                per creare un grafico piatto
+#                 if type(donazioni_mese[idx-1]['date']).__name__=="datetime":
+#                     donazioni_date_obj=donazioni_mese[idx-1]['date']
+#                 else:
+#                     donazioni_date_obj = datetime.datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+#
+#                 if (val_date_obj-donazioni_date_obj) > timedelta(31):
+#                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
+#                     for k in range(1, n_mesi):
+#                         new_month_obj = add_months(donazioni_date_obj,k)
+#                         new_month_print = _date(new_month_obj,"M - Y")
+#                         donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum'],'sum_ita':None})
+#                         j += 1
+#
+# #               inserisce il dato del mese corrente
+#                 donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum']),'sum_ita':None})
+#                 j += 1
+#
+#             else:
+#                 donazioni_spline.append({'month':val_date_print,'sum':val['sum'],'sum_ita':None})
+#                 j += 1
+#
+#
+#         if donazioni_spline and len(donazioni_spline)>1:
+# #            rende i numeri Decimal delle stringhe per il grafico
+#
+#             for value in donazioni_spline:
+#                 value['sum_ita']=moneyfmt(value['sum'],2,"",".",",")
+#                 value['sum']=moneyfmt(value['sum'],2,"","",".")
+#
+#             context['donazioni_spline'] = donazioni_spline
+#
+#         #donazioni per tipologia
+#         donazioni_categorie_list = Donazione.objects.all().\
+#             filter(confermato=True).values('tipologia__denominazione','tipologia__slug').\
+#             annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo')).order_by('-sum')
+#
+#         for idx, val in enumerate(donazioni_categorie_list):
+#             val['sum'] = moneyfmt(val['sum'],2,"",".",",")
+#
+#         context['donazioni_categorie_list']=donazioni_categorie_list
+#
+#         #donazioni per tipologia
+#         donazioni_categorie_pie = Donazione.objects.all().\
+#             filter(confermato=True).values('tipologia__denominazione').\
+#             annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
+#
+#         for idx, val in enumerate(donazioni_categorie_pie):
+#             val['sum'] = moneyfmt(val['sum'],2,"","",".")
+#
+#         context['donazioni_categorie_pie']=donazioni_categorie_pie
+#
+#         #       ultime donazioni per il comune considerato
+#         donazioni_temp = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
+#         donazioni_last=[]
+#
+#         for idx, val in enumerate(donazioni_temp):
+#         ##            converto la data nel formato  Nome mese - Anno
+#             val_date_day = val.data.day
+#             val_date_month= _date(val.data,"M")
+#             val_date_year = time.strftime("%Y", val.data.timetuple())
+#             donazioni_last.append({'day':val_date_day,
+#                                    'month':val_date_month,
+#                                    'year':val_date_year,
+#                                    'tipologia':val.tipologia,
+#                                    'importo':moneyfmt(val.importo,2,"",".",","),
+#                                    'slug':val.tipologia.slug
+#             })
+#
+#         context['donazioni_last'] = donazioni_last
+#
+#         context['n_comuni_donazioni'] =\
+#             Territorio.objects.\
+#             filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+#             annotate(c = Count("donazione")).filter(c__gt=0).count()
+#
+#         #       set map center
+#         context['map_center_lat']= Territorio.get_map_center_lat()
+#         context['map_center_lon']= Territorio.get_map_center_lon()
+#
+#         #        set map bounds
+#         context['map_minlat']=Territorio.get_boundingbox_minlat()
+#         context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+#         context['map_minlon']=Territorio.get_boundingbox_minlon()
+#         context['map_maxlon']=Territorio.get_boundingbox_maxlon()
 
         return context
 

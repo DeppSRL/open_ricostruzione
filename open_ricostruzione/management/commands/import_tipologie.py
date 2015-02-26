@@ -3,7 +3,8 @@ import logging
 from optparse import make_option
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import BaseCommand
-from open_ricostruzione.models import Programma, Piano, RUP, ProprietarioImmobile, SoggettoAttuatore, InterventoProgramma, Progetto, Intervento, Cofinanziamento, EventoContrattuale, Liquidazione, QuadroEconomico
+from open_ricostruzione.models import Programma, Piano, RUP, ProprietarioImmobile, SoggettoAttuatore, \
+    InterventoProgramma, Progetto, Intervento, Cofinanziamento, EventoContrattuale, Liquidazione, QuadroEconomico
 
 
 class Command(BaseCommand):

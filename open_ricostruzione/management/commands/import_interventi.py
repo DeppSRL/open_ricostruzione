@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
     Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, \
-    Impresa, DonazioneInterventoProgramma, Donazione
+    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -49,8 +49,8 @@ class Command(BaseCommand):
                        'donazione__pk',
                        'donazione__denominazione',
                        'intervento_programma__programma__id',
-                       'intervento_programma__id_interv_a_progr',
-                       'intervento_programma__id_sogg_att',
+                       'intervento_programma__id_fenice',
+                       'intervento_programma__soggetto_attuatore__id_fenice',
                        'intervento_programma__id_propr_imm',
                        'intervento_programma__n_ordine',
                        'intervento_programma__importo_generale',
@@ -68,11 +68,11 @@ class Command(BaseCommand):
             iap = None
             try:
                 iap = InterventoProgramma.objects.get(
-                    id_interv_a_progr=dip_dict['intervento_programma__id_interv_a_progr'])
+                    id_fenice=dip_dict['intervento_programma__id_fenice'])
             except ObjectDoesNotExist:
                 self.logger.error(
-                    u"Cannot find Intervento a programma id_interv_progr:{} to associate with Donazione {}({})".format(
-                        dip_dict['intervento_programma__id_interv_a_progr'], dip_dict['donazione__denominazione'],
+                    u"Cannot find Intervento a programma id_fenice:{} to associate with Donazione {}({})".format(
+                        dip_dict['intervento_programma__id_fenice'], dip_dict['donazione__denominazione'],
                         dip_dict['donazione__pk']))
                 continue
             else:
@@ -156,22 +156,34 @@ class Command(BaseCommand):
                     territorio.save()
 
                 int_programma = InterventoProgramma()
+                # gets Programma
                 programma, is_created = Programma.objects.get_or_create(
-                    id_progr=intervento_a_programma['id_progr'],
+                    id_fenice=intervento_a_programma['id_progr'],
                 )
+                if is_created:
+                    self.logger.warning("Created new Programma with id:{}".format(programma.id_fenice))
+
+                # gets Soggetto Attuatore
+                soggetto_att, is_created = SoggettoAttuatore.objects.get_or_create(
+                    id_fenice=intervento_a_programma['id_sogg_att'],
+                )
+
+                if is_created:
+                    self.logger.warning("Created new Soggetto Attuatore with id:{}".format(soggetto_att.id_fenice))
+
                 int_programma.programma = programma
-                int_programma.id_interv_a_progr = intervento_a_programma['id_interv_a_progr']
+                int_programma.id_fenice = intervento_a_programma['id_interv_a_progr']
                 int_programma.n_ordine = intervento_a_programma['n_ordine'].strip()
                 int_programma.importo_generale = Decimal(intervento_a_programma['imp_gen'])
                 int_programma.importo_a_programma = Decimal(intervento_a_programma['imp_a_progr'])
                 int_programma.denominazione = intervento_a_programma['denominazione'].strip()
-                int_programma.id_sogg_att = intervento_a_programma['id_sogg_att']
+                int_programma.soggetto_attuatore = soggetto_att
                 int_programma.territorio = territorio
                 int_programma.id_tipo_imm = intervento_a_programma['id_tipo_imm']
                 int_programma.id_categ_imm = intervento_a_programma['id_categ_imm']
                 int_programma.id_propr_imm = intervento_a_programma['id_propr_imm']
                 int_programma.slug = slugify(
-                    u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_interv_a_progr)))
+                    u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_fenice)))
                 int_programma.tipo_immobile = intervento_a_programma['id_tipo_imm']
                 int_programma.save()
                 self.logger.info(u"Import Interv.Programma:{}".format(int_programma.slug))
@@ -189,11 +201,11 @@ class Command(BaseCommand):
                 for intervento_a_piano in intervento_a_programma['interventi_a_piano']:
                     int_piano = InterventoPiano()
                     int_piano.intervento_programma = int_programma
-                    int_piano.id_interv_a_piano = intervento_a_piano['id_interv_a_piano']
+                    int_piano.id_fenice = intervento_a_piano['id_interv_a_piano']
                     int_piano.imp_a_piano = intervento_a_piano['imp_a_piano']
                     # gets or create a Piano
                     piano, is_created = Piano.objects.get_or_create(
-                        id_piano=intervento_a_piano['piano']['id_piano'],
+                        id_fenice=intervento_a_piano['piano']['id_piano'],
                         tipologia=intervento_a_piano['piano']['id_tipo_piano']
                     )
                     int_piano.piano = piano
@@ -203,7 +215,7 @@ class Command(BaseCommand):
                     for intervento in intervento_a_piano['interventi']:
                         intr = Intervento()
                         intr.intervento_piano = int_piano
-                        intr.id_interv = intervento['id_interv']
+                        intr.id_fenice = intervento['id_interv']
                         intr.is_variante = intervento['variante']
 
                         intr.imp_congr_spesa = Decimal(0)

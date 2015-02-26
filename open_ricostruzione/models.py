@@ -59,9 +59,9 @@ class InterventoProgramma(models.Model):
     )
 
     programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
-    # id_interv_a_progr = id fenice per l'intervento
-    id_interv_a_progr = models.PositiveSmallIntegerField(null=False, blank=False)
-    id_sogg_att = models.PositiveSmallIntegerField(null=False, blank=False)
+    # id fenice = id_interv_a_progr
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
+    soggetto_attuatore = models.ForeignKey('SoggettoAttuatore', null=True, blank=False, default=None)
     # id_propr_imm = id fenice per l'immobile
     id_propr_imm = models.PositiveSmallIntegerField(null=False, blank=False)
     n_ordine = models.CharField(max_length=20, null=False, blank=False)
@@ -82,10 +82,10 @@ class InterventoProgramma(models.Model):
 
 class Programma(models.Model):
     denominazione = models.TextField(max_length=120)
-    id_progr = models.PositiveSmallIntegerField(null=True, blank=True)
+    id_fenice = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __unicode__(self):
-        return u"{}({})".format(self.denominazione, self.id_progr, )
+        return u"{}({})".format(self.denominazione, self.id_fenice, )
 
     class Meta:
         verbose_name_plural = u'Programmi'
@@ -120,8 +120,8 @@ class Piano(models.Model):
         ('3', 'EDILIZIA_SCOLASTICA', 'Piano edilizia scolastica ed universita'),
         ('4', 'MISTI', 'Piano UMI - misti'),
     )
-    # id_piano = id fenice x il piano
-    id_piano = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
+    # id fenice x il piano
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
     tipologia = models.CharField(max_length=2, choices=TIPO_PIANO, blank=False, null=False, default='')
     programma = models.ForeignKey('Programma', null=False, blank=False)
     denominazione = models.TextField(max_length=120, default=u'')
@@ -135,12 +135,12 @@ class Piano(models.Model):
 
 class InterventoPiano(models.Model):
     intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
-    id_interv_a_piano = models.PositiveSmallIntegerField(null=False, blank=False)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
     imp_a_piano = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     piano = models.ForeignKey('Piano', null=True, blank=True, default=None)
 
     def __unicode__(self):
-        return u"{},{},{},{}".format(self.piano, self.intervento_programma.pk, self.id_interv_a_piano,
+        return u"{},{},{},{}".format(self.piano, self.intervento_programma.pk, self.id_fenice,
                                      self.imp_a_piano)
 
     class Meta:
@@ -171,8 +171,8 @@ class Intervento(models.Model):
     )
 
     intervento_piano = models.ForeignKey('InterventoPiano', null=False, blank=False)
-    # id_interv = id fenice per l'intervento
-    id_interv = models.PositiveSmallIntegerField(null=False, blank=False)
+    # id fenice per l'intervento
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
     is_variante = models.BooleanField(null=False, blank=False, default=False)
     imp_congr_spesa = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
