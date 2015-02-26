@@ -363,7 +363,7 @@ class DonazioneInterventoProgramma(models.Model):
     def clean(self):
         # Check that SUM(importo donazioni intervento) <= donazione.importo and that self.import >0
 
-        if self.importo == Decimal(0):
+        if self.importo <= Decimal(0):
             raise ValidationError("L'importo deve essere maggiore di zero")
 
         importo_donazioni_intervento = DonazioneInterventoProgramma.\
@@ -373,13 +373,17 @@ class DonazioneInterventoProgramma(models.Model):
             importo_donazioni_intervento = 0
 
         difference = self.donazione.importo - Decimal(importo_donazioni_intervento)
+
+        if difference == Decimal(0):
+            raise ValidationError('Non e\' possibile inserire donazioni ad intervento per la donazione selezionata. Importo massimo raggiunto')
+
         if difference < self.importo:
             raise ValidationError('Importo massimo disponibile per la donazione a intervento:{}'.format(difference))
 
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        
+
         # before saving calls validation function
         self.full_clean()
 
