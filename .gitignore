@@ -6,6 +6,7 @@
 log/*
 config/
 static/
+fixtures/*
 open_ricostruzione/log/*
 csv/*
 requirements/local.txt
