@@ -1,8 +1,6 @@
 # Django settings for open_ricostruzione project.
-import django.conf.global_settings as DEFAULT_SETTINGS
 import os
 import environ
-
 root = environ.Path(__file__) - 2  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
 
 # set default values and casting
@@ -172,6 +170,8 @@ INSTALLED_APPS = (
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -194,9 +194,9 @@ LOGGING = {
         },
         'logfile': {
             'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
+            'class': 'open_ricostruzione.logger.GroupWriteRotatingFileHandler',
             'filename': PROJECT_ROOT + "/log/logfile",
-            'maxBytes': 10000000,
+            'maxBytes': 100000,
             'backupCount': 10,
             'formatter': 'standard',
         },
