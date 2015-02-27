@@ -96,10 +96,9 @@ class Command(BaseCommand):
             self.logger.setLevel(logging.DEBUG)
 
         self.input_file = options['file']
-        self.error_logfile = "{}/log/import_{}.json".format(settings.REPO_ROOT,
-                                                       datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
-        self.temp_logfile= "{}/log/import_{}_temp.json".format(settings.REPO_ROOT,
-                                                       datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M"))
+        today_str = datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M")
+        self.error_logfile = "{}/log/import_{}_err.json".format(settings.PROJECT_ROOT,today_str)
+        self.temp_logfile = "{}/log/import_{}_temp.json".format(settings.PROJECT_ROOT, today_str)
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
         not_found_istat = []
