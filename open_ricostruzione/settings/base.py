@@ -194,9 +194,9 @@ LOGGING = {
         },
         'logfile': {
             'level': 'INFO',
-            'class': 'open_ricostruzione.logger.GroupWriteRotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'filename': PROJECT_ROOT + "/log/logfile",
-            'maxBytes': 100000,
+            'maxBytes': 1000000,
             'backupCount': 10,
             'formatter': 'standard',
         },
