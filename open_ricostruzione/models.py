@@ -20,44 +20,56 @@ class Impresa(models.Model):
 
 
 class InterventoProgramma(models.Model):
+    TIPO_IMMOBILE_FENICE = Choices(
+        (u'1', u'ALTRO', u'ALTRO'),
+        (u'2', u'ATTR_INFRASTRUTTURE', u'ATTR. INFRASTRUTTURE E MOBILITA'),
+        (u'3', u'ATTR_INFRASTRUTTURE_FC', u'ATTR. INFRASTRUTTURE E MOBILITA\' - FUORI CRATERE'),
+        (u'4', u'ATTR_SANITARIE', u'ATTR. SANITARIE E/O SOCIO SANITARIE'),
+        (u'5', u'ATTR_CIMITERIALI', u'ATTREZZATURE CIMITERIALI'),
+        (u'6', u'ATTR_CULTURALI', u'ATTREZZATURE CULTURALI'),
+        (u'7', u'ATTR_SPORTIVE', u'ATTREZZATURE SPORTIVE E RICREATIVE'),
+        (u'8', u'BENE_RELIGIOSO', u'BENE RELIGIOSO DI PROPRIETA\' DI ENTE PUBBLICO'),
+        (u'9', u'BENI_DEMANIALI', u'BENI DEMANIALI'),
+        (u'10', u'BENI_ECCLESIASTICI', u'BENI ECCLESIASTICI'),
+        (u'11', u'CANONICA_ORATORIO', u'CANONICA/ORATORIO'),
+        (u'12', u'CHIESA', u'CHIESA'),
+        (u'13', u'EDILIZIA_SCOLASTICA', u'EDILIZIA SCOLASTICA'),
+        (u'14', u'EDILIZIA_SOCIALE', u'EDILIZIA SOCIALE'),
+        (u'15', u'EX_CHIESA', u'EX CHIESA/MONASTERO/ CONVENTO'),
+        (u'16', u'EX_SCUOLA', u'EX SCUOLA'),
+        (u'17', u'IMPIANTI_A_RETE', 'uIMPIANTI A RETE'),
+        (u'18', u'MAGAZZINO', 'MAGAZZINO'),
+        (u'19', u'MONASTERO_CONVENTO_SINAGOGA', u'MONASTERO / CONVENTO / SINAGOGA'),
+        (u'20', u'MUNICIPI', u'MUNICIPI - UFFICI E ALTRI ENTI PUBBLICI'),
+        (u'21', u'OPERE_BONIFICA', u'OPERE DI BONIFICA E IRRIGAZIONE'),
+        (u'22', u'OPERE_BONIFICA_FC', u'OPERE DI BONIFICA E IRRIGAZIONE - FUORI CRATERE'),
+        (u'23', u'UNIVERSITA', u'UNIVERSITA'),
+        (u'24', u'ATTR_RICREATIVE', u'ATTREZZATURE RICREATIVE'),
+        (u'25', u'ATTR_SPORTIVE', u'ATTREZZATURE SPORTIVE'),
+        (u'26', u'MONASTERO_CONVENTO', u'MONASTERO / CONVENTO'),
+        (u'27', u'BENI_PRIVATI', u'BENI PRIVATI'),
+    )
+
     TIPO_IMMOBILE = Choices(
-        ('1', 'ALTRO', 'ATTR. INFRASTRUTTURE E MOBILITA'),
-        ('2', 'ATTR_INFRASTRUTTURE', 'ATTR. INFRASTRUTTURE E MOBILITA'),
-        ('3', 'ATTR_INFRASTRUTTURE_FC', 'ATTR. INFRASTRUTTURE E MOBILITA\' - FUORI CRATERE'),
-        ('4', 'ATTR_SANITARIE', 'ATTR. SANITARIE E/O SOCIO SANITARIE'),
-        ('5', 'ATTR_CIMITERIALI', 'ATTREZZATURE CIMITERIALI'),
-        ('6', 'ATTR_CULTURALI', 'ATTREZZATURE CULTURALI'),
-        ('7', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE E RICREATIVE'),
-        ('8', 'BENE_RELIGIOSO', 'BENE RELIGIOSO DI PROPRIETA\' DI ENTE PUBBLICO'),
-        ('9', 'BENI_DEMANIALI', 'BENI DEMANIALI'),
-        ('10', 'BENI_ECCLESIASTICI', 'BENI ECCLESIASTICI'),
-        ('11', 'CANONICA_ORATORIO', 'CANONICA/ORATORIO'),
-        ('12', 'CHIESA', 'CHIESA'),
-        ('13', 'EDILIZIA_SCOLASTICA', 'EDILIZIA SCOLASTICA'),
-        ('14', 'EDILIZIA_SOCIALE', 'EDILIZIA SOCIALE'),
-        ('15', 'EX_CHIESA', 'EX CHIESA/MONASTERO/ CONVENTO'),
-        ('16', 'EX_SCUOLA', 'EX SCUOLA'),
-        ('17', 'IMPIANTI_A_RETE', 'IMPIANTI A RETE'),
-        ('18', 'MAGAZZINO', 'MAGAZZINO'),
-        ('19', 'MONASTERO_CONVENTO_SINAGOGA', 'MONASTERO / CONVENTO / SINAGOGA'),
-        ('20', 'MUNICIPI', 'MUNICIPI - UFFICI E ALTRI ENTI PUBBLICI'),
-        ('21', 'OPERE_BONIFICA', 'OPERE DI BONIFICA E IRRIGAZIONE'),
-        ('22', 'OPERE_BONIFICA_FC', 'OPERE DI BONIFICA E IRRIGAZIONE - FUORI CRATERE'),
-        ('23', 'UNIVERSITA', 'UNIVERSITA'),
-        ('24', 'ATTR_RICREATIVE', 'ATTREZZATURE RICREATIVE'),
-        ('25', 'ATTR_SPORTIVE', 'ATTREZZATURE SPORTIVE'),
-        ('26', 'MONASTERO_CONVENTO', 'MONASTERO / CONVENTO'),
-        ('27', 'BENI_PRIVATI', 'BENI PRIVATI'),
+        (u'1', u'ALTRO', u'Altro'),
+        (u'2', u'INFRASTRUTTURE_BONIFICHE', u'Infrastrutture e bonifiche'),
+        (u'3', u'OSPEDALI', u'Ospedali'),
+        (u'4', u'CIMITERI', u'Cimiteri'),
+        (u'5', u'EDIFICI_STORICI', u'Edifici storici e culturali'),
+        (u'6', u'IMPIANTI_SPORTIVI', u'Impianti sportivi e ricreativi'),
+        (u'7', u'CHIESE', u'Chiese e beni religiosi'),
+        (u'8', u'SCUOLE', u'Scuole e Universita'),
+        (u'9', u'EDIFICI_PUBBLICI', u'Edifici pubblici'),
     )
 
     CATEGORIA_IMMOBILE = Choices(
-        ('1', 'BENI_DEMANIALI', 'Beni Demaniali e Beni ecclesiastici di prop. Pubbl.'),
-        ('2', 'COMUNI_PROVINCE', 'Comuni e Province'),
-        ('3', 'ENTI_RELIGIOSI', 'Enti religiosi'),
-        ('4', 'MONASTERI_CONVENTI', 'Monasteri, Conventi ed ex'),
-        ('5', 'OPERE_BONIFICA', 'Opere di bonifica ed irrigazione'),
-        ('6', 'STRUTTURE_SANITARIE', 'Strutture Sanitarie'),
-        ('7', 'STRUTTURE_SCOLASTICHE', 'Strutture Scolastiche ed Universita'),
+        (u'1', u'BENI_DEMANIALI', u'Beni Demaniali e Beni ecclesiastici di prop. Pubbl.'),
+        (u'2', u'COMUNI_PROVINCE', u'Comuni e Province'),
+        (u'3', u'ENTI_RELIGIOSI', u'Enti religiosi'),
+        (u'4', u'MONASTERI_CONVENTI', u'Monasteri, Conventi ed ex'),
+        (u'5', u'OPERE_BONIFICA', u'Opere di bonifica ed irrigazione'),
+        (u'6', u'STRUTTURE_SANITARIE', u'Strutture Sanitarie'),
+        (u'7', u'STRUTTURE_SCOLASTICHE', u'Strutture Scolastiche ed Universita'),
     )
 
     programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
@@ -71,6 +83,7 @@ class InterventoProgramma(models.Model):
     importo_a_programma = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
     territorio = models.ForeignKey('territori.Territorio', null=True)
+    tipo_immobile_fenice = models.CharField(max_length=2, choices=TIPO_IMMOBILE_FENICE, blank=False, null=False, default='')
     tipo_immobile = models.CharField(max_length=2, choices=TIPO_IMMOBILE, blank=False, null=False, default='')
     categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
@@ -95,12 +108,12 @@ class Programma(models.Model):
 
 class Cofinanziamento(models.Model):
     TIPO_COFINANZIAMENTO = Choices(
-        ('1', 'ASSICURAZIONE', 'Assicurazione'),
-        ('2', 'DONAZIONI', 'Donazioni'),
-        ('3', 'OPERE_PROVVISIONALI', 'Opere provvisionali'),
-        ('4', 'MESSA_IN_SICUREZZA', 'Messa in sicurezza'),
-        ('5', 'FONDI_PROPRI', 'Fondi propri'),
-        ('6', 'EDILIZIA_SCOLASTICA', 'Edilizia scolastica'),
+        (u'1', u'ASSICURAZIONE', u'Assicurazione'),
+        (u'2', u'DONAZIONI', u'Donazioni'),
+        (u'3', u'OPERE_PROVVISIONALI', u'Opere provvisionali'),
+        (u'4', u'MESSA_IN_SICUREZZA', u'Messa in sicurezza'),
+        (u'5', u'FONDI_PROPRI', u'Fondi propri'),
+        (u'6', u'EDILIZIA_SCOLASTICA', u'Edilizia scolastica'),
     )
 
     tipologia = models.CharField(max_length=2, choices=TIPO_COFINANZIAMENTO, blank=False, null=False, default='')
@@ -117,10 +130,10 @@ class Cofinanziamento(models.Model):
 
 class Piano(models.Model):
     TIPO_PIANO = Choices(
-        ('1', 'OPERE_PUBBLICHE', 'Piano opere pubbliche'),
-        ('2', 'BENI_CULTURALI', 'Piano beni culturali'),
-        ('3', 'EDILIZIA_SCOLASTICA', 'Piano edilizia scolastica ed universita'),
-        ('4', 'MISTI', 'Piano UMI - misti'),
+        (u'1', u'OPERE_PUBBLICHE', u'Piano opere pubbliche'),
+        (u'2', u'BENI_CULTURALI', u'Piano beni culturali'),
+        (u'3', u'EDILIZIA_SCOLASTICA', u'Piano edilizia scolastica ed universita'),
+        (u'4', u'MISTI', u'Piano UMI - misti'),
     )
     # id fenice x il piano
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
@@ -151,25 +164,25 @@ class InterventoPiano(models.Model):
 
 class Intervento(models.Model):
     TIPO_INTERVENTO = Choices(
-        ('1', 'RIPARAZIONE_RAFFORZAMENTO', 'Riparazione con rafforzamento locale'),
-        ('2', 'RIPRISTINO', 'Ripristino con miglioramento sismico'),
-        ('3', 'DEMOLIZIONE', 'Demolizione e ricostruzione e/o nuova costruzione'),
-        ('4', 'NON_STRUTTURALE', 'Intervento non strutturale'),
+        (u'1', u'RIPARAZIONE_RAFFORZAMENTO', u'Riparazione con rafforzamento locale'),
+        (u'2', u'RIPRISTINO', u'Ripristino con miglioramento sismico'),
+        (u'3', u'DEMOLIZIONE', u'Demolizione e ricostruzione e/o nuova costruzione'),
+        (u'4', u'NON_STRUTTURALE', u'Intervento non strutturale'),
     )
 
     STATO_INTERVENTO = Choices(
-        ('1', 'A_PIANO', 'A piano'),
-        ('2', 'BOZZA', 'In bozza'),
-        ('3', 'PRESENTATO', 'Presentato'),
-        ('4', 'AMMESSO', 'Ammesso'),
-        ('5', 'RESPINTO', 'Respinto'),
-        ('6', 'FONDI_ASSEGNATI', 'Fondi assegnati'),
-        ('7', 'RINUNCIATO', 'Rinunciato'),
-        ('8', '2_ACCONTO', '2 acconto'),
-        ('9', '3_ACCONTO', '3 acconto'),
-        ('10', 'SALDO', 'Saldo'),
-        ('11', 'CHIUSO', 'Chiuso'),
-        ('12', 'SOSTITUITO', 'Sostituito da variante'),
+        (u'1', u'A_PIANO', u'A piano'),
+        (u'2', u'BOZZA', u'In bozza'),
+        (u'3', u'PRESENTATO', u'Presentato'),
+        (u'4', u'AMMESSO', u'Ammesso'),
+        (u'5', u'RESPINTO', u'Respinto'),
+        (u'6', u'FONDI_ASSEGNATI', u'Fondi assegnati'),
+        (u'7', u'RINUNCIATO', u'Rinunciato'),
+        (u'8', u'2_ACCONTO', u'2 acconto'),
+        (u'9', u'3_ACCONTO', u'3 acconto'),
+        (u'10', u'SALDO', u'Saldo'),
+        (u'11', u'CHIUSO', u'Chiuso'),
+        (u'12', u'SOSTITUITO', u'Sostituito da variante'),
     )
 
     intervento_piano = models.ForeignKey('InterventoPiano', null=False, blank=False)
@@ -193,19 +206,19 @@ class Intervento(models.Model):
 
 class Liquidazione(models.Model):
     TIPO_LIQUIDAZIONE = Choices(
-        ('1000', 'PRIMO_ACCONTO', 'Primo acconto'),
-        ('1100', 'BOZZA', 'In bozza'),
-        ('1110', 'PRESENTATO', 'Presentato'),
-        ('1111', 'AMMESSO', 'Ammesso'),
-        ('0100', 'RESPINTO', 'Respinto'),
-        ('0010', 'FONDI_ASSEGNATI', 'Fondi assegnati'),
-        ('0001', 'RINUNCIATO', 'Rinunciato'),
-        ('0110', '2_ACCONTO', '2 acconto'),
-        ('0111', '3_ACCONTO', '3 acconto'),
-        ('0011', 'SALDO', 'Saldo'),
+        (u'1000', u'PRIMO_ACCONTO', u'Primo acconto'),
+        (u'1100', u'BOZZA', u'In bozza'),
+        (u'1110', u'PRESENTATO', u'Presentato'),
+        (u'1111', u'AMMESSO', u'Ammesso'),
+        (u'0100', u'RESPINTO', u'Respinto'),
+        (u'0010', u'FONDI_ASSEGNATI', u'Fondi assegnati'),
+        (u'0001', u'RINUNCIATO', u'Rinunciato'),
+        (u'0110', u'2_ACCONTO', u'2 acconto'),
+        (u'0111', u'3_ACCONTO', u'3 acconto'),
+        (u'0011', u'SALDO', u'Saldo'),
     )
 
-    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+    intervento = models.ForeignKey(u'Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=5, choices=TIPO_LIQUIDAZIONE, null=False, blank=False, default='')
     data = models.DateField(blank=False, null=False)
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
@@ -219,10 +232,10 @@ class Liquidazione(models.Model):
 
 class EventoContrattuale(models.Model):
     TIPO_EVENTO = Choices(
-        ('1', 'STIPULA_CONTRATTO', 'Stipula contratto'),
-        ('2', 'INIZIO_LAVORI', 'Inizio lavori'),
-        ('3', 'FINE_LAVORI', 'Fine lavori come da Capitolato'),
-        ('4', 'VERBALE_CONSEGNA', 'Verbale di consegna lavori'),
+        (u'1', u'STIPULA_CONTRATTO', u'Stipula contratto'),
+        (u'2', u'INIZIO_LAVORI', u'Inizio lavori'),
+        (u'3', u'FINE_LAVORI', u'Fine lavori come da Capitolato'),
+        (u'4', u'VERBALE_CONSEGNA', u'Verbale di consegna lavori'),
     )
     intervento = models.ForeignKey('Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=2, choices=TIPO_EVENTO, null=False, blank=False, default='')
@@ -237,25 +250,25 @@ class EventoContrattuale(models.Model):
 
 class QuadroEconomico(models.Model):
     TIPO_QUADRO_ECONOMICO = Choices(
-        ('1', 'SPESA_COMPLESSIVA', 'Quadro sommario della spesa complessiva'),
-        ('2', 'COFINANZIAMENTO_RIMBORSO', 'Quadro sommario del cofinanziamento da Rimborso assicurativo'),
-        ('3', 'COFINANZIAMENTO_DONAZIONI', 'Quadro sommario del cofinanziamento da Donazioni'),
-        ('4', 'COFINANZIAMENTO_OPERE', 'Quadro sommario del cofinanziamento da Opere provvisionali'),
-        ('5', 'COFINANZIAMENTO_MESSE_SICUREZZA', 'Quadro sommario del cofinanziamento da Messe in sicurezza'),
-        ('6', 'COFINANZIAMENTO_EDIFICI_SCOLASTICI',
-         'Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici'),
-        ('7', 'COFINANZIAMENTO_FONDI_PROPRI', 'Quadro sommario del cofinanziamento da Fondi propri (e altro)'),
-        ('8', 'SOMMARIO_GENERALE', 'Quadro sommario generale riepilogativo'),
-        ('9', 'QTE_COMMISSARIO', 'Q.T.E. relativo al finanziamento del Commissario'),
-        ('10', 'QTE_ASSICURATIVO', 'Q.T.E. riferito al cofinanziamento da Rimborso assicurativo'),
-        ('11', 'QTE_DONAZIONI', 'Q.T.E. riferito al cofinanziamento da Donazioni'),
-        ('12', 'QTE_OPERE', 'Q.T.E. riferito al cofinanziamento da Opere provvisionali'),
-        ('13', 'QTE_MESSE_SICUREZZA', 'Q.T.E. riferito al cofinanziamento da Messe in sicurezza'),
-        ('14', 'QTE_EDIFICI_SCOLASTICI', 'Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici'),
-        ('15', 'QTE_FONDI_PROPRI', 'Q.T.E. riferito al cofinanziamento da Fondi propri (e altro)'),
-        ('16', 'QTE_GENERALE', 'Q.T.E. generale riepilogativo'),
-        ('17', 'QTE_RIMODULATO_COMMISSARIO', 'Q.T.E. rimodulato relativo al finanziamento del Commissario'),
-        ('18', 'QTE_FINANZIAMENTO_COMMISSARIO', 'Q.T.E. relativo al finanziamento assegnato dal Commissario'),
+        (u'1', u'SPESA_COMPLESSIVA', u'Quadro sommario della spesa complessiva'),
+        (u'2', u'COFINANZIAMENTO_RIMBORSO', u'Quadro sommario del cofinanziamento da Rimborso assicurativo'),
+        (u'3', u'COFINANZIAMENTO_DONAZIONI', u'Quadro sommario del cofinanziamento da Donazioni'),
+        (u'4', u'COFINANZIAMENTO_OPERE', u'Quadro sommario del cofinanziamento da Opere provvisionali'),
+        (u'5', u'COFINANZIAMENTO_MESSE_SICUREZZA', u'Quadro sommario del cofinanziamento da Messe in sicurezza'),
+        (u'6', u'COFINANZIAMENTO_EDIFICI_SCOLASTICI',
+         u'Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici'),
+        (u'7', u'COFINANZIAMENTO_FONDI_PROPRI', u'Quadro sommario del cofinanziamento da Fondi propri (e altro)'),
+        (u'8', u'SOMMARIO_GENERALE', u'Quadro sommario generale riepilogativo'),
+        (u'9', u'QTE_COMMISSARIO', u'Q.T.E. relativo al finanziamento del Commissario'),
+        (u'10', u'QTE_ASSICURATIVO', u'Q.T.E. riferito al cofinanziamento da Rimborso assicurativo'),
+        (u'11', u'QTE_DONAZIONI', u'Q.T.E. riferito al cofinanziamento da Donazioni'),
+        (u'12', u'QTE_OPERE', u'Q.T.E. riferito al cofinanziamento da Opere provvisionali'),
+        (u'13', u'QTE_MESSE_SICUREZZA', u'Q.T.E. riferito al cofinanziamento da Messe in sicurezza'),
+        (u'14', u'QTE_EDIFICI_SCOLASTICI', u'Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici'),
+        (u'15', u'QTE_FONDI_PROPRI', u'Q.T.E. riferito al cofinanziamento da Fondi propri (e altro)'),
+        (u'16', u'QTE_GENERALE', u'Q.T.E. generale riepilogativo'),
+        (u'17', u'QTE_RIMODULATO_COMMISSARIO', u'Q.T.E. rimodulato relativo al finanziamento del Commissario'),
+        (u'18', u'QTE_FINANZIAMENTO_COMMISSARIO', u'Q.T.E. relativo al finanziamento assegnato dal Commissario'),
     )
     tipologia = models.CharField(max_length=2, choices=TIPO_QUADRO_ECONOMICO, blank=False, null=False, default='')
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
@@ -286,22 +299,22 @@ class QuadroEconomicoIntervento(QuadroEconomico):
 
 class Progetto(models.Model):
     TIPO_PROGETTO = Choices(
-        ('1', 'PROGETTO_PRELIMINARE', 'Progetto preliminare'),
-        ('2', 'PROGETTO_DEFINITIVO', 'Progetto definitivo'),
-        ('3', 'PROGETTO_ESECUTIVO', 'Progetto esecutivo'),
-        ('4', 'PERIZIA_SISMICA', 'Perizia sismica'),
-        ('5', 'PERIZIA_DEMOLIZIONE_RIPRISTINO', 'Perizia demolizione con progetto di ripristino'),
-        ('6', 'PERIZIA_DEMOLIZIONE_CONVENZIONALE', 'Perizia demolizione con calcolo convenzionale'),
-        ('7', 'CALCOLO_CONVENZIONALE', 'Calcolo convenzionale'),
+        (u'1', u'PROGETTO_PRELIMINARE', u'Progetto preliminare'),
+        (u'2', u'PROGETTO_DEFINITIVO', u'Progetto definitivo'),
+        (u'3', u'PROGETTO_ESECUTIVO', u'Progetto esecutivo'),
+        (u'4', u'PERIZIA_SISMICA', u'Perizia sismica'),
+        (u'5', u'PERIZIA_DEMOLIZIONE_RIPRISTINO', u'Perizia demolizione con progetto di ripristino'),
+        (u'6', u'PERIZIA_DEMOLIZIONE_CONVENZIONALE', u'Perizia demolizione con calcolo convenzionale'),
+        (u'7', u'CALCOLO_CONVENZIONALE', u'Calcolo convenzionale'),
     )
 
     STATO_PROGETTO = Choices(
-        ('1', 'BOZZA', 'In bozza'),
-        ('2', 'PRESENTATO', 'Presentato'),
-        ('3', 'PRESO_IN_CARICO', 'Preso in carico'),
-        ('4', 'ISTRUTTORIA', 'In istruttoria'),
-        ('5', 'RESPINTO', 'Respinto'),
-        ('6', 'AMMESSO', 'Ammesso'),
+        (u'1', u'BOZZA', u'In bozza'),
+        (u'2', u'PRESENTATO', u'Presentato'),
+        (u'3', u'PRESO_IN_CARICO', u'Preso in carico'),
+        (u'4', u'ISTRUTTORIA', u'In istruttoria'),
+        (u'5', u'RESPINTO', u'Respinto'),
+        (u'6', u'AMMESSO', u'Ammesso'),
     )
     intervento = models.ForeignKey('Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=2, choices=TIPO_PROGETTO, blank=False, null=False, default='')
@@ -375,10 +388,10 @@ class DonazioneInterventoProgramma(models.Model):
         difference = self.donazione.importo - Decimal(importo_donazioni_intervento)
 
         if difference == Decimal(0):
-            raise ValidationError('Non e\' possibile inserire donazioni ad intervento per la donazione selezionata. Importo massimo raggiunto')
+            raise ValidationError(u'Non e\' possibile inserire donazioni ad intervento per la donazione selezionata. Importo massimo raggiunto')
 
         if difference < self.importo:
-            raise ValidationError('Importo massimo disponibile per la donazione a intervento:{}'.format(difference))
+            raise ValidationError(u'Importo massimo disponibile per la donazione a intervento:{}'.format(difference))
 
 
     def save(self, force_insert=False, force_update=False, using=None,
@@ -388,7 +401,6 @@ class DonazioneInterventoProgramma(models.Model):
         self.full_clean()
 
         super(DonazioneInterventoProgramma, self).save()
-
 
 
 ##

@@ -41,7 +41,7 @@ class Command(BaseCommand):
             ('tipi_cofinanziamento', Cofinanziamento.TIPO_COFINANZIAMENTO),
             ('tipi_evento_contrattuale', EventoContrattuale.TIPO_EVENTO),
             ('tipi_intervento', Intervento.TIPO_INTERVENTO),
-            ('tipi_immobile', InterventoProgramma.TIPO_IMMOBILE),
+            ('tipi_immobile', InterventoProgramma.TIPO_IMMOBILE_FENICE),
             ('tipi_liquidazione', Liquidazione.TIPO_LIQUIDAZIONE),
             ('tipi_piano', Piano.TIPO_PIANO),
             ('tipi_progetto', Progetto.TIPO_PROGETTO),
