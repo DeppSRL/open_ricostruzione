@@ -50,9 +50,6 @@ class DonazioneAdmin(admin.ModelAdmin):
     search_fields = ['^denominazione', ]
     list_filter = [TerritorioWithDonazione, 'tipologia_cedente']
     ordering = ['denominazione', 'territorio__slug']
-    inlines = [
-        DonazioneInterventoProgrammaAdminInline,
-    ]
 
 
 class LiquidazioneAdmin(admin.ModelAdmin):

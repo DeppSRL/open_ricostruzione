@@ -428,7 +428,27 @@ class Anagrafica(models.Model):
 
 
 class SoggettoAttuatore(Anagrafica):
+    TIPOLOGIA = Choices(
+        (u'1', u'ALTRO', u'Altro'),
+        (u'2', u'AZIENDE', u'Aziende'),
+        (u'3', u'CHIESA', u'Chiesa'),
+        (u'4', u'COMMISSARIO_DELEGATO', u'Commissario delegato'),
+        (u'5', u'COMUNE', u'Comune'),
+        (u'6', u'CONSORZIO_BONIFICA', u'Consorzio di Bonifica'),
+        (u'7', u'ENTI_AGENZIE', u'Enti e Agenzie'),
+        (u'8', u'FONDAZIONI', u'Fondazioni'),
+        (u'9', u'MINISTERI', u'Ministeri'),
+        (u'10', u'PRIVATI', u'Privati'),
+        (u'11', u'PROVINCE', u'Province'),
+        (u'12', u'PROV_INTERREGIONALE', u'Provveditorato Interregionale OO.PP'),
+        (u'13', u'REGIONE', u'Regione'),
+        (u'14', u'STRUTTURE_SS', u'Strutture socio-sanitarie'),
+        (u'15', u'UNIVERSITA', u'Università'),
+    )
+
+    tipologia = models.CharField(max_length=3, choices=TIPOLOGIA, blank=False, null=False, default=u'')
     denominazione = models.CharField(max_length=256)
+    descrizione = models.TextField(max_length=800, blank=True, null=True, default=None)
 
     class Meta:
         verbose_name_plural = u'Soggetti attuatori'
