@@ -2,16 +2,22 @@ from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from open_ricostruzione.models import Donazione, InterventoProgramma, InterventoPiano, Cofinanziamento, \
     EventoContrattuale, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
-    QuadroEconomicoProgetto, QuadroEconomicoIntervento, DonazioneInterventoProgramma, RUP, ProprietarioImmobile, SoggettoAttuatore
+    QuadroEconomicoProgetto, QuadroEconomicoIntervento, DonazioneInterventoProgramma,TipoImmobile,\
+    RUP, ProprietarioImmobile, \
+    SoggettoAttuatore
 
 from .filters import TerritorioWithDonazione, TerritorioWithIntervento
 
 
-class InterventoProgettoAdmin(admin.ModelAdmin):
+class InterventoProgrammaAdmin(admin.ModelAdmin):
     model = InterventoProgramma
     ordering = ['n_ordine']
     list_filter = ['programma', TerritorioWithIntervento, 'tipo_immobile', ]
     search_fields = ['^denominazione', ]
+
+
+class TipoImmobileAdmin(admin.ModelAdmin):
+    model = TipoImmobile
 
 
 class DonazioneInterventoProgrammaAdmin(ForeignKeyAutocompleteAdmin):
@@ -19,7 +25,7 @@ class DonazioneInterventoProgrammaAdmin(ForeignKeyAutocompleteAdmin):
         'intervento_programma': ('n_ordine', 'denominazione'),
         'donazione': ('denominazione', 'territorio__denominazione'),
     }
-    fields = ('donazione','intervento_programma', 'importo', )
+    fields = ('donazione', 'intervento_programma', 'importo', )
 
 
 class DonazioneInterventoProgrammaAdminInline(admin.TabularInline):
@@ -80,17 +86,21 @@ class QEProgettoAdmin(admin.ModelAdmin):
 class QEInterventoAdmin(admin.ModelAdmin):
     model = QuadroEconomicoIntervento
 
+
 class SoggettoAttuatoreAdmin(admin.ModelAdmin):
     model = SoggettoAttuatore
     ordering = ('denominazione',)
 
+
 class RUPAdmin(admin.ModelAdmin):
     model = RUP
+
 
 class ProprietarioImmobileAdmin(admin.ModelAdmin):
     model = ProprietarioImmobile
 
 
+admin.site.register(TipoImmobile, TipoImmobileAdmin)
 admin.site.register(ProprietarioImmobile, ProprietarioImmobileAdmin)
 admin.site.register(RUP, RUPAdmin)
 admin.site.register(SoggettoAttuatore, SoggettoAttuatoreAdmin)
@@ -105,6 +115,6 @@ admin.site.register(Impresa, ImpresaAdmin)
 admin.site.register(Cofinanziamento, CofinanziamentoAdmin)
 admin.site.register(EventoContrattuale, EventoContrattualeAdmin)
 admin.site.register(InterventoPiano, InterventoPianoAdmin)
-admin.site.register(InterventoProgramma, InterventoProgettoAdmin)
+admin.site.register(InterventoProgramma, InterventoProgrammaAdmin)
 admin.site.register(Intervento, InterventoAdmin)
 admin.site.register(Donazione, DonazioneAdmin)

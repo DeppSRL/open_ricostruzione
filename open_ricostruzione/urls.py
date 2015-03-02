@@ -26,6 +26,8 @@ router.register(r'users', UserViewSet)
 
 admin.autodiscover()
 urlpatterns = patterns('',
+                       # ADMIN urls
+
                        # Uncomment the admin/doc line below to enable admin documentation:
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        # Uncomment the next line to enable the admin:

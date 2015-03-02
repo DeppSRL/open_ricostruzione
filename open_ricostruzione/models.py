@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
@@ -37,8 +38,8 @@ class InterventoProgramma(models.Model):
         (u'14', u'EDILIZIA_SOCIALE', u'EDILIZIA SOCIALE'),
         (u'15', u'EX_CHIESA', u'EX CHIESA/MONASTERO/ CONVENTO'),
         (u'16', u'EX_SCUOLA', u'EX SCUOLA'),
-        (u'17', u'IMPIANTI_A_RETE', 'uIMPIANTI A RETE'),
-        (u'18', u'MAGAZZINO', 'MAGAZZINO'),
+        (u'17', u'IMPIANTI_A_RETE', u'IMPIANTI A RETE'),
+        (u'18', u'MAGAZZINO', u'MAGAZZINO'),
         (u'19', u'MONASTERO_CONVENTO_SINAGOGA', u'MONASTERO / CONVENTO / SINAGOGA'),
         (u'20', u'MUNICIPI', u'MUNICIPI - UFFICI E ALTRI ENTI PUBBLICI'),
         (u'21', u'OPERE_BONIFICA', u'OPERE DI BONIFICA E IRRIGAZIONE'),
@@ -48,18 +49,6 @@ class InterventoProgramma(models.Model):
         (u'25', u'ATTR_SPORTIVE', u'ATTREZZATURE SPORTIVE'),
         (u'26', u'MONASTERO_CONVENTO', u'MONASTERO / CONVENTO'),
         (u'27', u'BENI_PRIVATI', u'BENI PRIVATI'),
-    )
-
-    TIPO_IMMOBILE = Choices(
-        (u'1', u'ALTRO', u'Altro'),
-        (u'2', u'INFRASTRUTTURE_BONIFICHE', u'Infrastrutture e bonifiche'),
-        (u'3', u'OSPEDALI', u'Ospedali'),
-        (u'4', u'CIMITERI', u'Cimiteri'),
-        (u'5', u'EDIFICI_STORICI', u'Edifici storici e culturali'),
-        (u'6', u'IMPIANTI_SPORTIVI', u'Impianti sportivi e ricreativi'),
-        (u'7', u'CHIESE', u'Chiese e beni religiosi'),
-        (u'8', u'SCUOLE', u'Scuole e Universita'),
-        (u'9', u'EDIFICI_PUBBLICI', u'Edifici pubblici'),
     )
 
     CATEGORIA_IMMOBILE = Choices(
@@ -84,7 +73,7 @@ class InterventoProgramma(models.Model):
     denominazione = models.TextField(max_length=400)
     territorio = models.ForeignKey('territori.Territorio', null=True)
     tipo_immobile_fenice = models.CharField(max_length=2, choices=TIPO_IMMOBILE_FENICE, blank=False, null=False, default='')
-    tipo_immobile = models.CharField(max_length=2, choices=TIPO_IMMOBILE, blank=False, null=False, default='')
+    tipo_immobile = models.ForeignKey('TipoImmobile', null=True, )
     categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
@@ -93,6 +82,30 @@ class InterventoProgramma(models.Model):
 
     class Meta:
         verbose_name_plural = u'Interventi a programma'
+
+
+class TipoImmobile(models.Model):
+
+    TIPOLOGIA = Choices(
+        (u'1', u'ALTRO', u'Altro'),
+        (u'2', u'INFRASTRUTTURE_BONIFICHE', u'Infrastrutture e bonifiche'),
+        (u'3', u'OSPEDALI', u'Ospedali'),
+        (u'4', u'CIMITERI', u'Cimiteri'),
+        (u'5', u'EDIFICI_STORICI', u'Edifici storici e culturali'),
+        (u'6', u'IMPIANTI_SPORTIVI', u'Impianti sportivi e ricreativi'),
+        (u'7', u'CHIESE', u'Chiese e beni religiosi'),
+        (u'8', u'SCUOLE', u'Scuole e Università'),
+        (u'9', u'EDIFICI_PUBBLICI', u'Edifici pubblici'),
+    )
+    tipologia = models.CharField(max_length=3, choices=TIPOLOGIA, blank=False, null=False, default=u'')
+    slug = models.SlugField(max_length=50, blank=False, null=False, default='')
+    descrizione = models.TextField(max_length=800, blank=True, null=True, default=None)
+
+    def __unicode__(self):
+        return u"{} ({})".format(TipoImmobile.TIPOLOGIA[self.tipologia], self.slug, )
+
+    class Meta:
+        verbose_name_plural = u'Tipo Immobile'
 
 
 class Programma(models.Model):
@@ -142,7 +155,7 @@ class Piano(models.Model):
     denominazione = models.TextField(max_length=120, default=u'')
 
     def __unicode__(self):
-        return u"({}) {}".format(self.id_piano, self.TIPO_PIANO[self.tipologia])
+        return u"({}) {}".format(self.id_fenice, self.TIPO_PIANO[self.tipologia])
 
     class Meta:
         verbose_name_plural = u'Piani'
@@ -410,6 +423,9 @@ class DonazioneInterventoProgramma(models.Model):
 class Anagrafica(models.Model):
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
 
+    class Meta:
+        abstract = True
+
 
 class SoggettoAttuatore(Anagrafica):
     denominazione = models.CharField(max_length=256)
@@ -439,7 +455,6 @@ class RUP(Anagrafica):
 
     class Meta:
         verbose_name_plural = u'RUP'
-
 
     def __unicode__(self):
         return u"({}) {} {} [{}]".format(self.id_fenice, self.nome, self.cognome, self.cf)

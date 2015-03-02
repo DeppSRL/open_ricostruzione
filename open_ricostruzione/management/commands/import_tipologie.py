@@ -24,6 +24,12 @@ class Command(BaseCommand):
     anagrafiche = None
 
     def check_tipologia(self, t):
+        ##
+        # controlla che il numero di elementi presenti in una tipologia T sia uguale
+        # al n. di tuple nell'oggetto Choice presente nel modello.
+        # Se non e' cosi: logga errore e stoppa lo script
+        ##
+
         n_tipi_piano_json = len(self.codifiche[t[0]])
         n_tipi_piano_model = len(t[1])
         if n_tipi_piano_json != n_tipi_piano_model:
@@ -110,24 +116,17 @@ class Command(BaseCommand):
         self.check_tipologie()
         self.logger.info("Tipologie OK")
 
-        ##
         # Import PROGRAMMI
-        ##
         self.logger.info("Import programmi...")
         self.import_programmi()
         self.logger.info("Programmi imported")
 
-        ##
         # Import PIANI
-        ##
         self.logger.info("Import piani...")
         self.import_piani()
         self.logger.info("Piani imported")
 
-        ##
         # Import ANAGRAFICHE
-        ##
-
         self.logger.info("Import Anagrafiche: proprietari immobile, sogg.attuatori, rup...")
         for p_immobile_json in self.anagrafiche['proprietari_immobile']:
             ProprietarioImmobile.objects.update_or_create(
