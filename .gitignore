@@ -3,6 +3,7 @@
 .env
 *.pyc
 .htdigest
+data
 log/*
 config/
 static/
