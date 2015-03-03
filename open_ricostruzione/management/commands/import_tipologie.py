@@ -1,6 +1,8 @@
+import csv
 import json
 import logging
 from optparse import make_option
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import BaseCommand
 from open_ricostruzione.models import Programma, Piano, RUP, ProprietarioImmobile, SoggettoAttuatore, \
@@ -22,6 +24,7 @@ class Command(BaseCommand):
     logger = logging.getLogger('csvimport')
     codifiche = None
     anagrafiche = None
+    sogg_att_map = {}
 
     def check_tipologia(self, t):
         ##
@@ -84,6 +87,19 @@ class Command(BaseCommand):
                 }
             )
 
+    def load_sogg_attuatore_mapping(self):
+        ##
+        # creates a dict in self.sogg_att_map with keys: id_fenice for sogg.att
+        # and as value the corresponding ORIC categorization id
+        ##
+
+        with open(settings.SOGG_ATTUATORE_MAP_FILE_PATH, mode='r') as infile:
+            reader = csv.reader(infile, dialect='excel-tab')
+            next(reader, None)  # skip the headers
+            for row in reader:
+                self.sogg_att_map[int(row[0])] = row[3]
+
+
     def handle(self, *args, **options):
 
         verbosity = options['verbosity']
@@ -111,6 +127,9 @@ class Command(BaseCommand):
         self.codifiche = data['codifiche']
         self.anagrafiche = data['anagrafiche']
 
+        # load sogg.attuatore mapping from csv file in memory
+        self.load_sogg_attuatore_mapping()
+
         # Check tipologie
         self.logger.info("Checking tipologie...")
         self.check_tipologie()
@@ -135,9 +154,17 @@ class Command(BaseCommand):
             )
 
         for s_attuatori_json in self.anagrafiche['soggetti_attuatori']:
+
+            tipologia = self.sogg_att_map.get(s_attuatori_json['id'], u'')
+
+            if tipologia == u'':
+                self.logger.error("Soggetto attuatore: cannot find tipologia ORIC for id_fenice:'{}'".
+                    format(s_attuatori_json['id']))
+
             SoggettoAttuatore.objects.update_or_create(
                 id_fenice=s_attuatori_json['id'],
                 denominazione=s_attuatori_json['nome'],
+                tipologia=tipologia
             )
 
         for rup_json in self.anagrafiche['rup']:

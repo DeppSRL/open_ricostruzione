@@ -6,13 +6,8 @@
 log/*
 config/
 static/
-fixtures/*
 open_ricostruzione/log/*
-csv/*
 requirements/local.txt
-open_ricostruzione/settings_local.py
 open_ricostruzione/media
-sqlite.db*
 open_ricostruzione/migrations/
 territori/migrations/
-open_ricostruzione/csv/*
