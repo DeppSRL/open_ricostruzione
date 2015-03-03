@@ -72,7 +72,8 @@ class InterventoProgramma(models.Model):
     importo_a_programma = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
     territorio = models.ForeignKey('territori.Territorio', null=True)
-    tipo_immobile_fenice = models.CharField(max_length=2, choices=TIPO_IMMOBILE_FENICE, blank=False, null=False, default='')
+    tipo_immobile_fenice = models.CharField(max_length=2, choices=TIPO_IMMOBILE_FENICE, blank=False, null=False,
+                                            default='')
     tipo_immobile = models.ForeignKey('TipoImmobile', null=True, )
     categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
@@ -85,7 +86,6 @@ class InterventoProgramma(models.Model):
 
 
 class TipoImmobile(models.Model):
-
     TIPOLOGIA = Choices(
         (u'1', u'ALTRO', u'Altro'),
         (u'2', u'INFRASTRUTTURE_BONIFICHE', u'Infrastrutture e bonifiche'),
@@ -392,7 +392,7 @@ class DonazioneInterventoProgramma(models.Model):
         if self.importo <= Decimal(0):
             raise ValidationError("L'importo deve essere maggiore di zero")
 
-        importo_donazioni_intervento = DonazioneInterventoProgramma.\
+        importo_donazioni_intervento = DonazioneInterventoProgramma. \
             objects.filter(donazione=self.donazione).exclude(pk=self.pk).aggregate(Sum('importo'))['importo__sum']
 
         if not importo_donazioni_intervento:
@@ -401,11 +401,11 @@ class DonazioneInterventoProgramma(models.Model):
         difference = self.donazione.importo - Decimal(importo_donazioni_intervento)
 
         if difference == Decimal(0):
-            raise ValidationError(u'Non e\' possibile inserire donazioni ad intervento per la donazione selezionata. Importo massimo raggiunto')
+            raise ValidationError(
+                u'Non e\' possibile inserire donazioni ad intervento per la donazione selezionata. Importo massimo raggiunto')
 
         if difference < self.importo:
             raise ValidationError(u'Importo massimo disponibile per la donazione a intervento:{}'.format(difference))
-
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

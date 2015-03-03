@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
     Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, \
-    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore
+    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -92,50 +92,53 @@ class Command(BaseCommand):
                 dip.save()
                 self.donazioni_intervento_programma.pop(idx)
 
-
     def translate_tipo_imm(self, id_tipo_imm):
         ##
         # translate tipo immobile fenice to open ricostruzione categorization.
-        # if mapping is not presento for the id_tipo_imm value prints error
+        # if mapping is not present for the id_tipo_imm value prints error
         ##
         tipo_immobile_map = {
-            '1': InterventoProgramma.TIPO_IMMOBILE.ALTRO,
-            '2': InterventoProgramma.TIPO_IMMOBILE.INFRASTRUTTURE_BONIFICHE,
-            '3': InterventoProgramma.TIPO_IMMOBILE.INFRASTRUTTURE_BONIFICHE,
-            '4': InterventoProgramma.TIPO_IMMOBILE.OSPEDALI,
-            '5': InterventoProgramma.TIPO_IMMOBILE.CIMITERI,
-            '6': InterventoProgramma.TIPO_IMMOBILE.EDIFICI_STORICI,
-            '7': InterventoProgramma.TIPO_IMMOBILE.IMPIANTI_SPORTIVI,
-            '8': InterventoProgramma.TIPO_IMMOBILE.CHIESE,
-            '9': InterventoProgramma.TIPO_IMMOBILE.ALTRO,
-            '10': InterventoProgramma.TIPO_IMMOBILE.CHIESE,
-            '11': InterventoProgramma.TIPO_IMMOBILE.CHIESE,
-            '12': InterventoProgramma.TIPO_IMMOBILE.CHIESE,
-            '13': InterventoProgramma.TIPO_IMMOBILE.SCUOLE,
-            '14': InterventoProgramma.TIPO_IMMOBILE.IMPIANTI_SPORTIVI,
-            '15': InterventoProgramma.TIPO_IMMOBILE.EDIFICI_STORICI,
-            '16': InterventoProgramma.TIPO_IMMOBILE.ALTRO,
-            '17': InterventoProgramma.TIPO_IMMOBILE.INFRASTRUTTURE_BONIFICHE,
-            '18': InterventoProgramma.TIPO_IMMOBILE.ALTRO,
-            '19': InterventoProgramma.TIPO_IMMOBILE.CHIESE,
-            '20': InterventoProgramma.TIPO_IMMOBILE.EDIFICI_PUBBLICI,
-            '21': InterventoProgramma.TIPO_IMMOBILE.INFRASTRUTTURE_BONIFICHE,
-            '22': InterventoProgramma.TIPO_IMMOBILE.INFRASTRUTTURE_BONIFICHE,
-            '23': InterventoProgramma.TIPO_IMMOBILE.SCUOLE,
-            '24': InterventoProgramma.TIPO_IMMOBILE.IMPIANTI_SPORTIVI,
-            '25': InterventoProgramma.TIPO_IMMOBILE.IMPIANTI_SPORTIVI,
-            '26': InterventoProgramma.TIPO_IMMOBILE.CHIESE,
-            '27': InterventoProgramma.TIPO_IMMOBILE.ALTRO,
+            '1': TipoImmobile.TIPOLOGIA.ALTRO,
+            '2': TipoImmobile.TIPOLOGIA.INFRASTRUTTURE_BONIFICHE,
+            '3': TipoImmobile.TIPOLOGIA.INFRASTRUTTURE_BONIFICHE,
+            '4': TipoImmobile.TIPOLOGIA.OSPEDALI,
+            '5': TipoImmobile.TIPOLOGIA.CIMITERI,
+            '6': TipoImmobile.TIPOLOGIA.EDIFICI_STORICI,
+            '7': TipoImmobile.TIPOLOGIA.IMPIANTI_SPORTIVI,
+            '8': TipoImmobile.TIPOLOGIA.CHIESE,
+            '9': TipoImmobile.TIPOLOGIA.ALTRO,
+            '10': TipoImmobile.TIPOLOGIA.CHIESE,
+            '11': TipoImmobile.TIPOLOGIA.CHIESE,
+            '12': TipoImmobile.TIPOLOGIA.CHIESE,
+            '13': TipoImmobile.TIPOLOGIA.SCUOLE,
+            '14': TipoImmobile.TIPOLOGIA.IMPIANTI_SPORTIVI,
+            '15': TipoImmobile.TIPOLOGIA.EDIFICI_STORICI,
+            '16': TipoImmobile.TIPOLOGIA.ALTRO,
+            '17': TipoImmobile.TIPOLOGIA.INFRASTRUTTURE_BONIFICHE,
+            '18': TipoImmobile.TIPOLOGIA.ALTRO,
+            '19': TipoImmobile.TIPOLOGIA.CHIESE,
+            '20': TipoImmobile.TIPOLOGIA.EDIFICI_PUBBLICI,
+            '21': TipoImmobile.TIPOLOGIA.INFRASTRUTTURE_BONIFICHE,
+            '22': TipoImmobile.TIPOLOGIA.INFRASTRUTTURE_BONIFICHE,
+            '23': TipoImmobile.TIPOLOGIA.SCUOLE,
+            '24': TipoImmobile.TIPOLOGIA.IMPIANTI_SPORTIVI,
+            '25': TipoImmobile.TIPOLOGIA.IMPIANTI_SPORTIVI,
+            '26': TipoImmobile.TIPOLOGIA.CHIESE,
+            '27': TipoImmobile.TIPOLOGIA.ALTRO,
 
         }
 
-        tipo_immobile = tipo_immobile_map.get(str(id_tipo_imm), None)
-        if tipo_immobile:
+        try:
+            tipo_immobile = TipoImmobile.objects.get(tipologia=tipo_immobile_map[str(id_tipo_imm)])
+        except ObjectDoesNotExist:
+            self.logger.critical(u"Cannot find mapping for id_tipo_imm '{}', mapping must be updated!".format(id_tipo_imm))
+            if id_tipo_imm not in self.tipo_imm_not_found:
+                self.tipo_imm_not_found.append(id_tipo_imm)
+            return None
+
+        else:
             return tipo_immobile
-        self.logger.critical(u"Cannot find mapping for id_tipo_imm '{}', mapping must be updated!".format(id_tipo_imm))
-        if id_tipo_imm not in self.tipo_imm_not_found:
-            self.tipo_imm_not_found.append(id_tipo_imm)
-        return ''
+
 
 
     def handle(self, *args, **options):
