@@ -109,14 +109,13 @@ class Command(BaseCommand):
         make_option('--delete',
                     dest='delete',
                     action='store_true',
-                    default=True,
+                    default=False,
                     help='Delete Existing Records'),
         make_option('--no-bulk',
                     dest='no_bulk',
                     action='store_true',
                     default=True,
                     help='Avoid saving donazione in a bulk create'),
-
     )
 
     input_file = ''
@@ -214,14 +213,11 @@ class Command(BaseCommand):
                 self.print_wrong_line(rowdata, row_counter)
                 continue
 
-            # todo: add tipologia cedente
-            tipologia_cedente = ''
-
             don_dict = {
                 'territorio': territorio,
                 'informazioni': rowdata.info,
                 'denominazione': rowdata.denominazione,
-                'tipologia_cedente': tipologia_cedente,
+                'tipologia_cedente': rowdata.tipologia_cedente,
                 'tipologia_donazione': rowdata.tipologia_donazione,
                 'data': rowdata.data,
                 'importo': rowdata.importo,

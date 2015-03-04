@@ -125,7 +125,6 @@ class Command(BaseCommand):
             '25': TipoImmobile.TIPOLOGIA.IMPIANTI_SPORTIVI,
             '26': TipoImmobile.TIPOLOGIA.CHIESE,
             '27': TipoImmobile.TIPOLOGIA.ALTRO,
-
         }
 
         try:
@@ -138,8 +137,6 @@ class Command(BaseCommand):
 
         else:
             return tipo_immobile
-
-
 
     def handle(self, *args, **options):
 
@@ -189,6 +186,12 @@ class Command(BaseCommand):
 
         set_autocommit(False)
         for intervento_a_programma in data['interventi_a_programma']:
+
+            # DEBUG: skips example project
+            # TODO: remove this when the file is not an example file
+            if intervento_a_programma['id_interv_a_progr'] == 605:
+                continue
+
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
             try:
                 territorio = Territorio.objects.get(istat_id=istat_comune)
