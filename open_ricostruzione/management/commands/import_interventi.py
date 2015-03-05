@@ -185,8 +185,9 @@ class Command(BaseCommand):
         else:
             self.logger.info("No Donazioni Programma found")
 
-        self.logger.info("Deleting all previous records...")
+        self.logger.info("Deleting all previous InterventoProgramma and Impresa...")
         InterventoProgramma.objects.all().delete()
+        Impresa.objects.all().delete()
         self.logger.info("Done")
 
         set_autocommit(False)
