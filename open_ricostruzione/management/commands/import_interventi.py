@@ -27,9 +27,12 @@ class Command(BaseCommand):
                     help='Path to file'),
     )
 
+    logger = logging.getLogger('csvimport')
     input_file = None
     encoding = 'latin-1'
-    logger = logging.getLogger('csvimport')
+    # istat_code_vari_territori = if an Intervento has this code in istat_code
+    # => intervento su vari territori bool is set to true
+    istat_code_vari_territori = '999999'
     date_format = '%d/%M/%Y'
     error_logfile = None
     temp_logfile = None
@@ -157,6 +160,8 @@ class Command(BaseCommand):
         self.temp_logfile = "{}/log/import_{}_temp.json".format(settings.PROJECT_ROOT, today_str)
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
+        interventi_counter = 0
+        vari_territori_counter = 0
 
         # read file
         try:
@@ -180,171 +185,181 @@ class Command(BaseCommand):
         else:
             self.logger.info("No Donazioni Programma found")
 
-
         self.logger.info("Deleting all previous records...")
         InterventoProgramma.objects.all().delete()
         self.logger.info("Done")
 
         set_autocommit(False)
         for intervento_a_programma in data['interventi_a_programma']:
-
             # DEBUG: skips example project
             # TODO: remove this when the file is not an example file
             if intervento_a_programma['id_interv_a_progr'] == 605:
                 continue
 
+            interventi_counter+=1
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
-            try:
-                territorio = Territorio.objects.get(istat_id=istat_comune)
-            except ObjectDoesNotExist:
-                self.logger.error("Territorio does not exist:{}".format(istat_comune))
-                if istat_comune not in self.not_found_territori:
-                    self.not_found_territori[istat_comune] = 1
-                else:
-                    self.not_found_territori[istat_comune] += 1
+            territorio = None
+            vari_territori = False
 
-                continue
+            # checks if istat_id == vari_territori, else find the territorio in the db
+            if istat_comune == self.istat_code_vari_territori:
+                self.logger.debug(u"Territorio found: VARI TERRITORI")
+                vari_territori = True
+                vari_territori_counter+=1
             else:
-                self.logger.debug(u"Territorio found:{}".format(territorio.denominazione))
+                try:
+                    territorio = Territorio.objects.get(istat_id=istat_comune)
+                except ObjectDoesNotExist:
+                    self.logger.error("Territorio does not exist:{}".format(istat_comune))
+                    if istat_comune not in self.not_found_territori:
+                        self.not_found_territori[istat_comune] = 1
+                    else:
+                        self.not_found_territori[istat_comune] += 1
 
-                got_gps_data = False
-                if territorio.gps_lon is None:
-                    territorio.gps_lon = intervento_a_programma['comune']['long']
-                    got_gps_data = True
+                    continue
+                else:
+                    self.logger.debug(u"Territorio found:{}".format(territorio.denominazione))
 
-                if territorio.gps_lat is None:
-                    territorio.gps_lat = intervento_a_programma['comune']['lat']
-                    got_gps_data = True
+                    got_gps_data = False
+                    if territorio.gps_lon is None:
+                        territorio.gps_lon = intervento_a_programma['comune']['long']
+                        got_gps_data = True
 
-                if got_gps_data:
-                    territorio.save()
+                    if territorio.gps_lat is None:
+                        territorio.gps_lat = intervento_a_programma['comune']['lat']
+                        got_gps_data = True
 
-                int_programma = InterventoProgramma()
-                # gets Programma
-                programma, is_created = Programma.objects.get_or_create(
-                    id_fenice=intervento_a_programma['id_progr'],
+                    if got_gps_data:
+                        territorio.save()
+
+            int_programma = InterventoProgramma()
+            # gets Programma
+            programma, is_created = Programma.objects.get_or_create(
+                id_fenice=intervento_a_programma['id_progr'],
                 )
-                if is_created:
-                    self.logger.warning("Created new Programma with id:{}".format(programma.id_fenice))
+            if is_created:
+                self.logger.warning("Created new Programma with id:{}".format(programma.id_fenice))
 
-                # gets Soggetto Attuatore
-                soggetto_att, is_created = SoggettoAttuatore.objects.get_or_create(
-                    id_fenice=intervento_a_programma['id_sogg_att'],
+            # gets Soggetto Attuatore
+            soggetto_att, is_created = SoggettoAttuatore.objects.get_or_create(
+                id_fenice=intervento_a_programma['id_sogg_att'],
                 )
 
-                if is_created:
-                    self.logger.warning("Created new Soggetto Attuatore with id:{}".format(soggetto_att.id_fenice))
+            if is_created:
+                self.logger.warning("Created new Soggetto Attuatore with id:{}".format(soggetto_att.id_fenice))
 
-                int_programma.programma = programma
-                int_programma.id_fenice = intervento_a_programma['id_interv_a_progr']
-                int_programma.n_ordine = intervento_a_programma['n_ordine'].strip()
-                int_programma.importo_generale = Decimal(intervento_a_programma['imp_gen'])
-                int_programma.importo_a_programma = Decimal(intervento_a_programma['imp_a_progr'])
-                int_programma.denominazione = intervento_a_programma['denominazione'].strip()
-                int_programma.soggetto_attuatore = soggetto_att
-                int_programma.territorio = territorio
-                int_programma.id_categ_imm = intervento_a_programma['id_categ_imm']
-                int_programma.id_propr_imm = intervento_a_programma['id_propr_imm']
-                int_programma.slug = slugify(
-                    u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_fenice)))
-                int_programma.tipo_immobile_fenice = intervento_a_programma['id_tipo_imm']
-                int_programma.tipo_immobile = self.translate_tipo_imm(intervento_a_programma['id_tipo_imm'])
-                int_programma.save()
-                self.logger.info(u"Import Interv.Programma:{}".format(int_programma.slug))
+            int_programma.programma = programma
+            int_programma.id_fenice = intervento_a_programma['id_interv_a_progr']
+            int_programma.n_ordine = intervento_a_programma['n_ordine'].strip()
+            int_programma.importo_generale = Decimal(intervento_a_programma['imp_gen'])
+            int_programma.importo_a_programma = Decimal(intervento_a_programma['imp_a_progr'])
+            int_programma.denominazione = intervento_a_programma['denominazione'].strip()
+            int_programma.soggetto_attuatore = soggetto_att
+            int_programma.territorio = territorio
+            int_programma.vari_territori = vari_territori
+            int_programma.id_categ_imm = intervento_a_programma['id_categ_imm']
+            int_programma.id_propr_imm = intervento_a_programma['id_propr_imm']
+            int_programma.slug = slugify(
+                u"{}-{}".format(int_programma.denominazione[:45], str(int_programma.id_fenice)))
+            int_programma.tipo_immobile_fenice = intervento_a_programma['id_tipo_imm']
+            int_programma.tipo_immobile = self.translate_tipo_imm(intervento_a_programma['id_tipo_imm'])
+            int_programma.save()
+            self.logger.info(u"Import Interv.Programma:{}".format(int_programma.slug))
 
-                # save cofinanziamenti
-                for cofinanziamento in list(
-                        filter(lambda x: x['importo'] > 0, intervento_a_programma['cofinanziamenti'])):
-                    cof = Cofinanziamento()
-                    cof.intervento_programma = int_programma
-                    cof.tipologia = cofinanziamento['id_tipo_cofin']
-                    cof.importo = cofinanziamento['importo']
-                    cof.save()
+            # save cofinanziamenti
+            for cofinanziamento in list(
+                    filter(lambda x: x['importo'] > 0, intervento_a_programma['cofinanziamenti'])):
+                cof = Cofinanziamento()
+                cof.intervento_programma = int_programma
+                cof.tipologia = cofinanziamento['id_tipo_cofin']
+                cof.importo = cofinanziamento['importo']
+                cof.save()
 
-                # save interventi a piano
-                for intervento_a_piano in intervento_a_programma['interventi_a_piano']:
-                    int_piano = InterventoPiano()
-                    int_piano.intervento_programma = int_programma
-                    int_piano.id_fenice = intervento_a_piano['id_interv_a_piano']
-                    int_piano.imp_a_piano = intervento_a_piano['imp_a_piano']
-                    # gets or create a Piano
-                    piano, is_created = Piano.objects.get_or_create(
-                        id_fenice=intervento_a_piano['piano']['id_piano'],
-                        tipologia=intervento_a_piano['piano']['id_tipo_piano']
-                    )
-                    int_piano.piano = piano
-                    int_piano.save()
+            # save interventi a piano
+            for intervento_a_piano in intervento_a_programma['interventi_a_piano']:
+                int_piano = InterventoPiano()
+                int_piano.intervento_programma = int_programma
+                int_piano.id_fenice = intervento_a_piano['id_interv_a_piano']
+                int_piano.imp_a_piano = intervento_a_piano['imp_a_piano']
+                # gets or create a Piano
+                piano, is_created = Piano.objects.get_or_create(
+                    id_fenice=intervento_a_piano['piano']['id_piano'],
+                    tipologia=intervento_a_piano['piano']['id_tipo_piano']
+                )
+                int_piano.piano = piano
+                int_piano.save()
 
-                    # save interventi
-                    for intervento in intervento_a_piano['interventi']:
-                        intr = Intervento()
-                        intr.intervento_piano = int_piano
-                        intr.id_fenice = intervento['id_interv']
-                        intr.is_variante = intervento['variante']
+                # save interventi
+                for intervento in intervento_a_piano['interventi']:
+                    intr = Intervento()
+                    intr.intervento_piano = int_piano
+                    intr.id_fenice = intervento['id_interv']
+                    intr.is_variante = intervento['variante']
 
-                        intr.imp_congr_spesa = Decimal(0)
-                        if intervento['imp_congr_spesa']:
-                            intr.imp_congr_spesa = Decimal(intervento['imp_congr_spesa'])
+                    intr.imp_congr_spesa = Decimal(0)
+                    if intervento['imp_congr_spesa']:
+                        intr.imp_congr_spesa = Decimal(intervento['imp_congr_spesa'])
 
-                        intr.denominazione = intervento['denominazione']
-                        intr.tipologia = intervento['id_tipo_interv']
-                        intr.stato = intervento['id_stato_interv']
-                        intr.gps_lat = intervento['lat']
-                        intr.gps_long = intervento['long']
-                        intr.save()
+                    intr.denominazione = intervento['denominazione']
+                    intr.tipologia = intervento['id_tipo_interv']
+                    intr.stato = intervento['id_stato_interv']
+                    intr.gps_lat = intervento['lat']
+                    intr.gps_long = intervento['long']
+                    intr.save()
 
-                        # save quadro economico for Intervento
-                        for qe_intervento in intervento['qe']:
-                            QuadroEconomicoIntervento(**{
-                                'intervento': intr,
-                                'tipologia': qe_intervento['id_tipo_qe'],
-                                'importo': Decimal(qe_intervento['imp_qe']),
+                    # save quadro economico for Intervento
+                    for qe_intervento in intervento['qe']:
+                        QuadroEconomicoIntervento(**{
+                            'intervento': intr,
+                            'tipologia': qe_intervento['id_tipo_qe'],
+                            'importo': Decimal(qe_intervento['imp_qe']),
                             }).save()
 
-                        #     import progetti
-                        for progetto in intervento['progetti']:
-                            prog = Progetto(**{
-                                'intervento': intr,
-                                'tipologia': progetto['id_tipo_prog'],
-                                'stato_progetto': progetto['id_stato_prog'],
-                                'data_deposito': datetime.strptime(progetto['data_dep'], self.date_format)
-                            })
-                            prog.save()
-                            # save quadro economico for Progetto
-                            for qe_progetto in progetto['qe']:
-                                qep = QuadroEconomicoProgetto(**{
-                                    'progetto': prog,
-                                    'tipologia': qe_progetto['id_tipo_qe'],
-                                    'importo': Decimal(qe_progetto['imp_qe']),
+                    #     import progetti
+                    for progetto in intervento['progetti']:
+                        prog = Progetto(**{
+                            'intervento': intr,
+                            'tipologia': progetto['id_tipo_prog'],
+                            'stato_progetto': progetto['id_stato_prog'],
+                            'data_deposito': datetime.strptime(progetto['data_dep'], self.date_format)
+                        })
+                        prog.save()
+                        # save quadro economico for Progetto
+                        for qe_progetto in progetto['qe']:
+                            qep = QuadroEconomicoProgetto(**{
+                                'progetto': prog,
+                                'tipologia': qe_progetto['id_tipo_qe'],
+                                'importo': Decimal(qe_progetto['imp_qe']),
                                 }).save()
 
-                        #  import liquidazioni
-                        for liquidazione in intervento['liquidazioni']:
-                            Liquidazione(**{
-                                'intervento': intr,
-                                'tipologia': liquidazione['id_tipo_liq'],
-                                'data': datetime.strptime(liquidazione['data_ord'], self.date_format),
-                                'importo': Decimal(liquidazione['imp_ord'])
+                    #  import liquidazioni
+                    for liquidazione in intervento['liquidazioni']:
+                        Liquidazione(**{
+                            'intervento': intr,
+                            'tipologia': liquidazione['id_tipo_liq'],
+                            'data': datetime.strptime(liquidazione['data_ord'], self.date_format),
+                            'importo': Decimal(liquidazione['imp_ord'])
+                        }).save()
+
+                    #  Eventi contr.
+                    for evento_contr in intervento['eventi_contrattuali']:
+                        EventoContrattuale(**{
+                            'intervento': intr,
+                            'tipologia': evento_contr['id_tipo_evento_contr'],
+                            'data': datetime.strptime(evento_contr['data'], self.date_format),
                             }).save()
 
-                        #  Eventi contr.
-                        for evento_contr in intervento['eventi_contrattuali']:
-                            EventoContrattuale(**{
-                                'intervento': intr,
-                                'tipologia': evento_contr['id_tipo_evento_contr'],
-                                'data': datetime.strptime(evento_contr['data'], self.date_format),
-                            }).save()
-
-                        #     imprese
-                        for impresa in intervento['imprese']:
-                            impr = Impresa(**{
-                                'ragione_sociale': impresa['rag_soc'],
-                                'partita_iva': impresa['p_iva']
-                            })
-                            impr.save()
-                            intr.imprese.add(impr)
+                    #     imprese
+                    for impresa in intervento['imprese']:
+                        impr = Impresa(**{
+                            'ragione_sociale': impresa['rag_soc'],
+                            'partita_iva': impresa['p_iva']
+                        })
+                        impr.save()
+                        intr.imprese.add(impr)
         commit()
 
+        self.logger.info("Imported {} interventi, {} of which were on ALTRI TERRITORI".format(interventi_counter, vari_territori_counter))
         # prints out not-found Territori
         if len(self.not_found_territori.keys()):
             for t,counter in self.not_found_territori.iteritems():
