@@ -72,6 +72,7 @@ class InterventoProgramma(models.Model):
     importo_a_programma = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
     territorio = models.ForeignKey('territori.Territorio', null=True)
+    vari_territori = models.BooleanField(default=False, null=False, blank=False)
     tipo_immobile_fenice = models.CharField(max_length=2, choices=TIPO_IMMOBILE_FENICE, blank=False, null=False,
                                             default='')
     tipo_immobile = models.ForeignKey('TipoImmobile', null=True, )

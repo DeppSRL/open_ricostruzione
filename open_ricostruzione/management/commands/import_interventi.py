@@ -35,6 +35,7 @@ class Command(BaseCommand):
     temp_logfile = None
     donazioni_intervento_programma = None
     tipo_imm_not_found = []
+    not_found_territori = {}
 
     def dump_don_json(self, logfile_name):
         with open(logfile_name, 'w') as outfile:
@@ -156,7 +157,7 @@ class Command(BaseCommand):
         self.temp_logfile = "{}/log/import_{}_temp.json".format(settings.PROJECT_ROOT, today_str)
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
-        not_found_istat = []
+
         # read file
         try:
             json_file = open(self.input_file)
@@ -197,8 +198,11 @@ class Command(BaseCommand):
                 territorio = Territorio.objects.get(istat_id=istat_comune)
             except ObjectDoesNotExist:
                 self.logger.error("Territorio does not exist:{}".format(istat_comune))
-                if istat_comune not in not_found_istat:
-                    not_found_istat.append(istat_comune)
+                if istat_comune not in self.not_found_territori:
+                    self.not_found_territori[istat_comune] = 1
+                else:
+                    self.not_found_territori[istat_comune] += 1
+
                 continue
             else:
                 self.logger.debug(u"Territorio found:{}".format(territorio.denominazione))
@@ -340,6 +344,11 @@ class Command(BaseCommand):
                             impr.save()
                             intr.imprese.add(impr)
         commit()
+
+        # prints out not-found Territori
+        if len(self.not_found_territori.keys()):
+            for t,counter in self.not_found_territori.iteritems():
+                self.logger.error(u"Cannot find territorio with istat_id:'{}' {} times".format(t, counter))
 
         self.logger.info("Recovering Donazioni Programma if present...")
         total_donazioni_intervento = len(self.donazioni_intervento_programma)
