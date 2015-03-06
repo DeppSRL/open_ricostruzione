@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     
     <meta itemprop="name" content="Open Ricostruzione">
-    <meta itemprop="description" content="Open Ricostruzione è uno strumento a disposizione degli amministratori e dei cittadini per favorire una ricostruzione partecipata e trasparente. E' aperto al contributo di tutti e anzi lo incoraggia: commenti, notizie, segnalazioni.">
+    <meta itemprop="description" content="">
     <meta itemprop="image" content="http://www.openricostruzione.it/static/img/favicon_grande.png">
     <title>Open Ricostruzione - {% block title %} {% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
     <meta name="author" content="" >
  
     <!-- Le styles -->
-    <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.9.1.custom.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     {% block css_header %}
     {% endblock %}
@@ -27,9 +27,7 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/less-1.3.1.min.js"></script>
 
     {% else %}
-
-        <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
-        <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/main.css" rel="stylesheet">
 
     {% endif %}
 
