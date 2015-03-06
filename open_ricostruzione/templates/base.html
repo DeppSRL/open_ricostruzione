@@ -238,153 +238,11 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{{ STATIC_URL }}js/jquery.js"></script>
-<script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}js/highcharts.js"></script>
-<script src="{{ STATIC_URL }}js/jquery-ui-1.9.1.custom.min.js" type="text/javascript" ></script>
-<script src="{{ STATIC_URL }}js/utils.js" type="text/javascript" ></script>
-<script src="{{ STATIC_URL }}js/jquery.lightbox_me.js" type="text/javascript" ></script>
+<script src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="{{ STATIC_URL }}vendor/highcharts/js/highcharts.js"></script>
 
-<!-- leaflet -->
-<script src="http://cdn.leafletjs.com/leaflet-0.4/leaflet.js"></script>
-<script src="{{ STATIC_URL }}js/Semicircle.js?"></script>
-<script src="{{ STATIC_URL }}js/leaflet.label.js"></script>
-<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.1"></script>
+{% include 'g_analytics.html' %}
 
-
-{# google analytics #}
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-980632-21']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
-<script type="text/javascript">
-    {#    names of hidden inputs for donation #}
-    var donate_territorio = '#donate_territorio';
-    var donate_progetto = '#donate_progetto';
-    var error_container = "#error_container";
-
-    $(document).ready(function() {
-
-        $('#progetto-search').focus(function(){
-            if ($(this)._cleared) return;
-            $(this).val('');
-            $(this)._cleared = true;
-        });
-
-
-        $( "#progetto-search" ).autocomplete({
-            source: function( request, response ) {
-                $.getJSON(
-                       "{{ SITE_URL }}/progetti.json",
-                        {'qterm': request.term },
-                        function( data ) {
-                            response( $.map( data, function( item ) {
-                                return {
-                                    label: item.fields.denominazione,
-                                    value: item.fields.slug
-                                }
-                            }));
-                        }
-                );
-            },
-            minLength: 4,
-            select: function( event, ui ) {
-                window.location.href = "../progetto/"+ ui.item.value;
-            },
-            open: function() {
-               $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-            },
-            close: function() {
-                $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-            }
-        }).css('z-index', 10000);
-
-
-        {#        binds the select with the donation lightbox #}
-        $('#select_territorio_donation').change(function(e) {
-            var territorio_value=$(this).val();
-            var territorio_input = $(donate_territorio);
-
-            {# set hidden input to territorio value#}
-
-            if(territorio_input.length){
-                $(territorio_input).val(territorio_value);
-            }
-            e.preventDefault();
-        });
-
-        {#        binds the button click with the donation lightbox #}
-        $('.donate_button').click(function(e) {
-            var progetto_value = null;
-            var territorio_value = null;
-            var territorio_input = $(donate_territorio);
-            var progetto_input = $(donate_progetto);
-
-            if(territorio_input.length) {
-                // there's at least one matching element
-                territorio_value = territorio_input.val();
-            }
-
-            if(progetto_input.length) {
-                // there's at least one matching element
-                progetto_value = progetto_input.val();
-            }
-
-            click_donate(territorio_value,progetto_value);
-        });
-
-        $('#donation_submit').click(function(e) {
-
-            var error = false;
-
-            //clears all previous error messages
-            removeErrorFlashMessage(error_container);
-            {#   check cognome e codice fiscale not null#}
-            if(
-               check_input_is_null('#payerCodiceFiscaleContribuente') ||
-               check_input_is_null('#payerCognomeContribuente') ||
-               check_input_is_null('#payerImporto')
-                    ){
-                    //set error msg
-                    error=true;
-
-                    addFlashMessage(error_container,"error","I campi Cognome, Codice Fiscale e Importo sono obbligatori");
-            }
-
-            {#  codice fiscale >= 11 caratteri #}
-            if(!error && $('#payerCodiceFiscaleContribuente').val().length<11){
-                error=true;
-                addFlashMessage(error_container,"error","Il campo Codice Fiscale / P.Iva deve contenere almeno 11 caratteri");
-
-            }
-            {# check importo is not null and is a positive number#}
-            if(!error && !isNumeric($('#payerImporto').val()) || $('#payerImporto').val()<0 ){
-                error=true;
-                addFlashMessage(error_container,"error","Il campo Importo Totale deve contenere solo caratteri numerici");
-            }
-
-            if(error==true){
-                e.preventDefault();
-            }
-            else
-                addFlashMessage(error_container,"info","La preghiamo di attendere, stiamo procedendo a redizionarla verso la piattaforma di pagamento");
-
-        });
-
-
-      
-    });
-
-</script>
 
 {% block extra-js %}
 
@@ -394,19 +252,6 @@
 
 {% endblock %}
 
-
-{#/*    LEAFLET*/#}
-{% block map-data %}
-
-{% endblock %}
-{#/*  END  LEAFLET*/#}
-
-
-{#/*    HIGH CHARTS*/#}
-{% block graph-data %}
-
-{% endblock %}
-{#/*  END  HIGH CHARTS*/#}
 
 </body>
 </html>
