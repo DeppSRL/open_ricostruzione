@@ -5,6 +5,7 @@ import json
 from json.encoder import JSONEncoder
 import time
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
 from django.conf import settings
@@ -13,7 +14,7 @@ from django.db import connections
 from django.db.models.query import QuerySet
 from django.core.serializers import serialize
 from django.utils.functional import curry
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.defaultfilters import date as _date
 from open_ricostruzione.models import InterventoProgramma, Donazione
@@ -31,6 +32,29 @@ class DonazioneApiView(generics.ListAPIView):
 
     def get_queryset(self):
         return Donazione.objects.all()
+
+
+
+class PageNotFoundTemplateView(TemplateView):
+    template_name = '404.html'
+
+
+class StaticPageView(TemplateView, ):
+    template_name = 'static_page.html'
+
+    # def get(self, request, *args, **kwargs):
+    #
+    #     page_url = request.get_full_path().replace("/pages/", "")
+    #     if page_url not in settings.ENABLED_STATIC_PAGES:
+    #         return HttpResponseRedirect(reverse('404'))
+    #     return super(StaticPageView, self).get(request, *args, **kwargs)
+    #
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super(StaticPageView, self).get_context_data(**kwargs)
+    #     return context
+
+
 
 class HomeView(TemplateView):
     template_name = "home.html"

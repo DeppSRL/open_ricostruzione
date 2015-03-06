@@ -1,6 +1,7 @@
 # Django settings for open_ricostruzione project.
 import os
 import environ
+
 root = environ.Path(__file__) - 2  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
 
 # set default values and casting
@@ -236,6 +237,8 @@ DISQUS_API_KEY = env('DISQUS_API_KEY')
 
 OR_BLOG_FEED = 'http://blog.openricostruzione.it/?feed=rss2'
 
+ENABLED_STATIC_PAGES = ['faq', 'chi-siamo']
+
 OP_API = {
     'base_url': env('OP_API_DOMAIN'),
     'username': env('OP_API_USERNAME'),
@@ -250,4 +253,4 @@ REST_FRAMEWORK = {
     ]
 }
 
-SOGG_ATTUATORE_MAP_FILE_PATH = env.str('SOGG_ATTUATORE_MAP_FILE_PATH','')
+SOGG_ATTUATORE_MAP_FILE_PATH = env.str('SOGG_ATTUATORE_MAP_FILE_PATH', '')

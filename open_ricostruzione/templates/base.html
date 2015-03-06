@@ -32,16 +32,7 @@
         <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
 
     {% endif %}
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.css" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/leaflet.label.css" />
 
-    <!--[if lte IE 8]>
-     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.4/leaflet.ie.css" />
-    <![endif]-->
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico">
@@ -69,14 +60,14 @@
     </div> <!--/row -->
 </div> <!-- / container header -->
 
-<div id="top_home" class="{% block show-home %}hidden{% endblock %}">
-    <div class="container content ">
-        <div class="row">
+<div class="container content ">
+    <div class="row">
+        {% block content %}
             <div class="span5">
-                Work in progress
-           </div>
-       </div>
-   </div>
+            Work in progress
+            </div>
+        {% endblock %}
+    </div>
 </div>
 
 
@@ -96,7 +87,7 @@
                             E' aperto al contributo di tutti e
                             anzi lo incoraggia: commenti, notizie, segnalazioni.
                         </p>
-                       
+
                     </div>
                     <div class="links">
                         <ul>

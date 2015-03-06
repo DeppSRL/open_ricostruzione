@@ -27,7 +27,6 @@ router.register(r'users', UserViewSet)
 admin.autodiscover()
 urlpatterns = patterns('',
                        # ADMIN urls
-
                        # Uncomment the admin/doc line below to enable admin documentation:
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        # Uncomment the next line to enable the admin:
@@ -35,12 +34,18 @@ urlpatterns = patterns('',
 
                        #  DJANGO FRONT URLS
                        url(r'^front-edit/', include('front.urls')),
+                       url(r'^pages/chi-siamo', StaticPageView.as_view(), name='chi-siamo'),
+                       url(r'^pages/faq', StaticPageView.as_view(), name='faq'),
 
                        # Django REST FRAMEWORK API urls
-
                        url(r'^api/', include(router.urls)),
                        url(r'^api/donazioni/$', DonazioneApiView.as_view(), name='api-donazioni-list'),
                        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+                       # robots.txt
+                       url(r'^robots\.txt$', include('robots.urls')),
+
+                       url(r'^page-not-found$', PageNotFoundTemplateView.as_view(), name='404'),
 
                        # Work in progress url
                        # url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
@@ -54,4 +59,3 @@ if settings.DEVELOPMENT:
                             url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
                                 'document_root': settings.MEDIA_ROOT,
                             }))
-

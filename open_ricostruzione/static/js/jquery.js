@@ -1,1 +1,1 @@
-jquery-1.8.2.min.js
+/home/stefano/workspace/open_ricostruzione/open_ricostruzione/static/js/jquery-2.1.3.min.js
