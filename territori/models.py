@@ -133,6 +133,10 @@ class Territorio(models.Model):
     def get_province_cratere():
         return Territorio.objects.filter(tipologia=Territorio.TERRITORIO.P, denominazione__in=settings.PROVINCE_CRATERE)
 
+    @staticmethod
+    def get_territori_cratere():
+        return Territorio.objects.filter(tipologia=Territorio.TERRITORIO.C, istat_id__in=settings.COMUNI_CRATERE).order_by('prov', 'denominazione')
+
     def __unicode__(self):
         return unicode(self.denominazione)
 
