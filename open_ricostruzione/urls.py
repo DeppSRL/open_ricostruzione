@@ -51,6 +51,10 @@ urlpatterns = patterns('',
                        # url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
 
                        url(r'^$', HomeView.as_view(), name='home'),
+                       url(r'^tipo_immobile/$', HomeView.as_view(), name='tipo-immobile'),
+                       url(r'^localita/$', HomeView.as_view(), name='localita'),
+                       url(r'^sogg-attuatore/$', HomeView.as_view(), name='sogg-attuatore'),
+                       url(r'^int-programma/$', HomeView.as_view(), name='int-programma'),
 
 )
 

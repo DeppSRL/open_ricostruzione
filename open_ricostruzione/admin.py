@@ -13,7 +13,7 @@ class InterventoProgrammaAdmin(admin.ModelAdmin):
     model = InterventoProgramma
     ordering = ['n_ordine']
     list_filter = ['programma', TerritorioWithIntervento, 'tipo_immobile', ]
-    search_fields = ['^denominazione', ]
+    search_fields = ['^denominazione', 'id_fenice']
 
 
 class TipoImmobileAdmin(admin.ModelAdmin):

@@ -7,25 +7,27 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.2/ckeditor.js"></script>
 
     {% front_edit_scripts editor="ckeditor"%}
+    <div class="row">
 
-    <div id="content" class="col-sm-9" style="padding-bottom: 80px;">
-        <h1>
-        {% front_edit "title" request.path %}
-            Default title
-        {% end_front_edit  %}
-        </h1>
-        <h3>
-            {% front_edit "subtitle" request.path %}
+        <div id="content" class="col-sm-9" style="padding-bottom: 80px;">
+            <h1>
+                {% front_edit "title" request.path %}
+                Default title
+                {% end_front_edit  %}
+            </h1>
+            <h3>
+                {% front_edit "subtitle" request.path %}
                 Default subtitle
-            {% end_front_edit  %}
-        </h3>
-        <p>
-            {% front_edit "content" request.path %}
+                {% end_front_edit  %}
+            </h3>
+            <p>
+                {% front_edit "content" request.path %}
                 Default content
-            {% end_front_edit  %}
-        </p>
-    </div><!-- /#content -->
+                {% end_front_edit  %}
+            </p>
+        </div><!-- /#content -->
 
+    </div>
 
 {% endblock %}
 
