@@ -4,12 +4,13 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="dropdown-submenu">
-                    <a class="btn btn-default dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                        Dove si interviene
+
+{#                     DOVE           #}
+
+                    <a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        Dove si interviene?
                         <span class="caret"></span>
                     </a>
-
-
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
                         {% regroup territori_cratere by prov as group %}
                         {% for g in group %}
@@ -25,6 +26,35 @@
                         <li class="divider"></li>
                         <li><a href="#">Vari territori</a> </li>
 
+                    </ul>
+                </li>
+{#                COSA         #}
+                <li class="dropdown-submenu">
+                    <a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        Per cosa?
+                        <span class="caret"></span>
+                    </a>
+
+
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
+                        {% for t in tipologie_immobile %}
+                            <li><a href="#">{{ t.1 }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+{#                RESPONSABILI         #}
+                <li class="dropdown-submenu">
+                    <a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        Chi &egrave; il responsabile?
+                        <span class="caret"></span>
+                    </a>
+
+
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
+                        {% for t in tipologie_sogg_att %}
+                            <li><a href="#">{{ t.1 }}</a></li>
+                        {% endfor %}
                     </ul>
                 </li>
             </ul>

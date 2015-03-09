@@ -102,6 +102,10 @@ class TipoImmobile(models.Model):
     slug = models.SlugField(max_length=50, blank=False, null=False, default='')
     descrizione = models.TextField(max_length=800, blank=True, null=True, default=None)
 
+    @staticmethod
+    def get_tipologie():
+        return TipoImmobile.TIPOLOGIA
+
     def __unicode__(self):
         return u"{} ({})".format(TipoImmobile.TIPOLOGIA[self.tipologia], self.slug, )
 
@@ -450,6 +454,10 @@ class SoggettoAttuatore(Anagrafica):
     tipologia = models.CharField(max_length=3, choices=TIPOLOGIA, blank=False, null=False, default=u'')
     denominazione = models.CharField(max_length=256)
     descrizione = models.TextField(max_length=800, blank=True, null=True, default=None)
+
+    @staticmethod
+    def get_tipologie():
+        return SoggettoAttuatore.TIPOLOGIA
 
     class Meta:
         verbose_name_plural = u'Soggetti attuatori'
