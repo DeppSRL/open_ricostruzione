@@ -34,7 +34,6 @@ class DonazioneApiView(generics.ListAPIView):
         return Donazione.objects.all()
 
 
-
 class PageNotFoundTemplateView(TemplateView):
     template_name = '404.html'
 
@@ -42,28 +41,36 @@ class PageNotFoundTemplateView(TemplateView):
 class StaticPageView(TemplateView, ):
     template_name = 'static_page.html'
 
-    # def get(self, request, *args, **kwargs):
-    #
-    #     page_url = request.get_full_path().replace("/pages/", "")
-    #     if page_url not in settings.ENABLED_STATIC_PAGES:
-    #         return HttpResponseRedirect(reverse('404'))
-    #     return super(StaticPageView, self).get(request, *args, **kwargs)
-    #
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super(StaticPageView, self).get_context_data(**kwargs)
-    #     return context
 
+class AggregatePageMixin(object):
+    ##
+    # Aggregati Page Mixin
+    # stores the common function of all the aggregate views
+    ##
+
+    def get_programmati_pianificati(self):
+        return
+
+    def get_agg_tipo_immobile(self):
+        return
+
+    def get_agg_sott_att(self):
+        return
+
+    def fetch_interventi_programma(self):
+        return
 
 
 class HomeView(TemplateView):
     template_name = "home.html"
 
-    def get_context_data(self, **kwargs ):
+    def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-
-
         return context
+
+
+class LocalitaView(TemplateView):
+    template_name = 'localita.html'
 
 
 class ProgettoView(DetailView):
@@ -71,46 +78,44 @@ class ProgettoView(DetailView):
     context_object_name = "progetto"
     template_name = 'progetto.html'
 
-    def get_context_data(self, **kwargs ):
+    def get_context_data(self, **kwargs):
         p = self.get_object()
         context = super(ProgettoView, self).get_context_data(**kwargs)
 
         #sotto progetti
         sottoprogetti = InterventoProgramma.objects.filter(id_padre=p.id_progetto).order_by('denominazione')
         if sottoprogetti:
-            context['sottoprogetti']=sottoprogetti
+            context['sottoprogetti'] = sottoprogetti
 
         # importi progetto
-        stima_danno = InterventoProgramma.objects.filter(id_progetto=p.id_progetto).\
+        stima_danno = InterventoProgramma.objects.filter(id_progetto=p.id_progetto). \
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
 
         # numero donazioni
-        context['n_donazioni'] = Donazione.objects.filter(confermato = True, progetto=p).count()
+        context['n_donazioni'] = Donazione.objects.filter(confermato=True, progetto=p).count()
         # donazioni per il territorio considerato
-        tot_donazioni = Donazione.objects.filter(confermato = True, progetto=p).aggregate(s=Sum('importo')).values()
+        tot_donazioni = Donazione.objects.filter(confermato=True, progetto=p).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
 
-
         context['territorio_nome'] = p.territorio.denominazione
-        iban =  InterventoProgramma.objects.get(pk = p.pk).territorio.iban
+        iban = InterventoProgramma.objects.get(pk=p.pk).territorio.iban
         if iban:
             context['iban'] = iban
 
-#        set map bounds
-        context['map_minlat']=Territorio.get_boundingbox_minlat()
-        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
-        context['map_minlon']=Territorio.get_boundingbox_minlon()
-        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+        #        set map bounds
+        context['map_minlat'] = Territorio.get_boundingbox_minlat()
+        context['map_maxlat'] = Territorio.get_boundingbox_maxlat()
+        context['map_minlon'] = Territorio.get_boundingbox_minlon()
+        context['map_maxlon'] = Territorio.get_boundingbox_maxlon()
         return context
 
 
-
 class ProgettoListView(ListView):
-    model=InterventoProgramma
+    model = InterventoProgramma
     template_name = "tipologieprogetto.html"
 
     def get_context_data(self, **kwargs):
@@ -119,26 +124,27 @@ class ProgettoListView(ListView):
         return context
 
     def get_queryset(self):
-#        context = super(ProgettoListView, self).get_context_data(**kwargs)
+    #        context = super(ProgettoListView, self).get_context_data(**kwargs)
 
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
-            return InterventoProgramma.objects.filter(id_padre__isnull=True,denominazione__icontains=qterm)[0:50]
+            return InterventoProgramma.objects.filter(id_padre__isnull=True, denominazione__icontains=qterm)[0:50]
         else:
-           return  InterventoProgramma.objects.all()[0:50]
+            return InterventoProgramma.objects.all()[0:50]
 
 
 class TerritorioListView(ListView):
     model = Territorio
 
     def get_queryset(self):
-        territori = Territorio.objects.filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
-            annotate(c = Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',flat=True)
+        territori = Territorio.objects.filter(tipo_territorio="C", cod_comune__in=settings.COMUNI_CRATERE). \
+            annotate(c=Count("progetto")).filter(c__gt=0).order_by("-cod_provincia").values_list('cod_comune',
+                                                                                                 flat=True)
         if 'qterm' in self.request.GET:
             qterm = self.request.GET['qterm']
-            return Territorio.objects.filter(denominazione__icontains=qterm,cod_comune__in=territori)[0:50]
+            return Territorio.objects.filter(denominazione__icontains=qterm, cod_comune__in=territori)[0:50]
         else:
-            return  None
+            return None
 
 
 class TerritorioView(DetailView):
@@ -146,259 +152,260 @@ class TerritorioView(DetailView):
     context_object_name = "territorio"
     template_name = 'territorio.html'
 
-    def get_context_data(self, **kwargs ):
+    def get_context_data(self, **kwargs):
         t = self.get_object()
         context = super(TerritorioView, self).get_context_data(**kwargs)
 
-        context['sigla_provincia'] = Territorio.objects.get(tipo_territorio = 'P', cod_provincia = t.cod_provincia, cod_comune = "0").sigla_provincia
+        context['sigla_provincia'] = Territorio.objects.get(tipo_territorio='P', cod_provincia=t.cod_provincia,
+                                                            cod_comune="0").sigla_provincia
 
         #numero progetti
-        context['n_progetti']=  InterventoProgramma.objects.filter(territorio=t, id_padre__isnull = True).count()
+        context['n_progetti'] = InterventoProgramma.objects.filter(territorio=t, id_padre__isnull=True).count()
         # importi progetti totale
-        stima_danno = InterventoProgramma.objects.filter(territorio=t, id_padre__isnull = True).\
+        stima_danno = InterventoProgramma.objects.filter(territorio=t, id_padre__isnull=True). \
             aggregate(s=Sum('riepilogo_importi')).values()
 
         if stima_danno[0]:
             context['stima_danno'] = stima_danno[0]
             # importi dei progetti per categorie
-            progetti_categorie_list =\
-                InterventoProgramma.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
-                annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+            progetti_categorie_list = \
+                InterventoProgramma.objects.filter(territorio=t).values('tipologia__denominazione', 'tipologia__slug'). \
+                    annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
 
             for p in progetti_categorie_list:
-                p['sum'] =moneyfmt(p['sum'] ,2,"",".",",")
+                p['sum'] = moneyfmt(p['sum'], 2, "", ".", ",")
 
-            context['progetti_categorie_list']=progetti_categorie_list
+            context['progetti_categorie_list'] = progetti_categorie_list
 
-            progetti_categorie_pie=\
-                InterventoProgramma.objects.filter(territorio=t).values('tipologia__denominazione','tipologia__slug').\
-                annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
+            progetti_categorie_pie = \
+                InterventoProgramma.objects.filter(territorio=t).values('tipologia__denominazione', 'tipologia__slug'). \
+                    annotate(sum=Sum('riepilogo_importi')).annotate(c=Count('pk')).order_by('-sum')
             for p in progetti_categorie_pie:
-                p['sum'] =moneyfmt(p['sum'] ,2,"","",".")
+                p['sum'] = moneyfmt(p['sum'], 2, "", "", ".")
 
-            context['progetti_categorie_pie']=progetti_categorie_pie
+            context['progetti_categorie_pie'] = progetti_categorie_pie
 
         # numero donazioni
-        context['n_donazioni'] = Donazione.objects.filter(confermato = True).filter(territorio=t).count()
+        context['n_donazioni'] = Donazione.objects.filter(confermato=True).filter(territorio=t).count()
         # donazioni per il territorio considerato
-        tot_donazioni = Donazione.objects.filter(territorio=t, confermato = True).aggregate(s=Sum('importo')).values()
+        tot_donazioni = Donazione.objects.filter(territorio=t, confermato=True).aggregate(s=Sum('importo')).values()
         if tot_donazioni[0]:
             context['tot_donazioni'] = tot_donazioni[0]
 
-        context['donazioni_comune'] = Donazione.objects.filter(confermato = True).filter(territorio=t)
+        context['donazioni_comune'] = Donazione.objects.filter(confermato=True).filter(territorio=t)
 
         #lista progetti per questo territorio in ordine di costo decrescente
-        projects = InterventoProgramma.objects.filter(territorio = t).order_by('-riepilogo_importi')[:10]
+        projects = InterventoProgramma.objects.filter(territorio=t).order_by('-riepilogo_importi')[:10]
 
         if projects:
             for p in projects:
-                p.riepilogo_importi =moneyfmt( Decimal(p.riepilogo_importi),2,"",".",",")
+                p.riepilogo_importi = moneyfmt(Decimal(p.riepilogo_importi), 2, "", ".", ",")
 
             context['progetti_top'] = projects
 
 
         # donazioni divise per tipologia cedente
         donazioni_categorie_list = \
-            Donazione.objects.filter( territorio=t).\
-            filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
-            annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+            Donazione.objects.filter(territorio=t). \
+                filter(confermato=True).values('tipologia__denominazione', 'tipologia__slug'). \
+                annotate(sum=Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
         for d in donazioni_categorie_list:
-            d['sum'] =moneyfmt(d['sum'] ,2,"",".",",")
+            d['sum'] = moneyfmt(d['sum'], 2, "", ".", ",")
 
-        context['donazioni_categorie_list']=donazioni_categorie_list
+        context['donazioni_categorie_list'] = donazioni_categorie_list
 
-        donazioni_categorie_pie =\
-            Donazione.objects.filter( territorio=t).\
-            filter(confermato = True).values('tipologia__denominazione','tipologia__slug').\
-            annotate(sum = Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
+        donazioni_categorie_pie = \
+            Donazione.objects.filter(territorio=t). \
+                filter(confermato=True).values('tipologia__denominazione', 'tipologia__slug'). \
+                annotate(sum=Sum('importo')).annotate(c=Count('pk')).order_by('-sum')
 
-        context['donazioni_categorie_pie']=donazioni_categorie_pie
+        context['donazioni_categorie_pie'] = donazioni_categorie_pie
 
 
         #iban territorio
-        iban = Territorio.objects.get(cod_comune = t.cod_comune, cod_comune__in=settings.COMUNI_CRATERE).iban
+        iban = Territorio.objects.get(cod_comune=t.cod_comune, cod_comune__in=settings.COMUNI_CRATERE).iban
         if iban:
             context['iban'] = iban
 
         donazioni_spline = t.get_spline_data()
 
-        if donazioni_spline and len(donazioni_spline)>1:
+        if donazioni_spline and len(donazioni_spline) > 1:
             context['donazioni_spline'] = donazioni_spline
 
-#       ultime donazioni per il comune considerato
+        #       ultime donazioni per il comune considerato
 
-        donazioni_temp=Donazione.objects.filter(territorio=t,confermato=True).\
-            extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
-            order_by('-data')[:3]
+        donazioni_temp = Donazione.objects.filter(territorio=t, confermato=True). \
+                             extra(
+            select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}). \
+                             order_by('-data')[:3]
 
-        donazioni_last =[]
-
+        donazioni_last = []
 
         for idx, val in enumerate(donazioni_temp):
-##      converto la data nel formato  Nome mese - Anno
+        ##      converto la data nel formato  Nome mese - Anno
 
-            if type(val.date).__name__=="datetime":
-                val_date_obj =val.date
+            if type(val.date).__name__ == "datetime":
+                val_date_obj = val.date
             else:
-                val_date_obj = datetime.datetime.strptime(val.date,"%Y-%m-%d %H:%M:%S")
+                val_date_obj = datetime.datetime.strptime(val.date, "%Y-%m-%d %H:%M:%S")
 
             val_date_day = val.data.day
-            val_date_month = _date(val_date_obj,"M")
+            val_date_month = _date(val_date_obj, "M")
             val_date_year = time.strftime("%Y", val_date_obj.timetuple())
-            donazioni_last.append({'day':val_date_day,
-                                   'month':val_date_month,
-                                   'year':val_date_year,
-                                   'tipologia':val.tipologia,
-                                   'importo':moneyfmt(val.importo,2,"",".",","),
-                                   'slug':val.tipologia.slug
+            donazioni_last.append({'day': val_date_day,
+                                   'month': val_date_month,
+                                   'year': val_date_year,
+                                   'tipologia': val.tipologia,
+                                   'importo': moneyfmt(val.importo, 2, "", ".", ","),
+                                   'slug': val.tipologia.slug
             })
 
         context['donazioni_last'] = donazioni_last
 
         #        set map bounds
-        context['map_minlat']=Territorio.get_boundingbox_minlat()
-        context['map_maxlat']=Territorio.get_boundingbox_maxlat()
-        context['map_minlon']=Territorio.get_boundingbox_minlon()
-        context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+        context['map_minlat'] = Territorio.get_boundingbox_minlat()
+        context['map_maxlat'] = Territorio.get_boundingbox_maxlat()
+        context['map_minlon'] = Territorio.get_boundingbox_minlon()
+        context['map_maxlon'] = Territorio.get_boundingbox_maxlon()
 
         return context
 
-class DonazioneView(TemplateView):
 
+class DonazioneView(TemplateView):
     template_name = "donazioni.html"
 
 
     def get_context_data(self, **kwargs):
         context = super(DonazioneView, self).get_context_data(**kwargs)
 
-#         # numero donazioni
-#         context['n_donazioni'] = Donazione.objects.filter(confermato = True).count()
-#
-#         # tutte le donazioni
-#         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
-#         if tot_donazioni[0]:
-#             context['tot_donazioni'] = tot_donazioni[0]
-#             context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
-#
-#         #numero progetti
-#         context['n_progetti']=  InterventoProgramma.objects.filter( id_padre__isnull = True).count()
-#         # importi progetti totale
-#         stima_danno = InterventoProgramma.objects.filter( id_padre__isnull = True).\
-#             aggregate(s=Sum('riepilogo_importi')).values()
-#
-#         if stima_danno[0]:
-#             context['stima_danno'] = stima_danno[0]
-#
-#         #tutte le donazioni nel tempo
-#         #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
-#         # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
-#
-#         donazioni_mese = Donazione.objects.filter(confermato = True).\
-#                         extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
-#                         order_by('date').\
-#                         values('date').annotate(sum = Sum('importo'))
-#
-#         donazioni_spline =[]
-#         j = 0
-#
-#         for idx, val in enumerate(donazioni_mese):
-# ##            converto la data nel formato  Nome mese - Anno
-#             if type(val['date']).__name__=="datetime":
-#                 val_date_obj = val['date']
-#             else:
-#                 val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
-#
-#             val_date_print=_date(val_date_obj,"M - Y")
-#
-#             if idx is not 0:
-# #                se le due date sono piu' distanti di un mese
-# #                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
-# #                per creare un grafico piatto
-#                 if type(donazioni_mese[idx-1]['date']).__name__=="datetime":
-#                     donazioni_date_obj=donazioni_mese[idx-1]['date']
-#                 else:
-#                     donazioni_date_obj = datetime.datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
-#
-#                 if (val_date_obj-donazioni_date_obj) > timedelta(31):
-#                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
-#                     for k in range(1, n_mesi):
-#                         new_month_obj = add_months(donazioni_date_obj,k)
-#                         new_month_print = _date(new_month_obj,"M - Y")
-#                         donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum'],'sum_ita':None})
-#                         j += 1
-#
-# #               inserisce il dato del mese corrente
-#                 donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum']),'sum_ita':None})
-#                 j += 1
-#
-#             else:
-#                 donazioni_spline.append({'month':val_date_print,'sum':val['sum'],'sum_ita':None})
-#                 j += 1
-#
-#
-#         if donazioni_spline and len(donazioni_spline)>1:
-# #            rende i numeri Decimal delle stringhe per il grafico
-#
-#             for value in donazioni_spline:
-#                 value['sum_ita']=moneyfmt(value['sum'],2,"",".",",")
-#                 value['sum']=moneyfmt(value['sum'],2,"","",".")
-#
-#             context['donazioni_spline'] = donazioni_spline
-#
-#         #donazioni per tipologia
-#         donazioni_categorie_list = Donazione.objects.all().\
-#             filter(confermato=True).values('tipologia__denominazione','tipologia__slug').\
-#             annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo')).order_by('-sum')
-#
-#         for idx, val in enumerate(donazioni_categorie_list):
-#             val['sum'] = moneyfmt(val['sum'],2,"",".",",")
-#
-#         context['donazioni_categorie_list']=donazioni_categorie_list
-#
-#         #donazioni per tipologia
-#         donazioni_categorie_pie = Donazione.objects.all().\
-#             filter(confermato=True).values('tipologia__denominazione').\
-#             annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
-#
-#         for idx, val in enumerate(donazioni_categorie_pie):
-#             val['sum'] = moneyfmt(val['sum'],2,"","",".")
-#
-#         context['donazioni_categorie_pie']=donazioni_categorie_pie
-#
-#         #       ultime donazioni per il comune considerato
-#         donazioni_temp = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
-#         donazioni_last=[]
-#
-#         for idx, val in enumerate(donazioni_temp):
-#         ##            converto la data nel formato  Nome mese - Anno
-#             val_date_day = val.data.day
-#             val_date_month= _date(val.data,"M")
-#             val_date_year = time.strftime("%Y", val.data.timetuple())
-#             donazioni_last.append({'day':val_date_day,
-#                                    'month':val_date_month,
-#                                    'year':val_date_year,
-#                                    'tipologia':val.tipologia,
-#                                    'importo':moneyfmt(val.importo,2,"",".",","),
-#                                    'slug':val.tipologia.slug
-#             })
-#
-#         context['donazioni_last'] = donazioni_last
-#
-#         context['n_comuni_donazioni'] =\
-#             Territorio.objects.\
-#             filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
-#             annotate(c = Count("donazione")).filter(c__gt=0).count()
-#
-#         #       set map center
-#         context['map_center_lat']= Territorio.get_map_center_lat()
-#         context['map_center_lon']= Territorio.get_map_center_lon()
-#
-#         #        set map bounds
-#         context['map_minlat']=Territorio.get_boundingbox_minlat()
-#         context['map_maxlat']=Territorio.get_boundingbox_maxlat()
-#         context['map_minlon']=Territorio.get_boundingbox_minlon()
-#         context['map_maxlon']=Territorio.get_boundingbox_maxlon()
+        #         # numero donazioni
+        #         context['n_donazioni'] = Donazione.objects.filter(confermato = True).count()
+        #
+        #         # tutte le donazioni
+        #         tot_donazioni = Donazione.objects.filter(confermato = True).aggregate(s=Sum('importo')).values()
+        #         if tot_donazioni[0]:
+        #             context['tot_donazioni'] = tot_donazioni[0]
+        #             context['tot_donazioni_ita']= moneyfmt(tot_donazioni[0],2,"",".",",")
+        #
+        #         #numero progetti
+        #         context['n_progetti']=  InterventoProgramma.objects.filter( id_padre__isnull = True).count()
+        #         # importi progetti totale
+        #         stima_danno = InterventoProgramma.objects.filter( id_padre__isnull = True).\
+        #             aggregate(s=Sum('riepilogo_importi')).values()
+        #
+        #         if stima_danno[0]:
+        #             context['stima_danno'] = stima_danno[0]
+        #
+        #         #tutte le donazioni nel tempo
+        #         #le donazioni vengono espresse con valori incrementali rispetto alla somma delle donazioni
+        #         # del mese precedente. In questo modo se un mese le donazioni sono 0 la retta del grafico e' piatta
+        #
+        #         donazioni_mese = Donazione.objects.filter(confermato = True).\
+        #                         extra(select={'date': connections[Donazione.objects.db].ops.date_trunc_sql('month', 'data')}).\
+        #                         order_by('date').\
+        #                         values('date').annotate(sum = Sum('importo'))
+        #
+        #         donazioni_spline =[]
+        #         j = 0
+        #
+        #         for idx, val in enumerate(donazioni_mese):
+        # ##            converto la data nel formato  Nome mese - Anno
+        #             if type(val['date']).__name__=="datetime":
+        #                 val_date_obj = val['date']
+        #             else:
+        #                 val_date_obj = datetime.datetime.strptime(val['date'],"%Y-%m-%d %H:%M:%S")
+        #
+        #             val_date_print=_date(val_date_obj,"M - Y")
+        #
+        #             if idx is not 0:
+        # #                se le due date sono piu' distanti di un mese
+        # #                inserisce tanti mesi quanti mancano con un importo uguale all'ultimo importo disponibile
+        # #                per creare un grafico piatto
+        #                 if type(donazioni_mese[idx-1]['date']).__name__=="datetime":
+        #                     donazioni_date_obj=donazioni_mese[idx-1]['date']
+        #                 else:
+        #                     donazioni_date_obj = datetime.datetime.strptime(donazioni_mese[idx-1]['date'],"%Y-%m-%d %H:%M:%S")
+        #
+        #                 if (val_date_obj-donazioni_date_obj) > timedelta(31):
+        #                     n_mesi = (val_date_obj - donazioni_date_obj).days / 28
+        #                     for k in range(1, n_mesi):
+        #                         new_month_obj = add_months(donazioni_date_obj,k)
+        #                         new_month_print = _date(new_month_obj,"M - Y")
+        #                         donazioni_spline.append({'month':new_month_print,'sum':donazioni_spline[j-1]['sum'],'sum_ita':None})
+        #                         j += 1
+        #
+        # #               inserisce il dato del mese corrente
+        #                 donazioni_spline.append({'month':val_date_print,'sum':(donazioni_spline[j-1]['sum']+val['sum']),'sum_ita':None})
+        #                 j += 1
+        #
+        #             else:
+        #                 donazioni_spline.append({'month':val_date_print,'sum':val['sum'],'sum_ita':None})
+        #                 j += 1
+        #
+        #
+        #         if donazioni_spline and len(donazioni_spline)>1:
+        # #            rende i numeri Decimal delle stringhe per il grafico
+        #
+        #             for value in donazioni_spline:
+        #                 value['sum_ita']=moneyfmt(value['sum'],2,"",".",",")
+        #                 value['sum']=moneyfmt(value['sum'],2,"","",".")
+        #
+        #             context['donazioni_spline'] = donazioni_spline
+        #
+        #         #donazioni per tipologia
+        #         donazioni_categorie_list = Donazione.objects.all().\
+        #             filter(confermato=True).values('tipologia__denominazione','tipologia__slug').\
+        #             annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo')).order_by('-sum')
+        #
+        #         for idx, val in enumerate(donazioni_categorie_list):
+        #             val['sum'] = moneyfmt(val['sum'],2,"",".",",")
+        #
+        #         context['donazioni_categorie_list']=donazioni_categorie_list
+        #
+        #         #donazioni per tipologia
+        #         donazioni_categorie_pie = Donazione.objects.all().\
+        #             filter(confermato=True).values('tipologia__denominazione').\
+        #             annotate(c=Count('tipologia__denominazione')).annotate(sum = Sum('importo'))
+        #
+        #         for idx, val in enumerate(donazioni_categorie_pie):
+        #             val['sum'] = moneyfmt(val['sum'],2,"","",".")
+        #
+        #         context['donazioni_categorie_pie']=donazioni_categorie_pie
+        #
+        #         #       ultime donazioni per il comune considerato
+        #         donazioni_temp = Donazione.objects.select_related().filter(confermato=True).order_by('-data')[:3]
+        #         donazioni_last=[]
+        #
+        #         for idx, val in enumerate(donazioni_temp):
+        #         ##            converto la data nel formato  Nome mese - Anno
+        #             val_date_day = val.data.day
+        #             val_date_month= _date(val.data,"M")
+        #             val_date_year = time.strftime("%Y", val.data.timetuple())
+        #             donazioni_last.append({'day':val_date_day,
+        #                                    'month':val_date_month,
+        #                                    'year':val_date_year,
+        #                                    'tipologia':val.tipologia,
+        #                                    'importo':moneyfmt(val.importo,2,"",".",","),
+        #                                    'slug':val.tipologia.slug
+        #             })
+        #
+        #         context['donazioni_last'] = donazioni_last
+        #
+        #         context['n_comuni_donazioni'] =\
+        #             Territorio.objects.\
+        #             filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
+        #             annotate(c = Count("donazione")).filter(c__gt=0).count()
+        #
+        #         #       set map center
+        #         context['map_center_lat']= Territorio.get_map_center_lat()
+        #         context['map_center_lon']= Territorio.get_map_center_lon()
+        #
+        #         #        set map bounds
+        #         context['map_minlat']=Territorio.get_boundingbox_minlat()
+        #         context['map_maxlat']=Territorio.get_boundingbox_maxlat()
+        #         context['map_minlon']=Territorio.get_boundingbox_minlon()
+        #         context['map_maxlon']=Territorio.get_boundingbox_maxlon()
 
         return context
 
@@ -410,17 +417,17 @@ class FaqView(TemplateView):
         context = super(FaqView, self).get_context_data(**kwargs)
         #numero di comuni con almeno 1 progetto attivo
         context['n_comuni_progetti'] = \
-            Territorio.objects.\
-                filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
-                annotate(c = Count("progetto")).filter(c__gt=0).count()
+            Territorio.objects. \
+                filter(tipo_territorio="C", cod_comune__in=settings.COMUNI_CRATERE). \
+                annotate(c=Count("progetto")).filter(c__gt=0).count()
 
-        context['n_comuni_donazioni'] =\
-            Territorio.objects.\
-            filter(tipo_territorio = "C",cod_comune__in=settings.COMUNI_CRATERE).\
-            annotate(c = Count("donazione")).filter(c__gt=0).count()
+        context['n_comuni_donazioni'] = \
+            Territorio.objects. \
+                filter(tipo_territorio="C", cod_comune__in=settings.COMUNI_CRATERE). \
+                annotate(c=Count("donazione")).filter(c__gt=0).count()
 
         #numero progetti
-        context['n_progetti']=  InterventoProgramma.objects.filter(id_padre__isnull = True).count()
+        context['n_progetti'] = InterventoProgramma.objects.filter(id_padre__isnull=True).count()
         return context
 
 
@@ -438,11 +445,11 @@ class TipologieCedenteView(TemplateView):
     def get_context_data(self, **kwargs):
 
         context = super(TipologieCedenteView, self).get_context_data(**kwargs)
-        paginator =None
+        paginator = None
         self.n_donazioni = self.donazioni.count()
-        self.tot_donazioni= self.donazioni.aggregate(s=Sum('importo')).values()[0]
-#        if self.tipologia == TipologiaCedente.objects.get(slug="privati-cittadini"):
-#            return HttpResponseRedirect(reversed('home'))
+        self.tot_donazioni = self.donazioni.aggregate(s=Sum('importo')).values()[0]
+        #        if self.tipologia == TipologiaCedente.objects.get(slug="privati-cittadini"):
+        #            return HttpResponseRedirect(reversed('home'))
 
 
         if self.donazioni:
@@ -457,45 +464,44 @@ class TipologieCedenteView(TemplateView):
                 # If page is out of range (e.g. 9999), deliver last page of results.
                 page_obj = paginator.page(paginator.num_pages)
 
-            donazioni_page=[]
+            donazioni_page = []
             for idx, val in enumerate(page_obj.object_list):
                 donazioni_page.append(
-                    {'day':val.data.day,
-                     'month':_date(val.data,"M"),
-                     'year':val.data.year,
-                     'donazione':val,
-                     }
+                    {'day': val.data.day,
+                     'month': _date(val.data, "M"),
+                     'year': val.data.year,
+                     'donazione': val,
+                    }
                 )
 
             context['donazioni_page'] = donazioni_page
-            context['paginator']=paginator
-            context['page_obj']=page_obj
-            context['page']=self.page
+            context['paginator'] = paginator
+            context['page_obj'] = page_obj
+            context['page'] = self.page
 
         if self.n_donazioni:
-            context['n_donazioni']=self.n_donazioni
+            context['n_donazioni'] = self.n_donazioni
         if self.tot_donazioni:
-            context['tot_donazioni']=moneyfmt(self.tot_donazioni,2,"",".",",")
+            context['tot_donazioni'] = moneyfmt(self.tot_donazioni, 2, "", ".", ",")
         if self.tipologia:
-            context['tipologia']=self.tipologia
+            context['tipologia'] = self.tipologia
         if self.comune:
-            context['comune']=self.comune
+            context['comune'] = self.comune
         if paginator:
-            context['n_pages']=paginator._get_num_pages()
+            context['n_pages'] = paginator._get_num_pages()
 
         return context
 
+
 class DonazioniCompleta(TipologieCedenteView):
-
     def get_context_data(self, **kwargs):
-
         privati = TipologiaCedente.objects.get(denominazione="Privati cittadini")
         altro = TipologiaCedente.objects.get(denominazione="Altro")
 
-        self.donazioni= Donazione.objects.\
-            exclude(tipologia=privati).\
-            exclude(tipologia=altro).\
-            filter(confermato=True).\
+        self.donazioni = Donazione.objects. \
+            exclude(tipologia=privati). \
+            exclude(tipologia=altro). \
+            filter(confermato=True). \
             order_by('denominazione')
 
         self.page = self.request.GET.get('page')
@@ -506,13 +512,13 @@ class DonazioniCompleta(TipologieCedenteView):
 
         return self.context
 
+
 class DonazioniTipologiaComune(TipologieCedenteView):
-
     def get_context_data(self, **kwargs):
-
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.tipologia = TipologiaCedente.objects.get(slug=kwargs['tipologia'])
-        self.donazioni= Donazione.objects.filter(territorio=self.comune, tipologia=self.tipologia,confermato=True).order_by('denominazione')
+        self.donazioni = Donazione.objects.filter(territorio=self.comune, tipologia=self.tipologia,
+                                                  confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniTipologiaComune, self).get_context_data(**kwargs)
 
@@ -523,11 +529,9 @@ class DonazioniTipologiaComune(TipologieCedenteView):
 
 
 class DonazioniTipologia(TipologieCedenteView):
-
     def get_context_data(self, **kwargs):
-
         self.tipologia = TipologiaCedente.objects.get(slug=kwargs['tipologia'])
-        self.donazioni= Donazione.objects.filter( tipologia=self.tipologia,confermato=True).order_by('denominazione')
+        self.donazioni = Donazione.objects.filter(tipologia=self.tipologia, confermato=True).order_by('denominazione')
         self.page = self.request.GET.get('page')
 
         self.context = super(DonazioniTipologia, self).get_context_data(**kwargs)
@@ -537,19 +541,18 @@ class DonazioniTipologia(TipologieCedenteView):
 
         return self.context
 
+
 class DonazioniComune(TipologieCedenteView):
-
     def get_context_data(self, **kwargs):
-
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
 
         privati = TipologiaCedente.objects.get(denominazione="Privati cittadini")
         altro = TipologiaCedente.objects.get(denominazione="Altro")
 
-        self.donazioni= Donazione.objects.\
-            exclude(tipologia=privati).\
-            exclude(tipologia=altro).\
-            filter(territorio=self.comune,confermato=True).\
+        self.donazioni = Donazione.objects. \
+            exclude(tipologia=privati). \
+            exclude(tipologia=altro). \
+            filter(territorio=self.comune, confermato=True). \
             order_by('denominazione')
         self.page = self.request.GET.get('page')
         self.context = super(DonazioniComune, self).get_context_data(**kwargs)
@@ -560,9 +563,7 @@ class DonazioniComune(TipologieCedenteView):
         return self.context
 
 
-
 class TipologieProgettoView(TemplateView):
-
     template_name = "progetti_list.html"
     n_progetti = 0
     tot_danno = 0
@@ -573,11 +574,11 @@ class TipologieProgettoView(TemplateView):
     progetti_pagina = 50 # numero di elementi per pagina
 
     def get_context_data(self, **kwargs):
-        paginator =None
+        paginator = None
         context = super(TipologieProgettoView, self).get_context_data(**kwargs)
 
         self.n_progetti = self.progetti.count()
-        self.tot_danno= self.progetti.aggregate(s=Sum('riepilogo_importi')).values()[0]
+        self.tot_danno = self.progetti.aggregate(s=Sum('riepilogo_importi')).values()[0]
 
         if self.progetti:
             paginator = Paginator(self.progetti, self.progetti_pagina)
@@ -590,30 +591,30 @@ class TipologieProgettoView(TemplateView):
                 # If page is out of range (e.g. 9999), deliver last page of results.
                 page_obj = paginator.page(paginator.num_pages)
 
-            context['paginator']=paginator
-            context['page_obj']=page_obj
-            context['page']=self.page
+            context['paginator'] = paginator
+            context['page_obj'] = page_obj
+            context['page'] = self.page
 
         if self.n_progetti:
-            context['n_progetti']=self.n_progetti
+            context['n_progetti'] = self.n_progetti
         if self.tot_danno:
-            context['tot_danno']=moneyfmt(self.tot_danno,2,"",".",",")
+            context['tot_danno'] = moneyfmt(self.tot_danno, 2, "", ".", ",")
         if self.tipologia:
-            context['tipologia']=self.tipologia
+            context['tipologia'] = self.tipologia
         if self.comune:
-            context['comune']=self.comune
+            context['comune'] = self.comune
         if paginator:
-            context['n_pages']=paginator._get_num_pages()
+            context['n_pages'] = paginator._get_num_pages()
 
         return context
 
+
 class ProgettiTipologiaComune(TipologieProgettoView):
-
     def get_context_data(self, **kwargs):
-
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= InterventoProgramma.objects.filter(territorio=self.comune, tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti = InterventoProgramma.objects.filter(territorio=self.comune, tipologia=self.tipologia,
+                                                           id_padre__isnull=True).order_by('-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiTipologiaComune, self).get_context_data(**kwargs)
 
@@ -624,11 +625,10 @@ class ProgettiTipologiaComune(TipologieProgettoView):
 
 
 class ProgettiTipologia(TipologieProgettoView):
-
     def get_context_data(self, **kwargs):
-
         self.tipologia = TipologiaProgetto.objects.get(slug=kwargs['tipologia'])
-        self.progetti= InterventoProgramma.objects.filter(tipologia=self.tipologia,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti = InterventoProgramma.objects.filter(tipologia=self.tipologia, id_padre__isnull=True).order_by(
+            '-riepilogo_importi')
         self.page = self.request.GET.get('page')
 
         self.context = super(ProgettiTipologia, self).get_context_data(**kwargs)
@@ -638,12 +638,12 @@ class ProgettiTipologia(TipologieProgettoView):
 
         return self.context
 
+
 class ProgettiComune(TipologieProgettoView):
-
     def get_context_data(self, **kwargs):
-
         self.comune = Territorio.objects.get(slug=kwargs['comune'])
-        self.progetti= InterventoProgramma.objects.filter(territorio=self.comune,id_padre__isnull=True).order_by('-riepilogo_importi')
+        self.progetti = InterventoProgramma.objects.filter(territorio=self.comune, id_padre__isnull=True).order_by(
+            '-riepilogo_importi')
         self.page = self.request.GET.get('page')
         self.context = super(ProgettiComune, self).get_context_data(**kwargs)
 
@@ -660,8 +660,11 @@ class DjangoJSONEncoder(JSONEncoder):
             # structure, the easiest way is to load the JSON
             # string produced by `serialize` and return it
             return json.loads(serialize('json', obj))
-        return JSONEncoder.default(self,obj)
+        return JSONEncoder.default(self, obj)
+
+
 dumps = curry(json.dumps, cls=DjangoJSONEncoder)
+
 
 class JSONResponseMixin(object):
     def render_to_response(self, context):
@@ -671,8 +674,8 @@ class JSONResponseMixin(object):
     def get_json_response(self, content, **httpresponse_kwargs):
         "Construct an `HttpResponse` object."
         return HttpResponse(content,
-            content_type='application/json',
-            **httpresponse_kwargs)
+                            content_type='application/json',
+                            **httpresponse_kwargs)
 
     def convert_context_to_json(self, context):
         "Convert the context dictionary into a JSON object"
@@ -686,7 +689,6 @@ class JSONResponseMixin(object):
 class ProgettiJSONListView(JSONResponseMixin, ProgettoListView):
     def convert_context_to_json(self, context):
         return dumps(context['progetto_list'])
-
 
 
 class TerritoriJSONListView(JSONResponseMixin, TerritorioListView):
