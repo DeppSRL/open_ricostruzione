@@ -163,8 +163,6 @@ INSTALLED_APPS = (
     'open_ricostruzione',
     'open_ricostruzione.depp_humanize',
     'territori',
-
-
 )
 
 
@@ -222,6 +220,8 @@ LOGGING = {
         }
     }
 }
+
+PROVINCE_CRATERE = [u'Bologna', u'Ferrara', u'Modena', u"Reggio nell'Emilia"]
 
 COMUNI_CRATERE = [u'037002', u'037003', u'037005', u'037017', u'037019', u'037024', u'037028', u'037035', u'037038',
                   u'037039', u'037048', u'037050', u'037052', u'037053', u'037055', u'037056', u'037006', u'037009',

@@ -51,7 +51,6 @@ class TerritoriManager(models.GeoManager):
         return self.get_query_set().get(cod_reg=int(cod_reg), cod_prov=int(cod_prov),
                                         cod_com=str(int(cod_prov)) + cod_com)
 
-
 class Territorio(models.Model):
     TERRITORIO = Choices(
         (u'C', u'Comune'),
@@ -130,6 +129,9 @@ class Territorio(models.Model):
         else:
             return u"{0} ({1})".format(self.nome, self.prov)
 
+    @staticmethod
+    def get_province_cratere():
+        return Territorio.objects.filter(tipologia=Territorio.TERRITORIO.P, denominazione__in=settings.PROVINCE_CRATERE)
 
     def __unicode__(self):
         return unicode(self.denominazione)
