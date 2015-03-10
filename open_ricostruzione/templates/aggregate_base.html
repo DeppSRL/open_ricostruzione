@@ -1,20 +1,39 @@
 {% extends 'base.html' %}
+{% load italianize static %}
 
 {% block content %}
 
     <div class="row">
         <div class="col-md-6">
-            blocco interventi a programma
+            <strong>Interventi a programma</strong><br/>
+            n.interventi programma: {{ n_int_programma }}<br/>
+            importo int.programma: {{ importo_int_programma|italianize }} E<br/>
+
         </div>
         <div class="col-md-6">
-            blocco interventi a piano
+            <strong>Interventi a piano</strong><br/>
+            n.interventi programma: {{ n_int_piano }}<br/>
+            importo int.programma: {{ importo_int_piano|italianize }} E<br/>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
-            blocco mappa
+        <div class="col-md-6">
+            Percentuale progetti a piano: {{ perc_a_piano|floatformat:2 }}%
         </div>
     </div>
+
+    {% block home-map %}
+        <div class="row">
+            <div class="col-md-12">
+                <strong>mappa home</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <img src="{% static 'img/mappa-home.png' %}">
+            </div>
+        </div>
+    {% endblock %}
     <div class="row">
         <div class="col-md-12">
             torta aggregazione tipo immobile
