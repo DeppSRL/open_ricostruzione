@@ -15,7 +15,7 @@
                         {% regroup territori_cratere by prov as group %}
                         {% for g in group %}
                             <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">{{ g.grouper|title }} <span class="glyphicon glyphicon-triangle-right"></span> </a>
+                                <a tabindex="-1" href="#">{{ g.list.0.provincia_name|title }} <span class="glyphicon glyphicon-triangle-right"></span> </a>
                                 <ul class="dropdown-menu">
                                     {% for item in g.list %}
                                         <li><a href="{% url 'localita' slug=item.slug %}">{{ item.denominazione }}</a></li>

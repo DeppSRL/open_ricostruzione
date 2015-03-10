@@ -17,11 +17,11 @@ class TerritoriManager(models.GeoManager):
         if with_nation:
             codes.append(Territorio.TERRITORIO.N)
             codes.append(Territorio.TERRITORIO.E)
-        return self.get_query_set().filter(territorio__in=codes)
+        return self.get_query_set().filter(tipologia__in=codes)
 
     @property
     def provincie(self):
-        return self.get_query_set().filter(territorio=Territorio.TERRITORIO.P)
+        return self.get_query_set().filter(tipologia=Territorio.TERRITORIO.P)
 
     @property
     def province(self):
@@ -29,7 +29,7 @@ class TerritoriManager(models.GeoManager):
 
     @property
     def comuni(self):
-        return self.get_query_set().filter(territorio=Territorio.TERRITORIO.C)
+        return self.get_query_set().filter(tipologia=Territorio.TERRITORIO.C)
 
     def get_from_istat_code(self, istat_code):
         """
@@ -132,6 +132,22 @@ class Territorio(models.Model):
     @staticmethod
     def get_province_cratere():
         return Territorio.objects.filter(tipologia=Territorio.TERRITORIO.P, denominazione__in=settings.PROVINCE_CRATERE)
+
+    @property
+    def provincia_name(self):
+        prov_map = {
+            u'bo': u'Bologna',
+            u're': u"Reggio nell'Emilia",
+            u'mo': u'Modena',
+            u'fe': u'Ferrara',
+        }
+
+        try:
+            prov_name = prov_map[self.prov.lower()]
+        except KeyError:
+            return None
+        else:
+            return prov_name
 
     @staticmethod
     def get_territori_cratere():
