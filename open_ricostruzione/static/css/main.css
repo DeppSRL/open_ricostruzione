@@ -1,0 +1,653 @@
+@import "../vendor/bootstrap/css/bootstrap.css";
+
+@import url(http://fonts.googleapis.com/css?family=Abel);
+/* MARGIN */
+/*BOXES BACKGROUND*/
+/* COLOR */
+/* FONT SIZE */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: white;
+}
+.ui-autocomplete {
+  z-index: 1000!important;
+}
+input::-webkit-input-placeholder {
+  color: #555;
+}
+input:-moz-placeholder {
+  color: #555;
+}
+input[placeholder],
+[placeholder],
+*[placeholder] {
+  color: #555;
+}
+.header #logo_header #logo_top {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+.header #logo_header #logo_top a {
+  border: 0;
+}
+.header #logo_header #appello {
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+  padding-bottom: 40px;
+  overflow: hidden;
+  background-color: #dcf930;
+  background-image: url("../img/donazioni_bg.png");
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 100%;
+  color: black;
+  font: 'Arial', 'sans-serif';
+  font-weight: normal;
+  letter-spacing: 0px;
+  font-size: 16px;
+  min-height: 139px;
+}
+.header #logo_header #appello p {
+  margin-bottom: 15px;
+}
+.header #logo_header #appello .title {
+  font-weight: normal;
+  font-family: 'Abel', 'sans-serif';
+  font-size: 25px;
+}
+.header #logo_header #appello select {
+  background-color: #ddd;
+  width: 248px;
+}
+.header #logo_header #appello .iban .title {
+  font-family: 'Arial', 'sans-serif';
+  padding-top: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.header #logo_header #appello .iban .number {
+  background-color: white;
+  color: black;
+  text-transform: uppercase;
+}
+.header #logo_header #appello .donate_button {
+  width: 122px;
+  height: 48px;
+  font-size: 18px;
+}
+#top_navbar {
+  background-color: #7b7979;
+}
+#top_navbar .navbar-custom {
+  margin-bottom: 0;
+  font-size: 15px;
+}
+#top_navbar .navbar-custom .dropdown-menu {
+  z-index: 2000!important;
+}
+#top_navbar .navbar-custom .navbar-inner-custom {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: #7b7979;
+  border-bottom-color: #7b7979;
+  background-repeat: no-repeat;
+  -webkit-box-shadow: none;
+  background-image: none;
+}
+#top_navbar .search-query {
+  height: 20px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  border-radius: 0;
+  background-color: #cacccb;
+  color: black;
+}
+@media (min-width: 767px) {
+  #top_navbar .navbar-search .search-query {
+    min-width: 380px;
+  }
+}
+#top_home {
+  background-color: #e2e3e8;
+}
+@media (min-width: 767px) {
+  #top_home {
+    min-height: 270px;
+  }
+}
+#home-map {
+  margin-top: 0;
+  margin-bottom: 25px;
+  height: 550px;
+}
+#home-map img {
+  max-height: 630px;
+}
+div.content {
+  padding-top: 15px;
+}
+@media (max-width: 400px) {
+  div.content {
+    min-height: 500px;
+  }
+}
+div.content .altrenews {
+  font-family: 'Abel', 'sans-serif';
+  font-size: 30px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+div.content .socialplugin {
+  margin-top: 25px;
+}
+div.content #main-search .search-query {
+  height: 20px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  border-radius: 0;
+  margin-bottom: 15px;
+}
+div.content .spacer {
+  clear: both;
+  margin-top: 7px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #b5b8b6;
+  min-height: 1px;
+}
+div.content .box_data {
+  width: 60px;
+  height: 60px;
+  padding-top: 7px;
+  float: left;
+  color: black;
+  text-transform: uppercase;
+  line-height: 15px;
+  text-align: center;
+  background-image: url("../img/box_data.png");
+  background-repeat: no-repeat;
+}
+@media (max-width: 767px) {
+  div.content .box_data {
+    margin-right: 15px;
+  }
+}
+div.content .box_data a {
+  color: black;
+}
+div.content .box_data a:hover {
+  text-decoration: none;
+}
+div.content .box_data .day {
+  font-size: 15px;
+  font-weight: bold;
+}
+div.content .box_data .month {
+  font-size: 15px;
+}
+div.content .box_data .year {
+  font-size: 13px;
+}
+div.content .evidenza {
+  padding-bottom: 50px;
+}
+div.content .evidenza .titolo {
+  min-height: 30px;
+  margin-top: 25px;
+  font-family: 'Abel', 'sans-serif';
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 30px;
+}
+div.content .evidenza .subtitle {
+  margin-bottom: 25px;
+}
+div.content .evidenza .project_row {
+  font-size: 15px;
+}
+div.content .evidenza .project_row .titolo {
+  color: #4265ae;
+  font-weight: bold;
+}
+div.content .evidenza .project_row .tipologia {
+  color: #849bca;
+}
+div.content .evidenza .project_row .box {
+  overflow: hidden;
+}
+div.content .evidenza .project_row .box .n_progetti {
+  color: #18a3c9;
+  float: left;
+}
+div.content .evidenza .project_row .box .importo {
+  float: right;
+  font-weight: bold;
+}
+div.content #map {
+  color: black;
+  text-align: center;
+  font-family: 'Abel', 'sans-serif';
+  font-size: 18px;
+  margin-top: 25px;
+  width: 400px;
+  height: 400px;
+}
+div.content #riepilogo-map {
+  color: black;
+  text-align: center;
+  font-family: 'Abel', 'sans-serif';
+  font-size: 18px;
+  margin-top: 25px;
+  min-height: 450px;
+  border: 2px solid #b5b8b6;
+}
+div.content #don_last {
+  margin-top: 50px;
+}
+div.content #aggiornamento {
+  font-size: 13px;
+  color: #7e8080;
+}
+div.content .boxes {
+  min-height: 200px;
+}
+@media (max-width: 767px) {
+  div.content .boxes .smallbox {
+    margin-top: 25px;
+  }
+}
+div.content .boxes .title {
+  color: black;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+}
+div.content .boxes .box {
+  min-height: 40px;
+}
+div.content .boxes .box .number_background {
+  float: left;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 40px;
+  width: 160px;
+  -webkit-background-size: 160px 40px;
+  -moz-background-size: 160px 40px;
+  -o-background-size: 160px 40px;
+  background-size: 160px 40px;
+}
+div.content .boxes .box .number {
+  text-align: right;
+  height: 30px;
+  padding-right: 10px;
+  padding-top: 10px;
+  color: white;
+  font-size: 20px;
+  width: 150px;
+}
+div.content .boxes .box .grandezza {
+  width: 50px;
+  vertical-align: middle;
+  padding-top: 10px;
+  text-transform: uppercase;
+  font-size: 20px;
+}
+@media (min-width: 400px) {
+  div.content .boxes .box .grandezza {
+    margin-left: 10px;
+  }
+}
+div.content .boxes .subtitle {
+  padding-top: 10px ;
+  margin-bottom: 15px;
+  font-size: 12px;
+  line-height: 12px;
+  text-transform: uppercase;
+}
+div.content .boxes #donazioni.box .number_background {
+  background-image: url("../img/box_donazioni.png");
+}
+div.content .boxes #donazioni.box .grandezza {
+  color: #a1ba03;
+}
+div.content .boxes #danno.box .number_background {
+  background-image: url("../img/box_danno.png");
+}
+div.content .boxes #danno.box .grandezza {
+  color: #18a3c9;
+}
+div.content #main-title {
+  padding-top: 25px;
+  line-height: 35px;
+  color: black;
+  font-family: 'Abel', 'sans-serif';
+  font-size: 35px;
+  margin-bottom: 10px;
+}
+div.content #main-subtitle {
+  margin-bottom: 25px;
+}
+div.content .main-content #faq-page p {
+  margin-left: 25px;
+}
+div.content .main-content ol.faq-list {
+  font-weight: bold;
+}
+div.content .main-content ol.faq-list li p {
+  margin-left: 0!important;
+}
+div.content .main-content #project_list .project_row .text {
+  margin-left: 20px;
+}
+div.content .main-content #project_list .project_row .titolo {
+  color: #4265ae;
+  font-weight: bold;
+}
+div.content .main-content #project_list .project_row .tipologia {
+  color: #849bca;
+}
+div.content .main-content #project_list .project_row .box {
+  overflow: hidden;
+}
+div.content .main-content #project_list .project_row .box .tempi {
+  float: left;
+}
+div.content .main-content #project_list .project_row .box .importi {
+  float: right;
+  font-size: 15px;
+  font-weight: bold;
+}
+div.content .main-content #project_data .titolo {
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: black;
+  clear: both;
+}
+div.content .main-content #project_data .data_row {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+div.content #data-content .box_data a {
+  color: black;
+}
+div.content #data-content .box_data a:hover {
+  text-decoration: none;
+}
+div.content #data-content a {
+  color: #4265ae;
+}
+div.content #data-content .news_list {
+  padding-top: 15px;
+}
+div.content #data-content .news_list .text {
+  margin-left: 20px;
+}
+div.content #data-content .news_list .title a {
+  font-size: 20px;
+}
+div.content #data-content .news_list img {
+  max-height: 130px;
+}
+div.content #data-content .news-spacer {
+  height: 15px;
+  border-bottom: 1px solid #b5b8b6;
+}
+div.content #data-content .pie-spacer {
+  height: 15px;
+  border-bottom: 4px double #b5b8b6;
+}
+div.content #data-content .titolo {
+  min-height: 30px;
+  margin-top: 25px;
+  font-family: 'Abel', 'sans-serif';
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 30px;
+}
+div.content #data-content .slogan {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: black;
+  margin-top: 15px;
+}
+div.content #data-content .donazioni {
+  color: #a1ba03;
+}
+div.content #data-content .danno {
+  color: #18a3c9;
+}
+div.content #data-content .pie {
+  min-height: 350px;
+}
+div.content #data-content .project_list {
+  font-size: 15px;
+  border-top: 1px solid #b5b8b6;
+  padding-top: 15px;
+  padding-left: 0;
+  padding-right: 0;
+}
+div.content #data-content .project_list .project_row .text {
+  margin-left: 5px;
+}
+div.content #data-content .project_list .project_row .titolo {
+  color: #4265ae;
+  font-weight: bold;
+}
+div.content #data-content .project_list .project_row .tipologia {
+  color: #849bca;
+}
+div.content #data-content .project_list .project_row .importo {
+  float: right;
+  font-weight: bold;
+}
+div.content #data-content .project_list .project_row .box {
+  overflow: hidden;
+}
+div.content #data-content .project_list .project_row .box .n_progetti {
+  color: #18a3c9;
+  float: left;
+}
+div.content #data-content .project_list .project_row .box .n_progetti .cypher {
+  color: black;
+}
+div.content #data-content #tempi-realizzazione {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  margin-left: 0;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  padding-left: 25px;
+  min-height: 100px;
+  background-color: #edfb97;
+}
+div.content #data-content #tempi-realizzazione .titolo {
+  font-family: 'Arial', 'sans-serif';
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: black;
+  clear: both;
+}
+div.content #data-content #subproj {
+  margin-left: 0;
+  border-bottom: 1px solid #ccc;
+}
+div.content #data-content #subproj .accordion .accordion-group {
+  border: 0;
+  color: black;
+}
+div.content #data-content #subproj .accordion .accordion-group a {
+  text-decoration: none;
+  color: black;
+}
+div.content #data-content #subproj .accordion .accordion-group .titolo {
+  text-transform: none;
+  line-height: 30px;
+}
+div.content #data-content #subproj .accordion .accordion-group .point {
+  margin-right: 15px;
+}
+div.content #data-content #subproj .accordion .accordion-group .triangle {
+  float: right;
+}
+div.content #data-content #subproj .accordion .accordion-group .accordion-inner {
+  background-color: #f4f4f4;
+}
+div.content #data-content #subproj .accordion .accordion-group .accordion-inner a {
+  color: #18a3c9;
+}
+div.content #data-content #subproj .accordion .accordion-group .accordion-inner .titolo {
+  margin-top: 15px;
+  line-height: 30px;
+  margin-bottom: 15px;
+}
+div.content #data-content #subproj .accordion .accordion-group .accordion-inner .titolo a {
+  color: black;
+}
+div.content #data-content #subproj .accordion .accordion-group .accordion-inner .box {
+  margin-top: 15px;
+}
+div.content #data-content #subproj .accordion .accordion-group .accordion-inner .box .tempi {
+  text-transform: none;
+  font-weight: bold;
+  color: black;
+}
+div.content #data-content #subproj .accordion .accordion-group .accordion-inner .box .importi {
+  text-transform: none;
+  font-weight: bold;
+  color: black;
+}
+div.content #data-content #progetti_evidenza .row-fluid,
+div.content #data-content #comuni_evidenza .row-fluid {
+  margin-top: 10px;
+  padding-bottom: 10px;
+  min-height: 14px;
+  line-height: 20px;
+}
+div.content #data-content #progetti_evidenza .row-fluid .span4,
+div.content #data-content #comuni_evidenza .row-fluid .span4 {
+  min-height: 14px;
+}
+div.content #comment .titolo {
+  min-height: 30px;
+  margin-top: 25px;
+  font-family: 'Abel', 'sans-serif';
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 30px;
+}
+footer #green-background {
+  min-height: 200px;
+  background-color: #5ab741;
+  margin-top: 15px;
+}
+footer #green-background li {
+  list-style: square;
+}
+footer #green-background li a {
+  font-weight: normal;
+  text-decoration: none;
+  color: white;
+}
+footer #green-background a {
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+footer #green-background .footer {
+  padding-top: 50px;
+  color: white;
+}
+footer #green-background .footer .title {
+  font-family: 'Abel', 'sans-serif';
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+footer #gray-background {
+  min-height: 100px;
+  background-color: #4c4e4d;
+  padding-top: 25px;
+  color: #cacaca;
+  font-size: 12px;
+}
+footer #gray-background .partners {
+  padding-bottom: 15px;
+}
+footer #gray-background .partners a {
+  padding-bottom: 15px;
+}
+footer #gray-background .logo {
+  padding-top: 15px;
+  max-height: 40px;
+}
+footer #gray-background #anci .logo {
+  padding-top: 10px;
+}
+footer #gray-background .spacer {
+  padding-left: 15px;
+  max-height: 45px;
+}
+footer #gray-background .cisco {
+  margin-left: 0;
+}
+#donation_form {
+  -moz-border-radius: 6px;
+  background: #fff;
+  -webkit-border-radius: 6px;
+  border: 1px solid #536376;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 12px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.6) 0px 2px 12px;
+  top: 15px!important;
+  padding-top: 14px;
+  padding-right: 22px;
+  padding-left: 22px;
+  padding-bottom: 14px;
+  position: relative;
+  display: none;
+}
+#donation_form form {
+  margin: 0;
+}
+#donation_form form label {
+  width: 200px;
+}
+#donation_form form .controls {
+  margin-left: 220px;
+}
+#donation_form .thin_control_group {
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
+#donation_form ::-webkit-input-placeholder {
+  /* WebKit browsers */
+
+  color: #cccccc;
+}
+#donation_form :-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+
+  color: #cccccc;
+}
+#donation_form ::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+
+  color: #cccccc;
+}
+#donation_form :-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+
+  color: #cccccc;
+}
+#donation_form h1 {
+  min-height: 30px;
+  font-family: 'Abel', 'sans-serif';
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 35px;
+  color: #a1ba03;
+}
+#donation_form legend {
+  border-bottom: 0;
+}

@@ -6,7 +6,7 @@
 data
 log/*
 config/
-static/
+/static/
 open_ricostruzione/log/*
 requirements/local.txt
 open_ricostruzione/media

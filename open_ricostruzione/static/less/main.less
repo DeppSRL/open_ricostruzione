@@ -1,0 +1,49 @@
+@import "variables.less";
+@import url(http://fonts.googleapis.com/css?family=Abel);
+//Open Ricostruzione custom Css
+
+body{
+  font-family: 'Arial', sans-serif;
+  background-color: white;
+}
+
+.wrapper{
+  margin-top:10px;
+  margin-bottom: 10px;
+}
+
+.container{
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.ui-autocomplete{
+  z-index: 1000!important;
+}
+
+/*navbar*/
+.dropdown-submenu{position:relative;}
+.dropdown-submenu>.dropdown-menu{
+  top:100%;
+  left:0;
+  margin-top:-6px;
+  margin-left:-1px;
+  -webkit-border-radius:0 6px 6px 6px;
+  -moz-border-radius:0 6px 6px 6px;
+  border-radius:0 6px 6px 6px;
+}
+.dropdown-submenu>.dropdown-menu>.dropdown-submenu>.dropdown-menu{
+  top:0;
+  left:100%;
+}
+.dropdown-submenu:hover>.dropdown-menu{display:block;}
+.dropdown-submenu:hover>a:after{border-left-color:#ffffff;}
+.dropdown-submenu.pull-left{float:none;}
+
+.dropdown-submenu.pull-left>.dropdown-menu{
+  left:0;
+  margin-left:10px;
+  -webkit-border-radius:6px 0 6px 6px;
+  -moz-border-radius:6px 0 6px 6px;
+  border-radius:6px 0 6px 6px;
+}
