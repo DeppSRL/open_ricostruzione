@@ -5,6 +5,7 @@ import json
 from json.encoder import JSONEncoder
 import time
 from django.core.exceptions import ObjectDoesNotExist
+from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, Http404
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Count, Sum
@@ -69,8 +70,19 @@ class HomeView(TemplateView):
         return context
 
 
-class LocalitaView(TemplateView):
+class LocalitaView(DetailView):
     template_name = 'localita.html'
+    model = Territorio
+    context_object_name = "territorio"
+    territorio = None
+
+    def get(self, request, *args, **kwargs):
+        # get data from the request
+        try:
+            self.territorio = self.get_object()
+        except Http404:
+            return HttpResponseRedirect(reverse('territorio-not-found'))
+
 
 
 class ProgettoView(DetailView):
