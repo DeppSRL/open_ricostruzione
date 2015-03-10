@@ -16,8 +16,10 @@
             importo int.programma: {{ importo_int_piano|italianize }} E<br/>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-6">
+    {# progress bar    #}
+    <div class="progress">
+        <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+        aria-valuenow=" {{ perc_a_piano }}" aria-valuemin="0" aria-valuemax="100" style="width:40%">
             Percentuale progetti a piano: {{ perc_a_piano|floatformat:2 }}%
         </div>
     </div>
