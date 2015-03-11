@@ -2,11 +2,13 @@
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from django.utils.text import slugify
 from model_utils import Choices
-import time
 from django.db import models
+from django.db.models import Q
+from aggregate_if import Count, Sum
 from django.conf import settings
-from open_ricostruzione.utils.moneydate import moneyfmt, add_months
+from open_ricostruzione.utils.moneydate import moneyfmt
 
 
 class Impresa(models.Model):
@@ -78,6 +80,21 @@ class InterventoProgramma(models.Model):
     tipo_immobile = models.ForeignKey('TipoImmobile', null=True, )
     categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
+
+    @staticmethod
+    def get_tipo_immobile_aggregates():
+
+        filter_dict = {
+            'totale__count':Count('pk'),
+            'totale__sum':Sum('importo_generale'),
+            }
+
+        for tip in TipoImmobile.TIPOLOGIA:
+            tipologia_slug = slugify(tip[1])
+            filter_dict["{}__sum".format(tipologia_slug)] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+            filter_dict["{}__count".format(tipologia_slug)] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+
+        return InterventoProgramma.objects.aggregate(**filter_dict)
 
     def __unicode__(self):
         return u"{} - {}".format(self.denominazione, self.territorio)
