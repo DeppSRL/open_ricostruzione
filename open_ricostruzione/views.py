@@ -77,8 +77,8 @@ class HomeView(TemplateView):
         context['n_int_piano'] = n_int_piano
 
         # example interventi fetch
-        interventi_top_importo = InterventoProgramma.objects.all().order_by('importo_generale')[0:5]
-        interventi_bottom_importo = InterventoProgramma.objects.all().order_by('-importo_generale')[0:5]
+        interventi_top_importo = InterventoProgramma.objects.all().order_by('-importo_generale')[0:5]
+        interventi_bottom_importo = InterventoProgramma.objects.all().order_by('importo_generale')[0:5]
 
         context['interventi_top_importo'] = interventi_top_importo
         context['interventi_bottom_importo'] = interventi_bottom_importo

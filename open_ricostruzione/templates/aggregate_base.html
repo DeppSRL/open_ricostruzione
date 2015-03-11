@@ -50,6 +50,14 @@
     {# fetch progetti #}
     <div class="row">
         <div class="col-md-6">
+            <strong>Progetti con maggiore importo</strong>
+        </div>
+        <div class="col-md-6">
+            <strong>Progetti con minore importo</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
             {% for intprog in interventi_top_importo %}
                 {% include 'home_intervento_block.html' with intprog=intprog %}
             {% endfor %}
