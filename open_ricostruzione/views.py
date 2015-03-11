@@ -75,6 +75,13 @@ class HomeView(TemplateView):
         context['perc_a_piano'] = 100.0 * (n_int_piano/float(n_int_programma))
         context['n_int_programma'] = n_int_programma
         context['n_int_piano'] = n_int_piano
+
+        # example interventi fetch
+        interventi_top_importo = InterventoProgramma.objects.all().order_by('importo_generale')[0:5]
+        interventi_bottom_importo = InterventoProgramma.objects.all().order_by('-importo_generale')[0:5]
+
+        context['interventi_top_importo'] = interventi_top_importo
+        context['interventi_bottom_importo'] = interventi_bottom_importo
         return context
 
 

@@ -12,8 +12,8 @@
         </div>
         <div class="col-md-6">
             <strong>Interventi a piano</strong><br/>
-            n.interventi programma: {{ n_int_piano }}<br/>
-            importo int.programma: {{ importo_int_piano|italianize }} E<br/>
+            n.interventi a piano: {{ n_int_piano }}<br/>
+            importo int.piano: {{ importo_int_piano|italianize }} E<br/>
         </div>
     </div>
     {# progress bar    #}
@@ -36,22 +36,28 @@
             </div>
         </div>
     {% endblock %}
-    <div class="row">
-        <div class="col-md-12">
-            torta aggregazione tipo immobile
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            torta aggregazione tipologia sogg.attuatori
-        </div>
-    </div>
+
+    {# aggregazione tipo immobile    #}
+
+    {% block torta-tipo-immobile %}
+        {% include 'pie_chart.html' with pie_title="Aggregazione tipo immobile" %}
+    {% endblock %}
+    {# aggregazione tipo sogg. att #}
+    {% block torta-tipo-sogg-attuatore %}
+        {% include 'pie_chart.html' with pie_title="Aggregazione tipo sogg.attuatore" %}
+    {% endblock %}
+
+    {# fetch progetti #}
     <div class="row">
         <div class="col-md-6">
-            fetch interventi/1
+            {% for intprog in interventi_top_importo %}
+                {% include 'home_intervento_block.html' with intprog=intprog %}
+            {% endfor %}
         </div>
         <div class="col-md-6">
-            fetch interventi/2
+            {% for intprog in interventi_bottom_importo %}
+                {% include 'home_intervento_block.html' with intprog=intprog %}
+            {% endfor %}
         </div>
     </div>
 

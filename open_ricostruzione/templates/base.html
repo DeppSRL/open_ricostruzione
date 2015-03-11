@@ -27,6 +27,17 @@
     {% endif %}
 
 
+    <!-- Le javascript
+    ================================================== -->
+
+    <script src="{{ STATIC_URL }}js/jquery.js"></script>
+
+    <script src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}vendor/highcharts/js/highcharts.js"></script>
+    <script src="{{ STATIC_URL }}js/project.js"></script>
+
+
+
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="{{ STATIC_URL }}favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ STATIC_URL }}ico/apple-touch-icon-144-precomposed.png">
@@ -90,12 +101,6 @@
 
 <!-- /FOOTER -->
 </div>
-<!-- Le javascript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="{{ STATIC_URL }}js/jquery.js"></script>
-<script src="{{ STATIC_URL }}vendor/bootstrap/js/bootstrap.min.js"></script>
-<script src="{{ STATIC_URL }}vendor/highcharts/js/highcharts.js"></script>
 
 {% include 'g_analytics.html' %}
 
