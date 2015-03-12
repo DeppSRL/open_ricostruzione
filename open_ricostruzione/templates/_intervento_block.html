@@ -1,0 +1,6 @@
+{% load italianize %}
+<div class="row" style="border-bottom: 1px solid #cccccc;margin-left: 2px;margin-right: 2px;">
+    <div class="col-md-6">{{ intprog.denominazione|title }}</div>
+    <div class="col-md-3">{{ intprog.importo_generale|italianize }} E</div>
+    <div class="col-md-3">{{ intprog.territorio.denominazione }}</div>
+</div>

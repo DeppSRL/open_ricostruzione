@@ -48,7 +48,7 @@
     {% endblock %}
 
     {# fetch progetti #}
-    <div class="row">
+    <div class="row" style="margin-bottom: 5px;">
         <div class="col-md-6">
             <strong>Progetti con maggiore importo</strong>
         </div>
@@ -59,12 +59,12 @@
     <div class="row">
         <div class="col-md-6">
             {% for intprog in interventi_top_importo %}
-                {% include 'home_intervento_block.html' with intprog=intprog  %}
+                {% include '_intervento_block.html' with intprog=intprog  %}
             {% endfor %}
         </div>
         <div class="col-md-6">
             {% for intprog in interventi_bottom_importo %}
-                {% include 'home_intervento_block.html' with intprog=intprog  %}
+                {% include '_intervento_block.html' with intprog=intprog  %}
             {% endfor %}
         </div>
     </div>
