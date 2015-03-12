@@ -14,7 +14,7 @@
     var d = [];
 
     {% for item in data_list %}
-        d.push(['{{ item.0 }}',{{ item.1|floatformat:2 }}]);
+        d.push(['{{ item.label }}',{{ item.value|floatformat:2 }}]);
     {% endfor %}
 
     $(document).ready(

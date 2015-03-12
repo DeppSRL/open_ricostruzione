@@ -89,8 +89,8 @@ class InterventoProgramma(models.Model):
             filter_dict['totale'] = Sum('importo_generale')
 
         for tip in model.TIPOLOGIA:
-            tipologia_slug = slugify(tip[1])
-            filter_dict["{}".format(tipologia_slug)] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+            # tipologia_slug = slugify(tip[1])
+            filter_dict["{}".format(tip[0])] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
 
         return InterventoProgramma.objects.aggregate(**filter_dict)
 
@@ -102,8 +102,8 @@ class InterventoProgramma(models.Model):
             filter_dict['totale'] = Count('pk')
 
         for tip in model.TIPOLOGIA:
-            tipologia_slug = slugify(tip[1])
-            filter_dict["{}".format(tipologia_slug)] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+            # tipologia_slug = slugify(tip[1])
+            filter_dict["{}".format(tip[0])] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
 
         return InterventoProgramma.objects.aggregate(**filter_dict)
 

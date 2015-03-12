@@ -40,11 +40,11 @@
     {# aggregazione tipo immobile    #}
 
     {% block torta-tipo-immobile %}
-        {% include 'pie_chart.html' with pie_title="Aggregazione tipo immobile somma" data_list=tipo_immobile_aggregates_sum  %}
+        {% include 'pie_chart.html' with pie_title="Aggregazione per tipo immobile dell'ammontare" data_list=tipo_immobile_aggregates_sum  %}
     {% endblock %}
     {# aggregazione tipo sogg. att #}
     {% block torta-tipo-sogg-attuatore %}
-        {% include 'pie_chart.html' with pie_title="Aggregazione tipo sogg.attuatore somma" data_list=sogg_att_aggregates_sum %}
+        {% include 'pie_chart.html' with pie_title="Aggregazione per tipo sogg.attuatore dell'ammontare" data_list=sogg_att_aggregates_sum %}
     {% endblock %}
 
     {# fetch progetti #}
