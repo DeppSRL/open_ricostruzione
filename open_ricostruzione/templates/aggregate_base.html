@@ -27,7 +27,7 @@
     {% block home-map %}
         <div class="row">
             <div class="col-md-12">
-                <strong>mappa home</strong>
+                <strong>Mappa</strong>
             </div>
         </div>
         <div class="row">
@@ -38,13 +38,23 @@
     {% endblock %}
 
     {# aggregazione tipo immobile    #}
-
     {% block torta-tipo-immobile %}
-        {% include 'pie_chart.html' with pie_title="Aggregazione per tipo immobile dell'ammontare" data_list=tipo_immobile_aggregates_sum  %}
+        {% include 'pie_chart.html' with pie_title="Aggregazione per tipo immobile - ammontare" data_list=tipo_immobile_aggregates_sum  %}
     {% endblock %}
+
     {# aggregazione tipo sogg. att #}
     {% block torta-tipo-sogg-attuatore %}
-        {% include 'pie_chart.html' with pie_title="Aggregazione per tipo sogg.attuatore dell'ammontare" data_list=sogg_att_aggregates_sum %}
+        {% include 'pie_chart.html' with pie_title="Aggregazione per tipo sogg.attuatore - ammontare" data_list=sogg_att_aggregates_sum %}
+    {% endblock %}
+
+    {# aggregazione tipologia cedente #}
+    {% block torta-tipologia-cedente %}
+        <div class="row" style="margin-bottom: 5px;">
+            <div class="col-md-12">
+                <strong>Donazioni</strong>
+            </div>
+        </div>
+{#        {% include 'pie_chart.html' with pie_title="Aggregazione per tipologia cedente dell'ammontare" data_list=tipologia_cedente_aggregates_sum %}#}
     {% endblock %}
 
     {# fetch progetti #}
