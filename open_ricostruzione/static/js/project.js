@@ -18,7 +18,7 @@ function init_highcharts(){
     chart_initialization = true;
 }
 
-function paint_chart(pie_title, container_id) {
+function paint_chart(pie_title, container_id, data) {
 
     if(chart_initialization == false)
         init_highcharts();
@@ -54,19 +54,7 @@ function paint_chart(pie_title, container_id) {
         series: [{
             type: 'pie',
             name: 'Browser share',
-            data: [
-                ['Firefox',   45.0],
-                ['IE',       26.8],
-                {
-                    name: 'Chrome',
-                    y: 12.8,
-                    sliced: true,
-                    selected: true
-                },
-                ['Safari',    8.5],
-                ['Opera',     6.2],
-                ['Others',   0.7]
-            ]
+            data: data
         }]
     });
 }

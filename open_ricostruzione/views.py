@@ -18,7 +18,7 @@ from django.utils.functional import curry
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.defaultfilters import date as _date
-from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano
+from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore
 from territori.models import Territorio
 from .serializers import DonazioneSerializer
 from open_ricostruzione.utils.moneydate import moneyfmt, add_months
@@ -70,11 +70,19 @@ class HomeView(TemplateView):
 
         n_int_programma = InterventoProgramma.objects.count()
         n_int_piano = InterventoPiano.objects.count()
-        context['importo_int_programma'] = InterventoProgramma.objects.all().aggregate(Sum('importo_generale'))['importo_generale__sum']
+        context['importo_int_programma'] = InterventoProgramma.objects.all().aggregate(Sum('importo_generale'))[
+            'importo_generale__sum']
         context['importo_int_piano'] = InterventoPiano.objects.all().aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
-        context['perc_a_piano'] = 100.0 * (n_int_piano/float(n_int_programma))
+        context['perc_a_piano'] = 100.0 * (n_int_piano / float(n_int_programma))
         context['n_int_programma'] = n_int_programma
         context['n_int_piano'] = n_int_piano
+
+        # tipo immobile pie data
+        context['tipo_immobile_aggregates_sum'] = [[k, float(v) if v else 0.0] for k, v in
+                                               InterventoProgramma.get_aggregates_sum(TipoImmobile).iteritems()]
+
+        context['sogg_att_aggregates_sum'] = [[k, float(v) if v else 0.0] for k, v in
+                                       InterventoProgramma.get_aggregates_sum(SoggettoAttuatore).iteritems()]
 
         # example interventi fetch
         interventi_top_importo = InterventoProgramma.objects.all().order_by('-importo_generale')[0:5]
@@ -97,7 +105,6 @@ class LocalitaView(DetailView):
             self.territorio = self.get_object()
         except Http404:
             return HttpResponseRedirect(reverse('territorio-not-found'))
-
 
 
 class ProgettoListView(ListView):

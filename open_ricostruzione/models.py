@@ -82,19 +82,31 @@ class InterventoProgramma(models.Model):
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
     @staticmethod
-    def get_tipo_immobile_aggregates():
+    def get_aggregates_sum(model, total=False,):
 
-        filter_dict = {
-            'totale__count':Count('pk'),
-            'totale__sum':Sum('importo_generale'),
-            }
+        filter_dict = {}
+        if total:
+            filter_dict['totale'] = Sum('importo_generale')
 
-        for tip in TipoImmobile.TIPOLOGIA:
+        for tip in model.TIPOLOGIA:
             tipologia_slug = slugify(tip[1])
-            filter_dict["{}__sum".format(tipologia_slug)] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
-            filter_dict["{}__count".format(tipologia_slug)] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+            filter_dict["{}".format(tipologia_slug)] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
 
         return InterventoProgramma.objects.aggregate(**filter_dict)
+
+    @staticmethod
+    def get_aggregates_count(model, total=False):
+
+        filter_dict = {}
+        if total:
+            filter_dict['totale'] = Count('pk')
+
+        for tip in model.TIPOLOGIA:
+            tipologia_slug = slugify(tip[1])
+            filter_dict["{}".format(tipologia_slug)] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+
+        return InterventoProgramma.objects.aggregate(**filter_dict)
+
 
     def __unicode__(self):
         return u"{} - {}".format(self.denominazione, self.territorio)

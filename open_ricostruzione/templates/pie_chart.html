@@ -10,7 +10,14 @@
 
 
 <script>
+
+    var d = [];
+
+    {% for item in data_list %}
+        d.push(['{{ item.0 }}',{{ item.1|floatformat:2 }}]);
+    {% endfor %}
+
     $(document).ready(
-        paint_chart('{{ pie_title }}',"{{ pie_title|slugify }}")
+        paint_chart('{{ pie_title }}',"{{ pie_title|slugify }}",d)
     )
 </script>
