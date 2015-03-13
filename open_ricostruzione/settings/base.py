@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'open_ricostruzione',
     'open_ricostruzione.depp_humanize',
     'territori',
+    'bootstrap_pagination',
 )
 
 
