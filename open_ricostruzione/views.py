@@ -115,7 +115,7 @@ class AggregatePageMixin(object):
         ricostruzione_status['piano']['percentage'] = 100.0 * (
             ricostruzione_status['piano']['count'] / float(ricostruzione_status['programma']['count']))
 
-        # todo: aggiugnere la parte sull'attuazione
+        # todo: aggiungere la parte sull'attuazione
 
         return ricostruzione_status
 
@@ -155,7 +155,12 @@ class LocalitaView(DetailView):
             self.territorio = self.get_object()
         except Http404:
             return HttpResponseRedirect(reverse('territorio-not-found'))
+        return super(LocalitaView, self).get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+
+        context = super(LocalitaView, self).get_context_data(**kwargs)
+        return context
 
 class ProgettoListView(ListView):
     model = InterventoProgramma
