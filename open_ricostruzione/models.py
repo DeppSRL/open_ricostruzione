@@ -82,7 +82,7 @@ class InterventoProgramma(models.Model):
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
     @staticmethod
-    def get_aggregates_sum(model, total=False,):
+    def get_aggregates_sum(model, total=False, ):
 
         filter_dict = {}
         if total:
@@ -108,7 +108,8 @@ class InterventoProgramma(models.Model):
             if model == TipoImmobile:
                 filter_dict["{}".format(tip[0])] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
             elif model == SoggettoAttuatore:
-                filter_dict["{}".format(tip[0])] = Count('importo_generale', only=Q(soggetto_attuatore__tipologia=tip[0]))
+                filter_dict["{}".format(tip[0])] = Count('importo_generale',
+                                                         only=Q(soggetto_attuatore__tipologia=tip[0]))
 
         return InterventoProgramma.objects.aggregate(**filter_dict)
 
@@ -401,6 +402,31 @@ class Donazione(models.Model):
     data = models.DateField(null=True, blank=True)
     importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False, )
     interventi_programma = models.ManyToManyField(InterventoProgramma, through='DonazioneInterventoProgramma')
+
+    @staticmethod
+    def get_aggregates_sum(total=False, ):
+
+        filter_dict = {}
+        if total:
+            filter_dict['totale'] = Sum('importo')
+
+        for tip in Donazione.TIPO_CEDENTE:
+            filter_dict["{}".format(tip[0])] = Sum('importo', only=Q(tipologia_cedente=tip[0]))
+
+        return Donazione.objects.aggregate(**filter_dict)
+
+    @staticmethod
+    def get_aggregates_count(total=False, ):
+
+        filter_dict = {}
+        if total:
+            filter_dict['totale'] = Count('importo')
+
+        for tip in Donazione.TIPO_CEDENTE:
+            filter_dict["{}".format(tip[0])] = Count('importo', only=Q(tipologia_cedente=tip[0]))
+
+        return Donazione.objects.aggregate(**filter_dict)
+
 
     def __unicode__(self):
         return u"{} - {}".format(self.denominazione, self.territorio)

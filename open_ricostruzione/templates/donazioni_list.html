@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load italianize %}
+{% block title %}Donazioni{% endblock %}
+
+{% block content %}
+    <h1>Donazioni</h1>
+    {% for donazione in object_list %}
+        <div class="row" style="border-bottom: 1px solid gray;">
+            <div class="col-md-12">{{ donazione.importo|italianize }} Euro -
+                {% if donazione.tipologia_cedente == '4' %}
+                    {{ donazione.get_tipologia_cedente_display|title }}
+                {% else %}
+
+                    {{ donazione.denominazione|title }}
+                {% endif %},
+                {{ donazione.territorio.nome_con_provincia|title }},
+                {{ donazione.data }},
+                {{ donazione.get_tipologia_donazione_display|title }}
+
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if is_paginated %}
+        <ul class="pagination pagination-centered">
+            {% if page_obj.has_previous %}
+                <li><a href="?page=1"><<</a></li>
+                <li><a href="?page={{ page_obj.previous_page_number }}"><</a></li>
+            {% endif %}
+{##}
+{#            {% for i in paginator.page_range %}#}
+{#                <li {% if page_obj.number == i %} class="active" {% endif %}><a href="?page={{i}}">{{i}}</a></li>#}
+{#            {% endfor %}#}
+
+            {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">></a></li>
+                <li><a href="?page={{ page_obj.paginator.num_pages }}">>></a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+{% endblock %}

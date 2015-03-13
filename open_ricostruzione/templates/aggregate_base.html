@@ -54,7 +54,12 @@
                 <strong>Donazioni</strong>
             </div>
         </div>
-{#        {% include 'pie_chart.html' with pie_title="Aggregazione per tipologia cedente dell'ammontare" data_list=tipologia_cedente_aggregates_sum %}#}
+        {% include 'pie_chart.html' with pie_title="Aggregazione per tipologia cedente - ammontare" data_list=tipologia_cedente_aggregates_sum %}
+         <div class="row" style="margin-bottom: 5px;">
+            <div class="col-md-12">
+                <a href="{% url 'donazioni' %}">Vedi tutte le donazioni</a>
+            </div>
+        </div>
     {% endblock %}
 
     {# fetch progetti #}

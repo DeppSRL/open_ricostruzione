@@ -43,17 +43,32 @@ class StaticPageView(TemplateView, ):
     template_name = 'static_page.html'
 
 
+class DonazioniListView(ListView):
+    paginate_by = 100
+    model = Donazione
+    template_name = 'donazioni_list.html'
+
 class AggregatePageMixin(object):
     ##
     # Aggregati Page Mixin
     # stores the common function of all the aggregate views
     ##
 
-    def get_programmati_pianificati(self):
-        return
+    @staticmethod
+    def get_aggr_tipologia_cedente():
+        values = []
+        for k, v in Donazione.get_aggregates_sum().iteritems():
+            if v:
+                v = float(v)
+            else:
+                v = 0.0
+
+            values.append({'value': v, 'slug': k, 'label': Donazione.TIPO_CEDENTE.__getitem__(k)})
+
+        return values
 
     @staticmethod
-    def _create_aggregate_data(model):
+    def _create_aggregate_int_progr(model):
         ##
         # creates the list of dict to be passed to the context.
         # calls the appropriate model function to get sums of the various categories of objects
@@ -72,11 +87,11 @@ class AggregatePageMixin(object):
 
     @staticmethod
     def get_aggr_tipo_immobile():
-        return AggregatePageMixin._create_aggregate_data(TipoImmobile)
+        return AggregatePageMixin._create_aggregate_int_progr(TipoImmobile)
 
     @staticmethod
     def get_aggr_sogg_att():
-        return AggregatePageMixin._create_aggregate_data(SoggettoAttuatore)
+        return AggregatePageMixin._create_aggregate_int_progr(SoggettoAttuatore)
 
 
     @staticmethod
@@ -101,12 +116,13 @@ class HomeView(TemplateView, AggregatePageMixin):
 
         # tipo immobile pie data
         context['tipo_immobile_aggregates_sum'] = AggregatePageMixin.get_aggr_tipo_immobile()
-
+        # tipo sogg.att pie data
         context['sogg_att_aggregates_sum'] = AggregatePageMixin.get_aggr_sogg_att()
-
+        # tipo sogg.att pie data
+        context['tipologia_cedente_aggregates_sum'] = AggregatePageMixin.get_aggr_tipologia_cedente()
         # example interventi fetch
-        interventi_top_importo = AggregatePageMixin.fetch_interventi_programma('-importo_generale',5)
-        interventi_bottom_importo = AggregatePageMixin.fetch_interventi_programma('importo_generale',5)
+        interventi_top_importo = AggregatePageMixin.fetch_interventi_programma('-importo_generale', 5)
+        interventi_bottom_importo = AggregatePageMixin.fetch_interventi_programma('importo_generale', 5)
 
         context['interventi_top_importo'] = interventi_top_importo
         context['interventi_bottom_importo'] = interventi_bottom_importo
