@@ -4,9 +4,9 @@
 {% block content %}
 
     <div class="row basic_spacer">
-        {% include '_data_block.html' with title='interventi a piano' number=n_int_programma money_value=importo_int_programma %}
-        {% include '_data_block.html' with title='interventi a programma' number=n_int_piano money_value=importo_int_piano %}
-        {% include '_data_block.html' with title='interventi in attuazione' number=0 money_value=0.0 %}
+        {% include '_data_block.html' with title='interventi a programma' data_dict=ricostruzione_status.programma %}
+        {% include '_data_block.html' with title='interventi a piano' data_dict=ricostruzione_status.piano %}
+        {% include '_data_block.html' with title='interventi in attuazione' data_dict=ricostruzione_status.attuazione %}
     </div>
     {# progress bar    #}
     <div class="progress basic_spacer" >
@@ -24,7 +24,7 @@
         </div>
         <div class="row basic_spacer">
             <div class="col-md-12">
-                <img src="{% static 'img/mappa-home.png' %}">
+                <img src="{% static 'img/mappa-home.png' %}" >
             </div>
         </div>
     {% endblock %}

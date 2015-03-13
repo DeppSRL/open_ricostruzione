@@ -48,6 +48,7 @@ class DonazioniListView(ListView):
     model = Donazione
     template_name = 'donazioni_list.html'
 
+
 class AggregatePageMixin(object):
     ##
     # Aggregati Page Mixin
@@ -98,6 +99,26 @@ class AggregatePageMixin(object):
     def fetch_interventi_programma(order_by, number):
         return InterventoProgramma.objects.all().order_by(order_by)[0:number]
 
+    @staticmethod
+    def get_ricostruzione_status():
+        ricostruzione_status = {
+            'piano': {},
+            'programma': {},
+            'attuazione': {},
+        }
+        ricostruzione_status['programma']['count'] = InterventoProgramma.objects.all().count()
+        ricostruzione_status['piano']['count'] = InterventoPiano.objects.all().count()
+        ricostruzione_status['programma']['money_value'] = \
+            InterventoProgramma.objects.all().aggregate(Sum('importo_generale'))['importo_generale__sum']
+        ricostruzione_status['piano']['money_value'] = InterventoPiano.objects.all().aggregate(Sum('imp_a_piano'))[
+            'imp_a_piano__sum']
+        ricostruzione_status['piano']['percentage'] = 100.0 * (
+            ricostruzione_status['piano']['count'] / float(ricostruzione_status['programma']['count']))
+
+        # todo: aggiugnere la parte sull'attuazione
+
+        return ricostruzione_status
+
 
 class HomeView(TemplateView, AggregatePageMixin):
     template_name = "home.html"
@@ -105,14 +126,7 @@ class HomeView(TemplateView, AggregatePageMixin):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
 
-        n_int_programma = InterventoProgramma.objects.count()
-        n_int_piano = InterventoPiano.objects.count()
-        context['importo_int_programma'] = InterventoProgramma.objects.all().aggregate(Sum('importo_generale'))[
-            'importo_generale__sum']
-        context['importo_int_piano'] = InterventoPiano.objects.all().aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
-        context['perc_a_piano'] = 100.0 * (n_int_piano / float(n_int_programma))
-        context['n_int_programma'] = n_int_programma
-        context['n_int_piano'] = n_int_piano
+        context['ricostruzione_status'] = AggregatePageMixin.get_ricostruzione_status()
 
         # tipo immobile pie data
         context['tipo_immobile_aggregates_sum'] = AggregatePageMixin.get_aggr_tipo_immobile()

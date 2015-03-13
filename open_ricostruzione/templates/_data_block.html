@@ -1,6 +1,6 @@
 {% load italianize %}
 <div class="col-md-4 data_block_border">
     <strong>{{ title|title }}</strong><br/>
-    n.interventi: {{ number }}<br/>
-    importo: {{ money_value|italianize }} E<br/>
+    n.interventi: {{ data_dict.count|default_if_none:0 }}<br/>
+    importo: {{ data_dict.money_value|italianize|default_if_none:0 }} E<br/>
 </div>

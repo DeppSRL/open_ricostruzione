@@ -15,5 +15,7 @@ register = template.Library()
 
 @register.filter(name='italianize')
 def italianize(value):
+    if not value or value == '':
+        return
     decimal_value = Decimal(format(value, ".15g"))
     return moneyfmt(decimal_value,2,"",".",",")
