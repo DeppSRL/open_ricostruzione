@@ -1,23 +1,15 @@
 {% extends 'base.html' %}
-{% load italianize static %}
+{% load static %}
 
 {% block content %}
 
-    <div class="row">
-        <div class="col-md-6">
-            <strong>Interventi a programma</strong><br/>
-            n.interventi programma: {{ n_int_programma }}<br/>
-            importo int.programma: {{ importo_int_programma|italianize }} E<br/>
-
-        </div>
-        <div class="col-md-6">
-            <strong>Interventi a piano</strong><br/>
-            n.interventi a piano: {{ n_int_piano }}<br/>
-            importo int.piano: {{ importo_int_piano|italianize }} E<br/>
-        </div>
+    <div class="row basic_spacer">
+        {% include '_data_block.html' with title='interventi a piano' number=n_int_programma money_value=importo_int_programma %}
+        {% include '_data_block.html' with title='interventi a programma' number=n_int_piano money_value=importo_int_piano %}
+        {% include '_data_block.html' with title='interventi in attuazione' number=0 money_value=0.0 %}
     </div>
     {# progress bar    #}
-    <div class="progress">
+    <div class="progress basic_spacer" >
         <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
         aria-valuenow=" {{ perc_a_piano }}" aria-valuemin="0" aria-valuemax="100" style="width:40%">
             Percentuale progetti a piano: {{ perc_a_piano|floatformat:2 }}%
@@ -25,12 +17,12 @@
     </div>
 
     {% block home-map %}
-        <div class="row">
+        <div class="row basic_spacer">
             <div class="col-md-12">
                 <strong>Mappa</strong>
             </div>
         </div>
-        <div class="row">
+        <div class="row basic_spacer">
             <div class="col-md-12">
                 <img src="{% static 'img/mappa-home.png' %}">
             </div>
@@ -63,7 +55,7 @@
     {% endblock %}
 
     {# fetch progetti #}
-    <div class="row" style="margin-bottom: 5px;">
+    <div class="row basic_spacer" style="margin-bottom: 5px;">
         <div class="col-md-6">
             <strong>Progetti con maggiore importo</strong>
         </div>
@@ -71,7 +63,7 @@
             <strong>Progetti con minore importo</strong>
         </div>
     </div>
-    <div class="row">
+    <div class="row basic_spacer">
         <div class="col-md-6">
             {% for intprog in interventi_top_importo %}
                 {% include '_intervento_block.html' with intprog=intprog  %}
