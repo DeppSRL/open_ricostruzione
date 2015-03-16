@@ -42,9 +42,9 @@ class AggregatePageMixin(object):
     # todo: aggiungere la parte sull'attuazione
     
     @staticmethod
-    def get_aggr_tipologia_cedente():
+    def get_aggr_tipologia_cedente(**kwargs):
         values = []
-        for k, v in Donazione.get_aggregates_sum().iteritems():
+        for k, v in Donazione.get_aggregates_sum(**kwargs).iteritems():
             if v:
                 v = float(v)
             else:
@@ -55,14 +55,14 @@ class AggregatePageMixin(object):
         return values
 
     @staticmethod
-    def _create_aggregate_int_progr(model):
+    def _create_aggregate_int_progr(model, **kwargs):
         ##
         # creates the list of dict to be passed to the context.
         # calls the appropriate model function to get sums of the various categories of objects
         ##
 
         values = []
-        for k, v in InterventoProgramma.get_aggregates_sum(model).iteritems():
+        for k, v in InterventoProgramma.get_aggregates_sum(model=model,**kwargs).iteritems():
             if v:
                 v = float(v)
             else:
@@ -73,12 +73,12 @@ class AggregatePageMixin(object):
         return values
 
     @staticmethod
-    def get_aggr_tipo_immobile():
-        return AggregatePageMixin._create_aggregate_int_progr(TipoImmobile)
+    def get_aggr_tipo_immobile(**kwargs):
+        return AggregatePageMixin._create_aggregate_int_progr(model=TipoImmobile, **kwargs)
 
     @staticmethod
-    def get_aggr_sogg_att():
-        return AggregatePageMixin._create_aggregate_int_progr(SoggettoAttuatore)
+    def get_aggr_sogg_att(**kwargs):
+        return AggregatePageMixin._create_aggregate_int_progr(model=SoggettoAttuatore, **kwargs)
 
 
     @staticmethod
@@ -152,13 +152,18 @@ class LocalitaView(DetailView, AggregatePageMixin):
         context = super(LocalitaView, self).get_context_data(**kwargs)
 
         context['ricostruzione_status'] = {
-            'piano': AggregatePageMixin.get_pianificazione_status(intervento_programma__territorio__slug=self.territorio.slug),
-            'programma': AggregatePageMixin.get_programmazione_status(territorio__slug=self.territorio.slug)
+            'piano': AggregatePageMixin.get_pianificazione_status(intervento_programma__territorio=self.territorio),
+            'programma': AggregatePageMixin.get_programmazione_status(territorio=self.territorio)
         }
         context['ricostruzione_status']['piano_percentage'] = 100.0 * (
             context['ricostruzione_status']['piano']['count'] / float(context['ricostruzione_status']['programma']['count']))
 
-
+        # tipo immobile pie data
+        context['tipo_immobile_aggregates_sum'] = AggregatePageMixin.get_aggr_tipo_immobile(territorio=self.territorio)
+        # tipo sogg.att pie data
+        context['sogg_att_aggregates_sum'] = AggregatePageMixin.get_aggr_sogg_att(territorio=self.territorio)
+        # tipo sogg.att pie data
+        context['tipologia_cedente_aggregates_sum'] = AggregatePageMixin.get_aggr_tipologia_cedente(territorio=self.territorio)
 
 
         # calculate the map bounds for the territorio

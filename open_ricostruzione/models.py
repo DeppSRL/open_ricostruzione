@@ -82,20 +82,20 @@ class InterventoProgramma(models.Model):
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
     @staticmethod
-    def get_aggregates_sum(model, total=False, ):
+    def get_aggregates_sum(model, total=False, **kwargs ):
 
-        filter_dict = {}
+        aggregation_struct = {}
         if total:
-            filter_dict['totale'] = Sum('importo_generale')
+            aggregation_struct['totale'] = Sum('importo_generale')
 
         for tip in model.TIPOLOGIA:
             # tipologia_slug = slugify(tip[1])
             if model == TipoImmobile:
-                filter_dict["{}".format(tip[0])] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+                aggregation_struct["{}".format(tip[0])] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
             elif model == SoggettoAttuatore:
-                filter_dict["{}".format(tip[0])] = Sum('importo_generale', only=Q(soggetto_attuatore__tipologia=tip[0]))
+                aggregation_struct["{}".format(tip[0])] = Sum('importo_generale', only=Q(soggetto_attuatore__tipologia=tip[0]))
 
-        return InterventoProgramma.objects.aggregate(**filter_dict)
+        return InterventoProgramma.objects.filter(**kwargs).aggregate(**aggregation_struct)
 
     @staticmethod
     def get_aggregates_count(model, total=False):
@@ -404,28 +404,28 @@ class Donazione(models.Model):
     interventi_programma = models.ManyToManyField(InterventoProgramma, through='DonazioneInterventoProgramma')
 
     @staticmethod
-    def get_aggregates_sum(total=False, ):
+    def get_aggregates_sum(total=False, **kwargs ):
 
-        filter_dict = {}
+        aggregation_struct = {}
         if total:
-            filter_dict['totale'] = Sum('importo')
+            aggregation_struct['totale'] = Sum('importo')
 
         for tip in Donazione.TIPO_CEDENTE:
-            filter_dict["{}".format(tip[0])] = Sum('importo', only=Q(tipologia_cedente=tip[0]))
+            aggregation_struct["{}".format(tip[0])] = Sum('importo', only=Q(tipologia_cedente=tip[0]))
 
-        return Donazione.objects.aggregate(**filter_dict)
+        return Donazione.objects.filter(**kwargs).aggregate(**aggregation_struct)
 
     @staticmethod
-    def get_aggregates_count(total=False, ):
+    def get_aggregates_count(total=False, **kwargs):
 
-        filter_dict = {}
+        aggregation_struct = {}
         if total:
-            filter_dict['totale'] = Count('importo')
+            aggregation_struct['totale'] = Count('importo')
 
         for tip in Donazione.TIPO_CEDENTE:
-            filter_dict["{}".format(tip[0])] = Count('importo', only=Q(tipologia_cedente=tip[0]))
+            aggregation_struct["{}".format(tip[0])] = Count('importo', only=Q(tipologia_cedente=tip[0]))
 
-        return Donazione.objects.aggregate(**filter_dict)
+        return Donazione.objects.filter(**kwargs).aggregate(**aggregation_struct)
 
 
     def __unicode__(self):

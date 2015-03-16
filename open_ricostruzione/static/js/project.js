@@ -53,7 +53,7 @@ function paint_chart(pie_title, container_id, data) {
         },
         series: [{
             type: 'pie',
-            name: 'Browser share',
+            name: 'Percentuale',
             data: data
         }]
     });
