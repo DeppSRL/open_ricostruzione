@@ -15,8 +15,8 @@ env.read_env(root('.env'))
 DEBUG = env.bool('DEBUG', False)
 TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', False)
 ########## END DEBUG CONFIGURATION
+INSTANCE_TYPE = env.str('INSTANCE_TYPE','')
 
-DEVELOPMENT = False
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
 

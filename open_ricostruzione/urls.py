@@ -59,7 +59,7 @@ urlpatterns = patterns('',
 
 )
 
-if settings.DEVELOPMENT:
+if settings.INSTANCE_TYPE == 'development':
     urlpatterns += patterns('',
                             url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
                                 'document_root': settings.MEDIA_ROOT,
