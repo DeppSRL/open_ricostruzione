@@ -1,27 +1,12 @@
-from decimal import Decimal
-import datetime
-from datetime import timedelta
-import json
-from json.encoder import JSONEncoder
-import time
-from django.core.exceptions import ObjectDoesNotExist
-from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, Http404
+from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, DetailView, ListView
-from django.db.models.aggregates import Count, Sum
+from django.db.models.aggregates import Sum
 from django.conf import settings
 from rest_framework import generics
-from django.db import connections
-from django.db.models.query import QuerySet
-from django.core.serializers import serialize
-from django.utils.functional import curry
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.template.defaultfilters import date as _date
 from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore
 from territori.models import Territorio
 from .serializers import DonazioneSerializer
-from open_ricostruzione.utils.moneydate import moneyfmt, add_months
 
 
 class DonazioneApiView(generics.ListAPIView):
@@ -158,9 +143,25 @@ class LocalitaView(DetailView):
         return super(LocalitaView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-
         context = super(LocalitaView, self).get_context_data(**kwargs)
+
+        # calculate the map bounds for the territorio
+        bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
+
+        context['map_bounds'] = \
+            {'min':
+                 {'lat': self.territorio.gps_lat - bounds_width,
+                  'lon': self.territorio.gps_lon - bounds_width,
+                 },
+             'max':
+                 {'lat': self.territorio.gps_lat + bounds_width,
+                  'lon': self.territorio.gps_lon + bounds_width,
+                 },
+        }
+
+
         return context
+
 
 class ProgettoListView(ListView):
     model = InterventoProgramma

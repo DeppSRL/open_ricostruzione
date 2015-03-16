@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {% block page-title %}{% endblock %}
+        </div>
+    </div>
 
     <div class="row basic_spacer">
         {% include '_data_block.html' with title='interventi a programma' data_dict=ricostruzione_status.programma %}
