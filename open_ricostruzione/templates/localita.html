@@ -11,11 +11,11 @@
 {% endblock %}
 
 {% block extra-css %}
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}" />
 {% endblock %}
 
 {% block extra-js %}
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
 {% endblock %}
 
 {% block home-map %}
