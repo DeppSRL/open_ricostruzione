@@ -39,7 +39,8 @@ class AggregatePageMixin(object):
     # Aggregati Page Mixin
     # stores the common function of all the aggregate views
     ##
-
+    # todo: aggiungere la parte sull'attuazione
+    
     @staticmethod
     def get_aggr_tipologia_cedente():
         values = []
@@ -84,25 +85,23 @@ class AggregatePageMixin(object):
     def fetch_interventi_programma(order_by, number):
         return InterventoProgramma.objects.all().order_by(order_by)[0:number]
 
+
     @staticmethod
-    def get_ricostruzione_status():
-        ricostruzione_status = {
-            'piano': {},
-            'programma': {},
-            'attuazione': {},
+    def get_pianificazione_status(**kwargs):
+        piano_dict = {
+            'count': InterventoPiano.objects.filter(**kwargs).count(),
+            'money_value': InterventoPiano.objects.filter(**kwargs).aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
         }
-        ricostruzione_status['programma']['count'] = InterventoProgramma.objects.all().count()
-        ricostruzione_status['piano']['count'] = InterventoPiano.objects.all().count()
-        ricostruzione_status['programma']['money_value'] = \
-            InterventoProgramma.objects.all().aggregate(Sum('importo_generale'))['importo_generale__sum']
-        ricostruzione_status['piano']['money_value'] = InterventoPiano.objects.all().aggregate(Sum('imp_a_piano'))[
-            'imp_a_piano__sum']
-        ricostruzione_status['piano']['percentage'] = 100.0 * (
-            ricostruzione_status['piano']['count'] / float(ricostruzione_status['programma']['count']))
+        return piano_dict
 
-        # todo: aggiungere la parte sull'attuazione
+    @staticmethod
+    def get_programmazione_status(**kwargs):
+        programmazione_dict = {
+            'count': InterventoProgramma.objects.filter(**kwargs).count(),
+            'money_value': InterventoProgramma.objects.filter(**kwargs).aggregate(Sum('importo_generale'))['importo_generale__sum']
+        }
 
-        return ricostruzione_status
+        return programmazione_dict
 
 
 class HomeView(TemplateView, AggregatePageMixin):
@@ -111,7 +110,14 @@ class HomeView(TemplateView, AggregatePageMixin):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
 
-        context['ricostruzione_status'] = AggregatePageMixin.get_ricostruzione_status()
+        context['ricostruzione_status'] = {
+            'piano': AggregatePageMixin.get_pianificazione_status(),
+            'programma': AggregatePageMixin.get_programmazione_status()
+        }
+
+        context['ricostruzione_status']['piano_percentage'] = 100.0 * (
+            context['ricostruzione_status']['piano']['count'] / float(context['ricostruzione_status']['programma']['count']))
+
 
         # tipo immobile pie data
         context['tipo_immobile_aggregates_sum'] = AggregatePageMixin.get_aggr_tipo_immobile()
@@ -128,7 +134,7 @@ class HomeView(TemplateView, AggregatePageMixin):
         return context
 
 
-class LocalitaView(DetailView):
+class LocalitaView(DetailView, AggregatePageMixin):
     template_name = 'localita.html'
     model = Territorio
     context_object_name = "territorio"
@@ -144,6 +150,16 @@ class LocalitaView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LocalitaView, self).get_context_data(**kwargs)
+
+        context['ricostruzione_status'] = {
+            'piano': AggregatePageMixin.get_pianificazione_status(intervento_programma__territorio__slug=self.territorio.slug),
+            'programma': AggregatePageMixin.get_programmazione_status(territorio__slug=self.territorio.slug)
+        }
+        context['ricostruzione_status']['piano_percentage'] = 100.0 * (
+            context['ricostruzione_status']['piano']['count'] / float(context['ricostruzione_status']['programma']['count']))
+
+
+
 
         # calculate the map bounds for the territorio
         bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH

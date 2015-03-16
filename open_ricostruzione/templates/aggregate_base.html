@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load l10n %}
 
 {% block content %}
 
@@ -15,9 +16,9 @@
     </div>
     {# progress bar    #}
     <div class="progress basic_spacer" >
-        <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
-        aria-valuenow=" {{ perc_a_piano }}" aria-valuemin="0" aria-valuemax="100" style="width:40%">
-            Percentuale progetti a piano: {{ perc_a_piano|floatformat:2 }}%
+        <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar"
+        aria-valuenow="{{ ricostruzione_status.piano_percentage|unlocalize|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ ricostruzione_status.piano_percentage|unlocalize|floatformat:0 }}%">
+            Percentuale progetti a piano: {{ ricostruzione_status.piano_percentage|floatformat:2 }}%
         </div>
     </div>
 
