@@ -54,7 +54,10 @@
 
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
                         {% for t in tipologie_sogg_att %}
-                            <li><a href="#">{{ t.1 }}</a></li>
+
+                            <li>
+                                <a href="{% url 'tipo-sogg-attuatore' t.1|lower %}">{{ t.2 }}</a>
+                            </li>
                         {% endfor %}
                     </ul>
                 </li>

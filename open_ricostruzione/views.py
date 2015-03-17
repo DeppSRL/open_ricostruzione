@@ -233,6 +233,33 @@ class TipoImmobileView(TemplateView, AggregatePageMixin):
         context.update(apm.get_aggregates())
         return context
 
+
+
+class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
+    template_name = 'sogg_att.html'
+    tipo_sogg_att = None
+
+    def get(self, request, *args, **kwargs):
+        # get data from the request
+        try:
+            self.tipo_sogg_att = SoggettoAttuatoreView.objects.get(slug=kwargs['slug'])
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect(reverse('404'))
+        return super(SoggettoAttuatoreView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SoggettoAttuatoreView, self).get_context_data(**kwargs)
+        context['tipo_sogg_att'] = self.tipo_sogg_att
+        # apm = AggregatePageMixin(
+        #     tipologia=AggregatePageMixin.TIPO_SOGG_ATT,
+        #     programmazione_filters={'tipo_immobile': self.tipo_immobile},
+        #     pianificazione_filters={'intervento_programma__tipo_immobile': self.tipo_immobile}
+        # )
+        # context.update(apm.get_aggregates())
+        return context
+
+
+
 class HomeView(TemplateView, AggregatePageMixin):
     template_name = "home.html"
 
@@ -245,4 +272,24 @@ class HomeView(TemplateView, AggregatePageMixin):
         )
         context.update(apm.get_aggregates())
         return context
+
+
+class TipoSoggAttView(ListView):
+    template_name = 'tipo_sogg_att_list.html'
+    tipologia_sogg_att = None
+
+    def get(self, request, *args, **kwargs):
+        if 'slug' not in kwargs:
+            return HttpResponseRedirect(reverse('404'))
+
+        t_list = filter(lambda x: x[1] == kwargs['slug'].upper(), SoggettoAttuatore.TIPOLOGIA._triples)
+        if len(t_list) == 0:
+            # if the slug does not match any tipologia slug -> 404
+            return HttpResponseRedirect(reverse('404'))
+
+        self.tipologia_sogg_att = t_list[0][0]
+        return super(TipoSoggAttView, self).get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att)
 

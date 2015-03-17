@@ -517,7 +517,7 @@ class SoggettoAttuatore(Anagrafica):
 
     @staticmethod
     def get_tipologie():
-        return list(SoggettoAttuatore.TIPOLOGIA)
+        return list(SoggettoAttuatore.TIPOLOGIA._triples)
 
     class Meta:
         verbose_name_plural = u'Soggetti attuatori'
