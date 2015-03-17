@@ -5,6 +5,8 @@ from optparse import make_option
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management import BaseCommand
+from django.db import IntegrityError
+from django.utils.text import slugify
 from open_ricostruzione.models import Programma, Piano, RUP, ProprietarioImmobile, SoggettoAttuatore, \
     InterventoProgramma, Progetto, Intervento, Cofinanziamento, EventoContrattuale, Liquidazione, QuadroEconomico
 
@@ -146,33 +148,52 @@ class Command(BaseCommand):
         self.logger.info("Piani imported")
 
         # Import ANAGRAFICHE
-        self.logger.info("Import Anagrafiche: proprietari immobile, sogg.attuatori, rup...")
+        self.logger.info("Import proprietari immobile")
         for p_immobile_json in self.anagrafiche['proprietari_immobile']:
             ProprietarioImmobile.objects.update_or_create(
                 id_fenice=p_immobile_json['id'],
                 denominazione=p_immobile_json['nome'],
-            )
+                )
+
+        self.logger.info("Import sogg.attuatori")
 
         for s_attuatori_json in self.anagrafiche['soggetti_attuatori']:
 
             tipologia = self.sogg_att_map.get(s_attuatori_json['id'], u'')
-
+            sa_slug =  slugify(s_attuatori_json['nome'])
+            sa_slug_alternative = u"{}_2".format(sa_slug)
             if tipologia == u'':
                 self.logger.error("Soggetto attuatore: cannot find tipologia ORIC for id_fenice:'{}'".
-                    format(s_attuatori_json['id']))
+                format(s_attuatori_json['id']))
+            try:
 
-            SoggettoAttuatore.objects.update_or_create(
-                id_fenice=s_attuatori_json['id'],
-                denominazione=s_attuatori_json['nome'],
-                tipologia=tipologia
-            )
+                SoggettoAttuatore.objects.update_or_create(
+                    id_fenice=s_attuatori_json['id'],
+                    denominazione=s_attuatori_json['nome'],
+                    tipologia=tipologia,
+                    defaults={
+                        'slug': sa_slug
+                    }
+                )
+            except IntegrityError:
+                self.logger.warning("This slug:{} was already present in DB, try saving object with slug:{}".format(sa_slug, sa_slug_alternative))
+                SoggettoAttuatore.objects.update_or_create(
+                    id_fenice=s_attuatori_json['id'],
+                    denominazione=s_attuatori_json['nome'],
+                    tipologia=tipologia,
+                    defaults={
+                        'slug': sa_slug_alternative
+                    }
+                )
+                
 
+        self.logger.info("Import RUP")
         for rup_json in self.anagrafiche['rup']:
             RUP.objects.update_or_create(
                 id_fenice=rup_json['id'],
                 nome=rup_json['nome'],
                 cognome=rup_json['cognome'],
                 cf=rup_json['cf'],
-            )
+                )
 
         self.logger.info("Done")

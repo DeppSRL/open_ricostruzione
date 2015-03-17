@@ -513,6 +513,7 @@ class SoggettoAttuatore(Anagrafica):
 
     tipologia = models.CharField(max_length=3, choices=TIPOLOGIA, blank=False, null=False, default=u'')
     denominazione = models.CharField(max_length=256)
+    slug = models.SlugField(max_length=256, blank=False, null=False, unique=True)
     descrizione = models.TextField(max_length=800, blank=True, null=True, default=None)
 
     @staticmethod
