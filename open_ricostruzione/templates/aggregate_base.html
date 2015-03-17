@@ -42,7 +42,16 @@
                 <strong>Donazioni</strong>
             </div>
         </div>
-        {% include 'pie_chart.html' with pie_title="Aggregazione per tipologia cedente - ammontare" data_list=tipologia_cedente_aggregates_sum %}
+        {% if tipologia_cedente_aggregates_sum %}
+            {% include 'pie_chart.html' with pie_title="Aggregazione per tipologia cedente - ammontare" data_list=tipologia_cedente_aggregates_sum %}
+        {% else %}
+            <div class="row" style="margin-bottom: 5px;">
+                <div class="col-md-12">
+                    <strong>Non sono presenti donazioni per il Comune di {{ territorio.nome_con_provincia }}</strong>
+                </div>
+            </div>
+        {% endif %}
+
          <div class="row" style="margin-bottom: 5px;">
             <div class="col-md-12">
                 <a href="{% url 'donazioni' %}">Vedi tutte le donazioni</a>

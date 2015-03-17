@@ -44,15 +44,20 @@ class AggregatePageMixin(object):
     @staticmethod
     def get_aggr_tipologia_cedente(**kwargs):
         values = []
+        not_null = False
         for k, v in Donazione.get_aggregates_sum(**kwargs).iteritems():
             if v:
                 v = float(v)
+                not_null = True
             else:
                 v = 0.0
 
             values.append({'value': v, 'slug': k, 'label': Donazione.TIPO_CEDENTE.__getitem__(k)})
 
-        return values
+        if not_null:
+            return values
+        else:
+            return None
 
     @staticmethod
     def _create_aggregate_int_progr(model, **kwargs):
@@ -82,8 +87,8 @@ class AggregatePageMixin(object):
 
 
     @staticmethod
-    def fetch_interventi_programma(order_by, number):
-        return InterventoProgramma.objects.all().order_by(order_by)[0:number]
+    def fetch_interventi_programma(order_by, number=settings.N_PROGETTI_FETCH, **kwargs):
+        return InterventoProgramma.objects.filter(**kwargs).order_by(order_by)[0:number]
 
 
     @staticmethod
@@ -126,11 +131,9 @@ class HomeView(TemplateView, AggregatePageMixin):
         # tipo sogg.att pie data
         context['tipologia_cedente_aggregates_sum'] = AggregatePageMixin.get_aggr_tipologia_cedente()
         # example interventi fetch
-        interventi_top_importo = AggregatePageMixin.fetch_interventi_programma('-importo_generale', 5)
-        interventi_bottom_importo = AggregatePageMixin.fetch_interventi_programma('importo_generale', 5)
+        context['interventi_top_importo'] = AggregatePageMixin.fetch_interventi_programma('-importo_generale')
+        context['interventi_bottom_importo'] = AggregatePageMixin.fetch_interventi_programma('importo_generale')
 
-        context['interventi_top_importo'] = interventi_top_importo
-        context['interventi_bottom_importo'] = interventi_bottom_importo
         return context
 
 
@@ -165,6 +168,9 @@ class LocalitaView(DetailView, AggregatePageMixin):
         # tipo sogg.att pie data
         context['tipologia_cedente_aggregates_sum'] = AggregatePageMixin.get_aggr_tipologia_cedente(territorio=self.territorio)
 
+         # example interventi fetch
+        context['interventi_top_importo'] = AggregatePageMixin.fetch_interventi_programma('-importo_generale', territorio=self.territorio)
+        context['interventi_bottom_importo'] = AggregatePageMixin.fetch_interventi_programma('importo_generale',territorio=self.territorio)
 
         # calculate the map bounds for the territorio
         bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH

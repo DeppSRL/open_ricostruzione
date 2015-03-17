@@ -3,11 +3,11 @@
 {% load l10n %}
 
 {% block head-title %}
-    Comune di {{ object.denominazione }}
+    Comune di {{ object.nome_con_provincia }}
 {% endblock %}
 
 {% block  page-title %}
-    <h1>Comune di {{ object.denominazione }}</h1>
+    <h1>Comune di {{ object.nome_con_provincia }}</h1>
 {% endblock %}
 
 {% block extra-css %}
