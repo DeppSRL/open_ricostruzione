@@ -44,8 +44,20 @@ class AggregatePageMixin(object):
 
     programmazione_filters = None
     pianificazione_filters = None
+    tipologia = None
 
-    def __init__(self, programmazione_filters, pianificazione_filters):
+    TERRITORIO = 0
+    VARI_TERRITORI = 1
+    TIPO_IMMOBILE = 2
+    TIPO_SOGG_ATT = 3
+    HOME = 4
+
+    def __init__(self, tipologia, programmazione_filters, pianificazione_filters):
+        ##
+        # initialize class with type and filter for programmazione / pianificazione
+        ##
+
+        self.tipologia = tipologia
         self.programmazione_filters = programmazione_filters
         self.pianificazione_filters = pianificazione_filters
 
@@ -128,11 +140,14 @@ class AggregatePageMixin(object):
                 agg_dict['ricostruzione_status']['programma']['count']))
 
         # tipo immobile pie data
-        agg_dict['tipo_immobile_aggregates_sum'] = self.get_aggr_tipo_immobile()
+        if self.tipologia != self.TIPO_IMMOBILE:
+            agg_dict['tipo_immobile_aggregates_sum'] = self.get_aggr_tipo_immobile()
         # tipo sogg.att pie data
-        agg_dict['sogg_att_aggregates_sum'] = self.get_aggr_sogg_att()
+        if self.tipologia != self.TIPO_SOGG_ATT:
+            agg_dict['sogg_att_aggregates_sum'] = self.get_aggr_sogg_att()
         # tipo sogg.att pie data
-        agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
+        if self.tipologia != self.VARI_TERRITORI:
+            agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
 
         # example interventi fetch
         agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
@@ -162,7 +177,19 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         context['territorio'] = self.territorio
         context['vari_territori'] = self.vari_territori
 
-        apm = AggregatePageMixin(programmazione_filters={'territorio':self.territorio}, pianificazione_filters={'intervento_programma__territorio': self.territorio})
+        if self.vari_territori:
+            apm = AggregatePageMixin(
+                tipologia=AggregatePageMixin.VARI_TERRITORI,
+                programmazione_filters={'vari_territori':True},
+                pianificazione_filters={'intervento_programma__vari_territori': True}
+            )
+        else:
+            apm = AggregatePageMixin(
+                tipologia=AggregatePageMixin.TERRITORIO,
+                programmazione_filters={'territorio':self.territorio},
+                pianificazione_filters={'intervento_programma__territorio': self.territorio}
+            )
+
         context.update(apm.get_aggregates())
 
         if self.vari_territori is False:
@@ -188,6 +215,10 @@ class HomeView(TemplateView, AggregatePageMixin):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        apm = AggregatePageMixin(programmazione_filters={}, pianificazione_filters={})
+        apm = AggregatePageMixin(
+            tipologia=AggregatePageMixin.HOME,
+            programmazione_filters={},
+            pianificazione_filters={}
+        )
         context.update(apm.get_aggregates())
         return context
