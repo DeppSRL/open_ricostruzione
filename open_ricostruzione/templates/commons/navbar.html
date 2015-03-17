@@ -24,6 +24,7 @@
                             </li>
                         {% endfor %}
                         <li class="divider"></li>
+                        <li><a href="#">progetti fuori cratere</a> </li>
                         <li><a href="{% url 'localita' slug="vari-territori" %}">Vari territori</a> </li>
 
                     </ul>
@@ -38,7 +39,7 @@
 
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
                         {% for t in tipologie_immobile %}
-                            <li><a href="#">{{ t.1 }}</a></li>
+                            <li><a href="{% url 'tipo-immobile'  %}">{{ t.1 }}</a></li>
                         {% endfor %}
                     </ul>
                 </li>

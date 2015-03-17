@@ -27,10 +27,13 @@ class Command(NoArgsCommand):
                 'slug': slugify(t[1])
             }
 
-            ti, is_created = TipoImmobile.objects.get_or_create(
+            ti, is_created = TipoImmobile.objects.update_or_create(
                 tipologia=t[0],
                 slug=slugify(t[1]),
-                defaults={'descrizione': t[1]})
+                defaults={
+                    'denominazione': t[1],
+                    'descrizione': t[1]
+                })
             if is_created:
                 self.logger.info("Created TipoImmobile with slug:'{}'".format(d['slug']))
             else:

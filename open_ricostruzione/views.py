@@ -210,6 +210,28 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         return context
 
 
+class TipoImmobileView(TemplateView, AggregatePageMixin):
+    template_name = ''
+    tipo_immobile = None
+
+    def get(self, request, *args, **kwargs):
+        # get data from the request
+        try:
+            self.tipo_immobile = TipoImmobile.objects.get(slug=kwargs['slug'])
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect(reverse('tipo-immobile-not-found'))
+        return super(TipoImmobileView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TipoImmobileView, self).get_context_data(**kwargs)
+        apm = AggregatePageMixin(
+            tipologia=AggregatePageMixin.TIPO_IMMOBILE,
+            programmazione_filters={'tipo_immobile': self.tipo_immobile},
+            pianificazione_filters={'intervento_programma__tipo_immobile': self.tipo_immobile}
+        )
+        context.update(apm.get_aggregates())
+        return context
+
 class HomeView(TemplateView, AggregatePageMixin):
     template_name = "home.html"
 
@@ -222,3 +244,4 @@ class HomeView(TemplateView, AggregatePageMixin):
         )
         context.update(apm.get_aggregates())
         return context
+

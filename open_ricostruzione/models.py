@@ -134,11 +134,12 @@ class TipoImmobile(models.Model):
     )
     tipologia = models.CharField(max_length=3, choices=TIPOLOGIA, blank=False, null=False, default=u'')
     slug = models.SlugField(max_length=50, blank=False, null=False, default='')
+    denominazione = models.TextField(max_length=120, blank=True, null=True, default=u'')
     descrizione = models.TextField(max_length=800, blank=True, null=True, default=None)
 
     @staticmethod
     def get_tipologie():
-        return TipoImmobile.TIPOLOGIA
+        return list(TipoImmobile.objects.all().values('denominazione','slug'))
 
     def __unicode__(self):
         return u"{} ({})".format(TipoImmobile.TIPOLOGIA[self.tipologia], self.slug, )

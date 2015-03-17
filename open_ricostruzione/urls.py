@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, LocalitaView, DonazioniListView
+from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, LocalitaView, DonazioniListView,TipoImmobileView
 from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -51,8 +51,8 @@ urlpatterns = patterns('',
                        # url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
 
                        url(r'^$', HomeView.as_view(), name='home'),
-                       url(r'^localita/(?P<slug>[-\w]+)$', LocalitaView.as_view(), name='localita'),
-                       url(r'^tipo_immobile/$', HomeView.as_view(), name='tipo-immobile'),
+                       url(r'^localita/(?P<slug>[-\w]+)/$', LocalitaView.as_view(), name='localita'),
+                       url(r'^tipo_immobile/(?P<slug>[-\w]+)/$', TipoImmobileView.as_view(), name='tipo-immobile'),
                        url(r'^sogg-attuatore/$', HomeView.as_view(), name='sogg-attuatore'),
                        url(r'^int-programma/$', HomeView.as_view(), name='int-programma'),
                        url(r'^donazioni/$', DonazioniListView.as_view(), name='donazioni'),
