@@ -42,13 +42,17 @@ class AggregatePageMixin(object):
     ##
     # todo: aggiungere la parte sull'attuazione
 
-    filters = None
-    
-    @staticmethod
-    def get_aggr_tipologia_cedente(**kwargs):
+    programmazione_filters = None
+    pianificazione_filters = None
+
+    def __init__(self, programmazione_filters, pianificazione_filters):
+        self.programmazione_filters = programmazione_filters
+        self.pianificazione_filters = pianificazione_filters
+
+    def get_aggr_tipologia_cedente(self,):
         values = []
         not_null = False
-        for k, v in Donazione.get_aggregates_sum(**kwargs).iteritems():
+        for k, v in Donazione.get_aggregates_sum(**self.programmazione_filters).iteritems():
             if v:
                 v = float(v)
                 not_null = True
@@ -62,15 +66,14 @@ class AggregatePageMixin(object):
         else:
             return None
 
-    @staticmethod
-    def _create_aggregate_int_progr(model, **kwargs):
+    def _create_aggregate_int_progr(self, model):
         ##
         # creates the list of dict to be passed to the context.
         # calls the appropriate model function to get sums of the various categories of objects
         ##
 
         values = []
-        for k, v in InterventoProgramma.get_aggregates_sum(model=model,**kwargs).iteritems():
+        for k, v in InterventoProgramma.get_aggregates_sum(model=model, **self.programmazione_filters).iteritems():
             if v:
                 v = float(v)
             else:
@@ -80,63 +83,61 @@ class AggregatePageMixin(object):
 
         return values
 
-    @staticmethod
-    def get_aggr_tipo_immobile(**kwargs):
-        return AggregatePageMixin._create_aggregate_int_progr(model=TipoImmobile, **kwargs)
+    def get_aggr_tipo_immobile(self,):
+        return self._create_aggregate_int_progr(model=TipoImmobile,)
 
-    @staticmethod
-    def get_aggr_sogg_att(**kwargs):
-        return AggregatePageMixin._create_aggregate_int_progr(model=SoggettoAttuatore, **kwargs)
+    def get_aggr_sogg_att(self,):
+        return self._create_aggregate_int_progr(model=SoggettoAttuatore,)
 
+    def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH,):
+        return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
 
-    @staticmethod
-    def fetch_interventi_programma(order_by, number=settings.N_PROGETTI_FETCH, **kwargs):
-        return InterventoProgramma.objects.filter(**kwargs).order_by(order_by)[0:number]
+    def get_pianificazione_status(self):
 
-
-    @staticmethod
-    def get_pianificazione_status(**kwargs):
         piano_dict = {
-            'count': InterventoPiano.objects.filter(**kwargs).count(),
-            'money_value': InterventoPiano.objects.filter(**kwargs).aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
+            'count': InterventoPiano.objects.filter(**self.pianificazione_filters).count(),
+            'money_value': InterventoPiano.objects.
+            filter(**self.pianificazione_filters).aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
         }
         return piano_dict
 
-    @staticmethod
-    def get_programmazione_status(**kwargs):
+    def get_programmazione_status(self):
         programmazione_dict = {
-            'count': InterventoProgramma.objects.filter(**kwargs).count(),
-            'money_value': InterventoProgramma.objects.filter(**kwargs).aggregate(Sum('importo_generale'))['importo_generale__sum']
+            'count': InterventoProgramma.objects.filter(**self.programmazione_filters).count(),
+            'money_value':
+                InterventoProgramma.objects.filter(**self.programmazione_filters).aggregate(Sum('importo_generale'))[
+                    'importo_generale__sum']
         }
 
         return programmazione_dict
 
+    def get_aggregates(self):
+        ##
+        # calls the functions to get the aggregates and returns a dict
+        # all the function called depend on the filters passed to AggregatePageMixin on initialization
+        # so they return context-based data
+        ##
 
-class HomeView(TemplateView, AggregatePageMixin):
-    template_name = "home.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
-
-        context['ricostruzione_status'] = {
-            'piano': AggregatePageMixin.get_pianificazione_status(),
-            'programma': AggregatePageMixin.get_programmazione_status()
+        agg_dict = {}
+        agg_dict['ricostruzione_status'] = {
+            'piano': self.get_pianificazione_status(),
+            'programma': self.get_programmazione_status()
         }
-
-        context['ricostruzione_status']['piano_percentage'] = 100.0 * (
-            context['ricostruzione_status']['piano']['count'] / float(context['ricostruzione_status']['programma']['count']))
+        agg_dict['ricostruzione_status']['piano_percentage'] = 100.0 * (
+            agg_dict['ricostruzione_status']['piano']['count'] / float(
+                agg_dict['ricostruzione_status']['programma']['count']))
 
         # tipo immobile pie data
-        context['tipo_immobile_aggregates_sum'] = AggregatePageMixin.get_aggr_tipo_immobile()
+        agg_dict['tipo_immobile_aggregates_sum'] = self.get_aggr_tipo_immobile()
         # tipo sogg.att pie data
-        context['sogg_att_aggregates_sum'] = AggregatePageMixin.get_aggr_sogg_att()
+        agg_dict['sogg_att_aggregates_sum'] = self.get_aggr_sogg_att()
         # tipo sogg.att pie data
-        context['tipologia_cedente_aggregates_sum'] = AggregatePageMixin.get_aggr_tipologia_cedente()
-        # example interventi fetch
-        context['interventi_top_importo'] = AggregatePageMixin.fetch_interventi_programma('-importo_generale')
-        context['interventi_bottom_importo'] = AggregatePageMixin.fetch_interventi_programma('importo_generale')
+        agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
 
-        return context
+        # example interventi fetch
+        agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
+        agg_dict['interventi_bottom_importo'] = self.fetch_interventi_programma(order_by='importo_generale')
+        return agg_dict
 
 
 class LocalitaView(TemplateView, AggregatePageMixin):
@@ -161,24 +162,8 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         context['territorio'] = self.territorio
         context['vari_territori'] = self.vari_territori
 
-        context['ricostruzione_status'] = {
-            'piano': AggregatePageMixin.get_pianificazione_status(intervento_programma__territorio=self.territorio),
-            'programma': AggregatePageMixin.get_programmazione_status(territorio=self.territorio)
-        }
-        context['ricostruzione_status']['piano_percentage'] = 100.0 * (
-            context['ricostruzione_status']['piano']['count'] / float(context['ricostruzione_status']['programma']['count']))
-
-        # tipo immobile pie data
-        context['tipo_immobile_aggregates_sum'] = AggregatePageMixin.get_aggr_tipo_immobile(territorio=self.territorio)
-        # tipo sogg.att pie data
-        context['sogg_att_aggregates_sum'] = AggregatePageMixin.get_aggr_sogg_att(territorio=self.territorio)
-        # tipo sogg.att pie data
-        context['tipologia_cedente_aggregates_sum'] = AggregatePageMixin.get_aggr_tipologia_cedente(territorio=self.territorio)
-
-         # example interventi fetch
-        context['interventi_top_importo'] = AggregatePageMixin.fetch_interventi_programma('-importo_generale', territorio=self.territorio)
-        context['interventi_bottom_importo'] = AggregatePageMixin.fetch_interventi_programma('importo_generale',territorio=self.territorio)
-
+        apm = AggregatePageMixin(programmazione_filters={'territorio':self.territorio}, pianificazione_filters={'intervento_programma__territorio': self.territorio})
+        context.update(apm.get_aggregates())
 
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
@@ -193,26 +178,16 @@ class LocalitaView(TemplateView, AggregatePageMixin):
                      {'lat': self.territorio.gps_lat + bounds_width,
                       'lon': self.territorio.gps_lon + bounds_width,
                      },
-            }
-
+                }
 
         return context
 
 
-class ProgettoListView(ListView):
-    model = InterventoProgramma
-    template_name = "tipologieprogetto.html"
+class HomeView(TemplateView, AggregatePageMixin):
+    template_name = "home.html"
 
     def get_context_data(self, **kwargs):
-        context = super(ProgettoListView, self).get_context_data(**kwargs)
-        context['SITE_URL'] = settings.PROJECT_ROOT
+        context = super(HomeView, self).get_context_data(**kwargs)
+        apm = AggregatePageMixin(programmazione_filters={}, pianificazione_filters={})
+        context.update(apm.get_aggregates())
         return context
-
-    def get_queryset(self):
-    #        context = super(ProgettoListView, self).get_context_data(**kwargs)
-
-        if 'qterm' in self.request.GET:
-            qterm = self.request.GET['qterm']
-            return InterventoProgramma.objects.filter(id_padre__isnull=True, denominazione__icontains=qterm)[0:50]
-        else:
-            return InterventoProgramma.objects.all()[0:50]
