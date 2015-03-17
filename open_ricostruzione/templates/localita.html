@@ -46,6 +46,7 @@
 
                 // set up the map
                 map = new L.Map('map').setMaxBounds(bounds);
+                map.scrollWheelZoom.disable();
 
                 // start the map on the Territorio lat/lon
                 map.setView(new L.LatLng({{ territorio.gps_lat|unlocalize }}, {{ territorio.gps_lon|unlocalize  }}),13);

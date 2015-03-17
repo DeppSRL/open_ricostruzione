@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, DetailView, ListView
@@ -40,6 +41,8 @@ class AggregatePageMixin(object):
     # stores the common function of all the aggregate views
     ##
     # todo: aggiungere la parte sull'attuazione
+
+    filters = None
     
     @staticmethod
     def get_aggr_tipologia_cedente(**kwargs):
@@ -50,7 +53,7 @@ class AggregatePageMixin(object):
                 v = float(v)
                 not_null = True
             else:
-                v = 0.0
+                continue
 
             values.append({'value': v, 'slug': k, 'label': Donazione.TIPO_CEDENTE.__getitem__(k)})
 
@@ -71,7 +74,7 @@ class AggregatePageMixin(object):
             if v:
                 v = float(v)
             else:
-                v = 0.0
+                continue
 
             values.append({'value': v, 'slug': k, 'label': model.TIPOLOGIA.__getitem__(k)})
 
@@ -123,7 +126,6 @@ class HomeView(TemplateView, AggregatePageMixin):
         context['ricostruzione_status']['piano_percentage'] = 100.0 * (
             context['ricostruzione_status']['piano']['count'] / float(context['ricostruzione_status']['programma']['count']))
 
-
         # tipo immobile pie data
         context['tipo_immobile_aggregates_sum'] = AggregatePageMixin.get_aggr_tipo_immobile()
         # tipo sogg.att pie data
@@ -137,22 +139,27 @@ class HomeView(TemplateView, AggregatePageMixin):
         return context
 
 
-class LocalitaView(DetailView, AggregatePageMixin):
+class LocalitaView(TemplateView, AggregatePageMixin):
     template_name = 'localita.html'
-    model = Territorio
-    context_object_name = "territorio"
     territorio = None
+    vari_territori = False
 
     def get(self, request, *args, **kwargs):
         # get data from the request
-        try:
-            self.territorio = self.get_object()
-        except Http404:
-            return HttpResponseRedirect(reverse('territorio-not-found'))
+        if kwargs['slug'] == 'vari-territori':
+            self.vari_territori = True
+            self.template_name = 'vari_territori.html'
+        else:
+            try:
+                self.territorio = Territorio.objects.get(slug=kwargs['slug'])
+            except ObjectDoesNotExist:
+                return HttpResponseRedirect(reverse('territorio-not-found'))
         return super(LocalitaView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(LocalitaView, self).get_context_data(**kwargs)
+        context['territorio'] = self.territorio
+        context['vari_territori'] = self.vari_territori
 
         context['ricostruzione_status'] = {
             'piano': AggregatePageMixin.get_pianificazione_status(intervento_programma__territorio=self.territorio),
@@ -172,19 +179,21 @@ class LocalitaView(DetailView, AggregatePageMixin):
         context['interventi_top_importo'] = AggregatePageMixin.fetch_interventi_programma('-importo_generale', territorio=self.territorio)
         context['interventi_bottom_importo'] = AggregatePageMixin.fetch_interventi_programma('importo_generale',territorio=self.territorio)
 
-        # calculate the map bounds for the territorio
-        bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
 
-        context['map_bounds'] = \
-            {'min':
-                 {'lat': self.territorio.gps_lat - bounds_width,
-                  'lon': self.territorio.gps_lon - bounds_width,
-                 },
-             'max':
-                 {'lat': self.territorio.gps_lat + bounds_width,
-                  'lon': self.territorio.gps_lon + bounds_width,
-                 },
-        }
+        if self.vari_territori is False:
+            # calculate the map bounds for the territorio
+            bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
+
+            context['map_bounds'] = \
+                {'min':
+                     {'lat': self.territorio.gps_lat - bounds_width,
+                      'lon': self.territorio.gps_lon - bounds_width,
+                     },
+                 'max':
+                     {'lat': self.territorio.gps_lat + bounds_width,
+                      'lon': self.territorio.gps_lon + bounds_width,
+                     },
+            }
 
 
         return context
