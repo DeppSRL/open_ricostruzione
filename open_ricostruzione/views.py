@@ -146,7 +146,7 @@ class AggregatePageMixin(object):
         if self.tipologia != self.TIPO_SOGG_ATT:
             agg_dict['sogg_att_aggregates_sum'] = self.get_aggr_sogg_att()
         # tipo sogg.att pie data
-        if self.tipologia != self.VARI_TERRITORI:
+        if self.tipologia != self.VARI_TERRITORI and self.tipologia != self.TIPO_IMMOBILE:
             agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
 
         # example interventi fetch
@@ -211,7 +211,7 @@ class LocalitaView(TemplateView, AggregatePageMixin):
 
 
 class TipoImmobileView(TemplateView, AggregatePageMixin):
-    template_name = ''
+    template_name = 'tipo_immobile.html'
     tipo_immobile = None
 
     def get(self, request, *args, **kwargs):
@@ -224,6 +224,7 @@ class TipoImmobileView(TemplateView, AggregatePageMixin):
 
     def get_context_data(self, **kwargs):
         context = super(TipoImmobileView, self).get_context_data(**kwargs)
+        context['tipo_immobile'] = self.tipo_immobile
         apm = AggregatePageMixin(
             tipologia=AggregatePageMixin.TIPO_IMMOBILE,
             programmazione_filters={'tipo_immobile': self.tipo_immobile},

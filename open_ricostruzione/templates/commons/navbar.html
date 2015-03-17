@@ -38,8 +38,8 @@
 
 
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
-                        {% for t in tipologie_immobile %}
-                            <li><a href="{% url 'tipo-immobile'  %}">{{ t.1 }}</a></li>
+                        {% for tipologia in tipologie_immobile %}
+                            <li><a href="{% url 'tipo-immobile' tipologia.slug  %}">{{ tipologia.denominazione }}</a></li>
                         {% endfor %}
                     </ul>
                 </li>
