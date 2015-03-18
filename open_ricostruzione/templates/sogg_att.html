@@ -1,1 +1,15 @@
 {% extends 'aggregate_base.html' %}
+
+{% block head-title %}
+   {{ sogg_att.denominazione|title }}
+{% endblock %}
+
+{% block  page-title %}
+    <h1>{{ sogg_att.denominazione|title }}</h1>
+{% endblock %}
+
+{% block donazioni %}
+{% endblock %}
+
+{% block soggetto-attuatore %}
+{% endblock %}

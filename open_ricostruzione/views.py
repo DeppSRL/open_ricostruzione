@@ -49,7 +49,7 @@ class AggregatePageMixin(object):
     TERRITORIO = 0
     VARI_TERRITORI = 1
     TIPO_IMMOBILE = 2
-    TIPO_SOGG_ATT = 3
+    SOGG_ATT = 3
     HOME = 4
 
     def __init__(self, tipologia, programmazione_filters, pianificazione_filters):
@@ -146,10 +146,10 @@ class AggregatePageMixin(object):
         if self.tipologia != self.TIPO_IMMOBILE:
             agg_dict['tipo_immobile_aggregates_sum'] = self.get_aggr_tipo_immobile()
         # tipo sogg.att pie data
-        if self.tipologia != self.TIPO_SOGG_ATT:
+        if self.tipologia != self.SOGG_ATT:
             agg_dict['sogg_att_aggregates_sum'] = self.get_aggr_sogg_att()
         # tipo sogg.att pie data
-        if self.tipologia != self.VARI_TERRITORI and self.tipologia != self.TIPO_IMMOBILE:
+        if self.tipologia == self.HOME:
             agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
 
         # example interventi fetch
@@ -237,28 +237,27 @@ class TipoImmobileView(TemplateView, AggregatePageMixin):
         return context
 
 
-
 class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
     template_name = 'sogg_att.html'
-    tipo_sogg_att = None
+    sogg_att = None
 
     def get(self, request, *args, **kwargs):
         # get data from the request
         try:
-            self.tipo_sogg_att = SoggettoAttuatore.objects.get(slug=kwargs['slug'])
+            self.sogg_att = SoggettoAttuatore.objects.get(slug=kwargs['slug'])
         except ObjectDoesNotExist:
             return HttpResponseRedirect(reverse('404'))
         return super(SoggettoAttuatoreView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(SoggettoAttuatoreView, self).get_context_data(**kwargs)
-        context['tipo_sogg_att'] = self.tipo_sogg_att
-        # apm = AggregatePageMixin(
-        #     tipologia=AggregatePageMixin.TIPO_SOGG_ATT,
-        #     programmazione_filters={'tipo_immobile': self.tipo_immobile},
-        #     pianificazione_filters={'intervento_programma__tipo_immobile': self.tipo_immobile}
-        # )
-        # context.update(apm.get_aggregates())
+        context['sogg_att'] = self.sogg_att
+        apm = AggregatePageMixin(
+            tipologia=AggregatePageMixin.SOGG_ATT,
+            programmazione_filters={'soggetto_attuatore': self.sogg_att},
+            pianificazione_filters={'intervento_programma__soggetto_attuatore': self.sogg_att}
+        )
+        context.update(apm.get_aggregates())
         return context
 
 
