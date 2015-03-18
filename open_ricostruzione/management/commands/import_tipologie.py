@@ -185,7 +185,7 @@ class Command(BaseCommand):
                         'slug': sa_slug_alternative
                     }
                 )
-                
+
 
         self.logger.info("Import RUP")
         for rup_json in self.anagrafiche['rup']:

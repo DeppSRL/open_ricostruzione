@@ -54,7 +54,7 @@ urlpatterns = patterns('',
                        url(r'^localita/(?P<slug>[-\w]+)/$', LocalitaView.as_view(), name='localita'),
                        url(r'^tipo_immobile/(?P<slug>[-\w]+)/$', TipoImmobileView.as_view(), name='tipo-immobile'),
                        url(r'^tipo_sogg_attuatore/(?P<slug>[-\w]+)/$', TipoSoggAttView.as_view(), name='tipo-sogg-attuatore'),
-                       url(r'^sogg_attuatore/(?P<slug>[-\w]+)/$', HomeView.as_view(), name='sogg-attuatore'),
+                       url(r'^sogg_attuatore/(?P<slug>[-\w]+)/$', SoggettoAttuatoreView.as_view(), name='sogg-attuatore'),
                        url(r'^int-programma/$', HomeView.as_view(), name='int-programma'),
                        url(r'^donazioni/$', DonazioniListView.as_view(), name='donazioni'),
 

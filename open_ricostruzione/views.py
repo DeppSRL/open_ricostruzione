@@ -135,9 +135,12 @@ class AggregatePageMixin(object):
             'piano': self.get_pianificazione_status(),
             'programma': self.get_programmazione_status()
         }
-        agg_dict['ricostruzione_status']['piano_percentage'] = 100.0 * (
-            agg_dict['ricostruzione_status']['piano']['count'] / float(
-                agg_dict['ricostruzione_status']['programma']['count']))
+
+        agg_dict['ricostruzione_status']['piano_percentage'] = 0.0
+        if agg_dict['ricostruzione_status']['programma']['count'] > 0:
+            agg_dict['ricostruzione_status']['piano_percentage'] = 100.0 * (
+                agg_dict['ricostruzione_status']['piano']['count'] / float(
+                    agg_dict['ricostruzione_status']['programma']['count']))
 
         # tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
@@ -242,7 +245,7 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
     def get(self, request, *args, **kwargs):
         # get data from the request
         try:
-            self.tipo_sogg_att = SoggettoAttuatoreView.objects.get(slug=kwargs['slug'])
+            self.tipo_sogg_att = SoggettoAttuatore.objects.get(slug=kwargs['slug'])
         except ObjectDoesNotExist:
             return HttpResponseRedirect(reverse('404'))
         return super(SoggettoAttuatoreView, self).get(request, *args, **kwargs)
@@ -282,6 +285,7 @@ class TipoSoggAttView(ListView):
         if 'slug' not in kwargs:
             return HttpResponseRedirect(reverse('404'))
 
+        # matches the name of the tipologia with the tipologia value to select the right set of sogg.attuatore
         t_list = filter(lambda x: x[1] == kwargs['slug'].upper(), SoggettoAttuatore.TIPOLOGIA._triples)
         if len(t_list) == 0:
             # if the slug does not match any tipologia slug -> 404
@@ -293,3 +297,8 @@ class TipoSoggAttView(ListView):
     def get_queryset(self):
         return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att)
 
+
+    def get_context_data(self, **kwargs):
+        context = super(TipoSoggAttView, self).get_context_data(**kwargs)
+        context['tipologia_sogg_att'] = SoggettoAttuatore.TIPOLOGIA[self.tipologia_sogg_att]
+        return context
