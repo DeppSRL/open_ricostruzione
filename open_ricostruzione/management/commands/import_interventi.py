@@ -318,11 +318,18 @@ class Command(BaseCommand):
 
                     #     import progetti
                     for progetto in intervento['progetti']:
+
+                        data_deposito = None
+                        if 'iter' in progetto:
+                            if 'data_dep' in progetto['iter']:
+                                if progetto['iter']['data_dep']:
+                                    data_deposito = datetime.strptime(progetto['iter']['data_dep'], self.date_format)
+
                         prog = Progetto(**{
                             'intervento': intr,
                             'tipologia': progetto['id_tipo_prog'],
                             'stato_progetto': progetto['id_stato_prog'],
-                            'data_deposito': datetime.strptime(progetto['data_dep'], self.date_format)
+                            'data_deposito': data_deposito
                         })
                         prog.save()
                         # save quadro economico for Progetto

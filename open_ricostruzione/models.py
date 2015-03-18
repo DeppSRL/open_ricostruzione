@@ -372,7 +372,7 @@ class Progetto(models.Model):
     intervento = models.ForeignKey('Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=2, choices=TIPO_PROGETTO, blank=False, null=False, default='')
     stato_progetto = models.CharField(max_length=2, choices=STATO_PROGETTO, blank=False, null=False, default='')
-    data_deposito = models.DateField(blank=False, null=False)
+    data_deposito = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = u'Progetti'
