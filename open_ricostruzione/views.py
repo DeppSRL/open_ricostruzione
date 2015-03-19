@@ -291,9 +291,15 @@ class TipoSoggettoAttuatoreView(ListView):
 
         self.tipologia_sogg_att = t_list[0][0]
 
-        to_redirect = [SoggettoAttuatore.TIPOLOGIA.COMMISSARIO_DELEGATO,SoggettoAttuatore.TIPOLOGIA.PROV_INTERREGIONALE, SoggettoAttuatore.TIPOLOGIA.REGIONE ]
+        # if the tipologia selected belongs to following categories which have only one sogg.att
+        # then redirects to the sogg.att page
+        tipologie_to_redirect = [
+            SoggettoAttuatore.TIPOLOGIA.COMMISSARIO_DELEGATO,
+            SoggettoAttuatore.TIPOLOGIA.PROV_INTERREGIONALE,
+            SoggettoAttuatore.TIPOLOGIA.REGIONE
+        ]
 
-        if self.tipologia_sogg_att in to_redirect:
+        if self.tipologia_sogg_att in tipologie_to_redirect:
             slug = SoggettoAttuatore.objects.get(tipologia = self.tipologia_sogg_att).slug
             return HttpResponseRedirect(reverse('sogg-attuatore',kwargs={'slug':slug}))
 
