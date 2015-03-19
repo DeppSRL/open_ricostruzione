@@ -2,10 +2,10 @@ from django.forms import forms
 from django.utils.translation import ugettext_lazy as _
 from open_ricostruzione.fields import InterventoProgrammaChoices
 
-class InterventoProgrammaSearchFormHome(forms.Form):
 
-    territori = InterventoProgrammaChoices(
-        to_field_name = 'slug',
+class InterventoProgrammaSearchFormHome(forms.Form):
+    intervento_programma = InterventoProgrammaChoices(
+        to_field_name='slug',
         required=True,
         label='',
         widget=InterventoProgrammaChoices.widget(

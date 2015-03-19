@@ -1,7 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponseRedirect, Http404
-from django.core.urlresolvers import reverse
-from django.views.generic import TemplateView, DetailView, ListView
+from django.core.urlresolvers import reverse, NoReverseMatch
+from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView, DetailView, ListView, RedirectView
 from django.db.models.aggregates import Sum
 from django.conf import settings
 from rest_framework import generics
@@ -324,5 +325,31 @@ class ListaImpreseView(ListView):
         return Impresa.objects.all().order_by('ragione_sociale')
 
 
+class InterventoProgrammaView(DetailView):
+    model = InterventoProgramma
+    template_name = 'intervento_programma.html'
+
 class ImpresaView(TemplateView):
     template_name = 'home.html'
+
+
+# redirects visits coming from the autocomplete search to the intervento programma detail page
+class InterventoRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+
+        # get InterventoProgramma data from the request
+        try:
+            intervento_prog = get_object_or_404(InterventoProgramma, slug=self.request.GET.get('intervento_programma', 0))
+        except Http404:
+            return reverse('404')
+
+        kwargs.update({'slug': intervento_prog.slug})
+
+        # redirects to bilancio-overview for the latest bilancio available
+
+        try:
+            url = reverse('intervento-programma', args=args, kwargs=kwargs)
+        except NoReverseMatch:
+            return reverse('404')
+
+        return url

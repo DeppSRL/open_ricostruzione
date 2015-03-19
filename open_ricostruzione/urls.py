@@ -5,7 +5,7 @@ from django.contrib import admin
 from rest_framework import routers, serializers, viewsets
 from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
-    ListaImpreseView, ImpresaView
+    ListaImpreseView, ImpresaView, InterventoProgrammaView, InterventoRedirectView
 
 
 # Serializers define the API representation.
@@ -52,13 +52,14 @@ urlpatterns = patterns('',
                        # url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
 
                        url(r'^$', HomeView.as_view(), name='home'),
+                       url(r'^intervento/search', InterventoRedirectView.as_view(), name='intervento-search'),
                        url(r'^localita/(?P<slug>[-\w]+)/$', LocalitaView.as_view(), name='localita'),
                        url(r'^tipo_immobile/(?P<slug>[-\w]+)/$', TipoImmobileView.as_view(), name='tipo-immobile'),
                        url(r'^tipo_sogg_attuatore/(?P<slug>[-\w]+)/$', TipoSoggettoAttuatoreView.as_view(),
                            name='tipo-sogg-attuatore'),
                        url(r'^sogg_attuatore/(?P<slug>[-\w]+)/$', SoggettoAttuatoreView.as_view(),
                            name='sogg-attuatore'),
-                       url(r'^int-programma/$', HomeView.as_view(), name='int-programma'),
+                       url(r'^intervento_programma/(?P<slug>[-\w]+)/$', InterventoProgrammaView.as_view(), name='intervento-programma'),
                        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
                        url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaView.as_view(), name='impresa'),
                        url(r'^donazioni/$', DonazioniListView.as_view(), name='donazioni'),
