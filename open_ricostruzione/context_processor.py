@@ -1,4 +1,5 @@
 from django.conf import settings
+from open_ricostruzione.forms import InterventoProgrammaSearchFormHome
 from territori.models import Territorio
 from open_ricostruzione.models import TipoImmobile, SoggettoAttuatore
 
@@ -10,5 +11,6 @@ def main_settings(request):
         "territori_cratere": Territorio.get_territori_cratere(),
         "tipologie_immobile": TipoImmobile.get_tipologie(),
         "tipologie_sogg_att": SoggettoAttuatore.get_tipologie(),
+        "interventi_search_form": InterventoProgrammaSearchFormHome(),
         "url": request.build_absolute_uri(),
         }

@@ -5,6 +5,7 @@ from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Sum
 from django.conf import settings
 from rest_framework import generics
+from open_ricostruzione.forms import InterventoProgrammaSearchFormHome
 from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa
 from territori.models import Territorio
 from .serializers import DonazioneSerializer

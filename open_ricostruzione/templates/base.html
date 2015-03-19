@@ -36,6 +36,7 @@
         <script src="{% static 'vendor/highcharts/js/highcharts.js'%}"></script>
         <script src="{% static 'js/project.js'%}"></script>
 
+
         {% block extra-js %}
         {% endblock %}
         {% block extra-css %}
@@ -71,7 +72,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="text" placeholder="Inizia a digitare...">
+                        {{ interventi_search_form }}
                         <button>Cerca intervento</button>
                     </div>
                 </div>

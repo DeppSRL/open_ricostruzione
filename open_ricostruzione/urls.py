@@ -1,12 +1,11 @@
 from django.conf.urls import patterns, include, url
-from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, \
-    LocalitaView, DonazioniListView,TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
-    ListaImpreseView, ImpresaView
-from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.contrib.auth.models import User
-from rest_framework import routers, serializers, viewsets
 from django.contrib import admin
+from rest_framework import routers, serializers, viewsets
+from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, \
+    LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
+    ListaImpreseView, ImpresaView
 
 
 # Serializers define the API representation.
@@ -25,7 +24,6 @@ class UserViewSet(viewsets.ModelViewSet):
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 
-
 admin.autodiscover()
 urlpatterns = patterns('',
                        # ADMIN urls
@@ -33,7 +31,8 @@ urlpatterns = patterns('',
                        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
                        # Uncomment the next line to enable the admin:
                        url(r'^admin/', include(admin.site.urls)),
-
+                       # select2
+                       url(r'^select2/', include('django_select2.urls')),
                        #  DJANGO FRONT URLS
                        url(r'^front-edit/', include('front.urls')),
                        url(r'^pages/chi-siamo', StaticPageView.as_view(), name='chi-siamo'),
@@ -55,8 +54,10 @@ urlpatterns = patterns('',
                        url(r'^$', HomeView.as_view(), name='home'),
                        url(r'^localita/(?P<slug>[-\w]+)/$', LocalitaView.as_view(), name='localita'),
                        url(r'^tipo_immobile/(?P<slug>[-\w]+)/$', TipoImmobileView.as_view(), name='tipo-immobile'),
-                       url(r'^tipo_sogg_attuatore/(?P<slug>[-\w]+)/$', TipoSoggettoAttuatoreView.as_view(), name='tipo-sogg-attuatore'),
-                       url(r'^sogg_attuatore/(?P<slug>[-\w]+)/$', SoggettoAttuatoreView.as_view(), name='sogg-attuatore'),
+                       url(r'^tipo_sogg_attuatore/(?P<slug>[-\w]+)/$', TipoSoggettoAttuatoreView.as_view(),
+                           name='tipo-sogg-attuatore'),
+                       url(r'^sogg_attuatore/(?P<slug>[-\w]+)/$', SoggettoAttuatoreView.as_view(),
+                           name='sogg-attuatore'),
                        url(r'^int-programma/$', HomeView.as_view(), name='int-programma'),
                        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
                        url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaView.as_view(), name='impresa'),
