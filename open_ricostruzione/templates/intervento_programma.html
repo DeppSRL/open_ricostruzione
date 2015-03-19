@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
+{% block head-title %}
+    {{ object.denominazione }}
+{% endblock %}
+
+
 {% block content %}
     {{ object }}
 {% endblock %}

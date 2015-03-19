@@ -302,9 +302,8 @@ class TipoSoggettoAttuatoreView(ListView):
         ]
 
         if self.tipologia_sogg_att in tipologie_to_redirect:
-            slug = SoggettoAttuatore.objects.get(tipologia = self.tipologia_sogg_att).slug
-            return HttpResponseRedirect(reverse('sogg-attuatore',kwargs={'slug':slug}))
-
+            slug = SoggettoAttuatore.objects.get(tipologia=self.tipologia_sogg_att).slug
+            return HttpResponseRedirect(reverse('sogg-attuatore', kwargs={'slug': slug}))
 
         return super(TipoSoggettoAttuatoreView, self).get(request, *args, **kwargs)
 
@@ -329,6 +328,7 @@ class InterventoProgrammaView(DetailView):
     model = InterventoProgramma
     template_name = 'intervento_programma.html'
 
+
 class ImpresaView(TemplateView):
     template_name = 'home.html'
 
@@ -339,7 +339,8 @@ class InterventoRedirectView(RedirectView):
 
         # get InterventoProgramma data from the request
         try:
-            intervento_prog = get_object_or_404(InterventoProgramma, slug=self.request.GET.get('intervento_programma', 0))
+            intervento_prog = get_object_or_404(InterventoProgramma,
+                                                slug=self.request.GET.get('intervento_programma', 0))
         except Http404:
             return reverse('404')
 
