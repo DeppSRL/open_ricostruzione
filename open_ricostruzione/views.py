@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, DetailView, ListView
 from django.db.models.aggregates import Sum
 from django.conf import settings
 from rest_framework import generics
-from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore
+from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa
 from territori.models import Territorio
 from .serializers import DonazioneSerializer
 
@@ -61,7 +61,7 @@ class AggregatePageMixin(object):
         self.programmazione_filters = programmazione_filters
         self.pianificazione_filters = pianificazione_filters
 
-    def get_aggr_tipologia_cedente(self,):
+    def get_aggr_tipologia_cedente(self, ):
         values = []
         not_null = False
         for k, v in Donazione.get_aggregates_sum(**self.programmazione_filters).iteritems():
@@ -95,13 +95,13 @@ class AggregatePageMixin(object):
 
         return values
 
-    def get_aggr_tipo_immobile(self,):
-        return self._create_aggregate_int_progr(model=TipoImmobile,)
+    def get_aggr_tipo_immobile(self, ):
+        return self._create_aggregate_int_progr(model=TipoImmobile, )
 
-    def get_aggr_sogg_att(self,):
-        return self._create_aggregate_int_progr(model=SoggettoAttuatore,)
+    def get_aggr_sogg_att(self, ):
+        return self._create_aggregate_int_progr(model=SoggettoAttuatore, )
 
-    def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH,):
+    def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH, ):
         return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
 
     def get_pianificazione_status(self):
@@ -145,10 +145,10 @@ class AggregatePageMixin(object):
         # tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
             agg_dict['tipo_immobile_aggregates_sum'] = self.get_aggr_tipo_immobile()
-        # tipo sogg.att pie data
+            # tipo sogg.att pie data
         if self.tipologia != self.SOGG_ATT:
             agg_dict['sogg_att_aggregates_sum'] = self.get_aggr_sogg_att()
-        # tipo sogg.att pie data
+            # tipo sogg.att pie data
         if self.tipologia == self.HOME:
             agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
 
@@ -183,13 +183,13 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         if self.vari_territori:
             apm = AggregatePageMixin(
                 tipologia=AggregatePageMixin.VARI_TERRITORI,
-                programmazione_filters={'vari_territori':True},
+                programmazione_filters={'vari_territori': True},
                 pianificazione_filters={'intervento_programma__vari_territori': True}
             )
         else:
             apm = AggregatePageMixin(
                 tipologia=AggregatePageMixin.TERRITORIO,
-                programmazione_filters={'territorio':self.territorio},
+                programmazione_filters={'territorio': self.territorio},
                 pianificazione_filters={'intervento_programma__territorio': self.territorio}
             )
 
@@ -261,7 +261,6 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
         return context
 
 
-
 class HomeView(TemplateView, AggregatePageMixin):
     template_name = "home.html"
 
@@ -276,7 +275,7 @@ class HomeView(TemplateView, AggregatePageMixin):
         return context
 
 
-class TipoSoggAttView(ListView):
+class TipoSoggettoAttuatoreView(ListView):
     template_name = 'tipo_sogg_att_list.html'
     tipologia_sogg_att = None
 
@@ -291,13 +290,32 @@ class TipoSoggAttView(ListView):
             return HttpResponseRedirect(reverse('404'))
 
         self.tipologia_sogg_att = t_list[0][0]
-        return super(TipoSoggAttView, self).get(request, *args, **kwargs)
+
+        to_redirect = [SoggettoAttuatore.TIPOLOGIA.COMMISSARIO_DELEGATO,SoggettoAttuatore.TIPOLOGIA.PROV_INTERREGIONALE, SoggettoAttuatore.TIPOLOGIA.REGIONE ]
+
+        if self.tipologia_sogg_att in to_redirect:
+            slug = SoggettoAttuatore.objects.get(tipologia = self.tipologia_sogg_att).slug
+            return HttpResponseRedirect(reverse('sogg-attuatore',kwargs={'slug':slug}))
+
+
+        return super(TipoSoggettoAttuatoreView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
         return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att)
 
 
     def get_context_data(self, **kwargs):
-        context = super(TipoSoggAttView, self).get_context_data(**kwargs)
+        context = super(TipoSoggettoAttuatoreView, self).get_context_data(**kwargs)
         context['tipologia_sogg_att'] = SoggettoAttuatore.TIPOLOGIA[self.tipologia_sogg_att]
         return context
+
+
+class ListaImpreseView(ListView):
+    template_name = 'imprese_list.html'
+
+    def get_queryset(self):
+        return Impresa.objects.all().order_by('ragione_sociale')
+
+
+class ImpresaView(TemplateView):
+    template_name = 'home.html'

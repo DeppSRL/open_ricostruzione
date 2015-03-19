@@ -54,22 +54,22 @@ class Command(BaseCommand):
             DonazioneInterventoProgramma. \
                 objects.all().order_by('intervento_programma__programma__id'). \
                 values(
-                    'importo',
-                    'donazione__pk',
-                    'donazione__denominazione',
-                    'intervento_programma__programma__id',
-                    'intervento_programma__id_fenice',
-                    'intervento_programma__soggetto_attuatore__id_fenice',
-                    'intervento_programma__id_propr_imm',
-                    'intervento_programma__n_ordine',
-                    'intervento_programma__importo_generale',
-                    'intervento_programma__importo_a_programma',
-                    'intervento_programma__denominazione',
-                    'intervento_programma__territorio__slug',
-                    'intervento_programma__tipo_immobile',
-                    'intervento_programma__tipo_immobile_fenice',
-                    'intervento_programma__slug',
-                )
+                'importo',
+                'donazione__pk',
+                'donazione__denominazione',
+                'intervento_programma__programma__id',
+                'intervento_programma__id_fenice',
+                'intervento_programma__soggetto_attuatore__id_fenice',
+                'intervento_programma__id_propr_imm',
+                'intervento_programma__n_ordine',
+                'intervento_programma__importo_generale',
+                'intervento_programma__importo_a_programma',
+                'intervento_programma__denominazione',
+                'intervento_programma__territorio__slug',
+                'intervento_programma__tipo_immobile',
+                'intervento_programma__tipo_immobile_fenice',
+                'intervento_programma__slug',
+            )
         )
 
     def associate_don_progr(self):
@@ -134,7 +134,8 @@ class Command(BaseCommand):
         try:
             tipo_immobile = TipoImmobile.objects.get(tipologia=tipo_immobile_map[str(id_tipo_imm)])
         except ObjectDoesNotExist:
-            self.logger.critical(u"Cannot find mapping for id_tipo_imm '{}', mapping must be updated!".format(id_tipo_imm))
+            self.logger.critical(
+                u"Cannot find mapping for id_tipo_imm '{}', mapping must be updated!".format(id_tipo_imm))
             if id_tipo_imm not in self.tipo_imm_not_found:
                 self.tipo_imm_not_found.append(id_tipo_imm)
             return None
@@ -156,7 +157,7 @@ class Command(BaseCommand):
 
         self.input_file = options['file']
         today_str = datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M")
-        self.error_logfile = "{}/log/import_{}_err.json".format(settings.PROJECT_ROOT,today_str)
+        self.error_logfile = "{}/log/import_{}_err.json".format(settings.PROJECT_ROOT, today_str)
         self.temp_logfile = "{}/log/import_{}_temp.json".format(settings.PROJECT_ROOT, today_str)
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
@@ -178,7 +179,7 @@ class Command(BaseCommand):
 
         self.logger.info("Checking Donazioni Programma before import...")
         self.store_don_progr()
-        if len(self.donazioni_intervento_programma)>0:
+        if len(self.donazioni_intervento_programma) > 0:
             self.dump_don_json(self.temp_logfile)
             self.logger.info("Saved {} Donazioni Programma".format(len(self.donazioni_intervento_programma)))
             self.logger.info("Dumped ALL Donazioni Programma in temp file:{}".format(self.temp_logfile))
@@ -197,7 +198,7 @@ class Command(BaseCommand):
             if intervento_a_programma['id_interv_a_progr'] == 605:
                 continue
 
-            interventi_counter+=1
+            interventi_counter += 1
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
             territorio = None
             vari_territori = False
@@ -206,7 +207,7 @@ class Command(BaseCommand):
             if istat_comune == self.istat_code_vari_territori:
                 self.logger.debug(u"Territorio found: VARI TERRITORI")
                 vari_territori = True
-                vari_territori_counter+=1
+                vari_territori_counter += 1
             else:
                 try:
                     territorio = Territorio.objects.get(istat_id=istat_comune)
@@ -237,14 +238,14 @@ class Command(BaseCommand):
             # gets Programma
             programma, is_created = Programma.objects.get_or_create(
                 id_fenice=intervento_a_programma['id_progr'],
-                )
+            )
             if is_created:
                 self.logger.warning("Created new Programma with id:{}".format(programma.id_fenice))
 
             # gets Soggetto Attuatore
             soggetto_att, is_created = SoggettoAttuatore.objects.get_or_create(
                 id_fenice=intervento_a_programma['id_sogg_att'],
-                )
+            )
 
             if is_created:
                 self.logger.warning("Created new Soggetto Attuatore with id:{}".format(soggetto_att.id_fenice))
@@ -314,7 +315,7 @@ class Command(BaseCommand):
                             'intervento': intr,
                             'tipologia': qe_intervento['id_tipo_qe'],
                             'importo': Decimal(qe_intervento['imp_qe']),
-                            }).save()
+                        }).save()
 
                     #     import progetti
                     for progetto in intervento['progetti']:
@@ -338,7 +339,7 @@ class Command(BaseCommand):
                                 'progetto': prog,
                                 'tipologia': qe_progetto['id_tipo_qe'],
                                 'importo': Decimal(qe_progetto['imp_qe']),
-                                }).save()
+                            }).save()
 
                     #  import liquidazioni
                     for liquidazione in intervento['liquidazioni']:
@@ -355,22 +356,27 @@ class Command(BaseCommand):
                             'intervento': intr,
                             'tipologia': evento_contr['id_tipo_evento_contr'],
                             'data': datetime.strptime(evento_contr['data'], self.date_format),
-                            }).save()
+                        }).save()
 
                     #     imprese
                     for impresa in intervento['imprese']:
-                        impr = Impresa(**{
-                            'ragione_sociale': impresa['rag_soc'],
-                            'partita_iva': impresa['p_iva']
-                        })
+                        impr, _ = Impresa.objects.get_or_create(
+                            partita_iva=impresa['p_iva'],
+                            defaults ={'ragione_sociale': impresa['rag_soc']}
+                        )
+                        # impr = Impresa(**{
+                        #     'ragione_sociale': impresa['rag_soc'],
+                        #     'partita_iva': impresa['p_iva']
+                        # })
                         impr.save()
                         intr.imprese.add(impr)
         commit()
 
-        self.logger.info("Imported {} interventi, {} of which were on ALTRI TERRITORI".format(interventi_counter, vari_territori_counter))
+        self.logger.info("Imported {} interventi, {} of which were on ALTRI TERRITORI".format(interventi_counter,
+                                                                                              vari_territori_counter))
         # prints out not-found Territori
         if len(self.not_found_territori.keys()):
-            for t,counter in self.not_found_territori.iteritems():
+            for t, counter in self.not_found_territori.iteritems():
                 self.logger.error(u"Cannot find territorio with istat_id:'{}' {} times".format(t, counter))
 
         self.logger.info("Recovering Donazioni Programma if present...")
@@ -382,10 +388,10 @@ class Command(BaseCommand):
             self.logger.info("Correctly associated {} Donazioni Programma".format(associated_donazioni_intervento, ))
         if not_associated_donazioni_intervento > 0:
             self.logger.error(u"Could NOT ASSOCIATE {} Donazioni Programma. Dumped ONLY ERROR DATA in file {}".
-                format(not_associated_donazioni_intervento, self.error_logfile))
+            format(not_associated_donazioni_intervento, self.error_logfile))
             self.dump_don_json(self.error_logfile)
 
-        if len(self.tipo_imm_not_found)>0:
+        if len(self.tipo_imm_not_found) > 0:
             for id_not_found in self.tipo_imm_not_found:
                 self.logger.error(u"Cannot map id_tipo_imm:'{}', update mapping!".format(id_not_found))
         self.logger.info("Done")

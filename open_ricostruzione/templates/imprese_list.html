@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block head-title %}Lista Imprese{% endblock %}
+
+{% block content %}
+    <h1>Lista Imprese</h1>
+    {% for impresa in object_list %}
+        <div class="row" style="border-bottom: 1px solid gray;">
+            <div class="col-md-12">
+                <a href="#">{{ impresa.ragione_sociale|title}}, Partita Iva:{{ impresa.partita_iva }}</a>
+            </div>
+        </div>
+    {% endfor %}
+
+
+{% endblock %}

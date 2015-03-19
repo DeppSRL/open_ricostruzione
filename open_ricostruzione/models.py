@@ -13,7 +13,7 @@ from open_ricostruzione.utils.moneydate import moneyfmt
 
 class Impresa(models.Model):
     ragione_sociale = models.CharField(max_length=200, null=False, blank=False)
-    partita_iva = models.CharField(max_length=30, null=False, blank=False)
+    partita_iva = models.CharField(max_length=30, null=False, blank=False, unique=True)
 
     class Meta:
         verbose_name_plural = u'Imprese'
