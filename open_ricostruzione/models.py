@@ -65,7 +65,7 @@ class InterventoProgramma(models.Model):
 
     programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
     # id fenice = id_interv_a_progr
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
     soggetto_attuatore = models.ForeignKey('SoggettoAttuatore', null=True, blank=False, default=None)
     # id_propr_imm = id fenice per l'immobile
     id_propr_imm = models.PositiveSmallIntegerField(null=False, blank=False)
@@ -150,7 +150,7 @@ class TipoImmobile(models.Model):
 
 class Programma(models.Model):
     denominazione = models.TextField(max_length=120)
-    id_fenice = models.PositiveSmallIntegerField(null=True, blank=True)
+    id_fenice = models.PositiveSmallIntegerField(null=True, blank=True, unique=True)
 
     def __unicode__(self):
         return u"{}({})".format(self.denominazione, self.id_fenice, )
@@ -189,7 +189,7 @@ class Piano(models.Model):
         (u'4', u'MISTI', u'Piano UMI - misti'),
     )
     # id fenice x il piano
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0, unique=True)
     tipologia = models.CharField(max_length=2, choices=TIPO_PIANO, blank=False, null=False, default='')
     programma = models.ForeignKey('Programma', null=False, blank=False)
     denominazione = models.TextField(max_length=120, default=u'')
@@ -203,7 +203,7 @@ class Piano(models.Model):
 
 class InterventoPiano(models.Model):
     intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
     imp_a_piano = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     piano = models.ForeignKey('Piano', null=True, blank=True, default=None)
 
@@ -240,7 +240,7 @@ class Intervento(models.Model):
 
     intervento_piano = models.ForeignKey('InterventoPiano', null=False, blank=False)
     # id fenice per l'intervento
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
     is_variante = models.BooleanField(null=False, blank=False, default=False)
     imp_congr_spesa = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
@@ -326,7 +326,7 @@ class QuadroEconomico(models.Model):
         (u'20', u'QTE_VARIANTE_CON_MODIFICA', u'Q.T.E. di variante con modifica dei lavori'),
         (u'21', u'QTE_FINALE', u'Q.T.E. finale'),
     )
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0, unique=True)
     tipologia = models.CharField(max_length=2, choices=TIPO_QUADRO_ECONOMICO, blank=False, null=False, default='')
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
 
@@ -374,7 +374,7 @@ class Progetto(models.Model):
         (u'5', u'RESPINTO', u'Respinto'),
         (u'6', u'AMMESSO', u'Ammesso'),
     )
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0, unique=True)
     intervento = models.ForeignKey('Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=2, choices=TIPO_PROGETTO, blank=False, null=False, default='')
     stato = models.CharField(max_length=2, choices=STATO_PROGETTO, blank=False, null=False, default='')
@@ -400,7 +400,7 @@ class Variante(models.Model):
         )
     tipologia = models.CharField(max_length=2, choices=TIPO_VARIANTE, blank=False, null=False, default='')
     stato = models.CharField(max_length=2, choices=STATO_VARIANTE, blank=False, null=False, default='')
-    progetto = models.ForeignKey('Progetto', null=False, blank=False)
+    progetto = models.ForeignKey('Progetto', null=True, blank=True)
     data_deposito = models.DateField(blank=True, null=True)
     data_fine = models.DateField(blank=True, null=True)
 
@@ -517,7 +517,7 @@ class DonazioneInterventoProgramma(models.Model):
 ##
 
 class Anagrafica(models.Model):
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False,unique=True)
 
     class Meta:
         abstract = True

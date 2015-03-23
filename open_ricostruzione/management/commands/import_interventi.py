@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
     Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, \
-    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile
+    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile, Variante
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -367,10 +367,25 @@ class Command(BaseCommand):
                     #     imprese
                     for impresa in intervento['imprese']:
                         impr, _ = Impresa.objects.get_or_create(
-                            partita_iva=impresa['p_iva'],
-                            defaults={'ragione_sociale': impresa['rag_soc']}
+                            partita_iva = impresa['p_iva'],
+                            defaults={
+                            'ragione_sociale': impresa['rag_soc']
+                            }
                         )
                         intr.imprese.add(impr)
+
+
+                    # varianti
+                    # todo: importare eventuale qe
+                    for variante in intervento['varianti']:
+                        Variante(**{
+                            'tipologia': variante['id_tipo_var'],
+                            'stato': variante['id_stato_var'],
+                            'progetto': variante['id_prog'],
+                            'data_deposito': datetime.strptime(variante['iter']['data_dep'], self.date_format),
+                            'data_fine': datetime.strptime(variante['iter']['data_fine'], self.date_format),
+                        }).save()
+
         commit()
 
         self.logger.info("Imported {} interventi, {} of which were on ALTRI TERRITORI".format(interventi_counter,
