@@ -8,7 +8,7 @@ from django.core.management import BaseCommand
 from django.db import IntegrityError
 from django.utils.text import slugify
 from open_ricostruzione.models import Programma, Piano, RUP, ProprietarioImmobile, SoggettoAttuatore, \
-    InterventoProgramma, Progetto, Intervento, Cofinanziamento, EventoContrattuale, Liquidazione, QuadroEconomico
+    InterventoProgramma, Progetto, Intervento, Cofinanziamento, EventoContrattuale, Liquidazione, QuadroEconomico, Variante
 
 
 class Command(BaseCommand):
@@ -34,17 +34,35 @@ class Command(BaseCommand):
         # al n. di tuple nell'oggetto Choice presente nel modello.
         # Se non e' cosi: logga errore e stoppa lo script
         ##
+        check_passed = True
+        if t[0] is not 'tipi_liquidazione':
+            codifiche_file = set(unicode(d['id']) for d in self.codifiche[t[0]])
+        else:
+            codifiche_file = set(unicode(d) for d in self.codifiche[t[0]].keys())
 
-        n_tipi_piano_json = len(self.codifiche[t[0]])
+        codifiche_db = set(t[1]._db_values)
+        n_tipi_piano_json = len(codifiche_file)
         n_tipi_piano_model = len(t[1])
+        # gets data file ids and compares them with ids in the db
+        diff_file = set(codifiche_db)-set(codifiche_file)
+        diff_db = set(codifiche_file)-set(codifiche_db)
+        if len(diff_file):
+            diff_file_str = ",".join(str(e) for e in diff_file)
+            self.logger.error("{} Id:{} in DB SETTINGS but not in FILE".format(t[0].upper(),diff_file_str))
+            check_passed = False
+        if len(diff_db):
+            diff_db_str = ",".join(str(e) for e in diff_db)
+            self.logger.error("{} Id:{} in FILE but not in DB SETTINGS ".format(t[0].upper(), diff_db_str))
+            check_passed = False
         if n_tipi_piano_json != n_tipi_piano_model:
             self.logger.error("Found {} '{}' in Json file, {} '{}' present in DB Model".format(
                 n_tipi_piano_json, t[0], n_tipi_piano_model, t[0],
             ))
-            exit()
+            check_passed = False
+        return check_passed
 
     def check_tipologie(self):
-        tipologie_map=(
+        tipologie_map = (
             # note: categorie_immobile is optional
             ('categorie_immobile', InterventoProgramma.CATEGORIA_IMMOBILE ),
             ('stati_intervento', Intervento.STATO_INTERVENTO),
@@ -57,10 +75,20 @@ class Command(BaseCommand):
             ('tipi_piano', Piano.TIPO_PIANO),
             ('tipi_progetto', Progetto.TIPO_PROGETTO),
             ('tipi_qe', QuadroEconomico.TIPO_QUADRO_ECONOMICO),
+            # varianti
+            ('tipi_variante', Variante.TIPO_VARIANTE),
+            ('stati_variante', Variante.STATO_VARIANTE),
         )
 
+        stop_import = False
         for t in tipologie_map:
-            self.check_tipologia(t)
+
+            if not self.check_tipologia(t):
+                stop_import = True
+
+        if stop_import:
+            self.logger.critical("Stopping import because tipologie check failed")
+            exit()
 
     def import_piani(self):
         for piano_json in self.codifiche['piani']:
@@ -153,14 +181,14 @@ class Command(BaseCommand):
             ProprietarioImmobile.objects.update_or_create(
                 id_fenice=p_immobile_json['id'],
                 denominazione=p_immobile_json['nome'],
-                )
+            )
 
         self.logger.info("Import sogg.attuatori")
 
         for s_attuatori_json in self.anagrafiche['soggetti_attuatori']:
 
             tipologia = self.sogg_att_map.get(s_attuatori_json['id'], u'')
-            sa_slug =  slugify(s_attuatori_json['nome'])
+            sa_slug = slugify(s_attuatori_json['nome'])
             sa_slug_alternative = u"{}_2".format(sa_slug)
             if tipologia == u'':
                 self.logger.error("Soggetto attuatore: cannot find tipologia ORIC for id_fenice:'{}'".
@@ -176,7 +204,9 @@ class Command(BaseCommand):
                     }
                 )
             except IntegrityError:
-                self.logger.warning("This slug:{} was already present in DB, try saving object with slug:{}".format(sa_slug, sa_slug_alternative))
+                self.logger.warning(
+                    "This slug:{} was already present in DB, try saving object with slug:{}".format(sa_slug,
+                                                                                                    sa_slug_alternative))
                 SoggettoAttuatore.objects.update_or_create(
                     id_fenice=s_attuatori_json['id'],
                     denominazione=s_attuatori_json['nome'],
@@ -186,7 +216,6 @@ class Command(BaseCommand):
                     }
                 )
 
-
         self.logger.info("Import RUP")
         for rup_json in self.anagrafiche['rup']:
             RUP.objects.update_or_create(
@@ -194,6 +223,6 @@ class Command(BaseCommand):
                 nome=rup_json['nome'],
                 cognome=rup_json['cognome'],
                 cf=rup_json['cf'],
-                )
+            )
 
         self.logger.info("Done")

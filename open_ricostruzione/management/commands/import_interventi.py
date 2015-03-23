@@ -3,6 +3,7 @@ import json
 from django.core.management.base import BaseCommand
 from django.db.transaction import set_autocommit, commit
 from django.template.defaultfilters import slugify
+import pprint
 from django.conf import settings
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
@@ -193,10 +194,6 @@ class Command(BaseCommand):
 
         set_autocommit(False)
         for intervento_a_programma in data['interventi_a_programma']:
-            # DEBUG: skips example project
-            # TODO: remove this when the file is not an example file
-            if intervento_a_programma['id_interv_a_progr'] == 605:
-                continue
 
             interventi_counter += 1
             istat_comune = intervento_a_programma['comune']['cod_istat_com']
@@ -312,6 +309,7 @@ class Command(BaseCommand):
                     # save quadro economico for Intervento
                     for qe_intervento in intervento['qe']:
                         QuadroEconomicoIntervento(**{
+                            'id_fenice': qe_intervento['id_qe'],
                             'intervento': intr,
                             'tipologia': qe_intervento['id_tipo_qe'],
                             'importo': Decimal(qe_intervento['imp_qe']),
@@ -321,21 +319,29 @@ class Command(BaseCommand):
                     for progetto in intervento['progetti']:
 
                         data_deposito = None
-                        if 'iter' in progetto:
-                            if 'data_dep' in progetto['iter']:
-                                if progetto['iter']['data_dep']:
-                                    data_deposito = datetime.strptime(progetto['iter']['data_dep'], self.date_format)
+                        data_inizio = None
+                        data_fine = None
+                        if progetto['iter'].get('data_dep', None):
+                            data_deposito = datetime.strptime(progetto['iter']['data_dep'], self.date_format)
+                        if progetto['iter'].get('data_inizio', None):
+                            data_inizio = datetime.strptime(progetto['iter']['data_inizio'], self.date_format)
+                        if progetto['iter'].get('data_fine', None):
+                            data_fine = datetime.strptime(progetto['iter']['data_fine'], self.date_format)
 
                         prog = Progetto(**{
+                            'id_fenice': progetto['id_prog'],
                             'intervento': intr,
                             'tipologia': progetto['id_tipo_prog'],
-                            'stato_progetto': progetto['id_stato_prog'],
-                            'data_deposito': data_deposito
+                            'stato': progetto['id_stato_prog'],
+                            'data_deposito': data_deposito,
+                            'data_inizio': data_inizio,
+                            'data_fine': data_fine,
                         })
                         prog.save()
                         # save quadro economico for Progetto
                         for qe_progetto in progetto['qe']:
                             qep = QuadroEconomicoProgetto(**{
+                                'id_fenice': qe_progetto['id_qe'],
                                 'progetto': prog,
                                 'tipologia': qe_progetto['id_tipo_qe'],
                                 'importo': Decimal(qe_progetto['imp_qe']),
@@ -362,13 +368,8 @@ class Command(BaseCommand):
                     for impresa in intervento['imprese']:
                         impr, _ = Impresa.objects.get_or_create(
                             partita_iva=impresa['p_iva'],
-                            defaults ={'ragione_sociale': impresa['rag_soc']}
+                            defaults={'ragione_sociale': impresa['rag_soc']}
                         )
-                        # impr = Impresa(**{
-                        #     'ragione_sociale': impresa['rag_soc'],
-                        #     'partita_iva': impresa['p_iva']
-                        # })
-                        impr.save()
                         intr.imprese.add(impr)
         commit()
 

@@ -322,7 +322,11 @@ class QuadroEconomico(models.Model):
         (u'16', u'QTE_GENERALE', u'Q.T.E. generale riepilogativo'),
         (u'17', u'QTE_RIMODULATO_COMMISSARIO', u'Q.T.E. rimodulato relativo al finanziamento del Commissario'),
         (u'18', u'QTE_FINANZIAMENTO_COMMISSARIO', u'Q.T.E. relativo al finanziamento assegnato dal Commissario'),
+        (u'19', u'QTE_VARIANTE_SENZA_MODIFICA', u'Q.T.E. di variante senza modifica dei lavori'),
+        (u'20', u'QTE_VARIANTE_CON_MODIFICA', u'Q.T.E. di variante con modifica dei lavori'),
+        (u'21', u'QTE_FINALE', u'Q.T.E. finale'),
     )
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
     tipologia = models.CharField(max_length=2, choices=TIPO_QUADRO_ECONOMICO, blank=False, null=False, default='')
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
 
@@ -359,6 +363,7 @@ class Progetto(models.Model):
         (u'5', u'PERIZIA_DEMOLIZIONE_RIPRISTINO', u'Perizia demolizione con progetto di ripristino'),
         (u'6', u'PERIZIA_DEMOLIZIONE_CONVENZIONALE', u'Perizia demolizione con calcolo convenzionale'),
         (u'7', u'CALCOLO_CONVENZIONALE', u'Calcolo convenzionale'),
+        (u'8', u'VARIANTE', u'Variante con modifica dei lavori'),
     )
 
     STATO_PROGETTO = Choices(
@@ -369,13 +374,39 @@ class Progetto(models.Model):
         (u'5', u'RESPINTO', u'Respinto'),
         (u'6', u'AMMESSO', u'Ammesso'),
     )
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0)
     intervento = models.ForeignKey('Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=2, choices=TIPO_PROGETTO, blank=False, null=False, default='')
-    stato_progetto = models.CharField(max_length=2, choices=STATO_PROGETTO, blank=False, null=False, default='')
+    stato = models.CharField(max_length=2, choices=STATO_PROGETTO, blank=False, null=False, default='')
     data_deposito = models.DateField(blank=True, null=True)
+    data_inizio = models.DateField(blank=True, null=True)
+    data_fine = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = u'Progetti'
+
+
+class Variante(models.Model):
+    TIPO_VARIANTE = Choices(
+        (u'1', u'SENZA_MODIFICA', u'Variante senza modifica dei lavori'),
+        (u'2', u'CON_MODIFICA', u'Variante con modifica dei lavori'),
+    )
+
+    STATO_VARIANTE = Choices(
+        (u'1', u'PRESENTATA', u'Presentata'),
+        (u'2', u'PRESA_IN_CARICO', u'Presa in carico'),
+        (u'3', u'AMMESSA', u'Ammessa'),
+        (u'4', u'RESPINTA', u'Respinta'),
+        )
+    tipologia = models.CharField(max_length=2, choices=TIPO_VARIANTE, blank=False, null=False, default='')
+    stato = models.CharField(max_length=2, choices=STATO_VARIANTE, blank=False, null=False, default='')
+    progetto = models.ForeignKey('Progetto', null=False, blank=False)
+    data_deposito = models.DateField(blank=True, null=True)
+    data_fine = models.DateField(blank=True, null=True)
+
+##
+# Donazioni
+##
 
 
 class Donazione(models.Model):
