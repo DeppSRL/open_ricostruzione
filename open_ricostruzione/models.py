@@ -579,3 +579,23 @@ class RUP(Anagrafica):
 
     def __unicode__(self):
         return u"({}) {} {} [{}]".format(self.id_fenice, self.nome, self.cognome, self.cf)
+
+
+##
+# Ultimo aggiornamento keeps track of when the data was updated
+##
+
+class UltimoAggiornamento(models.Model):
+    TIPOLOGIA = Choices(
+        (u'1', u'INTERVENTI', u'Interventi'),
+        (u'2', u'DONAZIONI', u'Donazioni'),
+        )
+    data = models.DateField(null=False, blank=False, auto_now=True)
+    tipologia = models.CharField(max_length=2, choices=TIPOLOGIA, blank=False, null=False, default=u'')
+
+    class Meta:
+        verbose_name_plural = u'Ultimo Aggiornamento'
+
+    def __unicode__(self):
+        return u"({}) {}".format(self.TIPOLOGIA[self.tipologia], self.data)
+

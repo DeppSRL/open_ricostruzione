@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
     Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, \
-    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile, Variante
+    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile, Variante, UltimoAggiornamento
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -367,9 +367,9 @@ class Command(BaseCommand):
                     #     imprese
                     for impresa in intervento['imprese']:
                         impr, _ = Impresa.objects.get_or_create(
-                            partita_iva = impresa['p_iva'],
+                            partita_iva=impresa['p_iva'],
                             defaults={
-                            'ragione_sociale': impresa['rag_soc']
+                                'ragione_sociale': impresa['rag_soc']
                             }
                         )
                         intr.imprese.add(impr)
@@ -390,6 +390,14 @@ class Command(BaseCommand):
 
         self.logger.info("Imported {} interventi, {} of which were on ALTRI TERRITORI".format(interventi_counter,
                                                                                               vari_territori_counter))
+        UltimoAggiornamento.objects.update_or_create(
+            tipologia=UltimoAggiornamento.TIPOLOGIA.INTERVENTI,
+            defaults={
+                'data': datetime.today(),
+            }
+        )
+        self.logger.info("Set Ultimo aggiornamento to today")
+
         # prints out not-found Territori
         if len(self.not_found_territori.keys()):
             for t, counter in self.not_found_territori.iteritems():

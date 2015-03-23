@@ -6,7 +6,7 @@ from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import xlrd
 from django.conf import settings
-from open_ricostruzione.models import Donazione
+from open_ricostruzione.models import Donazione, UltimoAggiornamento
 from open_ricostruzione.utils import UnicodeDictReader
 from territori.models import Territorio
 from optparse import make_option
@@ -248,3 +248,11 @@ class Command(BaseCommand):
                 self.logger.info("{}:{}".format(t, counter))
 
         self.logger.info("Imported {} donazioni".format(donation_counter))
+
+        UltimoAggiornamento.objects.update_or_create(
+            tipologia=UltimoAggiornamento.TIPOLOGIA.DONAZIONI,
+            defaults={
+                'data': datetime.today(),
+            }
+        )
+        self.logger.info("Set Ultimo aggiornamento to today")
