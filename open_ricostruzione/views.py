@@ -7,7 +7,7 @@ from django.db.models.aggregates import Sum
 from django.conf import settings
 from rest_framework import generics
 from open_ricostruzione.forms import InterventoProgrammaSearchFormHome
-from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa
+from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa, Intervento
 from territori.models import Territorio
 from .serializers import DonazioneSerializer
 
@@ -46,6 +46,7 @@ class AggregatePageMixin(object):
 
     programmazione_filters = None
     pianificazione_filters = None
+    attuazione_filters = None
     tipologia = None
 
     TERRITORIO = 0
@@ -54,7 +55,7 @@ class AggregatePageMixin(object):
     SOGG_ATT = 3
     HOME = 4
 
-    def __init__(self, tipologia, programmazione_filters, pianificazione_filters):
+    def __init__(self, tipologia, programmazione_filters, pianificazione_filters, attuazione_filters):
         ##
         # initialize class with type and filter for programmazione / pianificazione
         ##
@@ -62,6 +63,8 @@ class AggregatePageMixin(object):
         self.tipologia = tipologia
         self.programmazione_filters = programmazione_filters
         self.pianificazione_filters = pianificazione_filters
+        self.attuazione_filters = attuazione_filters
+
 
     def get_aggr_tipologia_cedente(self, ):
         values = []
@@ -106,24 +109,30 @@ class AggregatePageMixin(object):
     def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH, ):
         return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
 
-    def get_pianificazione_status(self):
-
-        piano_dict = {
-            'count': InterventoPiano.objects.filter(**self.pianificazione_filters).count(),
-            'money_value': InterventoPiano.objects.
-            filter(**self.pianificazione_filters).aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
-        }
-        return piano_dict
 
     def get_programmazione_status(self):
-        programmazione_dict = {
+        return {
             'count': InterventoProgramma.objects.filter(**self.programmazione_filters).count(),
             'money_value':
                 InterventoProgramma.objects.filter(**self.programmazione_filters).aggregate(Sum('importo_generale'))[
                     'importo_generale__sum']
         }
 
-        return programmazione_dict
+
+    def get_pianificazione_status(self):
+
+        return {
+            'count': InterventoPiano.objects.filter(**self.pianificazione_filters).count(),
+            'money_value': InterventoPiano.objects.
+            filter(**self.pianificazione_filters).aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
+        }
+
+    def get_attuazione_status(self):
+
+        return {
+            'count': Intervento.objects.filter(**self.attuazione_filters).count(),
+            'money_value': Intervento.objects.filter(**self.attuazione_filters).aggregate(Sum('imp_congr_spesa'))['imp_congr_spesa__sum']
+        }
 
     def get_aggregates(self):
         ##
@@ -132,17 +141,24 @@ class AggregatePageMixin(object):
         # so they return context-based data
         ##
 
-        agg_dict = {}
-        agg_dict['ricostruzione_status'] = {
+        agg_dict = {'status': {
             'piano': self.get_pianificazione_status(),
-            'programma': self.get_programmazione_status()
-        }
+            'programma': self.get_programmazione_status(),
+            'attuazione': self.get_attuazione_status(),
+        }}
 
-        agg_dict['ricostruzione_status']['piano_percentage'] = 0.0
-        if agg_dict['ricostruzione_status']['programma']['count'] > 0:
-            agg_dict['ricostruzione_status']['piano_percentage'] = 100.0 * (
-                agg_dict['ricostruzione_status']['piano']['count'] / float(
-                    agg_dict['ricostruzione_status']['programma']['count']))
+        agg_dict['status']['piano']['percentage'] = 0.0
+        agg_dict['status']['attuazione']['percentage'] = 0.0
+
+        if agg_dict['status']['programma']['count'] > 0:
+            agg_dict['status']['piano']['percentage'] = 100.0 * (
+                agg_dict['status']['piano']['count'] / float(
+                    agg_dict['status']['programma']['count']))
+
+            agg_dict['status']['attuazione']['percentage'] = 100.0 * (
+                agg_dict['status']['attuazione']['count'] / float(
+                    agg_dict['status']['programma']['count']))
+
 
         # tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
@@ -271,7 +287,8 @@ class HomeView(TemplateView, AggregatePageMixin):
         apm = AggregatePageMixin(
             tipologia=AggregatePageMixin.HOME,
             programmazione_filters={},
-            pianificazione_filters={}
+            pianificazione_filters={},
+            attuazione_filters={}
         )
         context.update(apm.get_aggregates())
         return context

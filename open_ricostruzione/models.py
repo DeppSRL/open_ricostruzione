@@ -88,12 +88,12 @@ class InterventoProgramma(models.Model):
         if total:
             aggregation_struct['totale'] = Sum('importo_generale')
 
-        for tip in model.TIPOLOGIA:
+        for type in model.TIPOLOGIA:
             # tipologia_slug = slugify(tip[1])
             if model == TipoImmobile:
-                aggregation_struct["{}".format(tip[0])] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+                aggregation_struct["{}".format(type[0])] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=type[0]))
             elif model == SoggettoAttuatore:
-                aggregation_struct["{}".format(tip[0])] = Sum('importo_generale', only=Q(soggetto_attuatore__tipologia=tip[0]))
+                aggregation_struct["{}".format(type[0])] = Sum('importo_generale', only=Q(soggetto_attuatore__tipologia=type[0]))
 
         return InterventoProgramma.objects.filter(**kwargs).aggregate(**aggregation_struct)
 

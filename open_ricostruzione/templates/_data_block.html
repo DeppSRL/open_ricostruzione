@@ -3,4 +3,9 @@
     <strong>{{ title|title }}</strong><br/>
     n.interventi: {{ data_dict.count|default_if_none:0 }}<br/>
     importo: {{ data_dict.money_value|italianize|default_if_none:0 }} E<br/>
+    {% if perc_label %}
+        {{ data_dict.percentage|floatformat:2 }}% {{ perc_label }}
+    {% else %}
+        <br/>
+    {% endif %}
 </div>
