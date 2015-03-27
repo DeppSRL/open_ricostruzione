@@ -15,86 +15,8 @@
         {% include '_data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' %}
     </div>
 
-    {# execution progress bar    #}
-    <div class="row">
-        <div class="col-md-12">
-            <div id="container" style="min-width: 310px; max-width: 1000px; height: 200px; margin: 0 auto" class="basic_spacer">
-
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4">
-            N interv. in progettazione
-        </div>
-        <div class="col-md-4">
-                N interv. in corso
-            </div>
-        <div class="col-md-4">
-                N interv. conclusi
-            </div>
-    </div>
-
-
-
-    <script>
-        $(function () {
-            $('#container').highcharts({
-                chart: {
-                    type: 'bar'
-                },
-                title: {
-                    text: 'Stato interv.in esecuzione'
-                },
-                xAxis: {
-                    categories: ['Avanzamento interventi'],
-                    lineWidth: 0,
-                    minorGridLineWidth: 0,
-                    gridLineColor: 'white',
-                    lineColor: 'transparent',
-                    labels: {
-                        enabled: false
-                    },
-                    minorTickLength: 0,
-                    tickLength: 0
-                },
-                yAxis: {
-                    min: 0,
-                    lineWidth: 0,
-                    minorGridLineWidth: 0,
-                    gridLineColor: 'white',
-                    lineColor: 'transparent',
-                    labels: {
-                        enabled: false
-                    },
-                    minorTickLength: 0,
-                    tickLength: 0
-
-                },
-                legend: {
-                    reversed: true
-                },
-                plotOptions: {
-                    series: {
-                        stacking: 'normal'
-                    }
-                },
-                series: [{
-                    name: 'Conclusi',
-                    data: [2],
-                    color: "#ee5e29"
-                }, {
-                    name: 'In corso',
-                    data: [2],
-                    color: "#f9825a"
-                }, {
-                    name: 'In progettazione',
-                    data: [3],
-                    color: "#f9a487"
-                }]
-            });
-        });
-    </script>
+    {#    execution status bar / status blocks #}
+    {% include "_execution_status.html" %}
         
     {# fetch progetti #}
     <div class="row basic_spacer" style="margin-bottom: 5px;">
@@ -121,7 +43,57 @@
 
     {# aggregazione tipo immobile    #}
     {% block tipo-immobile %}
-        {% include '_pie_chart.html' with pie_title="Aggregazione per tipo immobile - ammontare" data_list=tipo_immobile_aggregates_sum  %}
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Per cosa si interviene?</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="tipo_immobile_chart"></div>
+            </div>
+        </div>
+
+        <script>
+        $(function () {
+            $('#tipo_immobile_chart').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ['Chiese', 'Ospedali', 'Altro']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: ''
+                    }
+                },
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                    shared: true
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'percent'
+                    }
+                },
+                series: [{
+                    name: 'Programmati',
+                    data: [5, 3, 4]
+                }, {
+                    name: 'Pianificati',
+                    data: [2, 2, 3]
+                }, {
+                    name: 'In attuazione',
+                    data: [3, 4, 4]
+                }]
+            });
+        });
+        </script>
     {% endblock %}
 
     {# aggregazione tipo sogg. att #}
