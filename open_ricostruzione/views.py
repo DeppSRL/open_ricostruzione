@@ -103,19 +103,12 @@ class AggregatePageMixin(object):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
 
     def get_pianificazione_status(self):
+        return InterventoProgramma.pianificati.filter(**self.programmazione_filters).with_count()
 
-        return {
-            'count': InterventoPiano.objects.filter(**self.pianificazione_filters).count(),
-            'money_value': InterventoPiano.objects.
-            filter(**self.pianificazione_filters).aggregate(Sum('imp_a_piano'))['imp_a_piano__sum']
-        }
 
     def get_attuazione_status(self):
+        return InterventoProgramma.attuazione.filter(**self.programmazione_filters).with_count()
 
-        return {
-            'count': Intervento.objects.filter(**self.attuazione_filters).count(),
-            'money_value': Intervento.objects.filter(**self.attuazione_filters).aggregate(Sum('imp_congr_spesa'))['imp_congr_spesa__sum']
-        }
 
     def get_aggregates(self):
         ##
