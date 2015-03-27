@@ -27,14 +27,18 @@
     </div>
     <div class="row basic_spacer">
         <div class="col-md-6">
-            {% for intprog in interventi_top_importo %}
-                {% include '_intervento_block.html' with intprog=intprog  %}
-            {% endfor %}
+            {% include '_intervento_block.html' with intprog=interventi_top_importo.0 %}
         </div>
         <div class="col-md-6">
-            {% for intprog in interventi_top_importo %}
-                {% include '_intervento_block.html' with intprog=intprog  %}
-            {% endfor %}
+                {% include '_intervento_block.html' with intprog=interventi_top_importo.2 %}
+        </div>
+    </div>
+    <div class="row basic_spacer">
+        <div class="col-md-6">
+            {% include '_intervento_block.html' with intprog=interventi_top_importo.1 %}
+        </div>
+        <div class="col-md-6">
+                {% include '_intervento_block.html' with intprog=interventi_top_importo.3 %}
         </div>
     </div>
 

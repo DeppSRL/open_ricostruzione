@@ -42,7 +42,6 @@ class AggregatePageMixin(object):
     # Aggregati Page Mixin
     # stores the common function of all the aggregate views
     ##
-    # todo: aggiungere la parte sull'attuazione
 
     programmazione_filters = None
     tipologia = None
@@ -91,7 +90,7 @@ class AggregatePageMixin(object):
     def _get_aggr_sogg_att(self, ):
         return self._create_aggregate_int_progr(model=SoggettoAttuatore, )
 
-    def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH, ):
+    def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH):
         return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
 
     def _get_programmazione_status(self):
@@ -111,7 +110,6 @@ class AggregatePageMixin(object):
 
     def _get_conclusi_status(self):
         return InterventoProgramma.conclusi.filter(**self.programmazione_filters).with_count()
-
 
     def get_aggregates(self):
         ##
@@ -154,7 +152,6 @@ class AggregatePageMixin(object):
 
         # example interventi fetch
         agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
-        agg_dict['interventi_bottom_importo'] = self.fetch_interventi_programma(order_by='importo_generale')
         return agg_dict
 
 

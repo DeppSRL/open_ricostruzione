@@ -47,8 +47,8 @@ class AttuazioneManager(models.Manager):
 class ProgettazioneQuerySet(models.QuerySet):
     def with_count(self):
         aggregate_dict = {
-            # "sum": Sum(''),
-            "count": Count('pk')
+            "sum": Sum('interventopiano__intervento__imp_congr_spesa'),
+            "count": Count('interventopiano__intervento__imp_congr_spesa')
         }
         return self.aggregate(**aggregate_dict)
 
