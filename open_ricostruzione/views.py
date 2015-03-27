@@ -61,8 +61,7 @@ class AggregatePageMixin(object):
         self.tipologia = tipologia
         self.programmazione_filters = programmazione_filters
 
-
-    def get_aggr_tipologia_cedente(self, ):
+    def _get_aggr_tipologia_cedente(self, ):
         values = []
         not_null = False
         for k, v in Donazione.get_aggregates_sum(**self.programmazione_filters).iteritems():
@@ -86,23 +85,32 @@ class AggregatePageMixin(object):
         ##
         return InterventoProgramma.get_type_aggregates(model=model, **self.programmazione_filters)
 
-    def get_aggr_tipo_immobile(self, ):
+    def _get_aggr_tipo_immobile(self, ):
         return self._create_aggregate_int_progr(model=TipoImmobile, )
 
-    def get_aggr_sogg_att(self, ):
+    def _get_aggr_sogg_att(self, ):
         return self._create_aggregate_int_progr(model=SoggettoAttuatore, )
 
     def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH, ):
         return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
 
-    def get_programmazione_status(self):
+    def _get_programmazione_status(self):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
 
-    def get_pianificazione_status(self):
+    def _get_pianificazione_status(self):
         return InterventoProgramma.pianificati.filter(**self.programmazione_filters).with_count()
 
-    def get_attuazione_status(self):
+    def _get_attuazione_status(self):
         return InterventoProgramma.attuazione.filter(**self.programmazione_filters).with_count()
+
+    def _get_progettazione_status(self):
+        return InterventoProgramma.progettazione.filter(**self.programmazione_filters).with_count()
+
+    def _get_in_corso_status(self):
+        return InterventoProgramma.in_corso.filter(**self.programmazione_filters).with_count()
+
+    def _get_conclusi_status(self):
+        return InterventoProgramma.conclusi.filter(**self.programmazione_filters).with_count()
 
 
     def get_aggregates(self):
@@ -113,33 +121,36 @@ class AggregatePageMixin(object):
         ##
 
         agg_dict = {'status': {
-            'piano': self.get_pianificazione_status(),
-            'programma': self.get_programmazione_status(),
-            'attuazione': self.get_attuazione_status(),
+            'programmazione': self._get_programmazione_status(),
+            'pianificazione': self._get_pianificazione_status(),
+            'attuazione': self._get_attuazione_status(),
+            'progettazione': self._get_progettazione_status(),
+            'in_corso': self._get_in_corso_status(),
+            'conclusi': self._get_conclusi_status(),
         }}
 
-        agg_dict['status']['piano']['percentage'] = 0.0
+        agg_dict['status']['pianificazione']['percentage'] = 0.0
         agg_dict['status']['attuazione']['percentage'] = 0.0
 
-        if agg_dict['status']['programma']['count'] > 0:
-            agg_dict['status']['piano']['percentage'] = 100.0 * (
-                agg_dict['status']['piano']['count'] / float(
-                    agg_dict['status']['programma']['count']))
+        if agg_dict['status']['programmazione']['count'] > 0:
+            agg_dict['status']['pianificazione']['percentage'] = 100.0 * (
+                agg_dict['status']['pianificazione']['count'] / float(
+                    agg_dict['status']['programmazione']['count']))
 
             agg_dict['status']['attuazione']['percentage'] = 100.0 * (
                 agg_dict['status']['attuazione']['count'] / float(
-                    agg_dict['status']['programma']['count']))
+                    agg_dict['status']['programmazione']['count']))
 
 
         # tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
-            agg_dict['tipo_immobile_aggregates_sum'] = self.get_aggr_tipo_immobile()
+            agg_dict['tipo_immobile_aggregates_sum'] = self._get_aggr_tipo_immobile()
             # tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
-            agg_dict['sogg_att'] = self.get_aggr_sogg_att()
+            agg_dict['sogg_att'] = self._get_aggr_sogg_att()
             # tipo sogg.att pie data
         if self.tipologia == self.HOME:
-            agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
+            agg_dict['tipologia_cedente_aggregates_sum'] = self._get_aggr_tipologia_cedente()
 
         # example interventi fetch
         agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')

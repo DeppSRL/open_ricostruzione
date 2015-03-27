@@ -10,13 +10,13 @@
     </div>
 
     <div class="row basic_spacer">
-        {% include '_data_block.html' with title='interventi a programma' data_dict=status.programma  %}
-        {% include '_data_block.html' with title='interventi a piano' data_dict=status.piano perc_label='a piano' %}
+        {% include '_data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}
+        {% include '_data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' %}
         {% include '_data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' %}
     </div>
 
     {#    execution status bar / status blocks #}
-    {% include "_execution_status.html" %}
+    {% include "_execution_status.html"  %}
         
     {# fetch progetti #}
     <div class="row basic_spacer" style="margin-bottom: 5px;">

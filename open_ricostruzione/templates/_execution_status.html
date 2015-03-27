@@ -1,80 +1,17 @@
 {# execution progress bar    #}
 <div class="row">
     <div class="col-md-12">
-        <div id="execution_graph" style="min-width: 310px; max-width: 1000px; height: 200px; margin: 0 auto" class="basic_spacer">
-
-        </div>
+        {#        graph will go here #}
     </div>
 </div>
 <div class="row">
     <div class="col-md-4">
-        N interv. in progettazione
+        In progettazione:{{ status.progettazione.count }}
     </div>
     <div class="col-md-4">
-            N interv. in corso
-        </div>
+        In corso:{{ status.in_corso.count  }}
+    </div>
     <div class="col-md-4">
-            N interv. conclusi
-        </div>
+        Conclusi:{{ status.conclusi.count }}
+    </div>
 </div>
-
-
-
-<script>
-    $(function () {
-        $('#execution_graph').highcharts({
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: 'Stato interv.in esecuzione'
-            },
-            xAxis: {
-                categories: ['Avanzamento interventi'],
-                lineWidth: 0,
-                minorGridLineWidth: 0,
-                gridLineColor: 'white',
-                lineColor: 'transparent',
-                labels: {
-                    enabled: false
-                },
-                minorTickLength: 0,
-                tickLength: 0
-            },
-            yAxis: {
-                min: 0,
-                lineWidth: 0,
-                minorGridLineWidth: 0,
-                gridLineColor: 'white',
-                lineColor: 'transparent',
-                labels: {
-                    enabled: false
-                },
-                minorTickLength: 0,
-                tickLength: 0
-
-            },
-            legend: {
-                reversed: true
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal'
-                }
-            },
-            series: [{
-                name: 'Conclusi',
-                data: [2],
-                color: "#ee5e29"
-            }, {
-                name: 'In corso',
-                data: [2],
-                color: "#f9825a"
-            }, {
-                name: 'In progettazione',
-                data: [3],
-                color: "#f9a487"
-            }]
-        });
-    });
-</script>

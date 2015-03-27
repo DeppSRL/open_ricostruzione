@@ -46,7 +46,11 @@ class AttuazioneManager(models.Manager):
 
 class ProgettazioneQuerySet(models.QuerySet):
     def with_count(self):
-        raise Exception
+        aggregate_dict = {
+            # "sum": Sum(''),
+            "count": Count('pk')
+        }
+        return self.aggregate(**aggregate_dict)
 
 
 class ProgettazioneManager(models.Manager):
@@ -84,4 +88,4 @@ class ConclusiQuerySet(models.QuerySet):
 class ConclusiManager(models.Manager):
     def get_queryset(self):
         stati_concl = [u'11', ]
-        return ConclusiQuerySet(self.model, using=self._db).ilter(interventopiano__intervento__stato__in=stati_concl)
+        return ConclusiQuerySet(self.model, using=self._db).filter(interventopiano__intervento__stato__in=stati_concl)
