@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Q
 from aggregate_if import Count, Sum
 from django.conf import settings
+from managers import ProgrammatiManager, PianificatiManager, AttuazioneManager, ProgettazioneManager, InCorsoManager, ConclusiManager
 from open_ricostruzione.utils.moneydate import moneyfmt
 
 
@@ -20,6 +21,7 @@ class Impresa(models.Model):
 
     def __unicode__(self):
         return u"{},{}".format(self.ragione_sociale, self.partita_iva)
+
 
 
 class InterventoProgramma(models.Model):
@@ -81,37 +83,32 @@ class InterventoProgramma(models.Model):
     categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
-    @staticmethod
-    def get_aggregates_sum(model, total=False, **kwargs ):
+    objects = ProgrammatiManager()
+    programmati = ProgrammatiManager()
+    pianificati = PianificatiManager()
+    attuazione = AttuazioneManager()
+    progettazione = ProgettazioneManager()
+    in_corso = InCorsoManager()
+    conclusi = ConclusiManager()
 
-        aggregation_struct = {}
-        if total:
-            aggregation_struct['totale'] = Sum('importo_generale')
-
-        for type in model.TIPOLOGIA:
-            # tipologia_slug = slugify(tip[1])
-            if model == TipoImmobile:
-                aggregation_struct["{}".format(type[0])] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=type[0]))
-            elif model == SoggettoAttuatore:
-                aggregation_struct["{}".format(type[0])] = Sum('importo_generale', only=Q(soggetto_attuatore__tipologia=type[0]))
-
-        return InterventoProgramma.objects.filter(**kwargs).aggregate(**aggregation_struct)
 
     @staticmethod
-    def get_aggregates_count(model, total=False):
+    def get_type_aggregates(model, **kwargs):
+        data = {}
+        filters = {}
 
-        filter_dict = {}
-        if total:
-            filter_dict['totale'] = Count('pk')
-
-        for tip in model.TIPOLOGIA:
+        for tipologia in model.TIPOLOGIA:
+            tipologia_name = model.TIPOLOGIA.__getitem__(tipologia[0])
             if model == TipoImmobile:
-                filter_dict["{}".format(tip[0])] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tip[0]))
+                filters["sum"] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tipologia[0]))
+                filters["count"] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tipologia[0]))
             elif model == SoggettoAttuatore:
-                filter_dict["{}".format(tip[0])] = Count('importo_generale',
-                                                         only=Q(soggetto_attuatore__tipologia=tip[0]))
+                filters["sum"] = Sum('importo_generale', only=Q(soggetto_attuatore__tipologia=tipologia[0]))
+                filters["count"] = Count('importo_generale', only=Q(soggetto_attuatore__tipologia=tipologia[0]))
 
-        return InterventoProgramma.objects.aggregate(**filter_dict)
+            data[tipologia_name] = InterventoProgramma.objects.filter(**kwargs).aggregate(**filters)
+
+        return data
 
     def __unicode__(self):
         return u"{} - {}".format(self.denominazione, self.territorio)
@@ -139,7 +136,7 @@ class TipoImmobile(models.Model):
 
     @staticmethod
     def get_tipologie():
-        return list(TipoImmobile.objects.all().values('denominazione','slug'))
+        return list(TipoImmobile.objects.all().values('denominazione', 'slug'))
 
     def __unicode__(self):
         return u"{} ({})".format(TipoImmobile.TIPOLOGIA[self.tipologia], self.slug, )
@@ -397,7 +394,7 @@ class Variante(models.Model):
         (u'2', u'PRESA_IN_CARICO', u'Presa in carico'),
         (u'3', u'AMMESSA', u'Ammessa'),
         (u'4', u'RESPINTA', u'Respinta'),
-        )
+    )
     tipologia = models.CharField(max_length=2, choices=TIPO_VARIANTE, blank=False, null=False, default='')
     stato = models.CharField(max_length=2, choices=STATO_VARIANTE, blank=False, null=False, default='')
     progetto = models.ForeignKey('Progetto', null=True, blank=True)
@@ -436,7 +433,7 @@ class Donazione(models.Model):
     interventi_programma = models.ManyToManyField(InterventoProgramma, through='DonazioneInterventoProgramma')
 
     @staticmethod
-    def get_aggregates_sum(total=False, **kwargs ):
+    def get_aggregates_sum(total=False, **kwargs):
 
         aggregation_struct = {}
         if total:
@@ -517,7 +514,7 @@ class DonazioneInterventoProgramma(models.Model):
 ##
 
 class Anagrafica(models.Model):
-    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False,unique=True)
+    id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
 
     class Meta:
         abstract = True
@@ -589,7 +586,7 @@ class UltimoAggiornamento(models.Model):
     TIPOLOGIA = Choices(
         (u'1', u'INTERVENTI', u'Interventi'),
         (u'2', u'DONAZIONI', u'Donazioni'),
-        )
+    )
     data = models.DateField(null=False, blank=False, auto_now=True)
     tipologia = models.CharField(max_length=2, choices=TIPOLOGIA, blank=False, null=False, default=u'')
 

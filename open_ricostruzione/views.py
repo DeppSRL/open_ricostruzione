@@ -88,17 +88,7 @@ class AggregatePageMixin(object):
         # creates the list of dict to be passed to the context.
         # calls the appropriate model function to get sums of the various categories of objects
         ##
-
-        values = []
-        for k, v in InterventoProgramma.get_aggregates_sum(model=model, **self.programmazione_filters).iteritems():
-            if v:
-                v = float(v)
-            else:
-                continue
-
-            values.append({'value': v, 'slug': k, 'label': model.TIPOLOGIA.__getitem__(k)})
-
-        return values
+        return InterventoProgramma.get_type_aggregates(model=model, **self.programmazione_filters)
 
     def get_aggr_tipo_immobile(self, ):
         return self._create_aggregate_int_progr(model=TipoImmobile, )
@@ -109,15 +99,8 @@ class AggregatePageMixin(object):
     def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH, ):
         return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
 
-
     def get_programmazione_status(self):
-        return {
-            'count': InterventoProgramma.objects.filter(**self.programmazione_filters).count(),
-            'money_value':
-                InterventoProgramma.objects.filter(**self.programmazione_filters).aggregate(Sum('importo_generale'))[
-                    'importo_generale__sum']
-        }
-
+        return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
 
     def get_pianificazione_status(self):
 
@@ -163,9 +146,9 @@ class AggregatePageMixin(object):
         # tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
             agg_dict['tipo_immobile_aggregates_sum'] = self.get_aggr_tipo_immobile()
-            # tipo sogg.att pie data
+        # tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
-            agg_dict['sogg_att_aggregates_sum'] = self.get_aggr_sogg_att()
+            agg_dict['sogg_att'] = self.get_aggr_sogg_att()
             # tipo sogg.att pie data
         if self.tipologia == self.HOME:
             agg_dict['tipologia_cedente_aggregates_sum'] = self.get_aggr_tipologia_cedente()
@@ -249,7 +232,8 @@ class TipoImmobileView(TemplateView, AggregatePageMixin):
         apm = AggregatePageMixin(
             tipologia=AggregatePageMixin.TIPO_IMMOBILE,
             programmazione_filters={'tipo_immobile': self.tipo_immobile},
-            pianificazione_filters={'intervento_programma__tipo_immobile': self.tipo_immobile}
+            pianificazione_filters={'intervento_programma__tipo_immobile': self.tipo_immobile},
+            attuazione_filters={'intervento_piano__intervento_programma__tipo_immobile=': self.tipo_immobile}
         )
         context.update(apm.get_aggregates())
         return context
@@ -273,7 +257,8 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
         apm = AggregatePageMixin(
             tipologia=AggregatePageMixin.SOGG_ATT,
             programmazione_filters={'soggetto_attuatore': self.sogg_att},
-            pianificazione_filters={'intervento_programma__soggetto_attuatore': self.sogg_att}
+            pianificazione_filters={'intervento_programma__soggetto_attuatore': self.sogg_att},
+            attuazione_filters={'intervento_piano__intervento_programma__soggetto_attuatore': self.sogg_att}
         )
         context.update(apm.get_aggregates())
         return context
