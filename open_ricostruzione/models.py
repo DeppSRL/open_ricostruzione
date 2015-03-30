@@ -23,7 +23,6 @@ class Impresa(models.Model):
         return u"{},{}".format(self.ragione_sociale, self.partita_iva)
 
 
-
 class InterventoProgramma(models.Model):
     TIPO_IMMOBILE_FENICE = Choices(
         (u'1', u'ALTRO', u'ALTRO'),
@@ -100,10 +99,9 @@ class InterventoProgramma(models.Model):
             tipologia_name = SoggettoAttuatore.TIPOLOGIA.__getitem__(tipologia_id)
             # count and sum for programmazione
             d = {'name': tipologia_name,
-                 'programmazione': InterventoProgramma.programmati.filter(soggetto_attuatore__tipologia=tipologia_id, **kwargs).with_count(),
-                 'pianificazione': InterventoProgramma.pianificati.filter(soggetto_attuatore__tipologia=tipologia_id, **kwargs).with_count(),
-                 'attuazione': InterventoProgramma.attuazione.filter(soggetto_attuatore__tipologia=tipologia_id, **kwargs).with_count(),
-                 }
+                 'attuazione': InterventoProgramma.attuazione.filter(soggetto_attuatore__tipologia=tipologia_id,
+                                                                     **kwargs).with_count(),
+            }
             data.append(d)
         return data
 
@@ -114,10 +112,13 @@ class InterventoProgramma(models.Model):
         for tipologia_id, tipologia_shortname in TipoImmobile.TIPOLOGIA:
             tipologia_name = TipoImmobile.TIPOLOGIA.__getitem__(tipologia_id)
             d = {'name': tipologia_name,
-                 'programmazione': InterventoProgramma.programmati.filter(tipo_immobile__tipologia=tipologia_id, **kwargs).with_count(),
-                 'pianificazione': InterventoProgramma.pianificati.filter(tipo_immobile__tipologia=tipologia_id, **kwargs).with_count(),
-                 'attuazione': InterventoProgramma.attuazione.filter(tipo_immobile__tipologia=tipologia_id, **kwargs).with_count(),
-                 }
+                 'programmazione': InterventoProgramma.programmati.filter(tipo_immobile__tipologia=tipologia_id,
+                                                                          **kwargs).with_count(),
+                 'pianificazione': InterventoProgramma.pianificati.filter(tipo_immobile__tipologia=tipologia_id,
+                                                                          **kwargs).with_count(),
+                 'attuazione': InterventoProgramma.attuazione.filter(tipo_immobile__tipologia=tipologia_id,
+                                                                     **kwargs).with_count(),
+            }
             data.append(d)
 
         return data
@@ -445,26 +446,19 @@ class Donazione(models.Model):
     interventi_programma = models.ManyToManyField(InterventoProgramma, through='DonazioneInterventoProgramma')
 
     @staticmethod
-    def get_aggregates_sum(total=False, **kwargs):
+    def get_aggregates(tipologia=None, **kwargs):
 
-        aggregation_struct = {}
-        if total:
-            aggregation_struct['totale'] = Sum('importo')
-
-        for tip in Donazione.TIPO_CEDENTE:
-            aggregation_struct["{}".format(tip[0])] = Sum('importo', only=Q(tipologia_cedente=tip[0]))
-
-        return Donazione.objects.filter(**kwargs).aggregate(**aggregation_struct)
-
-    @staticmethod
-    def get_aggregates_count(total=False, **kwargs):
-
-        aggregation_struct = {}
-        if total:
-            aggregation_struct['totale'] = Count('importo')
-
-        for tip in Donazione.TIPO_CEDENTE:
-            aggregation_struct["{}".format(tip[0])] = Count('importo', only=Q(tipologia_cedente=tip[0]))
+        if not tipologia:
+            aggregation_struct = {
+                'sum': Sum('importo'),
+                'count': Count('importo')
+            }
+        else:
+            tipologia_id, tipologia_shortname = tipologia
+            aggregation_struct = {
+                'sum': Sum('importo', only=Q(tipologia_cedente=tipologia_id)),
+                'count': Count('importo', only=Q(tipologia_cedente=tipologia_id))
+            }
 
         return Donazione.objects.filter(**kwargs).aggregate(**aggregation_struct)
 

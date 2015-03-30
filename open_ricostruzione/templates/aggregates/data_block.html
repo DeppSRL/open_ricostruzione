@@ -1,7 +1,7 @@
 {% load italianize %}
 <div class="col-md-4 data_block_border">
     <strong>{{ title|title }}</strong><br/>
-    n.interventi: {{ data_dict.count|default_if_none:0 }}<br/>
+    n.interventi: {{ data_dict.count|default_if_none:0|italianize:0 }}<br/>
     importo: {{ data_dict.sum|italianize|default_if_none:0 }} E<br/>
     {% if perc_label %}
         {{ data_dict.percentage|floatformat:2 }}% {{ perc_label }}

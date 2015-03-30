@@ -10,13 +10,13 @@
     </div>
 
     <div class="row basic_spacer">
-        {% include '_data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}
-        {% include '_data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' %}
-        {% include '_data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' %}
+        {% include 'aggregates/data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}
+        {% include 'aggregates/data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' %}
+        {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' %}
     </div>
 
     {#    execution status bar / status blocks #}
-    {% include "_execution_status.html"  %}
+    {% include "aggregates/execution_status.html" %}
         
     {# fetch progetti #}
     <div class="row basic_spacer" style="margin-bottom: 5px;">
@@ -27,18 +27,18 @@
     </div>
     <div class="row basic_spacer">
         <div class="col-md-6">
-            {% include '_intervento_block.html' with intprog=interventi_top_importo.0 %}
+            {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.0 %}
         </div>
         <div class="col-md-6">
-                {% include '_intervento_block.html' with intprog=interventi_top_importo.2 %}
+                {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.2 %}
         </div>
     </div>
     <div class="row basic_spacer">
         <div class="col-md-6">
-            {% include '_intervento_block.html' with intprog=interventi_top_importo.1 %}
+            {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.1 %}
         </div>
         <div class="col-md-6">
-                {% include '_intervento_block.html' with intprog=interventi_top_importo.3 %}
+                {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.3 %}
         </div>
     </div>
 
@@ -54,52 +54,30 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                {% for tipo_immobile in tipo_immobile_aggregates %}
-                    {{ tipo_immobile.name }}, programm:{{ tipo_immobile.programmazione }} pian:{{ tipo_immobile.pianificazione }} attuazione:{{ tipo_immobile.attuazione }}
-                    <br/>
-
-                {% endfor %}
+                <table>
+                    {% for tipo_immobile in tipo_immobile_aggregates %}
+                        <tr>
+                            <td><strong>{{ tipo_immobile.name }}</strong></td>
+                            <td>programma:{{ tipo_immobile.programmazione }}</td>
+                            <td>piano:{{ tipo_immobile.pianificazione }}</td>
+                            <td>attuazione:{{ tipo_immobile.attuazione }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
     {% endblock %}
 
     {# aggregazione tipo sogg. att #}
     {% block soggetto-attuatore %}
-        {% include '_pie_chart.html' with pie_title="Aggregazione per tipo sogg.attuatore - ammontare" data_list=sogg_att_aggregates_sum %}
 
-        <div class="row">
-            <div class="col-md-12">
-                {% for sa in sogg_att_aggregates %}
-                    {{ sa.name }}, programm:{{ sa.programmazione }} pian:{{ sa.pianificazione }} attuazione:{{ sa.attuazione }}
-                    <br/>
+        {% include 'aggregates/sogg_att_block.html' with pie_title="Aggregazione per tipo sogg.attuatore - ammontare" %}
 
-                {% endfor %}
-            </div>
-        </div>
     {% endblock %}
 
     {# aggregazione tipologia cedente #}
     {% block donazioni %}
-        <div class="row" style="margin-bottom: 5px;">
-            <div class="col-md-12">
-                <strong>Donazioni</strong>
-            </div>
-        </div>
-        {% if tipologia_cedente_aggregates_sum %}
-            {% include '_pie_chart.html' with pie_title="Aggregazione per tipologia cedente - ammontare" data_list=tipologia_cedente_aggregates_sum %}
-        {% else %}
-            <div class="row" style="margin-bottom: 5px;">
-                <div class="col-md-12">
-                    <strong>Non sono presenti donazioni per il Comune di {{ territorio.nome_con_provincia }}</strong>
-                </div>
-            </div>
-        {% endif %}
-
-         <div class="row" style="margin-bottom: 5px;">
-            <div class="col-md-12">
-                <a href="{% url 'donazioni' %}">Vedi tutte le donazioni</a>
-            </div>
-        </div>
+        {% include 'aggregates/donazioni_block.html' %}
     {% endblock %}
 
 

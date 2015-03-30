@@ -1,0 +1,40 @@
+{% load italianize %}
+<div class="row" style="margin-bottom: 5px;">
+    <div class="col-md-12">
+        <strong>Donazioni</strong>
+    </div>
+</div>
+{% if donazioni_aggregates %}
+    <div class="row" style="margin-bottom: 5px;">
+        <div class="col-md-2">
+            Sono state ricevute {{ donazioni_totale.count|italianize:0 }} donazioni per {{ donazioni_totale.sum|italianize }} euro<br/>
+            <a href="{% url 'donazioni' %}">Vedi tutte le donazioni</a>
+        </div>
+        <div class="col-md-8" id="donazioni_pie">piechart</div>
+        <div class="col-md-2">legende</div>
+    </div>
+
+
+    <script>
+
+        var donazioni_data = [];
+
+        {% for item in donazioni_aggregates %}
+            {% if item.sum  and item.sum > 0 %}
+                donazioni_data.push(['{{ item.name }}',{{ item.sum|floatformat:2 }}]);
+            {% endif %}
+        {% endfor %}
+
+        $(document).ready(
+            paint_chart('{{ pie_title }}',"donazioni_pie",donazioni_data)
+        )
+    </script>
+
+
+    {% else %}
+        <div class="row" style="margin-bottom: 5px;">
+            <div class="col-md-12">
+                <strong>Non sono presenti donazioni per il Comune di {{ territorio.nome_con_provincia }}</strong>
+            </div>
+        </div>
+{% endif %}

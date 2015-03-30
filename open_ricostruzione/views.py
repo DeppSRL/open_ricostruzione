@@ -3,7 +3,7 @@ from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Sum, Count
 from django.conf import settings
 from rest_framework import generics
 from open_ricostruzione.forms import InterventoProgrammaSearchFormHome
@@ -60,25 +60,26 @@ class AggregatePageMixin(object):
         self.tipologia = tipologia
         self.programmazione_filters = programmazione_filters
 
-    def _get_aggr_tipologia_cedente(self, ):
+    def _get_aggr_donazioni(self, ):
         values = []
-        not_null = False
-        for k, v in Donazione.get_aggregates_sum(**self.programmazione_filters).iteritems():
-            if v:
-                v = float(v)
-                not_null = True
-            else:
-                continue
 
-            values.append({'value': v, 'slug': k, 'label': Donazione.TIPO_CEDENTE.__getitem__(k)})
+        for tipologia in Donazione.TIPO_CEDENTE:
+            d = {'name': tipologia[1]}
+            d.update(Donazione.get_aggregates(tipologia=tipologia, **self.programmazione_filters))
+            values.append(d)
 
-        if not_null:
-            return values
-        else:
-            return None
+        return values
 
-    def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH):
-        return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
+    def _get_totale_donazioni(self):
+        return Donazione.get_aggregates(tipologia=None, **self.programmazione_filters)
+
+    def fetch_interventi_programma(self, order_by,):
+        n_objects = settings.N_PROGETTI_FETCH
+        return list(InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
+
+    def fetch_sogg_att(self):
+        n_objects = settings.N_SOGG_ATT_FETCH
+        return list(SoggettoAttuatore.objects.filter(**self.programmazione_filters).annotate(Count('interventoprogramma')).order_by('-interventoprogramma__count')[0:n_objects])
 
     def _get_programmazione_status(self):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
@@ -135,10 +136,11 @@ class AggregatePageMixin(object):
             # tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
             agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(**self.programmazione_filters)
+            agg_dict['sogg_att_top'] = self.fetch_sogg_att()
             # tipo sogg.att pie data
         if self.tipologia == self.HOME:
-            agg_dict['tipologia_cedente_aggregates_sum'] = self._get_aggr_tipologia_cedente()
-
+            agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni()
+            agg_dict['donazioni_totale'] = self._get_totale_donazioni()
 
         return agg_dict
 
