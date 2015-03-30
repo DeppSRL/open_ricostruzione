@@ -8,6 +8,7 @@ from django.conf import settings
 from rest_framework import generics
 from open_ricostruzione.forms import InterventoProgrammaSearchFormHome
 from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa, Intervento
+from open_ricostruzione.utils import convert2dict
 from territori.models import Territorio
 from .serializers import DonazioneSerializer
 
@@ -44,6 +45,7 @@ class AggregatePageMixin(object):
     ##
 
     programmazione_filters = None
+    sogg_att_filters = None
     tipologia = None
 
     TERRITORIO = 0
@@ -52,13 +54,14 @@ class AggregatePageMixin(object):
     SOGG_ATT = 3
     HOME = 4
 
-    def __init__(self, tipologia, programmazione_filters):
+    def __init__(self, tipologia, programmazione_filters, sogg_att_filters):
         ##
         # initialize class with type and filter for programmazione / pianificazione
         ##
 
         self.tipologia = tipologia
         self.programmazione_filters = programmazione_filters
+        self.sogg_att_filters = sogg_att_filters
 
     def _get_aggr_donazioni(self, ):
         values = []
@@ -73,13 +76,17 @@ class AggregatePageMixin(object):
     def _get_totale_donazioni(self):
         return Donazione.get_aggregates(tipologia=None, **self.programmazione_filters)
 
-    def fetch_interventi_programma(self, order_by,):
+    def fetch_interventi_programma(self, order_by, ):
         n_objects = settings.N_PROGETTI_FETCH
         return list(InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
 
     def fetch_sogg_att(self):
         n_objects = settings.N_SOGG_ATT_FETCH
-        return list(SoggettoAttuatore.objects.filter(**self.programmazione_filters).annotate(Count('interventoprogramma')).order_by('-interventoprogramma__count')[0:n_objects])
+        return list(SoggettoAttuatore.objects.
+                    filter(**self.sogg_att_filters).
+                    annotate(Count('interventoprogramma')).
+                    order_by('-interventoprogramma__count').
+                    values('denominazione', 'interventoprogramma__count')[0:n_objects])
 
     def _get_programmazione_status(self):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
@@ -132,10 +139,12 @@ class AggregatePageMixin(object):
 
         # tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
-            agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates( **self.programmazione_filters)
+            agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates(
+                **self.programmazione_filters)
             # tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
-            agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(**self.programmazione_filters)
+            agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(
+                **self.programmazione_filters)
             agg_dict['sogg_att_top'] = self.fetch_sogg_att()
             # tipo sogg.att pie data
         if self.tipologia == self.HOME:
@@ -171,11 +180,13 @@ class LocalitaView(TemplateView, AggregatePageMixin):
             apm = AggregatePageMixin(
                 tipologia=AggregatePageMixin.VARI_TERRITORI,
                 programmazione_filters={'vari_territori': True},
+                sogg_att_filters={'interventoprogramma__vari_territori': True}
             )
         else:
             apm = AggregatePageMixin(
                 tipologia=AggregatePageMixin.TERRITORIO,
                 programmazione_filters={'territorio': self.territorio},
+                sogg_att_filters={'interventoprogramma__territorio__slug': self.territorio.slug}
             )
 
         context.update(apm.get_aggregates())

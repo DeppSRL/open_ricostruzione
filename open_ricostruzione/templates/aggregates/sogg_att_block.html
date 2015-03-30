@@ -18,18 +18,16 @@
     </div>
 </div>
 
+{% if sogg_att_aggregates %}
+    <script>
 
-<script>
+        var sogg_att_data = [];
+        {% for item in sogg_att_aggregates %}
+            {% if item.attuazione.sum  and item.attuazione.sum > 0 %}
+                sogg_att_data.push(['{{ item.name }}',{{ item.attuazione.sum|floatformat:2 }}]);
+            {% endif %}
+        {% endfor %}
 
-    var sogg_att_data = [];
-
-    {% for item in sogg_att_aggregates %}
-        {% if item.attuazione.sum  and item.attuazione.sum > 0 %}
-            sogg_att_data.push(['{{ item.name }}',{{ item.attuazione.sum|floatformat:2 }}]);
-        {% endif %}
-    {% endfor %}
-
-    $(document).ready(
-        paint_chart('{{ pie_title }}',"sogg_att_pie",sogg_att_data)
-    )
-</script>
+        $(document).ready(paint_chart('{{ pie_title }}',"sogg_att_pie",sogg_att_data));
+    </script>
+{% endif %}

@@ -102,6 +102,9 @@ class InterventoProgramma(models.Model):
                  'attuazione': InterventoProgramma.attuazione.filter(soggetto_attuatore__tipologia=tipologia_id,
                                                                      **kwargs).with_count(),
             }
+
+            if d['attuazione']['count'] == 0:
+                continue
             data.append(d)
         return data
 

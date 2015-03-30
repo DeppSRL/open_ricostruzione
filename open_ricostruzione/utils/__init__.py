@@ -3,6 +3,7 @@ import csv
 import codecs
 import cStringIO
 from HTMLParser import HTMLParser
+from itertools import groupby
 import re
 
 class UTF8Recoder:
@@ -98,12 +99,6 @@ class UnicodeWriter:
         for row in rows:
             self.writerow(row)
 
-
-def remove_img_tags(data):
-    p = re.compile(r'<img.*?/>')
-    return p.sub('', data)
-
-
 class MLStripper(HTMLParser):
     def __init__(self):
         self.reset()
@@ -121,3 +116,16 @@ def strip_tags(html):
     s.feed(html)
     return s.get_data()
 
+
+# converts a qset into a dict using the key field
+def convert2dict(queryset, key_field):
+    if type(key_field) == tuple or type(key_field) == list:
+        if len(key_field) == 0:
+            raise Exception
+        else:
+            indice_keygen = lambda x: tuple(x[key] for key in key_field)
+
+    else:
+        indice_keygen = lambda x: x[key_field]
+
+    return dict((k, list(v)) for k, v in groupby(queryset, key=indice_keygen))
