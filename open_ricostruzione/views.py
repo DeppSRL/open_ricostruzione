@@ -77,19 +77,6 @@ class AggregatePageMixin(object):
         else:
             return None
 
-    def _create_aggregate_int_progr(self, model):
-        ##
-        # creates the list of dict to be passed to the context.
-        # calls the appropriate model function to get sums of the various categories of objects
-        ##
-        return InterventoProgramma.get_type_aggregates(model=model, **self.programmazione_filters)
-
-    def _get_aggr_tipo_immobile(self, ):
-        return self._create_aggregate_int_progr(model=TipoImmobile, )
-
-    def _get_aggr_sogg_att(self, ):
-        return self._create_aggregate_int_progr(model=SoggettoAttuatore, )
-
     def fetch_interventi_programma(self, order_by, number=settings.N_PROGETTI_FETCH):
         return InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:number]
 
@@ -139,19 +126,20 @@ class AggregatePageMixin(object):
                 agg_dict['status']['attuazione']['count'] / float(
                     agg_dict['status']['programmazione']['count']))
 
+        # top importo interventi fetch
+        agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
 
         # tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
-            agg_dict['tipo_immobile_aggregates_sum'] = self._get_aggr_tipo_immobile()
+            agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates( **self.programmazione_filters)
             # tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
-            agg_dict['sogg_att'] = self._get_aggr_sogg_att()
+            agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(**self.programmazione_filters)
             # tipo sogg.att pie data
         if self.tipologia == self.HOME:
             agg_dict['tipologia_cedente_aggregates_sum'] = self._get_aggr_tipologia_cedente()
 
-        # example interventi fetch
-        agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
+
         return agg_dict
 
 

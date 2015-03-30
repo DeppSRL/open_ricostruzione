@@ -54,55 +54,28 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div id="tipo_immobile_chart"></div>
+                {% for tipo_immobile in tipo_immobile_aggregates %}
+                    {{ tipo_immobile.name }}, programm:{{ tipo_immobile.programmazione }} pian:{{ tipo_immobile.pianificazione }} attuazione:{{ tipo_immobile.attuazione }}
+                    <br/>
+
+                {% endfor %}
             </div>
         </div>
-
-        <script>
-        $(function () {
-            $('#tipo_immobile_chart').highcharts({
-                chart: {
-                    type: 'column'
-                },
-                title: {
-                    text: ''
-                },
-                xAxis: {
-                    categories: ['Chiese', 'Ospedali', 'Altro']
-                },
-                yAxis: {
-                    min: 0,
-                    title: {
-                        text: ''
-                    }
-                },
-                tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-                    shared: true
-                },
-                plotOptions: {
-                    column: {
-                        stacking: 'percent'
-                    }
-                },
-                series: [{
-                    name: 'Programmati',
-                    data: [5, 3, 4]
-                }, {
-                    name: 'Pianificati',
-                    data: [2, 2, 3]
-                }, {
-                    name: 'In attuazione',
-                    data: [3, 4, 4]
-                }]
-            });
-        });
-        </script>
     {% endblock %}
 
     {# aggregazione tipo sogg. att #}
     {% block soggetto-attuatore %}
         {% include '_pie_chart.html' with pie_title="Aggregazione per tipo sogg.attuatore - ammontare" data_list=sogg_att_aggregates_sum %}
+
+        <div class="row">
+            <div class="col-md-12">
+                {% for sa in sogg_att_aggregates %}
+                    {{ sa.name }}, programm:{{ sa.programmazione }} pian:{{ sa.pianificazione }} attuazione:{{ sa.attuazione }}
+                    <br/>
+
+                {% endfor %}
+            </div>
+        </div>
     {% endblock %}
 
     {# aggregazione tipologia cedente #}

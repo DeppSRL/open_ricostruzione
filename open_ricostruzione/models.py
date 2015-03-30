@@ -93,20 +93,32 @@ class InterventoProgramma(models.Model):
 
 
     @staticmethod
-    def get_type_aggregates(model, **kwargs):
-        data = {}
-        filters = {}
+    def get_sogg_attuatore_aggregates(**kwargs):
+        data = []
 
-        for tipologia in model.TIPOLOGIA:
-            tipologia_name = model.TIPOLOGIA.__getitem__(tipologia[0])
-            if model == TipoImmobile:
-                filters["sum"] = Sum('importo_generale', only=Q(tipo_immobile__tipologia=tipologia[0]))
-                filters["count"] = Count('importo_generale', only=Q(tipo_immobile__tipologia=tipologia[0]))
-            elif model == SoggettoAttuatore:
-                filters["sum"] = Sum('importo_generale', only=Q(soggetto_attuatore__tipologia=tipologia[0]))
-                filters["count"] = Count('importo_generale', only=Q(soggetto_attuatore__tipologia=tipologia[0]))
+        for tipologia_id, tipologia_shortname in SoggettoAttuatore.TIPOLOGIA:
+            tipologia_name = SoggettoAttuatore.TIPOLOGIA.__getitem__(tipologia_id)
+            # count and sum for programmazione
+            d = {'name': tipologia_name,
+                 'programmazione': InterventoProgramma.programmati.filter(soggetto_attuatore__tipologia=tipologia_id, **kwargs).with_count(),
+                 'pianificazione': InterventoProgramma.pianificati.filter(soggetto_attuatore__tipologia=tipologia_id, **kwargs).with_count(),
+                 'attuazione': InterventoProgramma.attuazione.filter(soggetto_attuatore__tipologia=tipologia_id, **kwargs).with_count(),
+                 }
+            data.append(d)
+        return data
 
-            data[tipologia_name] = InterventoProgramma.objects.filter(**kwargs).aggregate(**filters)
+    @staticmethod
+    def get_tipo_immobile_aggregates(**kwargs):
+        data = []
+
+        for tipologia_id, tipologia_shortname in TipoImmobile.TIPOLOGIA:
+            tipologia_name = TipoImmobile.TIPOLOGIA.__getitem__(tipologia_id)
+            d = {'name': tipologia_name,
+                 'programmazione': InterventoProgramma.programmati.filter(tipo_immobile__tipologia=tipologia_id, **kwargs).with_count(),
+                 'pianificazione': InterventoProgramma.pianificati.filter(tipo_immobile__tipologia=tipologia_id, **kwargs).with_count(),
+                 'attuazione': InterventoProgramma.attuazione.filter(tipo_immobile__tipologia=tipologia_id, **kwargs).with_count(),
+                 }
+            data.append(d)
 
         return data
 
