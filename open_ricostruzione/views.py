@@ -7,7 +7,7 @@ from django.db.models.aggregates import Sum, Count
 from django.conf import settings
 from rest_framework import generics
 from open_ricostruzione.forms import InterventoProgrammaSearchFormHome
-from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa, Intervento
+from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa, Intervento, DonazioneInterventoProgramma
 from open_ricostruzione.utils import convert2dict
 from territori.models import Territorio
 from .serializers import DonazioneSerializer
@@ -46,6 +46,7 @@ class AggregatePageMixin(object):
 
     programmazione_filters = None
     sogg_att_filters = None
+    donazione_intervento_filters = {}
     tipologia = None
 
     TERRITORIO = 0
@@ -61,6 +62,11 @@ class AggregatePageMixin(object):
 
         self.tipologia = tipologia
         self.programmazione_filters = programmazione_filters
+
+        # transforms programmazione filters into donazioneIntervento filters
+        for k, v in programmazione_filters.iteritems():
+            self.donazione_intervento_filters["intervento_programma__{}".format(k)] = v
+
         self.sogg_att_filters = sogg_att_filters
 
     def _get_aggr_donazioni(self, ):
@@ -75,6 +81,20 @@ class AggregatePageMixin(object):
 
     def _get_totale_donazioni(self):
         return Donazione.get_aggregates(tipologia=None, **self.programmazione_filters)
+
+    def _get_totale_donazioni_interventi(self):
+        return DonazioneInterventoProgramma.get_aggregates(**self.donazione_intervento_filters)
+
+    def _get_aggr_donazioni_interventi(self):
+        values = []
+
+        for tipologia in Donazione.TIPO_CEDENTE:
+            d = {'name': tipologia[1]}
+            d.update(DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
+            values.append(d)
+
+        return values
+
 
     def fetch_interventi_programma(self, order_by, ):
         n_objects = settings.N_PROGETTI_FETCH
@@ -141,15 +161,20 @@ class AggregatePageMixin(object):
         if self.tipologia != self.TIPO_IMMOBILE:
             agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates(
                 **self.programmazione_filters)
-            # tipo sogg.att data
+        # tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
             agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(
                 **self.programmazione_filters)
             agg_dict['sogg_att_top'] = self.fetch_sogg_att()
-            # tipo sogg.att pie data
-        agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni()
-        agg_dict['donazioni_totale'] = self._get_totale_donazioni()
-
+        # donazioni data
+        # if home or localita page: use programmazione filters ( no filters or territorio filters)
+        # else (tipo immobile) use DonazioneInterventoProgramma filters
+        if self.tipologia == self.HOME or self.tipologia == self.TERRITORIO:
+            agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni()
+            agg_dict['donazioni_totale'] = self._get_totale_donazioni()
+        else:
+            agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni_interventi()
+            agg_dict['donazioni_totale'] = self._get_totale_donazioni_interventi()
         return agg_dict
 
 
@@ -226,6 +251,7 @@ class TipoImmobileView(TemplateView, AggregatePageMixin):
         apm = AggregatePageMixin(
             tipologia=AggregatePageMixin.TIPO_IMMOBILE,
             programmazione_filters={'tipo_immobile': self.tipo_immobile},
+            sogg_att_filters={'interventoprogramma__tipo_immobile': self.tipo_immobile}
         )
         context.update(apm.get_aggregates())
         return context
@@ -249,6 +275,7 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
         apm = AggregatePageMixin(
             tipologia=AggregatePageMixin.SOGG_ATT,
             programmazione_filters={'soggetto_attuatore': self.sogg_att},
+            sogg_att_filters={}
         )
         context.update(apm.get_aggregates())
         return context
