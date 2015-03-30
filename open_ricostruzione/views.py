@@ -147,9 +147,8 @@ class AggregatePageMixin(object):
                 **self.programmazione_filters)
             agg_dict['sogg_att_top'] = self.fetch_sogg_att()
             # tipo sogg.att pie data
-        if self.tipologia == self.HOME:
-            agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni()
-            agg_dict['donazioni_totale'] = self._get_totale_donazioni()
+        agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni()
+        agg_dict['donazioni_totale'] = self._get_totale_donazioni()
 
         return agg_dict
 
@@ -263,6 +262,7 @@ class HomeView(TemplateView, AggregatePageMixin):
         apm = AggregatePageMixin(
             tipologia=AggregatePageMixin.HOME,
             programmazione_filters={},
+            sogg_att_filters={}
         )
         context.update(apm.get_aggregates())
         return context
