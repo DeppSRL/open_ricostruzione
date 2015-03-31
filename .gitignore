@@ -8,6 +8,7 @@ log/*
 config/
 /static/
 open_ricostruzione/log/*
+open_ricostruzione/static
 requirements/local.txt
 open_ricostruzione/media
 open_ricostruzione/migrations/
