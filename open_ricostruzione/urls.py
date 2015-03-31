@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib import admin
+from django.views.generic.base import TemplateView
 from rest_framework import routers, serializers, viewsets
 from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
@@ -63,6 +64,7 @@ urlpatterns = patterns('',
                        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
                        url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaView.as_view(), name='impresa'),
                        url(r'^donazioni/$', DonazioniListView.as_view(), name='donazioni'),
+                       url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
 
 )
 
