@@ -62,10 +62,27 @@
                     </ul>
                 </li>
 {#                IMPRESE               #}
-                <li class="">
-                    <a class="" href="{% url 'lista-imprese' %}" >
-                        Imprese coinvolte
+                <li class="dropdown-submenu">
+                    <a class="">
+                        Quali sono le imprese coinvolte?
+                        <span class="caret"></span>
                     </a>
+
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
+                        <li>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form role="search" class="pull-left autosubmit" action="{% url 'impresa-search' %}" method="get">
+                                        {{ impresa_search_form }}
+                                    </form>
+                                </div>
+                            </div>
+
+                        </li>
+                        <li>
+                            <a href="{% url 'lista-imprese' %}" >Lista imprese</a>
+                        </li>
+                    </ul>
 
                 </li>
             </ul>

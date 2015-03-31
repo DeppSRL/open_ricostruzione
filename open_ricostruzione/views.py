@@ -6,7 +6,7 @@ from django.views.generic import TemplateView, DetailView, ListView, RedirectVie
 from django.db.models.aggregates import Sum, Count
 from django.conf import settings
 from rest_framework import generics
-from open_ricostruzione.forms import InterventoProgrammaSearchFormHome
+from open_ricostruzione.forms import InterventoProgrammaSearchFormNavbar
 from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa, Intervento, DonazioneInterventoProgramma
 from open_ricostruzione.utils import convert2dict
 from territori.models import Territorio
@@ -364,10 +364,26 @@ class InterventoRedirectView(RedirectView):
 
         kwargs.update({'slug': intervento_prog.slug})
 
-        # redirects to bilancio-overview for the latest bilancio available
-
         try:
             url = reverse('intervento-programma', args=args, kwargs=kwargs)
+        except NoReverseMatch:
+            return reverse('404')
+
+        return url
+
+class ImpresaRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+
+        # get impresa data from the request
+        try:
+            impresa = get_object_or_404(Impresa,slug=self.request.GET.get('impresa', 0))
+        except Http404:
+            return reverse('404')
+
+        kwargs.update({'slug': impresa.slug})
+
+        try:
+            url = reverse('impresa', args=args, kwargs=kwargs)
         except NoReverseMatch:
             return reverse('404')
 
