@@ -369,7 +369,8 @@ class Command(BaseCommand):
                         impr, _ = Impresa.objects.get_or_create(
                             partita_iva=impresa['p_iva'],
                             defaults={
-                                'ragione_sociale': impresa['rag_soc']
+                                'ragione_sociale': impresa['rag_soc'],
+                                'slug': slugify(u"{}-{}".format(impresa['rag_soc'][:45], impresa['p_iva']))
                             }
                         )
                         intr.imprese.add(impr)
