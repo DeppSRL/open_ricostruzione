@@ -3,7 +3,7 @@
     <div class="container-fluid">
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="dropdown-submenu">
+                <li class="dropdown">
 
 {#                     DOVE           #}
 
@@ -14,7 +14,7 @@
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
                         {% regroup territori_cratere by prov as group %}
                         {% for g in group %}
-                            <li class="dropdown-submenu">
+                            <li class="dropdown">
                                 <a tabindex="-1" href="#">{{ g.list.0.provincia_name|title }} <span class="glyphicon glyphicon-triangle-right"></span> </a>
                                 <ul class="dropdown-menu">
                                     {% for item in g.list %}
@@ -30,7 +30,7 @@
                     </ul>
                 </li>
 {#                COSA         #}
-                <li class="dropdown-submenu">
+                <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                         Per cosa?
                         <span class="caret"></span>
@@ -45,7 +45,7 @@
                 </li>
 
 {#                RESPONSABILI         #}
-                <li class="dropdown-submenu">
+                <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                         Chi &egrave; il responsabile?
                         <span class="caret"></span>
@@ -62,14 +62,17 @@
                     </ul>
                 </li>
 {#                IMPRESE               #}
-                <li class="dropdown-submenu">
-                    <a class="">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                         Quali sono le imprese coinvolte?
                         <span class="caret"></span>
                     </a>
 
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="">
                         <li>
+                            <a href="{% url 'lista-imprese' %}" >Tutte le imprese</a>
+                        </li>
+                        <li style="padding:10px;">
                             <div class="row">
                                 <div class="col-md-12">
                                     <form role="search" class="pull-left autosubmit" action="{% url 'impresa-search' %}" method="get">
@@ -79,9 +82,7 @@
                             </div>
 
                         </li>
-                        <li>
-                            <a href="{% url 'lista-imprese' %}" >Lista imprese</a>
-                        </li>
+
                     </ul>
 
                 </li>

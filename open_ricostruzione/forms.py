@@ -24,7 +24,7 @@ class ImpresaSearchFormNavbar(forms.Form):
         label='',
         widget=ImpresaChoices.widget(
             select2_options={
-                'width': '48em',
+                'width': '20em',
                 'placeholder': _(u"CERCA UN'IMPRESA"),
             }
         )
