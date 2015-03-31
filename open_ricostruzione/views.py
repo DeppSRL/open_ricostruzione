@@ -347,8 +347,25 @@ class InterventoProgrammaView(DetailView):
     template_name = 'intervento_programma.html'
 
 
-class ImpresaView(TemplateView):
-    template_name = 'home.html'
+class ImpresaDetailView(DetailView):
+    model = Impresa
+    template_name = 'impresa.html'
+    impresa = None
+
+    def get(self, request, *args, **kwargs):
+        # get data from the request
+        try:
+            self.impresa = Impresa.objects.get(slug=kwargs['slug'])
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect(reverse('404'))
+        return super(ImpresaDetailView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ImpresaDetailView, self).get_context_data(**kwargs)
+        context['impresa'] = self.impresa
+
+        return context
+
 
 
 # redirects visits coming from the autocomplete search to the intervento programma detail page

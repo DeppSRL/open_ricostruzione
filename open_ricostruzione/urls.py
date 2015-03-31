@@ -6,7 +6,7 @@ from django.views.generic.base import TemplateView
 from rest_framework import routers, serializers, viewsets
 from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
-    ListaImpreseView, ImpresaView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView
+    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView
 
 
 # Serializers define the API representation.
@@ -60,7 +60,7 @@ urlpatterns = patterns('',
        url(r'^sogg_attuatore/(?P<slug>[-\w]+)/$', SoggettoAttuatoreView.as_view(),name='sogg-attuatore'),
        url(r'^intervento_programma/(?P<slug>[-\w]+)/$', InterventoProgrammaView.as_view(), name='intervento-programma'),
        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
-       url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaView.as_view(), name='impresa'),
+       url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaDetailView.as_view(), name='impresa'),
        url(r'^donazioni/$', DonazioniListView.as_view(), name='donazioni'),
 
        # todo: remove following url
