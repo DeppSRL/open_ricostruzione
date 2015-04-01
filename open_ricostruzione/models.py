@@ -479,60 +479,14 @@ class Donazione(models.Model):
 
 
 class DonazioneInterventoProgramma(models.Model):
-    importo = models.DecimalField(decimal_places=2, max_digits=15, default=0.00, blank=False, null=False)
     donazione = models.ForeignKey('Donazione', blank=False, null=False)
     intervento_programma = models.ForeignKey('InterventoProgramma', blank=False, null=False)
-
-    @staticmethod
-    def get_aggregates(tipologia=None, **kwargs):
-        if not tipologia:
-            aggregation_struct = {
-                'sum': Sum('importo'),
-                'count': Count('importo')
-            }
-        else:
-            tipologia_id, tipologia_shortname = tipologia
-            aggregation_struct = {
-                'sum': Sum('importo', only=Q(donazione__tipologia_cedente=tipologia_id)),
-                'count': Count('importo', only=Q(donazione__tipologia_cedente=tipologia_id))
-            }
-
-        return DonazioneInterventoProgramma.objects.filter(**kwargs).aggregate(**aggregation_struct)
-
-    def clean(self):
-        # Check that SUM(importo donazioni intervento) <= donazione.importo and that self.import >0
-
-        if self.importo <= Decimal(0):
-            raise ValidationError("L'importo deve essere maggiore di zero")
-
-        importo_donazioni_intervento = DonazioneInterventoProgramma. \
-            objects.filter(donazione=self.donazione).exclude(pk=self.pk).aggregate(Sum('importo'))['importo__sum']
-
-        if not importo_donazioni_intervento:
-            importo_donazioni_intervento = 0
-
-        difference = self.donazione.importo - Decimal(importo_donazioni_intervento)
-
-        if difference == Decimal(0):
-            raise ValidationError(
-                u'Non e\' possibile inserire donazioni ad intervento per la donazione selezionata. Importo massimo raggiunto')
-
-        if difference < self.importo:
-            raise ValidationError(u'Importo massimo disponibile per la donazione a intervento:{}'.format(difference))
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-
-        # before saving calls validation function
-        self.full_clean()
-
-        super(DonazioneInterventoProgramma, self).save()
 
     class Meta:
         verbose_name_plural = u'Donazioni a Interventi a programma'
 
     def __unicode__(self):
-        return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.importo)
+        return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.donazione.importo)
 
 ##
 # ANAGRAFICHE
