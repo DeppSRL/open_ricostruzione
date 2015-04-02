@@ -93,9 +93,9 @@ class Territorio(models.Model):
     @property
     def codice(self):
         if self.tipologia == u'C':
-            return self.cod_com
+            return self.tipologia
         elif self.tipologia == u'P':
-            return self.cod_prov
+            return self.tipologia
         else:
             return self.cod_reg
 

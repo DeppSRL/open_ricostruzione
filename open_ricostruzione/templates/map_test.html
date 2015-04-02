@@ -40,11 +40,11 @@
 
 {% block extra-js %}
     <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/countries.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/emilia.json' %}"></script>
 
     <script type="text/javascript">
 
-		var map = L.map('map').setView([40.8, 12], 4);
+		var map = L.map('map').setView([44.6500, 10.9333], 8);
 
         var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
@@ -63,9 +63,9 @@
 		};
 
 		info.update = function (props) {
-			this._div.innerHTML = '<h4>US Population Density</h4>' +  (props ?
-				'<b>' + props.name + '</b><br />' + props.density + ' people / mi<sup>2</sup>'
-				: 'Hover over a state');
+			this._div.innerHTML = '<h4>Title</h4>' +  (props ?
+				'<b>' + props.name + '</b><br />' + props.density + ' Euro'
+				: 'Passa sopra un Comune');
 		};
 
 		info.addTo(map);
@@ -90,7 +90,7 @@
 				color: 'white',
 				dashArray: '3',
 				fillOpacity: 0.7,
-				fillColor: getColor(feature.properties.density)
+				fillColor: getColor(feature.properties.value)
 			};
 		}
 
@@ -130,37 +130,63 @@
 			});
 		}
 
-		geojson = L.geoJson(statesData, {
+
+        var comuniData ={// alpha 3 iso code
+{#            {% for t in map_values %}#}
+{#                "{{ t.istat_code }}": {#}
+{#                    "label": "{{ t.label }}",#}
+{#                    "url": "",#}
+{#                    "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')#}
+{#                }{% if not forloop.last %},{% endif %}#}
+{#            {% endfor %}#}
+            "8036023": {
+                "url": "",
+                "label": "Modena",
+                "value": "100"
+                }
+        };
+        $.each(comuniEmilia.features, function(index, feature){
+            var id = feature.properties.codice;
+
+            if (id in comuniData){
+                feature.properties.url = comuniData[id].url;
+                feature.properties.label = comuniData[id].label;
+                feature.properties.value = comuniData[id].value;
+
+            }
+        });
+
+		geojson = L.geoJson(comuniEmilia, {
 			style: style,
 			onEachFeature: onEachFeature
 		}).addTo(map);
 
-		map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
+		map.attributionControl.addAttribution('');
 
-
-		var legend = L.control({position: 'bottomright'});
-
-		legend.onAdd = function (map) {
-
-			var div = L.DomUtil.create('div', 'info legend'),
-				grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-				labels = [],
-				from, to;
-
-			for (var i = 0; i < grades.length; i++) {
-				from = grades[i];
-				to = grades[i + 1];
-
-				labels.push(
-					'<i style="background:' + getColor(from + 1) + '"></i> ' +
-					from + (to ? '&ndash;' + to : '+'));
-			}
-
-			div.innerHTML = labels.join('<br>');
-			return div;
-		};
-
-		legend.addTo(map);
+        {#        adds legend #}
+{#		var legend = L.control({position: 'bottomright'});#}
+{##}
+{#		legend.onAdd = function (map) {#}
+{##}
+{#			var div = L.DomUtil.create('div', 'info legend'),#}
+{#				grades = [0, 10, 20, 50, 100, 200, 500, 1000],#}
+{#				labels = [],#}
+{#				from, to;#}
+{##}
+{#			for (var i = 0; i < grades.length; i++) {#}
+{#				from = grades[i];#}
+{#				to = grades[i + 1];#}
+{##}
+{#				labels.push(#}
+{#					'<i style="background:' + getColor(from + 1) + '"></i> ' +#}
+{#					from + (to ? '&ndash;' + to : '+'));#}
+{#			}#}
+{##}
+{#			div.innerHTML = labels.join('<br>');#}
+{#			return div;#}
+{#		};#}
+{##}
+{#		legend.addTo(map);#}
 
 	</script>
 
