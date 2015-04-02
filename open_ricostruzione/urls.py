@@ -66,6 +66,7 @@ urlpatterns = patterns('',
        # todo: remove following url
        # todo: dev url
        url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
+       url(r'^map_test/$', TemplateView.as_view(template_name='map_test.html')),
 
 )
 
