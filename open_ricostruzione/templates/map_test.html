@@ -132,18 +132,14 @@
 
 
         var comuniData ={// alpha 3 iso code
-{#            {% for t in map_values %}#}
-{#                "{{ t.istat_code }}": {#}
-{#                    "label": "{{ t.label }}",#}
-{#                    "url": "",#}
-{#                    "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')#}
-{#                }{% if not forloop.last %},{% endif %}#}
-{#            {% endfor %}#}
-            "8036023": {
-                "url": "",
-                "label": "Modena",
-                "value": "100"
-                }
+            {% for t in map_values %}
+                "{{ t.istat_code }}": {
+                    "label": "{{ t.label }}",
+                    "url": "",
+                    "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
+                }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+
         };
         $.each(comuniEmilia.features, function(index, feature){
             var id = feature.properties.codice;

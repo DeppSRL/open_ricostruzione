@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404
+from random import randint
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
 from django.db.models.aggregates import Sum, Count
 from django.conf import settings
@@ -90,7 +91,8 @@ class AggregatePageMixin(object):
 
         for tipologia in Donazione.TIPO_CEDENTE:
             d = {'name': tipologia[1]}
-            d.update(DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
+            d.update(
+                DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
             values.append(d)
 
         return values
@@ -161,12 +163,12 @@ class AggregatePageMixin(object):
         if self.tipologia != self.TIPO_IMMOBILE:
             agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates(
                 **self.programmazione_filters)
-        # tipo sogg.att data
+            # tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
             agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(
                 **self.programmazione_filters)
             agg_dict['sogg_att_top'] = self.fetch_sogg_att()
-        # donazioni data
+            # donazioni data
         # if home or localita page: use programmazione filters ( no filters or territorio filters)
         # else (tipo immobile) use DonazioneInterventoProgramma filters
         if self.tipologia == self.HOME or self.tipologia == self.TERRITORIO:
@@ -295,6 +297,22 @@ class HomeView(TemplateView, AggregatePageMixin):
         return context
 
 
+class MappaTemplateView(TemplateView):
+    template_name = 'map_test.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MappaTemplateView, self).get_context_data(**kwargs)
+
+        map_values = []
+        territori_set = list(Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values('denominazione','istat_id'))
+        for t in territori_set:
+            d = {'istat_code':"8{}".format(t['istat_id']), 'value': randint(0,100), 'label': t['denominazione']}
+            map_values.append(d)
+        context['map_values'] = map_values
+
+        return context
+
+
 class TipoSoggettoAttuatoreView(ListView):
     template_name = 'tipo_sogg_att_list.html'
     tipologia_sogg_att = None
@@ -327,7 +345,6 @@ class TipoSoggettoAttuatoreView(ListView):
 
     def get_queryset(self):
         return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att)
-
 
     def get_context_data(self, **kwargs):
         context = super(TipoSoggettoAttuatoreView, self).get_context_data(**kwargs)
@@ -367,7 +384,6 @@ class ImpresaDetailView(DetailView):
         return context
 
 
-
 # redirects visits coming from the autocomplete search to the intervento programma detail page
 class InterventoRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
@@ -388,12 +404,13 @@ class InterventoRedirectView(RedirectView):
 
         return url
 
+
 class ImpresaRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
 
         # get impresa data from the request
         try:
-            impresa = get_object_or_404(Impresa,slug=self.request.GET.get('impresa', 0))
+            impresa = get_object_or_404(Impresa, slug=self.request.GET.get('impresa', 0))
         except Http404:
             return reverse('404')
 

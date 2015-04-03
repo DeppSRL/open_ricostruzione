@@ -6,7 +6,7 @@ from django.views.generic.base import TemplateView
 from rest_framework import routers, serializers, viewsets
 from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
-    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView
+    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, MappaTemplateView
 
 
 # Serializers define the API representation.
@@ -66,7 +66,7 @@ urlpatterns = patterns('',
        # todo: remove following url
        # todo: dev url
        url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
-       url(r'^map_test/$', TemplateView.as_view(template_name='map_test.html')),
+       url(r'^map_test/$', MappaTemplateView.as_view()),
 
 )
 
