@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from django.views.generic.base import TemplateView
 from rest_framework import routers, serializers, viewsets
-from open_ricostruzione.views import StaticPageView, DonazioneApiView, PageNotFoundTemplateView, HomeView, \
+from open_ricostruzione.views import StaticPageView, DonazioneApiView, InterventoProgrammaApiView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
     ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, MappaTemplateView
 
@@ -42,6 +42,7 @@ urlpatterns = patterns('',
        # Django REST FRAMEWORK API urls
        url(r'^api/', include(router.urls)),
        url(r'^api/donazioni/$', DonazioneApiView.as_view(), name='api-donazioni-list'),
+       url(r'^api/interv_programma/$', InterventoProgrammaApiView.as_view(), name='api-interv-programma-list'),
        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
        # robots.txt

@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404
@@ -11,18 +12,33 @@ from open_ricostruzione.forms import InterventoProgrammaSearchFormNavbar
 from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa, Intervento, DonazioneInterventoProgramma
 from open_ricostruzione.utils import convert2dict
 from territori.models import Territorio
-from .serializers import DonazioneSerializer
+from .serializers import DonazioneSerializer, InterventoProgrammaSerializer
 
 
 class DonazioneApiView(generics.ListAPIView):
     """
-    Returns a list of all authors.
+    Returns a list of all donazioni.
     """
     model = Donazione
     serializer_class = DonazioneSerializer
+    paginate_by = 100
+    paginator_class = Paginator
 
     def get_queryset(self):
-        return Donazione.objects.all()
+        return Donazione.objects.all().order_by('-importo')
+
+
+class InterventoProgrammaApiView(generics.ListAPIView):
+    """
+    Returns a list of all intervento programma.
+    """
+    model = InterventoProgramma
+    serializer_class = InterventoProgrammaSerializer
+    paginate_by = 100
+    paginator_class = Paginator
+
+    def get_queryset(self):
+        return InterventoProgramma.objects.all().order_by('-denominazione')
 
 
 class PageNotFoundTemplateView(TemplateView):
@@ -304,9 +320,11 @@ class MappaTemplateView(TemplateView):
         context = super(MappaTemplateView, self).get_context_data(**kwargs)
 
         map_values = []
-        territori_set = list(Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values('denominazione','istat_id'))
+        territori_set = list(
+            Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
+                'denominazione', 'istat_id'))
         for t in territori_set:
-            d = {'istat_code':"8{}".format(t['istat_id']), 'value': randint(0,100), 'label': t['denominazione']}
+            d = {'istat_code': "8{}".format(t['istat_id']), 'value': randint(0, 100), 'label': t['denominazione']}
             map_values.append(d)
         context['map_values'] = map_values
 
