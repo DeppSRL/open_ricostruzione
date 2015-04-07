@@ -67,12 +67,12 @@ function paint_chart(pie_title, container_id, data) {
 *   sets bounds, zoom and center for Leaflet map
 *
 * */
-function initmap(bounds, center) {
+function initmap(bounds, center, default_zoom, min_zoom, max_zoom) {
 
     // create the tile layer with correct attribution
     var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var osm = new L.TileLayer(osmUrl, {minZoom: 11, maxZoom: 18, attribution: osmAttrib});
+    var osm = new L.TileLayer(osmUrl, {minZoom: min_zoom, maxZoom: max_zoom, attribution: osmAttrib});
 
 
     //set map bounds
@@ -84,7 +84,7 @@ function initmap(bounds, center) {
     map.scrollWheelZoom.disable();
 
     // start the map on the Territorio lat/lon
-    map.setView(new L.LatLng(center.lat,center.lon),13);
+    map.setView(new L.LatLng(center.lat,center.lon),default_zoom);
     // add map attribution
     map.addLayer(osm);
 
@@ -95,7 +95,7 @@ function initmap(bounds, center) {
 * */
 
 function localita_map(bounds, center, territorio_label){
-    initmap(bounds, center);
+    initmap(bounds, center, 13, 11, 18);
 
 
     L.marker([center.lat,center.lon]).addTo(map)
@@ -103,7 +103,7 @@ function localita_map(bounds, center, territorio_label){
         .openPopup();
 }
 
-
+/* THEME MAP FUNCTIONS */
 
 function highlightFeature(e) {
     var layer = e.target;
@@ -152,7 +152,8 @@ function style(feature) {
 
 
 function thematic_map(bounds, center, comuniEmilia){
-    initmap(bounds, center);
+
+    initmap(bounds, center, 8, 8, 11);
     // control that shows state map_info on hover
     map_info = L.control();
 

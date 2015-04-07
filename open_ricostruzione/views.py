@@ -280,7 +280,6 @@ class HomeView(TemplateView, AggregatePageMixin):
         )
         context.update(apm.get_aggregates())
 
-
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
