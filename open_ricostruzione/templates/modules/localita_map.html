@@ -9,7 +9,9 @@
             'sw': {'lat':{{ map_bounds.sw.lat|unlocalize }} ,'lon':{{ map_bounds.sw.lon|unlocalize }} },
             'ne': {'lat':{{ map_bounds.ne.lat|unlocalize }} ,'lon':{{ map_bounds.ne.lon|unlocalize }} }
         };
+
         var center = {'lat': {{ territorio.gps_lat|unlocalize }},'lon':{{ territorio.gps_lon|unlocalize }}};
-        initmap(bounds, center, '{{ territorio.nome_con_provincia }}');
+        localita_map(bounds, center, '{{ territorio.nome_con_provincia }}');
+
     });
 </script>

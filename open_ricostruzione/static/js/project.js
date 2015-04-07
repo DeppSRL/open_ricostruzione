@@ -3,6 +3,9 @@
  */
 
 var chart_initialization = false;
+var map;
+var geojson;
+
 
 function init_highcharts(){
     // Radialize the colors
@@ -59,29 +62,121 @@ function paint_chart(pie_title, container_id, data) {
     });
 }
 
-function initmap(bounds, center, territorio_label) {
 
-        var map;
-        // create the tile layer with correct attribution
-        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osm = new L.TileLayer(osmUrl, {minZoom: 11, maxZoom: 18, attribution: osmAttrib});
+/* initmap
+*   sets bounds, zoom and center for Leaflet map
+*
+* */
+function initmap(bounds, center) {
 
-        //set map bounds
-        var southWest = L.latLng(bounds.sw.lat,bounds.sw.lon);
-        var northEast = L.latLng(bounds.ne.lat,bounds.ne.lon);
+    // create the tile layer with correct attribution
+    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var osm = new L.TileLayer(osmUrl, {minZoom: 11, maxZoom: 18, attribution: osmAttrib});
 
-        // set up the map
-        map = new L.Map('map').setMaxBounds(L.latLngBounds(southWest, northEast));
-        map.scrollWheelZoom.disable();
 
-        // start the map on the Territorio lat/lon
-        map.setView(new L.LatLng(center.lat,center.lon),13);
-        map.addLayer(osm);
-        L.marker([center.lat,center.lon]).addTo(map)
-            .bindPopup('Comune di '+territorio_label+'<br>')
-            .openPopup();
+    //set map bounds
+    var southWest = L.latLng(bounds.sw.lat,bounds.sw.lon);
+    var northEast = L.latLng(bounds.ne.lat,bounds.ne.lon);
+
+    // set up the map
+    map = new L.Map('map').setMaxBounds(L.latLngBounds(southWest, northEast));
+    map.scrollWheelZoom.disable();
+
+    // start the map on the Territorio lat/lon
+    map.setView(new L.LatLng(center.lat,center.lon),13);
+    // add map attribution
+    map.addLayer(osm);
+
+}
+
+/*localita_map
+* create simple localita map. sets bounds and center, adds marker on center
+* */
+
+function localita_map(bounds, center, territorio_label){
+    initmap(bounds, center);
+
+
+    L.marker([center.lat,center.lon]).addTo(map)
+        .bindPopup('Comune di '+territorio_label+'<br>')
+        .openPopup();
+}
+
+
+
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
     }
+
+    info.update(layer.feature.properties);
+}
+
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+    info.update();
+}
+
+function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+}
+
+function style(feature) {
+    return {
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7,
+        fillColor: getColor(feature.properties.value)
+    };
+}
+
+
+function thematic_map(bounds, center, comuniEmilia){
+    initmap(bounds, center);
+    // control that shows state info on hover
+    var info = L.control();
+
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+    };
+
+    info.update = function (props) {
+        this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
+            '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
+            : 'Passa sopra un Comune');
+    };
+
+    info.addTo(map);
+    geojson = L.geoJson(comuniEmilia, {
+        style: style,
+        onEachFeature: onEachFeature
+    }).addTo(map);
+
+    map.attributionControl.addAttribution('');
+
+}
 
 !function($){
 
