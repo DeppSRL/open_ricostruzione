@@ -15,7 +15,7 @@ env.read_env(root('.env'))
 DEBUG = env.bool('DEBUG', False)
 TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', False)
 ########## END DEBUG CONFIGURATION
-INSTANCE_TYPE = env.str('INSTANCE_TYPE','')
+INSTANCE_TYPE = env.str('INSTANCE_TYPE', '')
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
@@ -251,13 +251,23 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
-     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
 }
 
 SOGG_ATTUATORE_MAP_FILE_PATH = env.str('SOGG_ATTUATORE_MAP_FILE_PATH', '')
 
 # tipologia cedente in PRIVATE_TIPOLOGIA_CEDENTE are private citizens'ones so the Denominazione will be obscured
-PRIVATE_TIPOLOGIA_CEDENTE = [u'4',]
+PRIVATE_TIPOLOGIA_CEDENTE = [u'4', ]
 LOCALITA_MAP_BOUNDS_WIDTH = 0.2
+
+THEMATIC_MAP_BOUNDS = {
+    'sw': {'lat': 43.976387, 'lon': 9.294434},
+    'ne': {'lat': 45.237849, 'lon': 12.568359},
+}
+
+THEMATIC_MAP_CENTER = {
+    'lat':44.6500,
+    'lon':10.9333
+}
 N_PROGETTI_FETCH = 4
 N_SOGG_ATT_FETCH = 3

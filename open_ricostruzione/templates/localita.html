@@ -1,6 +1,6 @@
 {% extends 'aggregate_base.html' %}
 {% load static %}
-{% load l10n %}
+
 
 {% block head-title %}
     Comune di {{ territorio.nome_con_provincia }}
@@ -14,46 +14,10 @@
         <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}" />
 {% endblock %}
 
-{% block extra-js %}
+{% block extra-js-head %}
     <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
 {% endblock %}
 
 {% block home-map %}
-    <div id="map" style="height: 280px;"></div>
-
-        <script type="text/javascript">
-            window.onload = function () {
-                initmap();
-            };
-
-            var map;
-            var ajaxRequest;
-            var plotlist;
-            var plotlayers=[];
-
-            function initmap() {
-
-
-                // create the tile layer with correct attribution
-                var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-                var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-                var osm = new L.TileLayer(osmUrl, {minZoom: 11, maxZoom: 18, attribution: osmAttrib});
-
-                //set map bounds
-                var southWest = L.latLng({{ map_bounds.min.lat|unlocalize }},{{ map_bounds.min.lon|unlocalize }}),
-                northEast = L.latLng({{ map_bounds.max.lat|unlocalize }},{{ map_bounds.max.lon|unlocalize }}),
-                bounds = L.latLngBounds(southWest, northEast);
-
-                // set up the map
-                map = new L.Map('map').setMaxBounds(bounds);
-                map.scrollWheelZoom.disable();
-
-                // start the map on the Territorio lat/lon
-                map.setView(new L.LatLng({{ territorio.gps_lat|unlocalize }}, {{ territorio.gps_lon|unlocalize  }}),13);
-                map.addLayer(osm);
-                L.marker([{{ territorio.gps_lat|unlocalize }}, {{ territorio.gps_lon|unlocalize  }}]).addTo(map)
-                    .bindPopup('Comune di {{ territorio.nome_con_provincia }}<br>')
-                    .openPopup();
-            }
-        </script>
+    {% include 'modules/map.html' %}
 {% endblock %}

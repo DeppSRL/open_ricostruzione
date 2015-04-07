@@ -33,13 +33,14 @@
         <script src="{% static 'js/jquery.js'%}"></script>
         <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js'%}"></script>
         <script src="{% static 'vendor/highcharts/js/highcharts.js'%}"></script>
-        <script src="{% static 'js/project.js'%}"></script>
-
 
 
         {% block extra-css %}
         {% endblock %}
+        {% block extra-js-head %}
+        {% endblock %}
 
+        <script src="{% static 'js/project.js'%}"></script>
         <!-- Le fav and touch icons -->
         <link rel="shortcut icon" href="{% static 'favicon.ico'%}">
         <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static 'ico/apple-touch-icon-144-precomposed.png'%}">
@@ -105,10 +106,10 @@
 
         </div>
 
-        {% include 'g_analytics.html' %}
+        {% include 'commons/g_analytics.html' %}
         <script src="{% static 'js/select2_locale_it.js' %}"></script>
     </body>
 
-        {% block extra-js %}
+        {% block extra-js-bottom %}
         {% endblock %}
 </html>

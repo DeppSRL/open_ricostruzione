@@ -59,6 +59,30 @@ function paint_chart(pie_title, container_id, data) {
     });
 }
 
+function initmap(bounds, center, territorio_label) {
+
+        var map;
+        // create the tile layer with correct attribution
+        var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+        var osm = new L.TileLayer(osmUrl, {minZoom: 11, maxZoom: 18, attribution: osmAttrib});
+
+        //set map bounds
+        var southWest = L.latLng(bounds.sw.lat,bounds.sw.lon);
+        var northEast = L.latLng(bounds.ne.lat,bounds.ne.lon);
+
+        // set up the map
+        map = new L.Map('map').setMaxBounds(L.latLngBounds(southWest, northEast));
+        map.scrollWheelZoom.disable();
+
+        // start the map on the Territorio lat/lon
+        map.setView(new L.LatLng(center.lat,center.lon),13);
+        map.addLayer(osm);
+        L.marker([center.lat,center.lon]).addTo(map)
+            .bindPopup('Comune di '+territorio_label+'<br>')
+            .openPopup();
+    }
+
 !function($){
 
     $(document).ready(function(){

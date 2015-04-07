@@ -4,10 +4,11 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404
 from random import randint
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
-from django.db.models.aggregates import Count
+from django.db.models.aggregates import Count, Sum
 from django.conf import settings
 from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma
 from territori.models import Territorio
+from open_ricostruzione.utils import convert2dict
 
 class PageNotFoundTemplateView(TemplateView):
     template_name = '404.html'
@@ -206,11 +207,11 @@ class LocalitaView(TemplateView, AggregatePageMixin):
             bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
 
             context['map_bounds'] = \
-                {'min':
+                {'sw':
                      {'lat': self.territorio.gps_lat - bounds_width,
                       'lon': self.territorio.gps_lon - bounds_width,
                      },
-                 'max':
+                 'ne':
                      {'lat': self.territorio.gps_lat + bounds_width,
                       'lon': self.territorio.gps_lon + bounds_width,
                      },
@@ -287,13 +288,25 @@ class MappaTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MappaTemplateView, self).get_context_data(**kwargs)
 
+        # gets maps bounds and center
+        context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
+        context['map_center'] = settings.THEMATIC_MAP_CENTER
+
+
+        danno_values = Territorio.objects.filter(tipologia="C").annotate(Sum('interventoprogramma__importo_generale')).values('slug','interventoprogramma__importo_generale__sum')
+        danno_dict = convert2dict(danno_values,'slug')
         map_values = []
         territori_set = list(
             Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
-                'denominazione', 'istat_id'))
+                'denominazione', 'istat_id', 'slug'))
         for t in territori_set:
-            d = {'istat_code': "8{}".format(t['istat_id']), 'value': randint(0, 100), 'label': t['denominazione']}
-            map_values.append(d)
+            map_values.append(
+                {
+                    'label': t['denominazione'],
+                    'value': danno_dict[t['slug']][0]['interventoprogramma__importo_generale__sum'],
+                    'istat_code': "8{}".format(t['istat_id']),
+                }
+            )
         context['map_values'] = map_values
 
         return context
