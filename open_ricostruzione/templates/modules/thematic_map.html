@@ -1,84 +1,85 @@
 {% load l10n %}
+
 <div id="map" style="height: 280px;"></div>
 
 
 <script type="text/javascript">
 
-$(document).ready(function(){
+    $(document).ready(function(){
 
-    var bounds = {
-        'sw': {'lat':{{ map_bounds.sw.lat|unlocalize }} ,'lon':{{ map_bounds.sw.lon|unlocalize }} },
-        'ne': {'lat':{{ map_bounds.ne.lat|unlocalize }} ,'lon':{{ map_bounds.ne.lon|unlocalize }} }
-    };
-
-    var center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }} };
-    var comuniData ={
-        {# creates the dict with data using istat code as key to retrieve Comune polygon  #}
-        {% for t in map_values %}
-            "{{ t.istat_code }}": {
-                "label": "{{ t.label }}",
-                "url": "",
-                "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
-            }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-
-    };
-
-    $.each(comuniEmilia.features, function(index, feature){
-        var id = feature.properties.codice;
-
-        if (id in comuniData){
-            feature.properties.url = comuniData[id].url;
-            feature.properties.label = comuniData[id].label;
-            feature.properties.value = comuniData[id].value;
-
-        }
-    });
-
-    thematic_map(bounds, center, comuniEmilia);
-    add_legend();
-
-});
-
-
-// get color depending on population density value
-function getColor(d) {
-    return d > 20000000 ? '#800026' :
-           d > 15000000  ? '#BD0026' :
-           d > 10000000  ? '#E31A1C' :
-           d > 5000000  ? '#FC4E2A' :
-           d > 1000000   ? '#FD8D3C' :
-           d > 500000   ? '#FED976' :
-                      '#FFEDA0';
-}
-
-
-{# adds legend to map #}
-function add_legend(){
-    var legend = L.control({position: 'bottomright'});
-
-        legend.onAdd = function (map) {
-
-            var div = L.DomUtil.create('div', 'map_info legend'),
-                grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-                labels = [],
-                from, to;
-
-            for (var i = 0; i < grades.length; i++) {
-                from = grades[i];
-                to = grades[i + 1];
-
-                labels.push(
-                    '<i style="background:' + getColor(from + 1) + '"></i> ' +
-                    from + (to ? '&ndash;' + to : '+'));
-            }
-
-            div.innerHTML = labels.join('<br>');
-            return div;
+        var bounds = {
+            'sw': {'lat':{{ map_bounds.sw.lat|unlocalize }} ,'lon':{{ map_bounds.sw.lon|unlocalize }} },
+            'ne': {'lat':{{ map_bounds.ne.lat|unlocalize }} ,'lon':{{ map_bounds.ne.lon|unlocalize }} }
         };
 
-    legend.addTo(map);
-}
+        var center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }} };
+        var comuniData ={
+            {# creates the dict with data using istat code as key to retrieve Comune polygon  #}
+            {% for t in map_values %}
+                "{{ t.istat_code }}": {
+                    "label": "{{ t.label }}",
+                    "url": "",
+                    "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
+                }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+
+        };
+
+        $.each(comuniEmilia.features, function(index, feature){
+            var id = feature.properties.codice;
+
+            if (id in comuniData){
+                feature.properties.url = comuniData[id].url;
+                feature.properties.label = comuniData[id].label;
+                feature.properties.value = comuniData[id].value;
+
+            }
+        });
+
+        thematic_map(bounds, center, comuniEmilia);
+        add_legend();
+
+    });
+
+
+    // get color depending on population density value
+    function getColor(d) {
+        return d > 20000000 ? '#800026' :
+               d > 15000000  ? '#BD0026' :
+               d > 10000000  ? '#E31A1C' :
+               d > 5000000  ? '#FC4E2A' :
+               d > 1000000   ? '#FD8D3C' :
+               d > 500000   ? '#FED976' :
+                          '#FFEDA0';
+    }
+
+
+    {# adds legend to map #}
+    function add_legend(){
+        var legend = L.control({position: 'bottomright'});
+
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'map_info legend'),
+                    grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+                    labels = [],
+                    from, to;
+
+                for (var i = 0; i < grades.length; i++) {
+                    from = grades[i];
+                    to = grades[i + 1];
+
+                    labels.push(
+                        '<i style="background:' + getColor(from + 1) + '"></i> ' +
+                        from + (to ? '&ndash;' + to : '+'));
+                }
+
+                div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+        legend.addTo(map);
+    }
 
 
 </script>

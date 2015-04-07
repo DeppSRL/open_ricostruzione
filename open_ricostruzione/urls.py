@@ -5,8 +5,8 @@ from django.views.generic.base import TemplateView
 from rest_framework import routers
 from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
-    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, \
-    MappaTemplateView
+    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView
+
 
 from open_ricostruzione.viewsets import DonazioneViewSet, InterventoProgrammaViewSet
 
@@ -59,7 +59,6 @@ urlpatterns = patterns('',
                        # todo: remove following url
                        # todo: dev url
                        url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
-                       url(r'^map_test/$', MappaTemplateView.as_view()),
 
 )
 

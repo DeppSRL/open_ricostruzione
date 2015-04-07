@@ -279,14 +279,7 @@ class HomeView(TemplateView, AggregatePageMixin):
             sogg_att_filters={}
         )
         context.update(apm.get_aggregates())
-        return context
 
-
-class MappaTemplateView(TemplateView):
-    template_name = 'map_test.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(MappaTemplateView, self).get_context_data(**kwargs)
 
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
@@ -310,6 +303,7 @@ class MappaTemplateView(TemplateView):
         context['map_values'] = map_values
 
         return context
+
 
 
 class TipoSoggettoAttuatoreView(ListView):
