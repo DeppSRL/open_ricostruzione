@@ -16,6 +16,7 @@ class TerritorioSerializer(serializers.ModelSerializer):
             'gps_lon',
         )
 
+
 class DonazioneSerializer(serializers.ModelSerializer):
     """
     Serializes donazioni querysets.
@@ -43,6 +44,7 @@ class ProgrammaSerializer(serializers.ModelSerializer):
             'id_fenice',
         )
 
+
 class SoggettoAttuatoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = SoggettoAttuatore
@@ -51,6 +53,7 @@ class SoggettoAttuatoreSerializer(serializers.ModelSerializer):
             'descrizione',
             'slug',
         )
+
 
 class InterventoProgrammaSerializer(serializers.ModelSerializer):
     """

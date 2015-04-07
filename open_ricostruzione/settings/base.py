@@ -255,6 +255,9 @@ REST_FRAMEWORK = {
 }
 
 SOGG_ATTUATORE_MAP_FILE_PATH = env.str('SOGG_ATTUATORE_MAP_FILE_PATH', '')
+
+# tipologia cedente in PRIVATE_TIPOLOGIA_CEDENTE are private citizens'ones so the Denominazione will be obscured
+PRIVATE_TIPOLOGIA_CEDENTE = [u'4',]
 LOCALITA_MAP_BOUNDS_WIDTH = 0.2
 N_PROGETTI_FETCH = 4
 N_SOGG_ATT_FETCH = 3
