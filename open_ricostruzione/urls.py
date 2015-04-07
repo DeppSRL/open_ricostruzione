@@ -6,7 +6,9 @@ from rest_framework import routers
 from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
     ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, \
-    MappaTemplateView, DonazioneViewSet, InterventoProgrammaViewSet
+    MappaTemplateView
+
+from open_ricostruzione.viewsets import DonazioneViewSet, InterventoProgrammaViewSet
 
 
 # Routers provide an easy way of automatically determining the URL conf.

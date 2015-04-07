@@ -1,5 +1,4 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator
 from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404
@@ -7,36 +6,8 @@ from random import randint
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
 from django.db.models.aggregates import Count
 from django.conf import settings
-from rest_framework import viewsets
 from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma
 from territori.models import Territorio
-from .serializers import DonazioneSerializer, InterventoProgrammaSerializer
-
-
-class InterventoProgrammaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = InterventoProgramma.objects.all().order_by('-denominazione')
-    serializer_class = InterventoProgrammaSerializer
-    paginator_class = Paginator
-    paginate_by = 100
-
-
-class DonazioneViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Donazione.objects.all().order_by('-importo')
-    serializer_class = DonazioneSerializer
-    paginator_class = Paginator
-    paginate_by = 100
-
-    def get_queryset(self):
-        queryset = self.queryset
-
-        # manipulates queryset to obscure private citizen name in the list
-        for donazione in queryset:
-            if donazione.tipologia_cedente in settings.PRIVATE_TIPOLOGIA_CEDENTE:
-                donazione.denominazione = ""
-
-        return queryset
-
-
 
 class PageNotFoundTemplateView(TemplateView):
     template_name = '404.html'
