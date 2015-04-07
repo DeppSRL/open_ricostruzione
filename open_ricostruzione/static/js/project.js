@@ -5,7 +5,7 @@
 var chart_initialization = false;
 var map;
 var geojson;
-
+var map_info;
 
 function init_highcharts(){
     // Radialize the colors
@@ -119,12 +119,12 @@ function highlightFeature(e) {
         layer.bringToFront();
     }
 
-    info.update(layer.feature.properties);
+    map_info.update(layer.feature.properties);
 }
 
 function resetHighlight(e) {
     geojson.resetStyle(e.target);
-    info.update();
+    map_info.update();
 }
 
 function zoomToFeature(e) {
@@ -153,22 +153,22 @@ function style(feature) {
 
 function thematic_map(bounds, center, comuniEmilia){
     initmap(bounds, center);
-    // control that shows state info on hover
-    var info = L.control();
+    // control that shows state map_info on hover
+    map_info = L.control();
 
-    info.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'info');
+    map_info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'map_info');
         this.update();
         return this._div;
     };
 
-    info.update = function (props) {
+    map_info.update = function (props) {
         this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
             '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
             : 'Passa sopra un Comune');
     };
 
-    info.addTo(map);
+    map_info.addTo(map);
     geojson = L.geoJson(comuniEmilia, {
         style: style,
         onEachFeature: onEachFeature
