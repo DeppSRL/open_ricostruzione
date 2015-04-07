@@ -5,40 +5,26 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404
 from random import randint
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
-from django.db.models.aggregates import Sum, Count
+from django.db.models.aggregates import Count
 from django.conf import settings
-from rest_framework import generics
-from open_ricostruzione.forms import InterventoProgrammaSearchFormNavbar
-from open_ricostruzione.models import InterventoProgramma, Donazione, InterventoPiano, TipoImmobile, SoggettoAttuatore, Impresa, Intervento, DonazioneInterventoProgramma
-from open_ricostruzione.utils import convert2dict
+from rest_framework import viewsets
+from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma
 from territori.models import Territorio
 from .serializers import DonazioneSerializer, InterventoProgrammaSerializer
 
 
-class DonazioneApiView(generics.ListAPIView):
-    """
-    Returns a list of all donazioni.
-    """
-    model = Donazione
-    serializer_class = DonazioneSerializer
-    paginate_by = 100
-    paginator_class = Paginator
-
-    def get_queryset(self):
-        return Donazione.objects.all().order_by('-importo')
-
-
-class InterventoProgrammaApiView(generics.ListAPIView):
-    """
-    Returns a list of all intervento programma.
-    """
-    model = InterventoProgramma
+class InterventoProgrammaViewSet(viewsets.ModelViewSet):
+    queryset = InterventoProgramma.objects.all().order_by('-denominazione')
     serializer_class = InterventoProgrammaSerializer
-    paginate_by = 100
     paginator_class = Paginator
+    paginate_by = 100
 
-    def get_queryset(self):
-        return InterventoProgramma.objects.all().order_by('-denominazione')
+
+class DonazioneViewSet(viewsets.ModelViewSet):
+    queryset = Donazione.objects.all().order_by('-importo')
+    serializer_class = DonazioneSerializer
+    paginator_class = Paginator
+    paginate_by = 100
 
 
 class PageNotFoundTemplateView(TemplateView):
