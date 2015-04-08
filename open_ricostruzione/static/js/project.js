@@ -107,7 +107,18 @@ function localita_map(bounds, center, territorio_label){
 
 /* THEME MAP FUNCTIONS */
 
-function highlightFeature_attuazione(e) {
+function zoomToFeature(e,geojson, map_info, map) {
+    map.fitBounds(e.target.getBounds());
+}
+
+
+function resetHighlight(e, geojson, map_info, map) {
+    geojson.resetStyle(e.target);
+    map_info.update();
+}
+
+
+function highlightFeature(e,geojson, map_info, map) {
     var layer = e.target;
 
     layer.setStyle({
@@ -121,58 +132,23 @@ function highlightFeature_attuazione(e) {
         layer.bringToFront();
     }
 
-    map_info_attuazione.update(layer.feature.properties);
-}
-
-function highlightFeature_danno(e) {
-    var layer = e.target;
-
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-
-    if (!L.Browser.ie && !L.Browser.opera) {
-        layer.bringToFront();
-    }
-
-    map_info_danno.update(layer.feature.properties);
-}
-
-function resetHighlight_danno(e) {
-    geojson_danno.resetStyle(e.target);
-    map_info_danno.update();
-}
-function resetHighlight_attuazione(e) {
-    geojson_attuazione.resetStyle(e.target);
-    map_info_attuazione.update();
-}
-
-
-function zoomToFeature_danno(e) {
-    map_danno.fitBounds(e.target.getBounds());
-}
-function zoomToFeature_attuazione(e) {
-    map_attuazione.fitBounds(e.target.getBounds());
+    map_info.update(layer.feature.properties);
 }
 
 function onEachFeature_danno(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature_danno,
-        mouseout: resetHighlight_danno,
-        click: zoomToFeature_danno
-    });
+    layer.on('mouseout', function(e){resetHighlight(e,geojson_danno, map_info_danno, map_danno )});
+    layer.on('mouseover', function(e){highlightFeature(e,geojson_danno, map_info_danno, map_danno )});
+    layer.on('click', function(e){zoomToFeature(e,geojson_danno, map_info_danno, map_danno )});
+
 }
 
 function onEachFeature_attuazione(feature, layer) {
-    layer.on({
-        mouseover: highlightFeature_attuazione,
-        mouseout: resetHighlight_attuazione,
-        click: zoomToFeature_attuazione
-    });
+    layer.on('mouseout', function(e){resetHighlight(e,geojson_attuazione, map_info_attuazione, map_attuazione )});
+    layer.on('mouseover', function(e){highlightFeature(e,geojson_attuazione, map_info_attuazione, map_attuazione )});
+    layer.on('click', function(e){zoomToFeature(e,geojson_attuazione, map_info_attuazione, map_attuazione )});
+
 }
+
 
 function style(feature) {
     return {
@@ -229,24 +205,25 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
     map_info.addTo(map);
     
     if(map_type == 'danno'){
+
+        map_info_danno= map_info;
         geojson_danno = L.geoJson(comuniEmilia, {
             style: style,
             onEachFeature: onEachFeature_danno
         }).addTo(map);
         map_danno = map;
-        map_info_danno= map_info;
+
     }
     else{
+        map_info_attuazione = map_info;
         geojson_attuazione = L.geoJson(comuniEmilia, {
             style: style,
             onEachFeature: onEachFeature_attuazione
         }).addTo(map);
         map_attuazione = map;
-        map_info_attuazione = map_info;
+
     }
     
-    
-
     map.attributionControl.addAttribution('');
     add_legend(map);
 }
