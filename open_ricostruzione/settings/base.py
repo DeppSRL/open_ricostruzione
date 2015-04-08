@@ -261,8 +261,8 @@ PRIVATE_TIPOLOGIA_CEDENTE = [u'4', ]
 LOCALITA_MAP_BOUNDS_WIDTH = 0.2
 
 THEMATIC_MAP_BOUNDS = {
-    'sw': {'lat': 43.687332, 'lon': 9.654236},
-    'ne': {'lat': 45.443512, 'lon': 12.535400},
+    'sw': {'lat': 43.714294, 'lon': 8.316650},
+    'ne': {'lat': 45.743928, 'lon': 13.315430},
 }
 
 THEMATIC_MAP_CENTER = {

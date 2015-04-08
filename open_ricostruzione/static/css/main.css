@@ -67,7 +67,7 @@ body {
   border-radius: 6px 0 6px 6px;
 }
 #map {
-  width: 800px;
+  width: 100%;
   height: 500px;
 }
 .map_info {

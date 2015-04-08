@@ -78,9 +78,9 @@ function initmap(bounds, center, default_zoom, min_zoom, max_zoom) {
     //set map bounds
     var southWest = L.latLng(bounds.sw.lat,bounds.sw.lon);
     var northEast = L.latLng(bounds.ne.lat,bounds.ne.lon);
-
+    var leaf_bounds = L.latLngBounds(southWest, northEast);
     // set up the map
-    map = new L.Map('map').setMaxBounds(L.latLngBounds(southWest, northEast));
+    map = new L.Map('map').setMaxBounds(leaf_bounds);
     map.scrollWheelZoom.disable();
 
     // start the map on the Territorio lat/lon
