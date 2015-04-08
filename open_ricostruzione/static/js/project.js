@@ -67,7 +67,7 @@ function paint_chart(pie_title, container_id, data) {
 *   sets bounds, zoom and center for Leaflet map
 *
 * */
-function initmap(bounds, center, default_zoom, min_zoom, max_zoom) {
+function initmap(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
 
     // create the tile layer with correct attribution
     var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -80,7 +80,7 @@ function initmap(bounds, center, default_zoom, min_zoom, max_zoom) {
     var northEast = L.latLng(bounds.ne.lat,bounds.ne.lon);
     var leaf_bounds = L.latLngBounds(southWest, northEast);
     // set up the map
-    map = new L.Map('map').setMaxBounds(leaf_bounds);
+    map = new L.Map(div_id).setMaxBounds(leaf_bounds);
     map.scrollWheelZoom.disable();
 
     // start the map on the Territorio lat/lon
@@ -95,7 +95,7 @@ function initmap(bounds, center, default_zoom, min_zoom, max_zoom) {
 * */
 
 function localita_map(bounds, center, territorio_label){
-    initmap(bounds, center, 13, 11, 18);
+    initmap('localita_map',bounds, center, 13, 11, 18);
 
 
     L.marker([center.lat,center.lon]).addTo(map)
@@ -151,10 +151,9 @@ function style(feature) {
 }
 
 
-function thematic_map(bounds, center, comuniEmilia){
+function thematic_map(map_type, bounds, center, comuniEmilia){
 
-    initmap(bounds, center, 8, 8, 11);
-    // control that shows state map_info on hover
+    var div_id ;
     map_info = L.control();
 
     map_info.onAdd = function (map) {
@@ -162,12 +161,30 @@ function thematic_map(bounds, center, comuniEmilia){
         this.update();
         return this._div;
     };
+    //if type == 'danno', initialize map type A,
+    // else initialize map type B on attuazione
 
-    map_info.update = function (props) {
-        this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
+    if(map_type == 'danno'){
+        div_id = 'mappa_danno';
+        map_info.update = function (props) {
+            this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
+                '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
+                : 'Passa sopra un Comune');
+        };
+    }
+    else{
+        div_id = 'mappa_attuazione';
+        map_info.update = function (props) {
+        this._div.innerHTML = '<h4>Attuazione</h4>' +  (props ?
             '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
             : 'Passa sopra un Comune');
-    };
+        };
+    }
+    initmap(div_id, bounds, center, 8, 8, 11);
+    // control that shows state map_info on hover
+
+
+
 
     map_info.addTo(map);
     geojson = L.geoJson(comuniEmilia, {
