@@ -1,20 +1,33 @@
 {% load l10n %}
 
-<div role="tabpanel">
+{#<div role="tabpanel">#}
+{##}
+{#    <!-- Nav tabs -->#}
+{#    <ul class="nav nav-tabs" role="tablist">#}
+{#        <li role="presentation" class="active"><a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab">Mappa Danno</a></li>#}
+{#        <li role="presentation"><a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab">Mappa Attuazione</a></li>#}
+{#    </ul>#}
+{##}
+{#    <!-- Tab panes -->#}
+{#    <div class="tab-content">#}
+{#        <div role="tabpanel" class="tab-pane active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>#}
+{#        <div role="tabpanel" class="tab-pane" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>#}
+{#    </div>#}
+{##}
+{#</div>#}
 
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab">Mappa Danno</a></li>
-        <li role="presentation"><a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab">Mappa Attuazione</a></li>
-    </ul>
-
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
-        <div role="tabpanel" class="tab-pane" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="mappa_danno" class="map"></div>
     </div>
-
 </div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="mappa_attuazione" class="map"></div>
+    </div>
+</div>
+
+
 
 
 <script type="text/javascript">
@@ -52,7 +65,7 @@
 
         thematic_map('danno',bounds, center, comuniEmilia);
         thematic_map('attuazione',bounds, center, comuniEmilia);
-        add_legend();
+
 
     });
 
@@ -70,7 +83,7 @@
 
 
     {# adds legend to map #}
-    function add_legend(){
+    function add_legend(map){
         var legend = L.control({position: 'bottomright'});
 
             legend.onAdd = function (map) {

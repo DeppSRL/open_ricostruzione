@@ -3,9 +3,10 @@
  */
 
 var chart_initialization = false;
-var map;
-var geojson;
-var map_info;
+var map_danno, map_attuazione;
+var geojson_danno,geojson_attuazione;
+var map_info_danno, map_info_attuazione;
+
 
 function init_highcharts(){
     // Radialize the colors
@@ -80,13 +81,14 @@ function initmap(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
     var northEast = L.latLng(bounds.ne.lat,bounds.ne.lon);
     var leaf_bounds = L.latLngBounds(southWest, northEast);
     // set up the map
-    map = new L.Map(div_id).setMaxBounds(leaf_bounds);
+    var map = new L.Map(div_id).setMaxBounds(leaf_bounds);
     map.scrollWheelZoom.disable();
 
     // start the map on the Territorio lat/lon
     map.setView(new L.LatLng(center.lat,center.lon),default_zoom);
     // add map attribution
     map.addLayer(osm);
+    return map;
 
 }
 
@@ -95,7 +97,7 @@ function initmap(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
 * */
 
 function localita_map(bounds, center, territorio_label){
-    initmap('localita_map',bounds, center, 13, 11, 18);
+    var map = initmap(map, 'localita_map',bounds, center, 13, 11, 18);
 
 
     L.marker([center.lat,center.lon]).addTo(map)
@@ -105,7 +107,7 @@ function localita_map(bounds, center, territorio_label){
 
 /* THEME MAP FUNCTIONS */
 
-function highlightFeature(e) {
+function highlightFeature_attuazione(e) {
     var layer = e.target;
 
     layer.setStyle({
@@ -119,23 +121,56 @@ function highlightFeature(e) {
         layer.bringToFront();
     }
 
-    map_info.update(layer.feature.properties);
+    map_info_attuazione.update(layer.feature.properties);
 }
 
-function resetHighlight(e) {
-    geojson.resetStyle(e.target);
-    map_info.update();
+function highlightFeature_danno(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
+    }
+
+    map_info_danno.update(layer.feature.properties);
 }
 
-function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
+function resetHighlight_danno(e) {
+    geojson_danno.resetStyle(e.target);
+    map_info_danno.update();
+}
+function resetHighlight_attuazione(e) {
+    geojson_attuazione.resetStyle(e.target);
+    map_info_attuazione.update();
 }
 
-function onEachFeature(feature, layer) {
+
+function zoomToFeature_danno(e) {
+    map_danno.fitBounds(e.target.getBounds());
+}
+function zoomToFeature_attuazione(e) {
+    map_attuazione.fitBounds(e.target.getBounds());
+}
+
+function onEachFeature_danno(feature, layer) {
     layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: zoomToFeature
+        mouseover: highlightFeature_danno,
+        mouseout: resetHighlight_danno,
+        click: zoomToFeature_danno
+    });
+}
+
+function onEachFeature_attuazione(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature_attuazione,
+        mouseout: resetHighlight_attuazione,
+        click: zoomToFeature_attuazione
     });
 }
 
@@ -150,21 +185,25 @@ function style(feature) {
     };
 }
 
-
-function thematic_map(map_type, bounds, center, comuniEmilia){
-
-    var div_id ;
-    map_info = L.control();
-
+function init_mapinfo(){
+    var map_info = L.control();
     map_info.onAdd = function (map) {
         this._div = L.DomUtil.create('div', 'map_info');
         this.update();
         return this._div;
     };
+    return map_info;
+}
+
+function thematic_map(map_type, bounds, center, comuniEmilia){
+
+    var div_id, map_info ;
+    
     //if type == 'danno', initialize map type A,
     // else initialize map type B on attuazione
 
     if(map_type == 'danno'){
+        map_info = init_mapinfo();
         div_id = 'mappa_danno';
         map_info.update = function (props) {
             this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
@@ -173,6 +212,7 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
         };
     }
     else{
+        map_info = init_mapinfo();
         div_id = 'mappa_attuazione';
         map_info.update = function (props) {
         this._div.innerHTML = '<h4>Attuazione</h4>' +  (props ?
@@ -180,20 +220,35 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
             : 'Passa sopra un Comune');
         };
     }
-    initmap(div_id, bounds, center, 8, 8, 11);
+
+    
+    var map = initmap(div_id, bounds, center, 8, 8, 11);
     // control that shows state map_info on hover
 
 
-
-
     map_info.addTo(map);
-    geojson = L.geoJson(comuniEmilia, {
-        style: style,
-        onEachFeature: onEachFeature
-    }).addTo(map);
+    
+    if(map_type == 'danno'){
+        geojson_danno = L.geoJson(comuniEmilia, {
+            style: style,
+            onEachFeature: onEachFeature_danno
+        }).addTo(map);
+        map_danno = map;
+        map_info_danno= map_info;
+    }
+    else{
+        geojson_attuazione = L.geoJson(comuniEmilia, {
+            style: style,
+            onEachFeature: onEachFeature_attuazione
+        }).addTo(map);
+        map_attuazione = map;
+        map_info_attuazione = map_info;
+    }
+    
+    
 
     map.attributionControl.addAttribution('');
-
+    add_legend(map);
 }
 
 !function($){
