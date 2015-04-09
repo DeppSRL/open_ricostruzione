@@ -10,8 +10,8 @@
 
     <!-- Tab panes -->
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
-        <div role="tabpanel" class="tab-pane fade " id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
+        <div role="tabpanel" class="tab-pane fade in active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
+        <div role="tabpanel" class="tab-pane fade" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
     </div>
 
 </div>
@@ -67,10 +67,11 @@
     $(document).ready(function(){
         prepare_data();
         {#        on page load creates danno map#}
+        $('a#handle_attuazione').on('shown.bs.tab',{map_type:'attuazione',bounds:bounds,center:center,comuniEmilia: comuniEmilia},init_thematic_map);
+
         thematic_map('danno', bounds, center, comuniEmilia);
 
-{#        $("#tab_attuazione").on('shown',{map_type:'attuazione',bounds:bounds,center:center,comuniEmilia: comuniEmilia},init_thematic_map);#}
-        $('a#handle_attuazione').on('shown.bs.tab',{map_type:'attuazione',bounds:bounds,center:center,comuniEmilia: comuniEmilia},init_thematic_map);
+
 
     });
 
