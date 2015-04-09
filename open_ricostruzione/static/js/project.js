@@ -64,11 +64,11 @@ function paint_chart(pie_title, container_id, data) {
 }
 
 
-/* initmap
+/* init_map
 *   sets bounds, zoom and center for Leaflet map
 *
 * */
-function initmap(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
+function init_map(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
 
     // create the tile layer with correct attribution
     var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -97,7 +97,7 @@ function initmap(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
 * */
 
 function localita_map(bounds, center, territorio_label){
-    var map = initmap(map, 'localita_map',bounds, center, 13, 11, 18);
+    var map = init_map(map, 'localita_map',bounds, center, 13, 11, 18);
 
 
     L.marker([center.lat,center.lon]).addTo(map)
@@ -179,6 +179,7 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
     // else initialize map type B on attuazione
 
     if(map_type == 'danno'){
+        console.log('danno');
         map_info = init_mapinfo();
         div_id = 'mappa_danno';
         map_info.update = function (props) {
@@ -188,6 +189,7 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
         };
     }
     else{
+        console.log('attuazione');
         map_info = init_mapinfo();
         div_id = 'mappa_attuazione';
         map_info.update = function (props) {
@@ -198,7 +200,7 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
     }
 
     
-    var map = initmap(div_id, bounds, center, 8, 8, 11);
+    var map = init_map(div_id, bounds, center, 8, 8, 11);
     // control that shows state map_info on hover
 
 
@@ -226,6 +228,7 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
     
     map.attributionControl.addAttribution('');
     add_legend(map);
+    console.log('thematic map done');
 }
 
 !function($){

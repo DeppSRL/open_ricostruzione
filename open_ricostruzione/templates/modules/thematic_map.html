@@ -1,45 +1,34 @@
 {% load l10n %}
 
-{#<div role="tabpanel">#}
-{##}
-{#    <!-- Nav tabs -->#}
-{#    <ul class="nav nav-tabs" role="tablist">#}
-{#        <li role="presentation" class="active"><a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab">Mappa Danno</a></li>#}
-{#        <li role="presentation"><a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab">Mappa Attuazione</a></li>#}
-{#    </ul>#}
-{##}
-{#    <!-- Tab panes -->#}
-{#    <div class="tab-content">#}
-{#        <div role="tabpanel" class="tab-pane active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>#}
-{#        <div role="tabpanel" class="tab-pane" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>#}
-{#    </div>#}
-{##}
-{#</div>#}
+<div role="tabpanel">
 
-<div class="row">
-    <div class="col-md-12">
-        <div id="mappa_danno" class="map"></div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab" id="handle_danno">Mappa Danno</a></li>
+        <li role="presentation"><a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab" id="handle_attuazione">Mappa Attuazione</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
+        <div role="tabpanel" class="tab-pane fade " id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div id="mappa_attuazione" class="map"></div>
-    </div>
-</div>
 
-
+</div>
 
 
 <script type="text/javascript">
 
-    $(document).ready(function(){
+    var bounds, center, comuniEmilia;
 
-        var bounds = {
-            'sw': {'lat':{{ map_bounds.sw.lat|unlocalize }} ,'lon':{{ map_bounds.sw.lon|unlocalize }} },
-            'ne': {'lat':{{ map_bounds.ne.lat|unlocalize }} ,'lon':{{ map_bounds.ne.lon|unlocalize }} }
-        };
+    function prepare_data(){
 
-        var center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }} };
+        bounds = {
+                'sw': {'lat':{{ map_bounds.sw.lat|unlocalize }} ,'lon':{{ map_bounds.sw.lon|unlocalize }} },
+                'ne': {'lat':{{ map_bounds.ne.lat|unlocalize }} ,'lon':{{ map_bounds.ne.lon|unlocalize }} }
+            };
+
+        center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }} };
         var comuniData ={
             {# creates the dict with data using istat code as key to retrieve Comune polygon  #}
             {% for t in map_values %}
@@ -62,10 +51,26 @@
 
             }
         });
+    }
 
-        thematic_map('danno',bounds, center, comuniEmilia);
-        thematic_map('attuazione',bounds, center, comuniEmilia);
+    var initialized_map = false;
+    function init_thematic_map(event){
+        console.log("init_thematic_map");
+        if(initialized_map==false){
+            thematic_map('attuazione', event.data.bounds, event.data.center, event.data.comuniEmilia);
+            initialized_map = true;
+        }
+    }
 
+
+
+    $(document).ready(function(){
+        prepare_data();
+        {#        on page load creates danno map#}
+        thematic_map('danno', bounds, center, comuniEmilia);
+
+{#        $("#tab_attuazione").on('shown',{map_type:'attuazione',bounds:bounds,center:center,comuniEmilia: comuniEmilia},init_thematic_map);#}
+        $('a#handle_attuazione').on('shown.bs.tab',{map_type:'attuazione',bounds:bounds,center:center,comuniEmilia: comuniEmilia},init_thematic_map);
 
     });
 
