@@ -150,14 +150,25 @@ function onEachFeature_attuazione(feature, layer) {
 }
 
 
-function style(feature) {
+function style_danno(feature) {
     return {
         weight: 2,
         opacity: 1,
         color: 'white',
         dashArray: '3',
         fillOpacity: 0.7,
-        fillColor: getColor(feature.properties.value)
+        fillColor: getColor_danno(feature.properties.value)
+    };
+}
+
+function style_attuazione(feature) {
+    return {
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7,
+        fillColor: getColor_attuazione(feature.properties.value)
     };
 }
 
@@ -171,17 +182,16 @@ function init_mapinfo(){
     return map_info;
 }
 
-function thematic_map(map_type, bounds, center, comuniEmilia){
+function thematic_map(map_type, bounds, center, geojson_data){
 
     var div_id, map_info ;
     
     //if type == 'danno', initialize map type A,
     // else initialize map type B on attuazione
+    map_info = init_mapinfo();
+    div_id = 'mappa_'+map_type;
 
     if(map_type == 'danno'){
-        console.log('danno');
-        map_info = init_mapinfo();
-        div_id = 'mappa_danno';
         map_info.update = function (props) {
             this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
                 '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
@@ -189,9 +199,6 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
         };
     }
     else{
-        console.log('attuazione');
-        map_info = init_mapinfo();
-        div_id = 'mappa_attuazione';
         map_info.update = function (props) {
         this._div.innerHTML = '<h4>Attuazione</h4>' +  (props ?
             '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
@@ -209,8 +216,8 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
     if(map_type == 'danno'){
 
         map_info_danno= map_info;
-        geojson_danno = L.geoJson(comuniEmilia, {
-            style: style,
+        geojson_danno = L.geoJson(geojson_data, {
+            style: style_danno,
             onEachFeature: onEachFeature_danno
         }).addTo(map);
         map_danno = map;
@@ -218,8 +225,8 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
     }
     else{
         map_info_attuazione = map_info;
-        geojson_attuazione = L.geoJson(comuniEmilia, {
-            style: style,
+        geojson_attuazione = L.geoJson(geojson_data, {
+            style: style_attuazione,
             onEachFeature: onEachFeature_attuazione
         }).addTo(map);
         map_attuazione = map;
@@ -227,8 +234,7 @@ function thematic_map(map_type, bounds, center, comuniEmilia){
     }
     
     map.attributionControl.addAttribution('');
-    add_legend(map);
-    console.log('thematic map done');
+//    add_legend(map);
 }
 
 !function($){

@@ -10,6 +10,7 @@ from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobi
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
 
+
 class PageNotFoundTemplateView(TemplateView):
     template_name = '404.html'
 
@@ -268,7 +269,61 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
         return context
 
 
-class HomeView(TemplateView, AggregatePageMixin):
+class MapMixin(object):
+    @staticmethod
+    def get_danno_values():
+
+        danno_values = Territorio.objects. \
+            filter(tipologia="C", regione="Emilia Romagna"). \
+            annotate(Sum('interventoprogramma__importo_generale')). \
+            values('slug', 'interventoprogramma__importo_generale__sum')
+        danno_dict = convert2dict(danno_values, 'slug')
+        map_values = []
+        territori_set = list(
+            Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
+                'denominazione', 'istat_id', 'slug'))
+        for t in territori_set:
+            map_values.append(
+                {
+                    'label': t['denominazione'],
+                    'value': danno_dict[t['slug']][0]['interventoprogramma__importo_generale__sum'],
+                    'istat_code': "8{}".format(t['istat_id']),
+                }
+            )
+        return map_values
+
+    @staticmethod
+    def get_attuazione_values():
+        map_values = []
+        attuazione_values = Territorio.objects.filter(tipologia="C", regione="Emilia Romagna"). \
+            annotate(Sum('interventoprogramma__interventopiano__intervento__imp_congr_spesa')). \
+            annotate(Sum('interventoprogramma__importo_generale')). \
+            values('slug', 'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
+                   'interventoprogramma__importo_generale__sum')
+        attuazione_dict = convert2dict(attuazione_values, 'slug')
+        territori_set = list(
+            Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
+                'denominazione', 'istat_id', 'slug'))
+        for t in territori_set:
+            territorio_data = attuazione_dict[t['slug']][0]
+            value = 0
+            if territorio_data['interventoprogramma__importo_generale__sum'] is not None and territorio_data['interventoprogramma__importo_generale__sum'] != 0 and territorio_data['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum'] is not None:
+                value = 100.0 * float(
+                    territorio_data['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum'] / territorio_data[
+                        'interventoprogramma__importo_generale__sum'])
+
+            map_values.append(
+                {
+                    'label': t['denominazione'],
+                    'value': value,
+                    'istat_code': "8{}".format(t['istat_id']),
+                }
+            )
+
+        return map_values
+
+
+class HomeView(TemplateView, AggregatePageMixin, MapMixin):
     template_name = "home.html"
 
     def get_context_data(self, **kwargs):
@@ -284,25 +339,10 @@ class HomeView(TemplateView, AggregatePageMixin):
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
 
-
-        danno_values = Territorio.objects.filter(tipologia="C").annotate(Sum('interventoprogramma__importo_generale')).values('slug','interventoprogramma__importo_generale__sum')
-        danno_dict = convert2dict(danno_values,'slug')
-        map_values = []
-        territori_set = list(
-            Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
-                'denominazione', 'istat_id', 'slug'))
-        for t in territori_set:
-            map_values.append(
-                {
-                    'label': t['denominazione'],
-                    'value': danno_dict[t['slug']][0]['interventoprogramma__importo_generale__sum'],
-                    'istat_code': "8{}".format(t['istat_id']),
-                }
-            )
-        context['map_values'] = map_values
+        context['map_danno_values'] = MapMixin.get_danno_values()
+        context['map_attuazione_values'] = MapMixin.get_attuazione_values()
 
         return context
-
 
 
 class TipoSoggettoAttuatoreView(ListView):

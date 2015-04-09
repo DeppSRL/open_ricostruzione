@@ -19,8 +19,10 @@
 
 <script type="text/javascript">
 
-    var bounds, center, comuniEmilia;
-
+    var bounds, center;
+    var geojson_danno = [];
+    var geojson_attuazione = [];
+    
     function prepare_data(){
         {#        prepare data for the maps: center, bounds and comunidata #}
         bounds = {
@@ -29,9 +31,21 @@
             };
 
         center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }} };
-        var comuniData ={
+
+        var danno_data ={
             {# creates the dict with data using istat code as key to retrieve Comune polygon  #}
-            {% for t in map_values %}
+            {% for t in map_danno_values %}
+                "{{ t.istat_code }}": {
+                    "label": "{{ t.label }}",
+                    "url": "",
+                    "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
+                }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+
+        };
+        var attuazione_data ={
+            {# creates the dict with data using istat code as key to retrieve Comune polygon  #}
+            {% for t in map_attuazione_values %}
                 "{{ t.istat_code }}": {
                     "label": "{{ t.label }}",
                     "url": "",
@@ -41,43 +55,54 @@
 
         };
 
-        $.each(comuniEmilia.features, function(index, feature){
-            var id = feature.properties.codice;
+        geojson_danno = integrate_geojson(comuniEmilia, danno_data);
+        geojson_attuazione = integrate_geojson(comuniEmilia, attuazione_data);
 
-            if (id in comuniData){
-                feature.properties.url = comuniData[id].url;
-                feature.properties.label = comuniData[id].label;
-                feature.properties.value = comuniData[id].value;
 
-            }
-        });
+    }
+
+    /* integrate_geojson
+    *  integrates geojson data about comuni emilia with data from db and creates the new_geojson
+    *  that will be fed to leaflet */
+    function integrate_geojson(geojson, data_struct){
+        var new_geojson = [];
+        $.each(geojson.features, function(index, feature){
+                var id = feature.properties.codice;
+                //clone feature variable and copy it into "f" variable, this avoids shallow copy (by reference)
+                var f = jQuery.extend(true, {}, feature);
+    
+                if (id in data_struct){
+                    f.properties.url = data_struct[id].url;
+                    f.properties.label = data_struct[id].label;
+                    f.properties.value = data_struct[id].value;
+                    new_geojson.push(f);
+                }
+            });
+        return new_geojson
     }
 
     var secondary_map_is_initialized = false;
     function init_secondary_map(event){
         {# initialize the secondary map when the container tab is showed for the first time #}
         if(secondary_map_is_initialized==false){
-            thematic_map('attuazione', event.data.bounds, event.data.center, event.data.comuniEmilia);
+            console.log('thematic map attuazione');
+            thematic_map(event.data.map_type, event.data.bounds, event.data.center, event.data.geojson_data);
             secondary_map_is_initialized = true;
         }
     }
 
-
-
     $(document).ready(function(){
         prepare_data();
         {#        on page load creates danno map#}
-        $('a#handle_attuazione').on('shown.bs.tab',{map_type:'attuazione',bounds:bounds,center:center,comuniEmilia: comuniEmilia},init_secondary_map);
+        $('a#handle_attuazione').on('shown.bs.tab',{map_type:'attuazione',bounds:bounds,center:center,geojson_data: geojson_attuazione},init_secondary_map);
 
-        thematic_map('danno', bounds, center, comuniEmilia);
-
-
+        thematic_map('danno', bounds, center, geojson_danno);
 
     });
 
 
     // get color depending on population density value
-    function getColor(d) {
+    function getColor_danno(d) {
         return d > 20000000 ? '#800026' :
                d > 15000000  ? '#BD0026' :
                d > 10000000  ? '#E31A1C' :
@@ -86,7 +111,15 @@
                d > 500000   ? '#FED976' :
                           '#FFEDA0';
     }
-
+    function getColor_attuazione(d) {
+        return d > 5 ? '#800026' :
+               d > 3  ? '#BD0026' :
+               d > 1 ? '#E31A1C' :
+               d > 0.5 ? '#FC4E2A' :
+               d > 0.2   ? '#FD8D3C' :
+               d > 0.1   ? '#FED976' :
+                          '#FFEDA0';
+    }
 
     {# adds legend to map #}
     function add_legend(map){
