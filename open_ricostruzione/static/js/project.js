@@ -97,7 +97,7 @@ function init_map(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
 * */
 
 function localita_map(bounds, center, territorio_label){
-    var map = init_map(map, 'localita_map',bounds, center, 13, 11, 18);
+    var map = init_map('localita_map',bounds, center, 13, 11, 18);
 
 
     L.marker([center.lat,center.lon]).addTo(map)
