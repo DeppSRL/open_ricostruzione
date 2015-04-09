@@ -1,4 +1,5 @@
 {% extends 'aggregate_base.html' %}
+{% load static %}
 
 {% block head-title %}
     Tipo Immobile: {{ tipo_immobile.denominazione }}
@@ -11,6 +12,22 @@
 {% block tipo-immobile %}
 {% endblock %}
 
+{% block extra-css %}
+    <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}" />
+{% endblock %}
+
+{% block extra-js-head %}
+    <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/emilia.json' %}"></script>
+{% endblock %}
 
 {% block home-map %}
+    <div class="row basic_spacer">
+        <div class="col-md-12">
+            <h1>Dove si interviene?</h1>
+        </div>
+    </div>
+
+    {% include 'modules/thematic_map.html'  %}
+
 {% endblock %}

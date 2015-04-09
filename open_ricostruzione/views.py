@@ -69,19 +69,19 @@ class AggregatePageMixin(object):
     def _get_totale_donazioni(self):
         return Donazione.get_aggregates(tipologia=None, **self.programmazione_filters)
 
-    def _get_totale_donazioni_interventi(self):
-        return DonazioneInterventoProgramma.get_aggregates(**self.donazione_intervento_filters)
-
-    def _get_aggr_donazioni_interventi(self):
-        values = []
-
-        for tipologia in Donazione.TIPO_CEDENTE:
-            d = {'name': tipologia[1]}
-            d.update(
-                DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
-            values.append(d)
-
-        return values
+    # def _get_totale_donazioni_interventi(self):
+    #     return DonazioneInterventoProgramma.get_aggregates(**self.donazione_intervento_filters)
+    #
+    # def _get_aggr_donazioni_interventi(self):
+    #     values = []
+    #
+    #     for tipologia in Donazione.TIPO_CEDENTE:
+    #         d = {'name': tipologia[1]}
+    #         d.update(
+    #             DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
+    #         values.append(d)
+    #
+    #     return values
 
 
     def fetch_interventi_programma(self, order_by, ):
@@ -161,8 +161,9 @@ class AggregatePageMixin(object):
             agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni()
             agg_dict['donazioni_totale'] = self._get_totale_donazioni()
         else:
-            agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni_interventi()
-            agg_dict['donazioni_totale'] = self._get_totale_donazioni_interventi()
+            # agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni_interventi()
+            # agg_dict['donazioni_totale'] = self._get_totale_donazioni_interventi()
+            pass
         return agg_dict
 
 
@@ -220,55 +221,6 @@ class LocalitaView(TemplateView, AggregatePageMixin):
 
         return context
 
-
-class TipoImmobileView(TemplateView, AggregatePageMixin):
-    template_name = 'tipo_immobile.html'
-    tipo_immobile = None
-
-    def get(self, request, *args, **kwargs):
-        # get data from the request
-        try:
-            self.tipo_immobile = TipoImmobile.objects.get(slug=kwargs['slug'])
-        except ObjectDoesNotExist:
-            return HttpResponseRedirect(reverse('tipo-immobile-not-found'))
-        return super(TipoImmobileView, self).get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(TipoImmobileView, self).get_context_data(**kwargs)
-        context['tipo_immobile'] = self.tipo_immobile
-        apm = AggregatePageMixin(
-            tipologia=AggregatePageMixin.TIPO_IMMOBILE,
-            programmazione_filters={'tipo_immobile': self.tipo_immobile},
-            sogg_att_filters={'interventoprogramma__tipo_immobile': self.tipo_immobile}
-        )
-        context.update(apm.get_aggregates())
-        return context
-
-
-class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
-    template_name = 'sogg_att.html'
-    sogg_att = None
-
-    def get(self, request, *args, **kwargs):
-        # get data from the request
-        try:
-            self.sogg_att = SoggettoAttuatore.objects.get(slug=kwargs['slug'])
-        except ObjectDoesNotExist:
-            return HttpResponseRedirect(reverse('404'))
-        return super(SoggettoAttuatoreView, self).get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(SoggettoAttuatoreView, self).get_context_data(**kwargs)
-        context['sogg_att'] = self.sogg_att
-        apm = AggregatePageMixin(
-            tipologia=AggregatePageMixin.SOGG_ATT,
-            programmazione_filters={'soggetto_attuatore': self.sogg_att},
-            sogg_att_filters={}
-        )
-        context.update(apm.get_aggregates())
-        return context
-
-
 class MapMixin(object):
     @staticmethod
     def get_danno_values():
@@ -323,6 +275,61 @@ class MapMixin(object):
         return map_values
 
 
+class TipoImmobileView(TemplateView, AggregatePageMixin, MapMixin):
+    template_name = 'tipo_immobile.html'
+    tipo_immobile = None
+
+    def get(self, request, *args, **kwargs):
+        # get data from the request
+        try:
+            self.tipo_immobile = TipoImmobile.objects.get(slug=kwargs['slug'])
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect(reverse('tipo-immobile-not-found'))
+        return super(TipoImmobileView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TipoImmobileView, self).get_context_data(**kwargs)
+        context['tipo_immobile'] = self.tipo_immobile
+        apm = AggregatePageMixin(
+            tipologia=AggregatePageMixin.TIPO_IMMOBILE,
+            programmazione_filters={'tipo_immobile': self.tipo_immobile},
+            sogg_att_filters={'interventoprogramma__tipo_immobile': self.tipo_immobile}
+        )
+        context.update(apm.get_aggregates())
+
+        # gets maps bounds and center
+        context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
+        context['map_center'] = settings.THEMATIC_MAP_CENTER
+        # get maps data
+        context['map_danno_values'] = MapMixin.get_danno_values()
+        context['map_attuazione_values'] = MapMixin.get_attuazione_values()
+        return context
+
+
+class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
+    template_name = 'sogg_att.html'
+    sogg_att = None
+
+    def get(self, request, *args, **kwargs):
+        # get data from the request
+        try:
+            self.sogg_att = SoggettoAttuatore.objects.get(slug=kwargs['slug'])
+        except ObjectDoesNotExist:
+            return HttpResponseRedirect(reverse('404'))
+        return super(SoggettoAttuatoreView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SoggettoAttuatoreView, self).get_context_data(**kwargs)
+        context['sogg_att'] = self.sogg_att
+        apm = AggregatePageMixin(
+            tipologia=AggregatePageMixin.SOGG_ATT,
+            programmazione_filters={'soggetto_attuatore': self.sogg_att},
+            sogg_att_filters={}
+        )
+        context.update(apm.get_aggregates())
+        return context
+
+
 class HomeView(TemplateView, AggregatePageMixin, MapMixin):
     template_name = "home.html"
 
@@ -338,7 +345,7 @@ class HomeView(TemplateView, AggregatePageMixin, MapMixin):
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
-
+        # get maps data
         context['map_danno_values'] = MapMixin.get_danno_values()
         context['map_attuazione_values'] = MapMixin.get_attuazione_values()
 
