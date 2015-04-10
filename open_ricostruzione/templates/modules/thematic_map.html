@@ -101,22 +101,22 @@
 
     // get color depending on population density value
     function getColor_danno(d) {
-        return d > 20000000 ? '#800026' :
-               d > 15000000  ? '#BD0026' :
-               d > 10000000  ? '#E31A1C' :
-               d > 5000000  ? '#FC4E2A' :
-               d > 1000000   ? '#FD8D3C' :
-               d > 500000   ? '#FED976' :
-                          '#FFEDA0';
+        return d > 10000000? '#800026' :
+               d > 5000000 ? '#BD0026' :
+               d > 1000000 ? '#E31A1C' :
+               d > 500000  ? '#FC4E2A' :
+               d > 200000  ? '#FD8D3C' :
+               d > 50000   ? '#FED976' :
+                             '#FFEDA0';
     }
     function getColor_attuazione(d) {
-        return d > 5 ? '#800026' :
-               d > 3  ? '#BD0026' :
-               d > 1 ? '#E31A1C' :
-               d > 0.5 ? '#FC4E2A' :
-               d > 0.2   ? '#FD8D3C' :
-               d > 0.1   ? '#FED976' :
-                          '#FFEDA0';
+        return d > 84 ? '#800026' :
+               d > 70 ? '#BD0026' :
+               d > 56 ? '#E31A1C' :
+               d > 42 ? '#FC4E2A' :
+               d > 28 ? '#FD8D3C' :
+               d > 14 ? '#FED976' :
+                        '#FFEDA0';
     }
 
     {# adds legend to map #}
