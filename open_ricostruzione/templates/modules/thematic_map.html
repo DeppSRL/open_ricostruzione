@@ -120,23 +120,36 @@
     }
 
     {# adds legend to map #}
-    function add_legend(map){
+    function add_legend(map_type, map){
         var legend = L.control({position: 'bottomright'});
 
-            legend.onAdd = function (map) {
+            legend.onAdd = function (map_type, map) {
+                var grades;
+                var div = L.DomUtil.create('div', 'map_info legend');
+                if(map_type == 'danno'){
+                   grades = [0, 50000, 200000, 500000, 1000000, 5000000, 10000000];
+                }
+                else{
+                    grades = [0, 14, 28, 42, 56, 70, 84];
+                }
 
-                var div = L.DomUtil.create('div', 'map_info legend'),
-                    grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-                    labels = [],
+                var labels = [],
                     from, to;
 
                 for (var i = 0; i < grades.length; i++) {
                     from = grades[i];
                     to = grades[i + 1];
+                    if(map_type == 'danno'){
+                        labels.push(
+                            '<i style="background:' + getColor_danno(from + 1) + '"></i> ' +
+                            from + (to ? '&ndash;' + to : '+'));
+                    }
+                    else{
+                        labels.push(
+                            '<i style="background:' + getColor_attuazione(from + 1) + '"></i> ' +
+                            from + (to ? '&ndash;' + to : '+'));
+                    }
 
-                    labels.push(
-                        '<i style="background:' + getColor(from + 1) + '"></i> ' +
-                        from + (to ? '&ndash;' + to : '+'));
                 }
 
                 div.innerHTML = labels.join('<br>');

@@ -237,7 +237,7 @@ function thematic_map(map_type, bounds, center, geojson_data){
     }
     
     map.attributionControl.addAttribution('');
-//    add_legend(map);
+    add_legend(map_type, map);
 }
 
 !function($){
