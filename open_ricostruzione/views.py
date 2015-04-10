@@ -2,7 +2,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404
-from random import randint
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
 from django.db.models.aggregates import Count, Sum
 from django.conf import settings
@@ -235,9 +234,14 @@ class MapMixin(object):
             Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
                 'denominazione', 'istat_id', 'slug'))
         for t in territori_set:
+            url = ''
+            if t['istat_id'] in settings.COMUNI_CRATERE:
+                url = reverse('localita',  kwargs={'slug': t['slug']})
+
             map_values.append(
                 {
                     'label': t['denominazione'],
+                    'url': url,
                     'value': danno_dict[t['slug']][0]['interventoprogramma__importo_generale__sum'],
                     'istat_code': "8{}".format(t['istat_id']),
                 }
@@ -264,9 +268,14 @@ class MapMixin(object):
                     territorio_data['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum'] / territorio_data[
                         'interventoprogramma__importo_generale__sum'])
 
+            url = ''
+            if t['istat_id'] in settings.COMUNI_CRATERE:
+                url = reverse('localita',  kwargs={'slug': t['slug']})
+
             map_values.append(
                 {
                     'label': t['denominazione'],
+                    'url': url,
                     'value': value,
                     'istat_code': "8{}".format(t['istat_id']),
                 }

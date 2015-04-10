@@ -37,7 +37,7 @@
             {% for t in map_danno_values %}
                 "{{ t.istat_code }}": {
                     "label": "{{ t.label }}",
-                    "url": "",
+                    "url": "{{ t.url }}",
                     "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
                 }{% if not forloop.last %},{% endif %}
             {% endfor %}
@@ -48,7 +48,7 @@
             {% for t in map_attuazione_values %}
                 "{{ t.istat_code }}": {
                     "label": "{{ t.label }}",
-                    "url": "",
+                    "url": "{{ t.url }}",
                     "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
                 }{% if not forloop.last %},{% endif %}
             {% endfor %}
@@ -84,7 +84,6 @@
     function init_secondary_map(event){
         {# initialize the secondary map when the container tab is showed for the first time #}
         if(secondary_map_is_initialized==false){
-            console.log('thematic map attuazione');
             thematic_map(event.data.map_type, event.data.bounds, event.data.center, event.data.geojson_data);
             secondary_map_is_initialized = true;
         }

@@ -111,6 +111,9 @@ function zoomToFeature(e,geojson, map_info, map) {
     map.fitBounds(e.target.getBounds());
 }
 
+function navigateToFeatureURL(e) {
+    window.location = e.target.feature.properties.url;
+}
 
 function resetHighlight(e, geojson, map_info, map) {
     geojson.resetStyle(e.target);
@@ -138,14 +141,14 @@ function highlightFeature(e,geojson, map_info, map) {
 function onEachFeature_danno(feature, layer) {
     layer.on('mouseout', function(e){resetHighlight(e,geojson_danno, map_info_danno, map_danno )});
     layer.on('mouseover', function(e){highlightFeature(e,geojson_danno, map_info_danno, map_danno )});
-    layer.on('click', function(e){zoomToFeature(e,geojson_danno, map_info_danno, map_danno )});
+    layer.on('click', function(e){navigateToFeatureURL(e,geojson_danno, map_info_danno, map_danno )});
 
 }
 
 function onEachFeature_attuazione(feature, layer) {
     layer.on('mouseout', function(e){resetHighlight(e,geojson_attuazione, map_info_attuazione, map_attuazione )});
     layer.on('mouseover', function(e){highlightFeature(e,geojson_attuazione, map_info_attuazione, map_attuazione )});
-    layer.on('click', function(e){zoomToFeature(e,geojson_attuazione, map_info_attuazione, map_attuazione )});
+    layer.on('click', function(e){navigateToFeatureURL(e,geojson_attuazione, map_info_attuazione, map_attuazione )});
 
 }
 
@@ -207,7 +210,7 @@ function thematic_map(map_type, bounds, center, geojson_data){
     }
 
     
-    var map = init_map(div_id, bounds, center, 8, 8, 11);
+    var map = init_map(div_id, bounds, center, 9, 8, 11);
     // control that shows state map_info on hover
 
 

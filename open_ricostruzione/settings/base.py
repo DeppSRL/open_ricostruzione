@@ -258,7 +258,7 @@ SOGG_ATTUATORE_MAP_FILE_PATH = env.str('SOGG_ATTUATORE_MAP_FILE_PATH', '')
 
 # tipologia cedente in PRIVATE_TIPOLOGIA_CEDENTE are private citizens'ones so the Denominazione will be obscured
 PRIVATE_TIPOLOGIA_CEDENTE = [u'4', ]
-LOCALITA_MAP_BOUNDS_WIDTH = 0.2
+LOCALITA_MAP_BOUNDS_WIDTH = 0.1
 
 THEMATIC_MAP_BOUNDS = {
     'sw': {'lat': 43.714294, 'lon': 8.316650},
