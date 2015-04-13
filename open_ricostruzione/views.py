@@ -57,6 +57,8 @@ class AggregatePageMixin(object):
 
     def _get_aggr_donazioni(self, ):
         values = []
+        # get aggr donazioni uses programmazione filters because it's used only for home page: no filters or
+        # territorio page: only territorio filters
 
         for tipologia in Donazione.TIPO_CEDENTE:
             d = {'name': tipologia[1]}
@@ -68,20 +70,19 @@ class AggregatePageMixin(object):
     def _get_totale_donazioni(self):
         return Donazione.get_aggregates(tipologia=None, **self.programmazione_filters)
 
-    # def _get_totale_donazioni_interventi(self):
-    #     return DonazioneInterventoProgramma.get_aggregates(**self.donazione_intervento_filters)
-    #
-    # def _get_aggr_donazioni_interventi(self):
-    #     values = []
-    #
-    #     for tipologia in Donazione.TIPO_CEDENTE:
-    #         d = {'name': tipologia[1]}
-    #         d.update(
-    #             DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
-    #         values.append(d)
-    #
-    #     return values
+    def _get_totale_donazioni_interventi(self):
+        return DonazioneInterventoProgramma.get_aggregates(**self.donazione_intervento_filters)
 
+    def _get_aggr_donazioni_interventi(self):
+        values = []
+
+        for tipologia in Donazione.TIPO_CEDENTE:
+            d = {'name': tipologia[1]}
+            d.update(
+                DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
+            values.append(d)
+
+        return values
 
     def fetch_interventi_programma(self, order_by, ):
         n_objects = settings.N_PROGETTI_FETCH
@@ -89,11 +90,13 @@ class AggregatePageMixin(object):
 
     def fetch_sogg_att(self):
         n_objects = settings.N_SOGG_ATT_FETCH
-        return list(SoggettoAttuatore.objects.
-                    filter(**self.sogg_att_filters).
-                    annotate(Count('interventoprogramma')).
-                    order_by('-interventoprogramma__count').
-                    values('denominazione', 'interventoprogramma__count')[0:n_objects])
+        return list(
+            SoggettoAttuatore.objects.
+                filter(**self.sogg_att_filters).
+                annotate(Count('interventoprogramma')).
+                order_by('-interventoprogramma__count').
+                values('denominazione', 'interventoprogramma__count')[0:n_objects]
+            )
 
     def _get_programmazione_status(self):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
@@ -144,25 +147,28 @@ class AggregatePageMixin(object):
         # top importo interventi fetch
         agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
 
-        # tipo immobile pie data
+        # Get tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
             agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates(
                 **self.programmazione_filters)
-            # tipo sogg.att data
+
+        # Get tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
             agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(
                 **self.programmazione_filters)
             agg_dict['sogg_att_top'] = self.fetch_sogg_att()
-            # donazioni data
+
+        # Get donazioni data
+
         # if home or localita page: use programmazione filters ( no filters or territorio filters)
         # else (tipo immobile) use DonazioneInterventoProgramma filters
         if self.tipologia == self.HOME or self.tipologia == self.TERRITORIO:
             agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni()
             agg_dict['donazioni_totale'] = self._get_totale_donazioni()
         else:
-            # agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni_interventi()
-            # agg_dict['donazioni_totale'] = self._get_totale_donazioni_interventi()
-            pass
+            agg_dict['donazioni_aggregates'] = self._get_aggr_donazioni_interventi()
+            agg_dict['donazioni_totale'] = self._get_totale_donazioni_interventi()
+
         return agg_dict
 
 

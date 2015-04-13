@@ -482,11 +482,31 @@ class DonazioneInterventoProgramma(models.Model):
     donazione = models.ForeignKey('Donazione', blank=False, null=False)
     intervento_programma = models.ForeignKey('InterventoProgramma', blank=False, null=False)
 
+
+    @staticmethod
+    def get_aggregates(tipologia=None, **kwargs):
+
+        importo_field = 'donazione__importo'
+        if not tipologia:
+            aggregation_struct = {
+                'sum': Sum(importo_field),
+                'count': Count(importo_field)
+            }
+        else:
+            tipologia_id, tipologia_shortname = tipologia
+            aggregation_struct = {
+                'sum': Sum(importo_field, only=Q(donazione__tipologia_cedente=tipologia_id)),
+                'count': Count(importo_field, only=Q(donazione__tipologia_cedente=tipologia_id))
+            }
+
+        return DonazioneInterventoProgramma.objects.filter(**kwargs).aggregate(**aggregation_struct)
+
     class Meta:
         verbose_name_plural = u'Donazioni a Interventi a programma'
 
     def __unicode__(self):
         return u"{} - {}: {}E".format(self.donazione, self.intervento_programma, self.donazione.importo)
+
 
 ##
 # ANAGRAFICHE
