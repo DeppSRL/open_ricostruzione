@@ -92,11 +92,11 @@ class AggregatePageMixin(object):
         n_objects = settings.N_SOGG_ATT_FETCH
         return list(
             SoggettoAttuatore.objects.
-                filter(**self.sogg_att_filters).
-                annotate(Count('interventoprogramma')).
-                order_by('-interventoprogramma__count').
-                values('denominazione', 'interventoprogramma__count')[0:n_objects]
-            )
+            filter(**self.sogg_att_filters).
+            annotate(Count('interventoprogramma')).
+            order_by('-interventoprogramma__count').
+            values('denominazione', 'interventoprogramma__count')[0:n_objects]
+        )
 
     def _get_programmazione_status(self):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
@@ -226,58 +226,35 @@ class LocalitaView(TemplateView, AggregatePageMixin):
 
         return context
 
+
 class MapMixin(object):
-    @staticmethod
-    def get_danno_values():
+    map_filters = None
 
-        danno_values = Territorio.objects. \
-            filter(tipologia="C", regione="Emilia Romagna"). \
-            annotate(Sum('interventoprogramma__importo_generale')). \
-            values('slug', 'interventoprogramma__importo_generale__sum')
-        danno_dict = convert2dict(danno_values, 'slug')
+    def __init__(self, map_filters):
+        # initialize map filters
+        self.map_filters = map_filters
+
+    @staticmethod
+    def _get_territorio_set():
+        return list(
+            Territorio.objects. \
+                filter(tipologia="C", regione="Emilia Romagna"). \
+                order_by('denominazione').values('denominazione', 'istat_id', 'slug'))
+
+
+    @staticmethod
+    def _create_map_values(data_list):
+
+        data_dict = convert2dict(data_list, 'slug')
         map_values = []
-        territori_set = list(
-            Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
-                'denominazione', 'istat_id', 'slug'))
-        for t in territori_set:
+        for t in MapMixin._get_territorio_set():
             url = ''
             if t['istat_id'] in settings.COMUNI_CRATERE:
-                url = reverse('localita',  kwargs={'slug': t['slug']})
+                url = reverse('localita', kwargs={'slug': t['slug']})
 
-            map_values.append(
-                {
-                    'label': t['denominazione'],
-                    'url': url,
-                    'value': danno_dict[t['slug']][0]['interventoprogramma__importo_generale__sum'],
-                    'istat_code': "8{}".format(t['istat_id']),
-                }
-            )
-        return map_values
-
-    @staticmethod
-    def get_attuazione_values():
-        map_values = []
-        attuazione_values = Territorio.objects.filter(tipologia="C", regione="Emilia Romagna"). \
-            annotate(Sum('interventoprogramma__interventopiano__intervento__imp_congr_spesa')). \
-            annotate(Sum('interventoprogramma__importo_generale')). \
-            values('slug', 'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
-                   'interventoprogramma__importo_generale__sum')
-        attuazione_dict = convert2dict(attuazione_values, 'slug')
-        territori_set = list(
-            Territorio.objects.filter(tipologia="C", regione="Emilia Romagna").order_by('denominazione').values(
-                'denominazione', 'istat_id', 'slug'))
-        for t in territori_set:
-            territorio_data = attuazione_dict[t['slug']][0]
             value = 0
-            if territorio_data['interventoprogramma__importo_generale__sum'] is not None and territorio_data['interventoprogramma__importo_generale__sum'] != 0 and territorio_data['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum'] is not None:
-                value = 100.0 * float(
-                    territorio_data['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum'] / territorio_data[
-                        'interventoprogramma__importo_generale__sum'])
-
-            url = ''
-            if t['istat_id'] in settings.COMUNI_CRATERE:
-                url = reverse('localita',  kwargs={'slug': t['slug']})
-
+            if data_dict.get(t['slug'], None):
+                value = data_dict[t['slug']][0]['value']
             map_values.append(
                 {
                     'label': t['denominazione'],
@@ -286,8 +263,42 @@ class MapMixin(object):
                     'istat_code': "8{}".format(t['istat_id']),
                 }
             )
-
         return map_values
+
+    def get_danno_values(self):
+
+        danno_values = list(
+            Territorio.objects. \
+                filter(tipologia="C", regione="Emilia Romagna"). \
+                filter(**self.map_filters). \
+                annotate(Sum('interventoprogramma__importo_generale')). \
+                values('slug', 'interventoprogramma__importo_generale__sum')
+        )
+
+        for item in danno_values:
+            item['value'] = item['interventoprogramma__importo_generale__sum']
+
+        return MapMixin._create_map_values(danno_values)
+
+
+    def get_attuazione_values(self):
+
+        attuazione_values = list(
+            Territorio.objects.filter(tipologia="C", regione="Emilia Romagna"). \
+                filter(**self.map_filters). \
+                annotate(Sum('interventoprogramma__interventopiano__intervento__imp_congr_spesa')). \
+                annotate(Sum('interventoprogramma__importo_generale')). \
+                values('slug', 'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
+                       'interventoprogramma__importo_generale__sum'))
+
+        for item in attuazione_values:
+            item['value'] = 0
+            valore_progr = item['interventoprogramma__importo_generale__sum']
+            valore_attuaz = item['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum']
+            if valore_progr and valore_progr != 0 and valore_attuaz:
+                item['value'] = 100.0 * float(valore_attuaz / valore_progr)
+
+        return MapMixin._create_map_values(attuazione_values)
 
 
 class TipoImmobileView(TemplateView, AggregatePageMixin, MapMixin):
@@ -316,8 +327,10 @@ class TipoImmobileView(TemplateView, AggregatePageMixin, MapMixin):
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
         # get maps data
-        context['map_danno_values'] = MapMixin.get_danno_values()
-        context['map_attuazione_values'] = MapMixin.get_attuazione_values()
+        mapm = MapMixin(map_filters={'interventoprogramma__tipo_immobile': self.tipo_immobile})
+        context['map_danno_values'] = mapm.get_danno_values()
+        context['map_attuazione_values'] = mapm.get_attuazione_values()
+
         return context
 
 
@@ -361,8 +374,9 @@ class HomeView(TemplateView, AggregatePageMixin, MapMixin):
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
         # get maps data
-        context['map_danno_values'] = MapMixin.get_danno_values()
-        context['map_attuazione_values'] = MapMixin.get_attuazione_values()
+        mapm = MapMixin(map_filters={})
+        context['map_danno_values'] = mapm.get_danno_values()
+        context['map_attuazione_values'] = mapm.get_attuazione_values()
 
         return context
 
