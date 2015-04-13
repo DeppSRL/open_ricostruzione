@@ -252,9 +252,11 @@ class MapMixin(object):
             if t['istat_id'] in settings.COMUNI_CRATERE:
                 url = reverse('localita', kwargs={'slug': t['slug']})
 
-            value = 0
             if data_dict.get(t['slug'], None):
                 value = data_dict[t['slug']][0]['value']
+            else:
+                value = None
+
             map_values.append(
                 {
                     'label': t['denominazione'],

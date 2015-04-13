@@ -6,7 +6,7 @@ var chart_initialization = false;
 var map_danno, map_attuazione;
 var geojson_danno,geojson_attuazione;
 var map_info_danno, map_info_attuazione;
-
+var no_data_label = 'Nessun dato';
 
 function init_highcharts(){
     // Radialize the colors
@@ -107,9 +107,6 @@ function localita_map(bounds, center, territorio_label){
 
 /* THEME MAP FUNCTIONS */
 
-function zoomToFeature(e,geojson, map_info, map) {
-    map.fitBounds(e.target.getBounds());
-}
 
 function navigateToFeatureURL(e) {
     window.location = e.target.feature.properties.url;
@@ -125,7 +122,7 @@ function highlightFeature(e,geojson, map_info, map) {
     var layer = e.target;
 
     layer.setStyle({
-        weight: 5,
+        weight: 4,
         color: '#666',
         dashArray: '',
         fillOpacity: 0.7
@@ -197,14 +194,14 @@ function thematic_map(map_type, bounds, center, geojson_data){
     if(map_type == 'danno'){
         map_info.update = function (props) {
             this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
-                '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
+                '<b>' + props.label + '</b><br />' + (props.value != null ? props.value+ ' Euro': no_data_label)
                 : 'Passa sopra un Comune');
         };
     }
     else{
         map_info.update = function (props) {
         this._div.innerHTML = '<h4>Attuazione</h4>' +  (props ?
-            '<b>' + props.label + '</b><br />' + props.value+ ' Euro'
+            '<b>' + props.label + '</b><br />' + (props.value != null ? props.value+ ' %': no_data_label)
             : 'Passa sopra un Comune');
         };
     }

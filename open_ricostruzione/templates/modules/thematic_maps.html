@@ -56,7 +56,11 @@
                 "{{ t.istat_code }}": {
                     "label": "{{ t.label }}",
                     "url": "{{ t.url }}",
-                    "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
+                    {% if t.value %}
+                        "value": "{{ t.value }}".replace(/,/g, '.')
+                    {% else %}
+                        "value": null
+                    {% endif %}
                 }{% if not forloop.last %},{% endif %}
             {% endfor %}
 
@@ -67,7 +71,11 @@
                 "{{ t.istat_code }}": {
                     "label": "{{ t.label }}",
                     "url": "{{ t.url }}",
-                    "value": "{{ t.value|default:"0" }}".replace(/,/g, '.')
+                    {% if t.value %}
+                        "value": "{{ t.value }}".replace(/,/g, '.')
+                    {% else %}
+                        "value": null
+                    {% endif %}
                 }{% if not forloop.last %},{% endif %}
             {% endfor %}
 
@@ -133,7 +141,8 @@
                d > 500000  ? '#FC4E2A' :
                d > 200000  ? '#FD8D3C' :
                d > 50000   ? '#FED976' :
-                             '#FFEDA0';
+               d != null ? '#fffa6a':
+                       '#FFFFFF';
     }
     function getColor_attuazione(d) {
         return d > 84 ? '#800026' :
@@ -142,7 +151,8 @@
                d > 42 ? '#FC4E2A' :
                d > 28 ? '#FD8D3C' :
                d > 14 ? '#FED976' :
-                        '#FFEDA0';
+               d != null ? '#fffa6a':
+                       '#FFFFFF';
     }
 
     {# adds legend to map #}
@@ -178,8 +188,8 @@
                             '<i style="background:' + getColor_attuazione(from + 1) + '"></i> ' +
                             from + (to ? '&ndash;' + to : '+'));
                     }
-
                 }
+                labels.push('<i style="background:' + getColor_attuazione(null) + '"></i> '+no_data_label);
 
                 div.innerHTML = labels.join('<br>');
                 return div;
