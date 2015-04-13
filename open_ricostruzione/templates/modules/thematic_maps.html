@@ -76,7 +76,6 @@
         if(impresa == false)
             geojson_danno = integrate_geojson(comuniEmilia, danno_data);
 
-
         geojson_attuazione = integrate_geojson(comuniEmilia, attuazione_data);
 
     }
@@ -123,8 +122,6 @@
         else{
             thematic_map('attuazione', bounds, center, geojson_attuazione);
         }
-
-
     });
 
 
@@ -150,12 +147,15 @@
 
     {# adds legend to map #}
     function add_legend(map_type, map){
+
+
         var legend = L.control({position: 'bottomright'});
 
-            legend.onAdd = function (map_type, map) {
+            legend.onAdd = function (map) {
                 var grades;
+                var map_type = map._container.id;
                 var div = L.DomUtil.create('div', 'map_info legend');
-                if(map_type == 'danno'){
+                if(map_type == 'mappa_danno'){
                    grades = [0, 50000, 200000, 500000, 1000000, 5000000, 10000000];
                 }
                 else{
@@ -168,7 +168,7 @@
                 for (var i = 0; i < grades.length; i++) {
                     from = grades[i];
                     to = grades[i + 1];
-                    if(map_type == 'danno'){
+                    if(map_type == 'mappa_danno'){
                         labels.push(
                             '<i style="background:' + getColor_danno(from + 1) + '"></i> ' +
                             from + (to ? '&ndash;' + to : '+'));
@@ -186,6 +186,7 @@
             };
 
         legend.addTo(map);
+
     }
 
 
