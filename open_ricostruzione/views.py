@@ -334,7 +334,7 @@ class TipoImmobileView(TemplateView, AggregatePageMixin, MapMixin):
         return context
 
 
-class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
+class SoggettoAttuatoreView(TemplateView, AggregatePageMixin, MapMixin):
     template_name = 'sogg_att.html'
     sogg_att = None
 
@@ -355,6 +355,15 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
             sogg_att_filters={}
         )
         context.update(apm.get_aggregates())
+        
+        # gets maps bounds and center
+        context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
+        context['map_center'] = settings.THEMATIC_MAP_CENTER
+         # get maps data
+        mapm = MapMixin(map_filters={'interventoprogramma__soggetto_attuatore': self.sogg_att})
+        context['map_danno_values'] = mapm.get_danno_values()
+        context['map_attuazione_values'] = mapm.get_attuazione_values()
+
         return context
 
 
