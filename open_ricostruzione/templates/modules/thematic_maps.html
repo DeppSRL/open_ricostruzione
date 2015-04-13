@@ -1,17 +1,28 @@
 {% load l10n %}
 
-<div role="tabpanel">
+<div class="row">
+    <div class="col-md-12">
+        {% if impresa %}
+            <div id="mappa_attuazione" class="map"></div>
+        {% else %}
+            <div role="tabpanel">
 
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab" id="handle_danno">Mappa Danno</a></li>
-        <li role="presentation"><a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab" id="handle_attuazione">Mappa Attuazione</a></li>
-    </ul>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab" id="handle_danno">Mappa Danno</a></li>
+                <li role="presentation"><a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab" id="handle_attuazione">Mappa Attuazione</a></li>
+            </ul>
 
-    <!-- Tab panes -->
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane fade in active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
-        <div role="tabpanel" class="tab-pane fade" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
+                <div role="tabpanel" class="tab-pane fade" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
+            </div>
+
+        </div>
+
+        {% endif %}
+
     </div>
 
 </div>
@@ -22,7 +33,14 @@
     var bounds, center;
     var geojson_danno = [];
     var geojson_attuazione = [];
-    
+    var impresa;
+
+    {% if impresa %}
+        impresa = true;
+    {% else %}
+        impresa = false;
+    {% endif %}
+
     function prepare_data(){
         {#        prepare data for the maps: center, bounds and comunidata #}
         bounds = {
@@ -55,7 +73,10 @@
 
         };
 
-        geojson_danno = integrate_geojson(comuniEmilia, danno_data);
+        if(impresa == false)
+            geojson_danno = integrate_geojson(comuniEmilia, danno_data);
+
+
         geojson_attuazione = integrate_geojson(comuniEmilia, attuazione_data);
 
     }
@@ -91,10 +112,18 @@
 
     $(document).ready(function(){
         prepare_data();
-        {#        on page load creates danno map#}
-        $('a#handle_attuazione').on('shown.bs.tab',{map_type:'attuazione',bounds:bounds,center:center,geojson_data: geojson_attuazione},init_secondary_map);
 
-        thematic_map('danno', bounds, center, geojson_danno);
+        if(impresa == false){
+            {#        on page load creates danno map and set handler on event for attuazione map #}
+            $('a#handle_attuazione').on('shown.bs.tab',{map_type:'attuazione',bounds:bounds,center:center,geojson_data: geojson_attuazione},init_secondary_map);
+
+            if(impresa == false)
+                thematic_map('danno', bounds, center, geojson_danno);
+        }
+        else{
+            thematic_map('attuazione', bounds, center, geojson_attuazione);
+        }
+
 
     });
 

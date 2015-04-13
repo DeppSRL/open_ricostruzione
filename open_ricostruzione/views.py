@@ -355,7 +355,7 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin, MapMixin):
             sogg_att_filters={}
         )
         context.update(apm.get_aggregates())
-        
+
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
@@ -457,6 +457,13 @@ class ImpresaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ImpresaDetailView, self).get_context_data(**kwargs)
         context['impresa'] = self.impresa
+
+       # gets maps bounds and center
+        context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
+        context['map_center'] = settings.THEMATIC_MAP_CENTER
+         # get maps data
+        mapm = MapMixin(map_filters={'interventoprogramma__interventopiano__intervento__imprese': self.impresa})
+        context['map_attuazione_values'] = mapm.get_attuazione_values()
 
         return context
 
