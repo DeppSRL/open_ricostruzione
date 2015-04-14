@@ -305,9 +305,13 @@ class MapMixin(object):
                        'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
                        'interventoprogramma__importo_generale__sum'))
 
+        print self.map_filters
         attuazione_n_interventi = Territorio.objects.\
-            filter(tipologia="C", regione="Emilia Romagna").\
-            filter(**self.map_filters). \
+            filter(
+                tipologia="C",
+                regione="Emilia Romagna",
+                interventoprogramma__interventopiano__intervento__isnull=False,
+                **self.map_filters).\
             annotate(c=Count('interventoprogramma')).values('slug', 'c')
 
         n_interventi_dict = convert2dict(attuazione_n_interventi, 'slug')
