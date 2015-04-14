@@ -56,14 +56,11 @@ urlpatterns = patterns('',
                        url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaDetailView.as_view(), name='impresa'),
                        url(r'^donazioni/$', DonazioniListView.as_view(), name='donazioni'),
 
-                       # todo: remove following url
-                       # todo: dev url
-                       url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
-
 )
 
 if settings.INSTANCE_TYPE == 'development':
     urlpatterns += patterns('',
-                            url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-                                'document_root': settings.MEDIA_ROOT,
-                            }))
+                            url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT,}),
+                            # todo: remove following url
+                            url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
+    )

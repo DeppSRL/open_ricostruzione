@@ -23,6 +23,9 @@ class DonazioniListView(ListView):
     model = Donazione
     template_name = 'donazioni_list.html'
 
+    def get_queryset(self):
+        queryset = super(DonazioniListView, self).get_queryset()
+        return queryset.select_related()
 
 class AggregatePageMixin(object):
     ##
