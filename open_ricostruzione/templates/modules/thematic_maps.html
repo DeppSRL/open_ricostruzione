@@ -73,6 +73,7 @@
                     "label": "{{ t.label }}",
                     "url": "{{ t.url }}",
                     "count": "{{ t.count }}",
+                    "sum": "{{ t.sum }}",
                     {% if t.value %}
                         "value": "{{ t.value }}".replace(/,/g, '.')
                     {% else %}
@@ -105,6 +106,7 @@
                     f.properties.label = data_struct[id].label;
                     f.properties.value = data_struct[id].value;
                     f.properties.count = data_struct[id].count;
+                    f.properties.sum = data_struct[id].sum;
                     new_geojson.push(f);
                 }
             });

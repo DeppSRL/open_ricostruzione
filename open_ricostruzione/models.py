@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-from decimal import Decimal
-from django.core.exceptions import ValidationError
-from django.db.models import Sum
-from django.utils.text import slugify
 from model_utils import Choices
 from django.db import models
 from django.db.models import Q
 from aggregate_if import Count, Sum
-from django.conf import settings
 from managers import ProgrammatiManager, PianificatiManager, AttuazioneManager, ProgettazioneManager, InCorsoManager, ConclusiManager
 from open_ricostruzione.utils.moneydate import moneyfmt
 

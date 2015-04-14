@@ -248,13 +248,18 @@ class MapMixin(object):
         data_dict = convert2dict(data_list, 'slug')
         map_values = []
         for t in MapMixin._get_territorio_set():
+            sum = 0
             url = ''
+
             if t.istat_id in settings.COMUNI_CRATERE:
                 url = reverse('localita', kwargs={'slug': t.slug})
 
             if data_dict.get(t.slug, None):
                 value = data_dict[t.slug][0]['value']
                 count = data_dict[t.slug][0]['count']
+
+                if data_dict[t.slug][0].get('sum', None):
+                    sum = data_dict[t.slug][0]['sum']
             else:
                 value = None
                 count = 0
@@ -265,6 +270,7 @@ class MapMixin(object):
                     'url': url,
                     'value': value,
                     'count': count,
+                    'sum': sum,
                     'istat_code': "8{}".format(t.istat_id),
                 }
             )
@@ -295,16 +301,30 @@ class MapMixin(object):
                 filter(**self.map_filters). \
                 annotate(Sum('interventoprogramma__interventopiano__intervento__imp_congr_spesa')). \
                 annotate(Sum('interventoprogramma__importo_generale')). \
-                annotate(Count('interventoprogramma__importo_generale')). \
-                values('slug', 'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
-                       'interventoprogramma__importo_generale__count',
+                values('slug',
+                       'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
                        'interventoprogramma__importo_generale__sum'))
+
+        attuazione_n_interventi = Territorio.objects.\
+            filter(tipologia="C", regione="Emilia Romagna").\
+            filter(interventoprogramma__interventopiano__intervento__isnull=False).\
+            annotate(c=Count('interventoprogramma')).values('slug', 'c')
+
+        n_interventi_dict = convert2dict(attuazione_n_interventi, 'slug')
 
         for item in attuazione_values:
             item['value'] = 0
-            item['count'] = item['interventoprogramma__importo_generale__count']
-            valore_progr = item['interventoprogramma__importo_generale__sum']
+            item['count'] = 0
             valore_attuaz = item['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum']
+            item['sum'] = valore_attuaz
+            valore_progr = item['interventoprogramma__importo_generale__sum']
+
+            # add count of interventi in attuazione
+            if n_interventi_dict.get(item['slug'], None):
+                item['count'] = n_interventi_dict[item['slug']][0]['c']
+
+
+
             if valore_progr and valore_progr != 0 and valore_attuaz:
                 item['value'] = 100.0 * float(valore_attuaz / valore_progr)
 
