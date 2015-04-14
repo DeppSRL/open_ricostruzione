@@ -323,8 +323,6 @@ class MapMixin(object):
             if n_interventi_dict.get(item['slug'], None):
                 item['count'] = n_interventi_dict[item['slug']][0]['c']
 
-
-
             if valore_progr and valore_progr != 0 and valore_attuaz:
                 item['value'] = 100.0 * float(valore_attuaz / valore_progr)
 
