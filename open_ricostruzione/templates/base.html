@@ -106,8 +106,13 @@
 
         </div>
 
-        {% include 'commons/g_analytics.html' %}
+
         <script src="{% static 'js/select2_locale_it.js' %}"></script>
+
+        {% if INSTANCE_TYPE == 'production' %}
+            {% include 'commons/g_analytics.html' %}
+        {% endif %}
+
     </body>
 
         {% block extra-js-bottom %}

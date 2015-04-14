@@ -239,7 +239,7 @@ class MapMixin(object):
         return list(
             Territorio.objects. \
                 filter(tipologia="C", regione="Emilia Romagna"). \
-                order_by('denominazione').values('denominazione', 'istat_id', 'slug'))
+                order_by('denominazione'))
 
 
     @staticmethod
@@ -249,20 +249,23 @@ class MapMixin(object):
         map_values = []
         for t in MapMixin._get_territorio_set():
             url = ''
-            if t['istat_id'] in settings.COMUNI_CRATERE:
-                url = reverse('localita', kwargs={'slug': t['slug']})
+            if t.istat_id in settings.COMUNI_CRATERE:
+                url = reverse('localita', kwargs={'slug': t.slug})
 
-            if data_dict.get(t['slug'], None):
-                value = data_dict[t['slug']][0]['value']
+            if data_dict.get(t.slug, None):
+                value = data_dict[t.slug][0]['value']
+                count = data_dict[t.slug][0]['count']
             else:
                 value = None
+                count = 0
 
             map_values.append(
                 {
-                    'label': t['denominazione'],
+                    'label': t.nome_con_provincia,
                     'url': url,
                     'value': value,
-                    'istat_code': "8{}".format(t['istat_id']),
+                    'count': count,
+                    'istat_code': "8{}".format(t.istat_id),
                 }
             )
         return map_values
@@ -274,14 +277,16 @@ class MapMixin(object):
                 filter(tipologia="C", regione="Emilia Romagna"). \
                 filter(**self.map_filters). \
                 annotate(Sum('interventoprogramma__importo_generale')). \
-                values('slug', 'interventoprogramma__importo_generale__sum')
+                annotate(Count('interventoprogramma__importo_generale')). \
+                values('slug', 'interventoprogramma__importo_generale__sum',
+                       'interventoprogramma__importo_generale__count')
         )
 
         for item in danno_values:
             item['value'] = item['interventoprogramma__importo_generale__sum']
+            item['count'] = item['interventoprogramma__importo_generale__count']
 
         return MapMixin._create_map_values(danno_values)
-
 
     def get_attuazione_values(self):
 
@@ -290,11 +295,14 @@ class MapMixin(object):
                 filter(**self.map_filters). \
                 annotate(Sum('interventoprogramma__interventopiano__intervento__imp_congr_spesa')). \
                 annotate(Sum('interventoprogramma__importo_generale')). \
+                annotate(Count('interventoprogramma__importo_generale')). \
                 values('slug', 'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
+                       'interventoprogramma__importo_generale__count',
                        'interventoprogramma__importo_generale__sum'))
 
         for item in attuazione_values:
             item['value'] = 0
+            item['count'] = item['interventoprogramma__importo_generale__count']
             valore_progr = item['interventoprogramma__importo_generale__sum']
             valore_attuaz = item['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum']
             if valore_progr and valore_progr != 0 and valore_attuaz:
@@ -361,7 +369,7 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin, MapMixin):
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
-         # get maps data
+        # get maps data
         mapm = MapMixin(map_filters={'interventoprogramma__soggetto_attuatore': self.sogg_att})
         context['map_danno_values'] = mapm.get_danno_values()
         context['map_attuazione_values'] = mapm.get_attuazione_values()
@@ -460,10 +468,10 @@ class ImpresaDetailView(DetailView):
         context = super(ImpresaDetailView, self).get_context_data(**kwargs)
         context['impresa'] = self.impresa
 
-       # gets maps bounds and center
+        # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
-         # get maps data
+        # get maps data
         mapm = MapMixin(map_filters={'interventoprogramma__interventopiano__intervento__imprese': self.impresa})
         context['map_attuazione_values'] = mapm.get_attuazione_values()
 

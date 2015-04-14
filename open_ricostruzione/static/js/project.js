@@ -194,14 +194,14 @@ function thematic_map(map_type, bounds, center, geojson_data){
     if(map_type == 'danno'){
         map_info.update = function (props) {
             this._div.innerHTML = '<h4>Danno del sisma</h4>' +  (props ?
-                '<b>' + props.label + '</b><br />' + (props.value != null ? props.value+ ' Euro': no_data_label)
+                '<b>' + props.label + '</b><br />' + (props.value != null ? props.value+ ' Euro'+'<br/>n.interventi:'+props.count: no_data_label)
                 : 'Passa sopra un Comune');
         };
     }
     else{
         map_info.update = function (props) {
         this._div.innerHTML = '<h4>Attuazione</h4>' +  (props ?
-            '<b>' + props.label + '</b><br />' + (props.value != null ? props.value+ ' %': no_data_label)
+            '<b>' + props.label + '</b><br />' + (props.value != null ? props.value+ ' %'+'<br/>n.interventi:'+props.count: no_data_label)
             : 'Passa sopra un Comune');
         };
     }
