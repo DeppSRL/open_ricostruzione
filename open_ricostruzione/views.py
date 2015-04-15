@@ -18,6 +18,15 @@ class StaticPageView(TemplateView, ):
     template_name = 'static_page.html'
 
 
+class ListaInterventiView(ListView):
+    model = InterventoProgramma
+    paginate_by = 100
+    template_name = 'interventi_list.html'
+
+    def get_queryset(self):
+        queryset = super(ListaInterventiView, self).get_queryset()
+        return queryset.select_related('territorio')
+
 class DonazioniListView(ListView):
     paginate_by = 100
     model = Donazione
@@ -25,7 +34,7 @@ class DonazioniListView(ListView):
 
     def get_queryset(self):
         queryset = super(DonazioniListView, self).get_queryset()
-        return queryset.select_related()
+        return queryset.select_related('territorio')
 
 class AggregatePageMixin(object):
     ##
