@@ -35,6 +35,7 @@ function paint_chart(pie_title, container_id, data) {
             plotBorderWidth: null,
             plotShadow: false
         },
+        colors: ['#FEFCD7', '#A6CB45', '#71B238', '#6A8347','#787A40','#9FBF8C','#C8AB65', '#D4CBC3', '#DDDDDD'],
         title: {
             text: pie_title
         },
