@@ -28,6 +28,9 @@
             {% endif %}
         {% endfor %}
 
-        $(document).ready(paint_chart('{{ pie_title }}',"sogg_att_pie",sogg_att_data));
+        if(sogg_att_data.length>0){
+            $(document).ready(paint_chart('{{ pie_title }}',"sogg_att_pie",sogg_att_data));
+        }
+
     </script>
 {% endif %}

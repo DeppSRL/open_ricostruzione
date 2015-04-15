@@ -92,7 +92,13 @@
 
     {# aggregazione tipologia cedente #}
     {% block donazioni %}
-        {% include 'aggregates/donazioni_block.html' %}
+        <hr>
+        {% if donazioni_totale.sum > 0 %}
+            {% include 'aggregates/donazioni_block.html' %}
+        {% else %}
+            Non sono state ricevute donazioni
+        {% endif %}
+
     {% endblock %}
 
 
