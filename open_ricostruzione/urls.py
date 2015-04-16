@@ -55,7 +55,7 @@ urlpatterns = patterns('',
                        url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaDetailView.as_view(), name='impresa'),
                        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
                        url(r'^lista_interventi/$', ListaInterventiView.as_view(), name='lista-interventi'),
-                       url(r'^donazioni/$', DonazioniListView.as_view(), name='donazioni'),
+                       url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='donazioni'),
 
 )
 
