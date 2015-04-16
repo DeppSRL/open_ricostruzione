@@ -171,30 +171,34 @@
 
             legend.onAdd = function (map) {
                 var grades;
-                var map_type = map._container.id;
+                var map_div_id = map._container.id;
+                var labels = [], from, to;
+                //from and to numbers italianized for visualization
+                var from_ita, to_ita;
                 var div = L.DomUtil.create('div', 'map_info legend');
-                if(map_type == 'mappa_danno'){
+                if(map_div_id == 'mappa_danno'){
                    grades = [0, 50000, 200000, 500000, 1000000, 5000000, 10000000];
                 }
                 else{
                     grades = [0, 14, 28, 42, 56, 70, 84];
                 }
 
-                var labels = [],
-                    from, to;
-
                 for (var i = 0; i < grades.length; i++) {
                     from = grades[i];
                     to = grades[i + 1];
-                    if(map_type == 'mappa_danno'){
+                    from_ita = from.formatMoney(0, ',', '.');
+                    if(to){
+                        to_ita = to.formatMoney(0, ',', '.');
+                    }
+
+
+                    if(map_div_id == 'mappa_danno'){
                         labels.push(
-                            '<i style="background:' + getColor_danno(from + 1) + '"></i> ' +
-                            from + (to ? '&ndash;' + to : '+'));
+                            '<i style="background:' + getColor_danno(from + 1) + '"></i> ' + from_ita + (to ? ' &ndash; ' + to_ita : '+'));
                     }
                     else{
                         labels.push(
-                            '<i style="background:' + getColor_attuazione(from + 1) + '"></i> ' +
-                            from + (to ? '&ndash;' + to : '+'));
+                            '<i style="background:' + getColor_attuazione(from + 1) + '"></i> ' + from +'%'+ (to ? ' &ndash; ' + to+'%' : ' &ndash; 100%'));
                     }
                 }
                 labels.push('<i style="background:' + getColor_attuazione(null) + '"></i> '+no_data_label);
