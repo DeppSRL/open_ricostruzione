@@ -7,7 +7,6 @@ from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, H
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
     ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, ListaInterventiView
 
-
 from open_ricostruzione.viewsets import DonazioneViewSet, InterventoProgrammaViewSet
 
 
@@ -56,13 +55,13 @@ urlpatterns = patterns('',
                        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
                        url(r'^lista_interventi/$', ListaInterventiView.as_view(), name='lista-interventi'),
                        url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='donazioni'),
-                       # url(r'^list$', interventi_list)
 
 )
 
 if settings.INSTANCE_TYPE == 'development':
     urlpatterns += patterns('',
-                            url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT,}),
+                            url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+                                {'document_root': settings.MEDIA_ROOT, }),
                             # todo: remove following url
                             url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
     )

@@ -11,7 +11,7 @@
         {% for sa in sogg_att_top %}
             <div class="row">
                 <div class="col-md-12">
-                    <strong>{{ sa.denominazione }}</strong> n.interventi: {{ sa.interventoprogramma__count }}
+                    <strong><a href="{% url 'lista-interventi' %}?{{ query_string }}&soggetto_attuatore__slug={{ sa.slug }}">{{ sa.denominazione }}</a></strong> n.interventi: {{ sa.interventoprogramma__count }}
                 </div>
             </div>
         {% endfor %}

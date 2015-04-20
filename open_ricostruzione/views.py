@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 from django.shortcuts import get_object_or_404, render_to_response
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
 from django.db.models.aggregates import Count, Sum
+from django_filters.views import FilterView
 from django.conf import settings
 from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma
 from territori.models import Territorio
@@ -19,8 +20,9 @@ class StaticPageView(TemplateView, ):
     template_name = 'static_page.html'
 
 
-class ListaInterventiView(TemplateView):
+class ListaInterventiView(FilterView):
     template_name = 'interventi_list.html'
+    model = InterventoProgramma
     request = None
 
     def get(self, request, *args, **kwargs):
@@ -112,11 +114,11 @@ class AggregatePageMixin(object):
         n_objects = settings.N_SOGG_ATT_FETCH
         return list(
             SoggettoAttuatore.objects.
-            filter(**self.sogg_att_filters).
-            annotate(Count('interventoprogramma')).
-            order_by('-interventoprogramma__count').
-            values('denominazione', 'interventoprogramma__count')[0:n_objects]
-        )
+                filter(**self.sogg_att_filters).
+                annotate(Count('interventoprogramma')).
+                order_by('-interventoprogramma__count').
+                values('denominazione', 'interventoprogramma__count','slug')[0:n_objects]
+            )
 
     def _get_programmazione_status(self):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
@@ -232,6 +234,7 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
             bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
+            context['query_string'] = 'territorio__slug={}'.format(self.territorio.slug)
 
             context['map_bounds'] = \
                 {'sw':
