@@ -165,6 +165,7 @@ INSTALLED_APPS = (
     'territori',
     'bootstrap_pagination',
     'django_select2',
+    'django_filters',
 )
 
 

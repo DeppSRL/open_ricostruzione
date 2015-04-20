@@ -1,13 +1,14 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse, NoReverseMatch
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render_to_response
 from django.views.generic import TemplateView, DetailView, ListView, RedirectView
 from django.db.models.aggregates import Count, Sum
 from django.conf import settings
 from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
+from open_ricostruzione.filters import InterventoProgrammaFilter
 
 
 class PageNotFoundTemplateView(TemplateView):
@@ -18,14 +19,21 @@ class StaticPageView(TemplateView, ):
     template_name = 'static_page.html'
 
 
-class ListaInterventiView(ListView):
-    model = InterventoProgramma
-    paginate_by = 100
+class ListaInterventiView(TemplateView):
     template_name = 'interventi_list.html'
+    request = None
 
-    def get_queryset(self):
-        queryset = super(ListaInterventiView, self).get_queryset()
-        return queryset.select_related('territorio')
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        return super(ListaInterventiView, self).get(request,*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(ListaInterventiView, self).get_context_data(**kwargs)
+        ip_filter = InterventoProgrammaFilter(self.request.GET, queryset=InterventoProgramma.objects.all().select_related('territorio'))
+        context['filter'] = ip_filter
+        context['request'] = self.request
+        return context
+
 
 class DonazioniListView(ListView):
     paginate_by = 100

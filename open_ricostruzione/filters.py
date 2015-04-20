@@ -1,5 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
+import django_filters
+from open_ricostruzione.models import InterventoProgramma
 from territori.models import Territorio
 
 class TerritorioHasObject(SimpleListFilter):
@@ -50,6 +52,12 @@ class TerritorioWithIntervento(TerritorioHasObject):
             'denominazione').distinct().values('denominazione','prov','slug')
 
 
-
-
-
+class InterventoProgrammaFilter(django_filters.FilterSet):
+    class Meta:
+        model = InterventoProgramma
+        order_by = ['denominazione', 'tipo_immobile__slug', 'territorio']
+        fields = {
+            'territorio__slug': ['exact'],
+            'tipo_immobile__slug': ['exact'],
+            'soggetto_attuatore__slug': ['exact'],
+             }

@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView
 from rest_framework import routers
 from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
-    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView,ListaInterventiView
+    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, ListaInterventiView
 
 
 from open_ricostruzione.viewsets import DonazioneViewSet, InterventoProgrammaViewSet
@@ -56,6 +56,7 @@ urlpatterns = patterns('',
                        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
                        url(r'^lista_interventi/$', ListaInterventiView.as_view(), name='lista-interventi'),
                        url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='donazioni'),
+                       # url(r'^list$', interventi_list)
 
 )
 
