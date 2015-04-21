@@ -60,4 +60,5 @@ class InterventoProgrammaFilter(django_filters.FilterSet):
             'territorio__slug': ['exact'],
             'tipo_immobile__slug': ['exact'],
             'soggetto_attuatore__slug': ['exact'],
+            'interventopiano__intervento__imprese__slug': ['exact'],
              }
