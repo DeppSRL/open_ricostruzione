@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import Sum, Count
-
+from django.conf import settings
 
 class ProgrammatiQuerySet(models.QuerySet):
     def with_count(self):
@@ -55,7 +55,7 @@ class ProgettazioneQuerySet(models.QuerySet):
 
 class ProgettazioneManager(models.Manager):
     def get_queryset(self):
-        stati_prog = [u'1', u'2', u'3', u'4', u'5', u'7', ]
+        stati_prog = settings.STATI_PROGETTAZIONE
         return ProgettazioneQuerySet(self.model, using=self._db).filter(
             interventopiano__intervento__stato__in=stati_prog)
 
@@ -72,7 +72,7 @@ class InCorsoQuerySet(models.QuerySet):
 
 class InCorsoManager(models.Manager):
     def get_queryset(self):
-        stati_incorso = [u'6', u'8', u'9', u'10', ]
+        stati_incorso = settings.STATI_IN_CORSO
         return InCorsoQuerySet(self.model, using=self._db).filter(interventopiano__intervento__stato__in=stati_incorso)
 
 
@@ -87,5 +87,5 @@ class ConclusiQuerySet(models.QuerySet):
 
 class ConclusiManager(models.Manager):
     def get_queryset(self):
-        stati_concl = [u'11', ]
+        stati_concl = settings.STATI_CONCLUSI
         return ConclusiQuerySet(self.model, using=self._db).filter(interventopiano__intervento__stato__in=stati_concl)

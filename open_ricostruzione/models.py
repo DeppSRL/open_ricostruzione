@@ -61,11 +61,14 @@ class InterventoProgramma(models.Model):
     )
 
     STATO = Choices(
-        (u'1', u'PROGRAMMATO', u'Programmato'),
-        (u'2', u'PIANIFICATO', u'A piano'),
-        (u'3', u'PROGRAMMAZIONE', u'Programmazione'),
-        (u'4', u'IN_CORSO', u'In corso'),
-        (u'5', u'CONCLUSO', u'Concluso'),
+        (u'1', u'A_PIANO', u'A piano'),
+        (u'2', u'IN_ATTUAZIONE', u'Attuazione'),
+    )
+
+    STATO_ATTUAZIONE = Choices(
+        (u'1', u'PROGRAMMAZIONE', u'Programmazione'),
+        (u'2', u'IN_CORSO', u'In corso'),
+        (u'3', u'CONCLUSO', u'Concluso'),
     )
 
     programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
@@ -87,6 +90,8 @@ class InterventoProgramma(models.Model):
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
     stato = models.CharField(max_length=2, choices=STATO, blank=True, null=True, default='')
+    stato_attuazione = models.CharField(max_length=2, choices=STATO_ATTUAZIONE, blank=True, null=True, default='')
+
     objects = ProgrammatiManager()
     programmati = ProgrammatiManager()
     pianificati = PianificatiManager()
