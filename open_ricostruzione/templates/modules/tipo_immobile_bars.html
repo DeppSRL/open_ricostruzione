@@ -52,7 +52,7 @@
                 point: {
                     events: {
                         click: function () {
-                            window.location.href = '{% url 'lista-interventi' %}';
+                            window.location.href = '{% url 'lista-interventi' %}?{{ query_string }}&tipo_immobile__slug='+this.slug;
                         }
                     }
                 }
@@ -67,7 +67,8 @@
                 {% for tipo_immobile in tipo_immobile_aggregates %}
                     {
                         y:{{ tipo_immobile.programmazione.sum|default_if_none:0 }},
-                        count: {{ tipo_immobile.programmazione.count|default_if_none:0 }}
+                        count: {{ tipo_immobile.programmazione.count|default_if_none:0 }},
+                        slug: "{{ tipo_immobile.slug }}"
 
                     }{% if forloop.last %}{% else %},{% endif %}
                 {% endfor %}
@@ -80,7 +81,8 @@
                 {% for tipo_immobile in tipo_immobile_aggregates %}
                     {
                         y:{{ tipo_immobile.pianificazione.sum|default_if_none:0 }},
-                        count: {{ tipo_immobile.pianificazione.count|default_if_none:0 }}
+                        count: {{ tipo_immobile.pianificazione.count|default_if_none:0 }},
+                        slug: "{{ tipo_immobile.slug }}"
 
                     }{% if forloop.last %}{% else %},{% endif %}
                 {% endfor %}
@@ -93,7 +95,8 @@
                 {% for tipo_immobile in tipo_immobile_aggregates %}
                     {
                         y:{{ tipo_immobile.attuazione.sum|default_if_none:0 }},
-                        count: {{ tipo_immobile.attuazione.count|default_if_none:0 }}
+                        count: {{ tipo_immobile.attuazione.count|default_if_none:0 }},
+                        slug: "{{ tipo_immobile.slug }}"
 
                     }{% if forloop.last %}{% else %},{% endif %}
                 {% endfor %}

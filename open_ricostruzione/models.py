@@ -108,15 +108,16 @@ class InterventoProgramma(models.Model):
     def get_tipo_immobile_aggregates(**kwargs):
         data = []
 
-        for tipologia_id, tipologia_shortname in TipoImmobile.TIPOLOGIA:
-            tipologia_name = TipoImmobile.TIPOLOGIA.__getitem__(tipologia_id)
-            d = {'name': tipologia_name,
-                 'programmazione': InterventoProgramma.programmati.filter(tipo_immobile__tipologia=tipologia_id,
-                                                                          **kwargs).with_count(),
-                 'pianificazione': InterventoProgramma.pianificati.filter(tipo_immobile__tipologia=tipologia_id,
-                                                                          **kwargs).with_count(),
-                 'attuazione': InterventoProgramma.attuazione.filter(tipo_immobile__tipologia=tipologia_id,
-                                                                     **kwargs).with_count(),
+        for tipo_imm in TipoImmobile.objects.all().order_by('slug'):
+            d = {
+                'name': tipo_imm.denominazione,
+                'slug': tipo_imm.slug,
+                'programmazione': InterventoProgramma.programmati.filter(tipo_immobile__tipologia=tipo_imm.tipologia,
+                                                                      **kwargs).with_count(),
+                'pianificazione': InterventoProgramma.pianificati.filter(tipo_immobile__tipologia=tipo_imm.tipologia,
+                                                                      **kwargs).with_count(),
+                'attuazione': InterventoProgramma.attuazione.filter(tipo_immobile__tipologia=tipo_imm.tipologia,
+                                                                 **kwargs).with_count(),
             }
             data.append(d)
 
