@@ -60,6 +60,14 @@ class InterventoProgramma(models.Model):
         (u'7', u'STRUTTURE_SCOLASTICHE', u'Strutture Scolastiche ed Universita'),
     )
 
+    STATO = Choices(
+        (u'1', u'PROGRAMMATO', u'Programmato'),
+        (u'2', u'PIANIFICATO', u'A piano'),
+        (u'3', u'PROGRAMMAZIONE', u'Programmazione'),
+        (u'4', u'IN_CORSO', u'In corso'),
+        (u'5', u'CONCLUSO', u'Concluso'),
+    )
+
     programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
     # id fenice = id_interv_a_progr
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
@@ -78,6 +86,7 @@ class InterventoProgramma(models.Model):
     categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
+    stato = models.CharField(max_length=2, choices=STATO, blank=True, null=True, default='')
     objects = ProgrammatiManager()
     programmati = ProgrammatiManager()
     pianificati = PianificatiManager()
