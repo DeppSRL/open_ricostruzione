@@ -27,12 +27,26 @@ class ListaInterventiView(FilterView):
 
     def get(self, request, *args, **kwargs):
         self.request = request
-        return super(ListaInterventiView, self).get(request,*args, **kwargs)
+        return super(ListaInterventiView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ListaInterventiView, self).get_context_data(**kwargs)
-        ip_filter = InterventoProgrammaFilter(self.request.GET, queryset=InterventoProgramma.objects.all().select_related('territorio'))
+        ip_filter = InterventoProgrammaFilter(self.request.GET,
+                                              queryset=InterventoProgramma.objects.all().select_related('territorio'))
         context['filter'] = ip_filter
+        territorio_slug = ip_filter.form.data.get('territorio__slug', None)
+
+        if territorio_slug:
+            context['territorio_filter'] = Territorio.objects.get(slug=territorio_slug)
+
+        tipo_immobile_slug = ip_filter.form.data.get('tipo_immobile__slug', None)
+        if tipo_immobile_slug:
+            context['tipo_immobile_filter'] = TipoImmobile.objects.get(slug=tipo_immobile_slug)
+
+        sogg_attuatore_slug = ip_filter.form.data.get('soggetto_attuatore__slug', None)
+        if sogg_attuatore_slug:
+            context['sogg_attuatore_filter'] = SoggettoAttuatore.objects.get(slug=sogg_attuatore_slug)
+
         context['request'] = self.request
         return context
 
@@ -45,6 +59,7 @@ class DonazioniListView(ListView):
     def get_queryset(self):
         queryset = super(DonazioniListView, self).get_queryset()
         return queryset.select_related('territorio')
+
 
 class AggregatePageMixin(object):
     ##
@@ -114,11 +129,11 @@ class AggregatePageMixin(object):
         n_objects = settings.N_SOGG_ATT_FETCH
         return list(
             SoggettoAttuatore.objects.
-                filter(**self.sogg_att_filters).
-                annotate(Count('interventoprogramma')).
-                order_by('-interventoprogramma__count').
-                values('denominazione', 'interventoprogramma__count','slug')[0:n_objects]
-            )
+            filter(**self.sogg_att_filters).
+            annotate(Count('interventoprogramma')).
+            order_by('-interventoprogramma__count').
+            values('denominazione', 'interventoprogramma__count', 'slug')[0:n_objects]
+        )
 
     def _get_programmazione_status(self):
         return InterventoProgramma.programmati.filter(**self.programmazione_filters).with_count()
@@ -329,12 +344,12 @@ class MapMixin(object):
                        'interventoprogramma__importo_generale__sum'))
 
         print self.map_filters
-        attuazione_n_interventi = Territorio.objects.\
+        attuazione_n_interventi = Territorio.objects. \
             filter(
-                tipologia="C",
-                regione="Emilia Romagna",
-                interventoprogramma__interventopiano__intervento__isnull=False,
-                **self.map_filters).\
+            tipologia="C",
+            regione="Emilia Romagna",
+            interventoprogramma__interventopiano__intervento__isnull=False,
+            **self.map_filters). \
             annotate(c=Count('interventoprogramma')).values('slug', 'c')
 
         n_interventi_dict = convert2dict(attuazione_n_interventi, 'slug')

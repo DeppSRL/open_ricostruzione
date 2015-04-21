@@ -7,18 +7,24 @@
 
     <div class="row">
         <div class="col-md-12">
-            Trovati {{ filter.queryset|length }} interventi a programma<br/>
-            Per Soggetto attuatore: {{ filter.data.soggetto_attuatore__slug }}<br/>
-            Per Tipo Immobile: {{ filter.data.tipo_immobile__slug }}<br/>
-            Per Territorio: {{ filter.data.territorio__slug }}<br/>
+            Interventi<br/>
+            {% if territorio_filter %}
+                <strong>Per il Territorio di {{ territorio_filter.nome_con_provincia }}</strong><br/>
+            {% endif %}
+            {% if sogg_attuatore_filter %}
+                <strong>Per il Soggetto attuatore: {{ sogg_attuatore_filter.denominazione|title }}</strong><br/>
+            {% endif %}
+            {% if tipo_immobile_filter %}
+                <strong>Per Tipo Immobile: {{ tipo_immobile_filter.denominazione|title }}</strong><br/>
+            {% endif %}
+
+            Trovati {{ filter.qs|length }} interventi a programma<br/>
 
         </div>
     </div>
+    <hr>
 
-    <form action="" method="get">
-        {{ filter.form.as_p }}
-        <input type="submit" />
-    </form>
+
     {% for obj in filter %}
         <div class="row">
             <div class="col-md-12">
@@ -26,4 +32,13 @@
             </div>
         </div>
     {% endfor %}
+
+    <hr>
+    <small>
+        <form action="" method="get">
+            {{ filter.form.as_p }}
+            <input type="submit" />
+        </form>
+    </small>
+
 {% endblock %}

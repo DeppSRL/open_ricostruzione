@@ -113,11 +113,11 @@ class InterventoProgramma(models.Model):
                 'name': tipo_imm.denominazione,
                 'slug': tipo_imm.slug,
                 'programmazione': InterventoProgramma.programmati.filter(tipo_immobile__tipologia=tipo_imm.tipologia,
-                                                                      **kwargs).with_count(),
+                                                                         **kwargs).with_count(),
                 'pianificazione': InterventoProgramma.pianificati.filter(tipo_immobile__tipologia=tipo_imm.tipologia,
-                                                                      **kwargs).with_count(),
+                                                                         **kwargs).with_count(),
                 'attuazione': InterventoProgramma.attuazione.filter(tipo_immobile__tipologia=tipo_imm.tipologia,
-                                                                 **kwargs).with_count(),
+                                                                    **kwargs).with_count(),
             }
             data.append(d)
 
