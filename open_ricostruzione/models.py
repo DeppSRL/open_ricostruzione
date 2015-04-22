@@ -66,7 +66,7 @@ class InterventoProgramma(models.Model):
     )
 
     STATO_ATTUAZIONE = Choices(
-        (u'1', u'PROGRAMMAZIONE', u'Programmazione'),
+        (u'1', u'PROGETTAZIONE', u'Progettazione'),
         (u'2', u'IN_CORSO', u'In corso'),
         (u'3', u'CONCLUSO', u'Concluso'),
     )

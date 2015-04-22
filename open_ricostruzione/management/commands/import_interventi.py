@@ -161,7 +161,7 @@ class Command(BaseCommand):
                 # todo: qua si considera lo stato del primo intervento, quando aggiorneremo la logica andra' cambiato questo passaggio
                 intervento_stato = interventi.values_list('stato', flat=True)[0]
                 if intervento_stato in settings.STATI_PROGETTAZIONE:
-                    stato_attuazione = InterventoProgramma.STATO_ATTUAZIONE.PROGRAMMAZIONE
+                    stato_attuazione = InterventoProgramma.STATO_ATTUAZIONE.PROGETTAZIONE
                 elif intervento_stato in settings.STATI_IN_CORSO:
                     stato_attuazione = InterventoProgramma.STATO_ATTUAZIONE.IN_CORSO
                 elif intervento_stato in settings.STATI_CONCLUSI:

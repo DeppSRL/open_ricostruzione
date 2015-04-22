@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Sum, Count
 from django.conf import settings
 
+
 class ProgrammatiQuerySet(models.QuerySet):
     def with_count(self):
         aggregate_dict = {
@@ -27,7 +28,7 @@ class PianificatiQuerySet(models.QuerySet):
 
 class PianificatiManager(models.Manager):
     def get_queryset(self):
-        return PianificatiQuerySet(self.model, using=self._db).filter(interventopiano__isnull=False)
+        return PianificatiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.A_PIANO)
 
 
 class AttuazioneQuerySet(models.QuerySet):
@@ -41,7 +42,7 @@ class AttuazioneQuerySet(models.QuerySet):
 
 class AttuazioneManager(models.Manager):
     def get_queryset(self):
-        return AttuazioneQuerySet(self.model, using=self._db).filter(interventopiano__intervento__isnull=False)
+        return AttuazioneQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.IN_ATTUAZIONE)
 
 
 class ProgettazioneQuerySet(models.QuerySet):
@@ -56,8 +57,9 @@ class ProgettazioneQuerySet(models.QuerySet):
 class ProgettazioneManager(models.Manager):
     def get_queryset(self):
         stati_prog = settings.STATI_PROGETTAZIONE
-        return ProgettazioneQuerySet(self.model, using=self._db).filter(
-            interventopiano__intervento__stato__in=stati_prog)
+        return ProgettazioneQuerySet(self.model, using=self._db). \
+            filter(stato=self.model.STATO.IN_ATTUAZIONE,
+                   stato_attuazione=self.model.STATO_ATTUAZIONE.PROGETTAZIONE)
 
 
 class InCorsoQuerySet(models.QuerySet):
@@ -66,14 +68,13 @@ class InCorsoQuerySet(models.QuerySet):
             "sum": Sum('interventopiano__intervento__quadroeconomicointervento__importo'),
             "count": Count('interventopiano__intervento__quadroeconomicointervento__importo')
         }
-        return self.filter(interventopiano__intervento__quadroeconomicointervento__tipologia=u'16'). \
-            aggregate(**aggregate_dict)
+        return self.aggregate(**aggregate_dict)
 
 
 class InCorsoManager(models.Manager):
     def get_queryset(self):
-        stati_incorso = settings.STATI_IN_CORSO
-        return InCorsoQuerySet(self.model, using=self._db).filter(interventopiano__intervento__stato__in=stati_incorso)
+        return InCorsoQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.IN_ATTUAZIONE,
+                                                                  stato_attuazione=self.model.STATO_ATTUAZIONE.IN_CORSO)
 
 
 class ConclusiQuerySet(models.QuerySet):
@@ -87,5 +88,5 @@ class ConclusiQuerySet(models.QuerySet):
 
 class ConclusiManager(models.Manager):
     def get_queryset(self):
-        stati_concl = settings.STATI_CONCLUSI
-        return ConclusiQuerySet(self.model, using=self._db).filter(interventopiano__intervento__stato__in=stati_concl)
+        return ConclusiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.IN_ATTUAZIONE,
+                                                                   stato_attuazione=self.model.STATO_ATTUAZIONE.CONCLUSO)
