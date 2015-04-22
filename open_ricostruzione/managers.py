@@ -56,7 +56,6 @@ class ProgettazioneQuerySet(models.QuerySet):
 
 class ProgettazioneManager(models.Manager):
     def get_queryset(self):
-        stati_prog = settings.STATI_PROGETTAZIONE
         return ProgettazioneQuerySet(self.model, using=self._db). \
             filter(stato=self.model.STATO.ATTUAZIONE,
                    stato_attuazione=self.model.STATO_ATTUAZIONE.PROGETTAZIONE)
@@ -64,17 +63,17 @@ class ProgettazioneManager(models.Manager):
 
 class InCorsoQuerySet(models.QuerySet):
     def with_count(self):
-        aggregate_dict = {
-            "sum": Sum('interventopiano__intervento__quadroeconomicointervento__importo'),
-            "count": Count('interventopiano__intervento__quadroeconomicointervento__importo')
+
+        return {
+            'count':self.aggregate(count=Count('pk'))['count'],
+            'sum':self.aggregate(sum=Sum('interventopiano__intervento__quadroeconomicointervento__importo'))['sum']
         }
-        return self.aggregate(**aggregate_dict)
 
 
 class InCorsoManager(models.Manager):
     def get_queryset(self):
-        return InCorsoQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.ATTUAZIONE,
-                                                                  stato_attuazione=self.model.STATO_ATTUAZIONE.IN_CORSO)
+        return InCorsoQuerySet(self.model, using=self._db).\
+            filter(stato=self.model.STATO.ATTUAZIONE,stato_attuazione=self.model.STATO_ATTUAZIONE.IN_CORSO)
 
 
 class ConclusiQuerySet(models.QuerySet):

@@ -6,12 +6,18 @@
 </div>
 <div class="row">
     <div class="col-md-4">
-        In progettazione:{{ status.progettazione.count }}
+        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&stato=attuazione&stato_attuazione=progettazione">
+            In progettazione:{{ status.progettazione.count }}
+        </a>
     </div>
     <div class="col-md-4">
-        In corso:{{ status.in_corso.count  }}
+        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&stato=attuazione&stato_attuazione=in_corso">
+            In corso:{{ status.in_corso.count  }}
+        </a>
     </div>
     <div class="col-md-4">
-        Conclusi:{{ status.conclusi.count }}
+        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&stato=attuazione&stato_attuazione=concluso">
+            Conclusi:{{ status.conclusi.count }}
+        </a>
     </div>
 </div>
