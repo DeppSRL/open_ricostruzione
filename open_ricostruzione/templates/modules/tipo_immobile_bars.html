@@ -52,7 +52,7 @@
                 point: {
                     events: {
                         click: function () {
-                            window.location.href = '{% url 'lista-interventi' %}?{{ query_string }}&tipo_immobile__slug='+this.slug;
+                            window.location.href = '{% url 'lista-interventi' %}?{{ base_filters }}&tipo_immobile__slug='+this.slug;
                         }
                     }
                 }
