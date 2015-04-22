@@ -160,6 +160,11 @@ class AggregatePageMixin(object):
     def get_base_filters(self):
         if self.tipologia == self.TERRITORIO:
             return 'territorio__slug={}'.format(self.programmazione_filters['territorio'].slug)
+        elif self.tipologia == self.SOGG_ATT:
+            return 'soggetto_attuatore__slug={}'.format(self.programmazione_filters['soggetto_attuatore'].slug)
+        elif self.tipologia == self.TIPO_IMMOBILE:
+            return 'tipo_immobile__slug={}'.format(self.programmazione_filters['tipo_immobile'].slug)
+        
 
     def get_aggregates(self):
         ##
@@ -400,7 +405,7 @@ class TipoImmobileView(TemplateView, AggregatePageMixin, MapMixin):
             sogg_att_filters={'interventoprogramma__tipo_immobile': self.tipo_immobile}
         )
         context.update(apm.get_aggregates())
-
+        context['base_filters'] = apm.get_base_filters()
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER
@@ -433,6 +438,7 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin, MapMixin):
             sogg_att_filters={}
         )
         context.update(apm.get_aggregates())
+        context['base_filters'] = apm.get_base_filters()
 
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
