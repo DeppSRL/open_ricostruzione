@@ -47,6 +47,10 @@ class ListaInterventiView(FilterView):
         if sogg_attuatore_slug:
             context['sogg_attuatore_filter'] = SoggettoAttuatore.objects.get(slug=sogg_attuatore_slug)
 
+        context['stato_filter'] = ip_filter.form.data.get('stato', None)
+        context['stato_attuazione_filter'] = ip_filter.form.data.get('stato_attuazione', None)
+
+
         context['request'] = self.request
         return context
 
@@ -153,6 +157,10 @@ class AggregatePageMixin(object):
     def _get_conclusi_status(self):
         return InterventoProgramma.conclusi.filter(**self.programmazione_filters).with_count()
 
+    def get_base_filters(self):
+        if self.tipologia == self.TERRITORIO:
+            return 'territorio__slug={}'.format(self.programmazione_filters['territorio'].slug)
+
     def get_aggregates(self):
         ##
         # calls the functions to get the aggregates and returns a dict
@@ -249,7 +257,7 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
             bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
-            context['query_string'] = 'territorio__slug={}'.format(self.territorio.slug)
+            context['base_filters'] = apm.get_base_filters()
 
             context['map_bounds'] = \
                 {'sw':

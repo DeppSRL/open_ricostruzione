@@ -28,7 +28,7 @@ class PianificatiQuerySet(models.QuerySet):
 
 class PianificatiManager(models.Manager):
     def get_queryset(self):
-        return PianificatiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.A_PIANO)
+        return PianificatiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.PIANO)
 
 
 class AttuazioneQuerySet(models.QuerySet):
@@ -42,7 +42,7 @@ class AttuazioneQuerySet(models.QuerySet):
 
 class AttuazioneManager(models.Manager):
     def get_queryset(self):
-        return AttuazioneQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.IN_ATTUAZIONE)
+        return AttuazioneQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.ATTUAZIONE)
 
 
 class ProgettazioneQuerySet(models.QuerySet):
@@ -58,7 +58,7 @@ class ProgettazioneManager(models.Manager):
     def get_queryset(self):
         stati_prog = settings.STATI_PROGETTAZIONE
         return ProgettazioneQuerySet(self.model, using=self._db). \
-            filter(stato=self.model.STATO.IN_ATTUAZIONE,
+            filter(stato=self.model.STATO.ATTUAZIONE,
                    stato_attuazione=self.model.STATO_ATTUAZIONE.PROGETTAZIONE)
 
 
@@ -73,7 +73,7 @@ class InCorsoQuerySet(models.QuerySet):
 
 class InCorsoManager(models.Manager):
     def get_queryset(self):
-        return InCorsoQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.IN_ATTUAZIONE,
+        return InCorsoQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.ATTUAZIONE,
                                                                   stato_attuazione=self.model.STATO_ATTUAZIONE.IN_CORSO)
 
 
@@ -88,5 +88,5 @@ class ConclusiQuerySet(models.QuerySet):
 
 class ConclusiManager(models.Manager):
     def get_queryset(self):
-        return ConclusiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.IN_ATTUAZIONE,
+        return ConclusiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.ATTUAZIONE,
                                                                    stato_attuazione=self.model.STATO_ATTUAZIONE.CONCLUSO)

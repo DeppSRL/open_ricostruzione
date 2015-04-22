@@ -154,9 +154,9 @@ class Command(BaseCommand):
         if len(interventi_piano) > 0:
 
             if len(interventi) == 0:
-                stato = InterventoProgramma.STATO.A_PIANO
+                stato = InterventoProgramma.STATO.PIANO
             else:
-                stato = InterventoProgramma.STATO.IN_ATTUAZIONE
+                stato = InterventoProgramma.STATO.ATTUAZIONE
 
                 # todo: qua si considera lo stato del primo intervento, quando aggiorneremo la logica andra' cambiato questo passaggio
                 intervento_stato = interventi.values_list('stato', flat=True)[0]

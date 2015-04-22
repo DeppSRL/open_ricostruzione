@@ -17,6 +17,12 @@
             {% if tipo_immobile_filter %}
                 <strong>Per Tipo Immobile: {{ tipo_immobile_filter.denominazione|title }}</strong><br/>
             {% endif %}
+            {% if stato_filter %}
+                <strong>Per Stato: {{ stato_filter|title }}</strong><br/>
+            {% endif %}
+            {% if stato_attuazione_filter %}
+                <strong>Per Stato di attuazione: {{ stato_attuazione_filter|title }}</strong><br/>
+            {% endif %}
 
             Trovati {{ filter.qs|length }} interventi a programma<br/>
 

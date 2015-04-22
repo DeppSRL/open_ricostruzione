@@ -61,14 +61,14 @@ class InterventoProgramma(models.Model):
     )
 
     STATO = Choices(
-        (u'1', u'A_PIANO', u'A piano'),
-        (u'2', u'IN_ATTUAZIONE', u'Attuazione'),
+        (u'piano', u'PIANO', u'A piano'),
+        (u'attuazione', u'ATTUAZIONE', u'Attuazione'),
     )
 
     STATO_ATTUAZIONE = Choices(
-        (u'1', u'PROGETTAZIONE', u'Progettazione'),
-        (u'2', u'IN_CORSO', u'In corso'),
-        (u'3', u'CONCLUSO', u'Concluso'),
+        (u'progettazione', u'PROGETTAZIONE', u'Progettazione'),
+        (u'in_corso', u'IN_CORSO', u'In corso'),
+        (u'concluso', u'CONCLUSO', u'Concluso'),
     )
 
     programma = models.ForeignKey('Programma', null=False, blank=False, default=0)
@@ -89,8 +89,8 @@ class InterventoProgramma(models.Model):
     categ_immobile = models.CharField(max_length=2, choices=CATEGORIA_IMMOBILE, blank=True, null=True, default='')
     slug = models.SlugField(max_length=60, blank=False, null=False, unique=True)
 
-    stato = models.CharField(max_length=2, choices=STATO, blank=True, null=True, default='')
-    stato_attuazione = models.CharField(max_length=2, choices=STATO_ATTUAZIONE, blank=True, null=True, default='')
+    stato = models.CharField(max_length=11, choices=STATO, blank=True, null=True, default='')
+    stato_attuazione = models.CharField(max_length=13, choices=STATO_ATTUAZIONE, blank=True, null=True, default='')
 
     objects = ProgrammatiManager()
     programmati = ProgrammatiManager()

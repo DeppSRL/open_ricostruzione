@@ -1,7 +1,7 @@
 from django.conf import settings
 from open_ricostruzione.forms import InterventoProgrammaSearchFormNavbar, ImpresaSearchFormNavbar
 from territori.models import Territorio
-from open_ricostruzione.models import TipoImmobile, SoggettoAttuatore
+from open_ricostruzione.models import TipoImmobile, SoggettoAttuatore, InterventoProgramma
 
 
 def main_settings(request):

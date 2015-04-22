@@ -8,5 +8,9 @@
     {% endif %}
     <br/>
     {# todo: add filter on STATO INTERVENTO#}
-    <a href="{% url 'lista-interventi' %}?{{ query_string }}">Vai alla lista</a>
+    {% if status_filters %}
+        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&stato={{ status_filters }}">Vai alla lista</a>
+    {% else %}
+        <a href="{% url 'lista-interventi' %}?{{ base_filters }}">Vai alla lista</a>
+    {% endif %}
 </div>
