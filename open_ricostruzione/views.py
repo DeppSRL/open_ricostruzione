@@ -31,6 +31,8 @@ class ListaInterventiView(FilterView):
         self.request = request
         self.ip_filter = InterventoProgrammaFilter(self.request.GET,
                                                    queryset=InterventoProgramma.objects.all().select_related('territorio'))
+
+        # in this way the objects coming out of the filter will be paginated
         self.queryset = self.ip_filter.qs
         return super(ListaInterventiView, self).get(request, *args, **kwargs)
 
@@ -53,8 +55,6 @@ class ListaInterventiView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super(ListaInterventiView, self).get_context_data(**kwargs)
-
-
         context['request'] = self.request
 
         territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
@@ -76,7 +76,6 @@ class ListaInterventiView(FilterView):
         impresa_set = Impresa.objects.all().values_list('slug', flat=True)
         context['impresa_filter'] = self.get_parameter('interventopiano__intervento__imprese__slug', impresa_set,
                                                        model=Impresa)
-
         return context
 
 

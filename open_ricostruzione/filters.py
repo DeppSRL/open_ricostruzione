@@ -55,7 +55,7 @@ class TerritorioWithIntervento(TerritorioHasObject):
 class InterventoProgrammaFilter(django_filters.FilterSet):
     class Meta:
         model = InterventoProgramma
-        order_by = ['denominazione', 'tipo_immobile__slug', 'territorio']
+        order_by = ['denominazione', 'tipo_immobile__slug', 'territorio','stato','stato_attuazione']
         fields = {
             'territorio__slug': ['exact'],
             'tipo_immobile__slug': ['exact'],
