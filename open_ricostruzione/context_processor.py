@@ -9,7 +9,7 @@ def main_settings(request):
         "DEBUG": settings.DEBUG,
         "TEMPLATE_DEBUG": settings.TEMPLATE_DEBUG,
         "INSTANCE_TYPE": settings.INSTANCE_TYPE,
-        "territori_cratere": Territorio.get_territori_cratere(),
+        "territori_cratere": list(Territorio.get_territori_cratere()),
         "tipologie_immobile": TipoImmobile.get_tipologie(),
         "tipologie_sogg_att": SoggettoAttuatore.get_tipologie(),
         "interventi_search_form": InterventoProgrammaSearchFormNavbar(),

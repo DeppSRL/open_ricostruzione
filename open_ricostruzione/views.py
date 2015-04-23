@@ -23,34 +23,58 @@ class StaticPageView(TemplateView, ):
 class ListaInterventiView(FilterView):
     template_name = 'interventi_list.html'
     model = InterventoProgramma
+    ip_filter = None
     request = None
 
     def get(self, request, *args, **kwargs):
         self.request = request
         return super(ListaInterventiView, self).get(request, *args, **kwargs)
 
+    def get_parameter(self, get_parameter, possible_values, **kwargs):
+        model = kwargs.get('model', None)
+        # get the parameters from the filter
+        # if the value is not None
+        # and is one of the possible values -> returns the value
+        # else returns false
+        slug_value = self.ip_filter.form.data.get(get_parameter, None)
+        if slug_value is None:
+            return slug_value
+        elif slug_value not in possible_values:
+            return False
+
+        if model:
+            return model.objects.get(slug=slug_value)
+
+        return slug_value
+
     def get_context_data(self, **kwargs):
         context = super(ListaInterventiView, self).get_context_data(**kwargs)
-        ip_filter = InterventoProgrammaFilter(self.request.GET,
-                                              queryset=InterventoProgramma.objects.all().select_related('territorio'))
-        context['filter'] = ip_filter
-        territorio_slug = ip_filter.form.data.get('territorio__slug', None)
-
-        if territorio_slug:
-            context['territorio_filter'] = Territorio.objects.get(slug=territorio_slug)
-
-        tipo_immobile_slug = ip_filter.form.data.get('tipo_immobile__slug', None)
-        if tipo_immobile_slug:
-            context['tipo_immobile_filter'] = TipoImmobile.objects.get(slug=tipo_immobile_slug)
-
-        sogg_attuatore_slug = ip_filter.form.data.get('soggetto_attuatore__slug', None)
-        if sogg_attuatore_slug:
-            context['sogg_attuatore_filter'] = SoggettoAttuatore.objects.get(slug=sogg_attuatore_slug)
-
-        context['stato_filter'] = ip_filter.form.data.get('stato', None)
-        context['stato_attuazione_filter'] = ip_filter.form.data.get('stato_attuazione', None)
-
+        self.ip_filter = InterventoProgrammaFilter(self.request.GET,
+                                                   queryset=InterventoProgramma.objects.all().select_related(
+                                                       'territorio'))
+        context['filter'] = self.ip_filter
         context['request'] = self.request
+
+        territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
+        context['territorio_filter'] = self.get_parameter('territorio__slug', territori_set, model=Territorio)
+
+        tipo_immobile_set = TipoImmobile.objects.all().values_list('slug', flat=True)
+        context['tipo_immobile_filter'] = self.get_parameter('tipo_immobile__slug', tipo_immobile_set,
+                                                             model=TipoImmobile)
+
+        sogg_attuatore_set = SoggettoAttuatore.objects.all().values_list('slug', flat=True)
+        context['sogg_attuatore_filter'] = self.get_parameter('soggetto_attuatore__slug', sogg_attuatore_set,
+                                                              model=SoggettoAttuatore)
+
+        stato_set = list(InterventoProgramma.STATO._db_values)
+        context['stato_filter'] = self.get_parameter('stato', stato_set)
+        stato_attuazione_set = list(InterventoProgramma.STATO_ATTUAZIONE._db_values)
+        context['stato_attuazione_filter'] = self.get_parameter('stato_attuazione', stato_attuazione_set)
+
+        impresa_set = Impresa.objects.all().values_list('slug', flat=True)
+        context['impresa_filter'] = self.get_parameter('interventopiano__intervento__imprese__slug', impresa_set,
+                                                       model=Impresa)
+
         return context
 
 
@@ -130,10 +154,11 @@ class AggregatePageMixin(object):
         n_objects = settings.N_PROGETTI_FETCH
         return list(InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
 
-    def fetch_imprese(self,):
+    def fetch_imprese(self, ):
         n_objects = settings.N_IMPRESE_FETCH
         return list(
-            Impresa.objects.filter(**self.imprese_filters).annotate(count=Count('intervento__intervento_piano__intervento_programma')).order_by('-count')[0:n_objects])
+            Impresa.objects.filter(**self.imprese_filters).annotate(
+                count=Count('intervento__intervento_piano__intervento_programma')).order_by('-count')[0:n_objects])
 
 
     def fetch_sogg_att(self):
@@ -514,7 +539,8 @@ class TipoSoggettoAttuatoreView(ListView):
         return super(TipoSoggettoAttuatoreView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att).annotate(count=Count('interventoprogramma')).annotate(sum=Sum('interventoprogramma__importo_generale'))
+        return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att).annotate(
+            count=Count('interventoprogramma')).annotate(sum=Sum('interventoprogramma__importo_generale'))
 
     def get_context_data(self, **kwargs):
         context = super(TipoSoggettoAttuatoreView, self).get_context_data(**kwargs)
