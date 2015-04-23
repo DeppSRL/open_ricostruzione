@@ -16,16 +16,15 @@
 
     {#    execution status bar / status blocks #}
     {% include "aggregates/execution_status.html" %}
-        
+
     {# fetch progetti #}
-    <div class="row basic_spacer" style="margin-bottom: 5px;">
-        <div class="col-md-12">
-            <h1>Interventi con maggiore importo</h1>
-        </div>
-
-    </div>
-
     {% if interventi_top_importo %}
+        <div class="row basic_spacer" style="margin-bottom: 5px;">
+            <div class="col-md-12">
+                <h1>Interventi con maggiore importo</h1>
+            </div>
+
+        </div>
         <div class="row basic_spacer">
             <div class="col-md-6">
                 {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.0 %}
@@ -43,6 +42,7 @@
             </div>
         </div>
     {% endif %}
+
     {% block home-map %}
     {% endblock %}
 
@@ -90,6 +90,43 @@
 
         {% include 'aggregates/sogg_att_block.html' with pie_title="Aggregazione per tipo sogg.attuatore - ammontare" %}
 
+    {% endblock %}
+
+
+    {% block imprese %}
+        {# fetch imprese #}
+        {% if imprese_top %}
+            <div class="row basic_spacer" style="margin-bottom: 5px;">
+                <div class="col-md-12">
+                    <h1>LE IMPRESE CON PIÙ INTERVENTI</h1>
+                </div>
+
+            </div>
+            <div class="row basic_spacer">
+                <div class="col-md-6">
+                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.0 %}
+                </div>
+                <div class="col-md-6">
+                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.3 %}
+                </div>
+            </div>
+            <div class="row basic_spacer">
+                <div class="col-md-6">
+                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.1 %}
+                </div>
+                <div class="col-md-6">
+                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.4 %}
+                </div>
+            </div>
+            <div class="row basic_spacer">
+                <div class="col-md-6">
+                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.2 %}
+                </div>
+                <div class="col-md-6">
+                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.5 %}
+                </div>
+            </div>
+        {% endif %}
     {% endblock %}
 
     {# aggregazione tipologia cedente #}

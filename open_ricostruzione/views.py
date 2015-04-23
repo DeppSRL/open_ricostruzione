@@ -50,7 +50,6 @@ class ListaInterventiView(FilterView):
         context['stato_filter'] = ip_filter.form.data.get('stato', None)
         context['stato_attuazione_filter'] = ip_filter.form.data.get('stato_attuazione', None)
 
-
         context['request'] = self.request
         return context
 
@@ -72,6 +71,7 @@ class AggregatePageMixin(object):
     ##
 
     programmazione_filters = None
+    imprese_filters = {}
     sogg_att_filters = None
     donazione_intervento_filters = {}
     tipologia = None
@@ -93,6 +93,7 @@ class AggregatePageMixin(object):
         # transforms programmazione filters into donazioneIntervento filters
         for k, v in programmazione_filters.iteritems():
             self.donazione_intervento_filters["intervento_programma__{}".format(k)] = v
+            self.imprese_filters["intervento__intervento_piano__intervento_programma__{}".format(k)] = v
 
         self.sogg_att_filters = sogg_att_filters
 
@@ -129,6 +130,12 @@ class AggregatePageMixin(object):
         n_objects = settings.N_PROGETTI_FETCH
         return list(InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
 
+    def fetch_imprese(self,):
+        n_objects = settings.N_IMPRESE_FETCH
+        return list(
+            Impresa.objects.filter(**self.imprese_filters).annotate(count=Count('intervento__intervento_piano__intervento_programma')).order_by('-count')[0:n_objects])
+
+
     def fetch_sogg_att(self):
         n_objects = settings.N_SOGG_ATT_FETCH
         return list(
@@ -164,7 +171,6 @@ class AggregatePageMixin(object):
             return 'soggetto_attuatore__slug={}'.format(self.programmazione_filters['soggetto_attuatore'].slug)
         elif self.tipologia == self.TIPO_IMMOBILE:
             return 'tipo_immobile__slug={}'.format(self.programmazione_filters['tipo_immobile'].slug)
-        
 
     def get_aggregates(self):
         ##
@@ -173,14 +179,16 @@ class AggregatePageMixin(object):
         # so they return context-based data
         ##
 
-        agg_dict = {'status': {
-            'programmazione': self._get_programmazione_status(),
-            'pianificazione': self._get_pianificazione_status(),
-            'attuazione': self._get_attuazione_status(),
-            'progettazione': self._get_progettazione_status(),
-            'in_corso': self._get_in_corso_status(),
-            'conclusi': self._get_conclusi_status(),
-        }}
+        agg_dict = {
+            'status': {
+                'programmazione': self._get_programmazione_status(),
+                'pianificazione': self._get_pianificazione_status(),
+                'attuazione': self._get_attuazione_status(),
+                'progettazione': self._get_progettazione_status(),
+                'in_corso': self._get_in_corso_status(),
+                'conclusi': self._get_conclusi_status(),
+            }
+        }
 
         agg_dict['status']['pianificazione']['percentage'] = 0.0
         agg_dict['status']['attuazione']['percentage'] = 0.0
@@ -202,6 +210,7 @@ class AggregatePageMixin(object):
             agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates(
                 **self.programmazione_filters)
 
+        agg_dict['imprese_top'] = self.fetch_imprese()
         # Get tipo sogg.att data
         if self.tipologia != self.SOGG_ATT:
             agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(
