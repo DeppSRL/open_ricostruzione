@@ -484,7 +484,7 @@ class HomeView(TemplateView, AggregatePageMixin, MapMixin):
 
 
 class TipoSoggettoAttuatoreView(ListView):
-    template_name = 'tipo_sogg_att_list.html'
+    template_name = 'sogg_att_list.html'
     tipologia_sogg_att = None
 
     def get(self, request, *args, **kwargs):
@@ -514,7 +514,7 @@ class TipoSoggettoAttuatoreView(ListView):
         return super(TipoSoggettoAttuatoreView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att)
+        return SoggettoAttuatore.objects.filter(tipologia=self.tipologia_sogg_att).annotate(count=Count('interventoprogramma')).annotate(sum=Sum('interventoprogramma__importo_generale'))
 
     def get_context_data(self, **kwargs):
         context = super(TipoSoggettoAttuatoreView, self).get_context_data(**kwargs)

@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
+{% load italianize %}
 {% block head-title %}Soggetti attuatori - {{ tipologia_sogg_att }}{% endblock %}
 
 {% block content %}
     <h1>Soggetti attuatori - {{ tipologia_sogg_att }}</h1>
     {% for sogg_att in object_list %}
         <div class="row" style="border-bottom: 1px solid gray;">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <a href="{% url 'sogg-attuatore' sogg_att.slug %}">{{ sogg_att.denominazione }}</a>
+            </div>
+            <div class="col-md-6">
+                n.interventi:{{ sogg_att.count }}, importo:{{ sogg_att.sum|italianize }} euro
             </div>
         </div>
     {% endfor %}
