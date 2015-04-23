@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load italianize %}
+{% load italianize bootstrap_pagination %}
 {% block head-title %}Interventi a programma{% endblock %}
 
 
@@ -31,13 +31,15 @@
     <hr>
 
 
-    {% for obj in filter %}
+    {% for obj in object_list %}
         <div class="row">
             <div class="col-md-12">
                 <a href="{% url 'intervento-programma' slug=obj.slug %}">{{ obj.denominazione|title }}</a> - {{ obj.territorio.nome_con_provincia }}- {{ obj.importo_generale}} euro <br />
             </div>
         </div>
     {% endfor %}
+
+    {% bootstrap_paginate page_obj range=10 show_first_last='true' %}
 
     <hr>
     <small>

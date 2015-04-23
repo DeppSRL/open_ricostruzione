@@ -23,11 +23,15 @@ class StaticPageView(TemplateView, ):
 class ListaInterventiView(FilterView):
     template_name = 'interventi_list.html'
     model = InterventoProgramma
+    paginate_by = 100
     ip_filter = None
     request = None
 
     def get(self, request, *args, **kwargs):
         self.request = request
+        self.ip_filter = InterventoProgrammaFilter(self.request.GET,
+                                                   queryset=InterventoProgramma.objects.all().select_related('territorio'))
+        self.queryset = self.ip_filter.qs
         return super(ListaInterventiView, self).get(request, *args, **kwargs)
 
     def get_parameter(self, get_parameter, possible_values, **kwargs):
@@ -49,10 +53,8 @@ class ListaInterventiView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super(ListaInterventiView, self).get_context_data(**kwargs)
-        self.ip_filter = InterventoProgrammaFilter(self.request.GET,
-                                                   queryset=InterventoProgramma.objects.all().select_related(
-                                                       'territorio'))
-        context['filter'] = self.ip_filter
+
+
         context['request'] = self.request
 
         territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
