@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse, NoReverseMatch
@@ -219,14 +220,14 @@ class AggregatePageMixin(object):
         agg_dict['status']['pianificazione']['percentage'] = 0.0
         agg_dict['status']['attuazione']['percentage'] = 0.0
 
-        if agg_dict['status']['programmazione']['count'] > 0:
-            agg_dict['status']['pianificazione']['percentage'] = 100.0 * (
-                agg_dict['status']['pianificazione']['count'] / float(
-                    agg_dict['status']['programmazione']['count']))
+        if agg_dict['status']['programmazione']['sum'] > 0:
+            agg_dict['status']['pianificazione']['percentage'] = Decimal(100.0) * (
+                agg_dict['status']['pianificazione']['sum'] /
+                    agg_dict['status']['programmazione']['sum'])
 
-            agg_dict['status']['attuazione']['percentage'] = 100.0 * (
-                agg_dict['status']['attuazione']['count'] / float(
-                    agg_dict['status']['programmazione']['count']))
+            agg_dict['status']['attuazione']['percentage'] = Decimal(100.0) * (
+                agg_dict['status']['attuazione']['sum'] /
+                    agg_dict['status']['programmazione']['sum'])
 
         # top importo interventi fetch
         agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
