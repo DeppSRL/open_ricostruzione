@@ -30,6 +30,9 @@ function paint_chart(pie_title, container_id, data) {
 
     // Build the chart
     $("#"+container_id).highcharts({
+        credits:{
+            enabled: false
+        },
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
