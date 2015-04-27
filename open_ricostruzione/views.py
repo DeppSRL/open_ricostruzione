@@ -7,7 +7,7 @@ from django.views.generic import TemplateView, DetailView, ListView, RedirectVie
 from django.db.models.aggregates import Count, Sum
 from django_filters.views import FilterView
 from django.conf import settings
-from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma
+from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
 from open_ricostruzione.filters import InterventoProgrammaFilter
@@ -97,6 +97,7 @@ class AggregatePageMixin(object):
     ##
 
     programmazione_filters = None
+    varianti_filters = {}
     imprese_filters = {}
     sogg_att_filters = None
     donazione_intervento_filters = {}
@@ -120,6 +121,7 @@ class AggregatePageMixin(object):
         for k, v in programmazione_filters.iteritems():
             self.donazione_intervento_filters["intervento_programma__{}".format(k)] = v
             self.imprese_filters["intervento__intervento_piano__intervento_programma__{}".format(k)] = v
+            self.varianti_filters["intervento__intervento_piano__intervento_programma__{}".format(k)] = v
 
         self.sogg_att_filters = sogg_att_filters
 
@@ -162,7 +164,6 @@ class AggregatePageMixin(object):
             Impresa.objects.filter(**self.imprese_filters).annotate(
                 count=Count('intervento__intervento_piano__intervento_programma')).order_by('-count')[0:n_objects])
 
-
     def fetch_sogg_att(self):
         n_objects = settings.N_SOGG_ATT_FETCH
         return list(
@@ -181,6 +182,9 @@ class AggregatePageMixin(object):
 
     def _get_attuazione_status(self):
         return InterventoProgramma.attuazione.filter(**self.programmazione_filters).with_count()
+
+    def _get_varianti_status(self):
+        return Variante.objects.filter(**self.varianti_filters).with_count()
 
     def _get_progettazione_status(self):
         return InterventoProgramma.progettazione.filter(**self.programmazione_filters).with_count()
@@ -211,6 +215,7 @@ class AggregatePageMixin(object):
                 'programmazione': self._get_programmazione_status(),
                 'pianificazione': self._get_pianificazione_status(),
                 'attuazione': self._get_attuazione_status(),
+                'varianti': self._get_varianti_status(),
                 'progettazione': self._get_progettazione_status(),
                 'in_corso': self._get_in_corso_status(),
                 'conclusi': self._get_conclusi_status(),
@@ -219,6 +224,7 @@ class AggregatePageMixin(object):
 
         agg_dict['status']['pianificazione']['percentage'] = 0.0
         agg_dict['status']['attuazione']['percentage'] = 0.0
+        agg_dict['status']['varianti']['percentage'] = 0.0
 
         if agg_dict['status']['programmazione']['sum'] > 0:
             agg_dict['status']['pianificazione']['percentage'] = Decimal(100.0) * (
@@ -228,6 +234,12 @@ class AggregatePageMixin(object):
             agg_dict['status']['attuazione']['percentage'] = Decimal(100.0) * (
                 agg_dict['status']['attuazione']['sum'] /
                     agg_dict['status']['programmazione']['sum'])
+
+        # calculates % in varianti compared to attuazione importo
+        if agg_dict['status']['attuazione']['sum'] > 0 and agg_dict['status']['varianti']['sum']:
+            agg_dict['status']['varianti']['percentage'] = Decimal(100.0) * (
+                agg_dict['status']['varianti']['sum'] /
+                    agg_dict['status']['attuazione']['sum'])
 
         # top importo interventi fetch
         agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')

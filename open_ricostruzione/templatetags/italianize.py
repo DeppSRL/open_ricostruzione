@@ -14,7 +14,7 @@ register = template.Library()
 
 @register.filter(name='italianize')
 def italianize(value, arg=2):
-    if not value or value == '':
+    if value is None or value == '':
         return
     decimal_value = Decimal(format(value, ".15g"))
     if arg == 0:

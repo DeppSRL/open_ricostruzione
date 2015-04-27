@@ -217,6 +217,7 @@ class Command(BaseCommand):
         self.logger.info("Deleting all previous InterventoProgramma and Impresa...")
         InterventoProgramma.objects.all().delete()
         Impresa.objects.all().delete()
+        Variante.objects.all().delete()
         self.logger.info("Done")
 
         for intervento_a_progr_json in data['interventi_a_programma']:
@@ -390,7 +391,7 @@ class Command(BaseCommand):
                             'data': datetime.strptime(evento_contr['data'], self.date_format),
                         }).save()
 
-                    #     imprese
+                    # imprese
                     for impresa_json in intervento_json['imprese']:
                         impresa, _ = Impresa.objects.get_or_create(
                             partita_iva=impresa_json['p_iva'],
@@ -402,17 +403,35 @@ class Command(BaseCommand):
                         intervento.imprese.add(impresa)
 
                     # varianti
-                    # todo: importare eventuale qe
                     for variante in intervento_json['varianti']:
+                        progetto_variante = None
+                        qev = None
+                        if variante['id_prog']:
+                            try:
+                                progetto_variante = Progetto.objects.get(id_fenice=variante['id_prog'])
+                            except ObjectDoesNotExist:
+                                self.logger.error(
+                                    "Intervento with id_fenice:{}, Variante: id_prog:{} does not exist in db".format(
+                                        intervento.id_fenice, variante['id_prog']))
+
+                        # import Quadro economico
+                        if variante['id_qe']:
+                            try:
+                                qev = QuadroEconomicoIntervento.objects.get(id_fenice=variante['id_qe'])
+                            except ObjectDoesNotExist:
+                                self.logger.error(
+                                    "Intervento with id_fenice:{}, Variante: id_qe:{} does not exist in db".format(
+                                        intervento.id_fenice, variante['id_qe']))
+
                         Variante(**{
+                            'qe': qev,
                             'tipologia': variante['id_tipo_var'],
                             'stato': variante['id_stato_var'],
-                            'progetto': variante['id_prog'],
+                            'intervento': intervento,
+                            'progetto': progetto_variante,
                             'data_deposito': datetime.strptime(variante['iter']['data_dep'], self.date_format),
                             'data_fine': datetime.strptime(variante['iter']['data_fine'], self.date_format),
                         }).save()
-
-
 
             # set state and attuazione state for the considered intervento_programma
             intervento_programma.stato, intervento_programma.stato_attuazione = self.get_intervento_stato(

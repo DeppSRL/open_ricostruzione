@@ -89,3 +89,19 @@ class ConclusiManager(models.Manager):
     def get_queryset(self):
         return ConclusiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.ATTUAZIONE,
                                                                    stato_attuazione=self.model.STATO_ATTUAZIONE.CONCLUSO)
+
+# VARIANTI
+
+
+class VariantiQuerySet(models.QuerySet):
+    def with_count(self):
+        aggregate_dict = {
+            "sum": Sum('qe__importo'),
+            "count": Count('pk')
+        }
+        return self.aggregate(**aggregate_dict)
+
+
+class VariantiManager(models.Manager):
+    def get_queryset(self):
+        return VariantiQuerySet(self.model, using=self._db)

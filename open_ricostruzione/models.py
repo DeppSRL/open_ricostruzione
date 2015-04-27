@@ -3,7 +3,7 @@ from model_utils import Choices
 from django.db import models
 from django.db.models import Q
 from aggregate_if import Count, Sum
-from managers import ProgrammatiManager, PianificatiManager, AttuazioneManager, ProgettazioneManager, InCorsoManager, ConclusiManager
+from managers import ProgrammatiManager, PianificatiManager, AttuazioneManager, ProgettazioneManager, InCorsoManager, ConclusiManager, VariantiManager
 from open_ricostruzione.utils.moneydate import moneyfmt
 
 
@@ -109,9 +109,9 @@ class InterventoProgramma(models.Model):
             tipologia_name = SoggettoAttuatore.TIPOLOGIA.__getitem__(tipologia_id)
             # count and sum for programmazione
             d = {'name': tipologia_name,
-                 'attuazione': InterventoProgramma.attuazione.filter(soggetto_attuatore__tipologia=tipologia_id,
+                 'attuazione': InterventoProgramma.programmati.filter(soggetto_attuatore__tipologia=tipologia_id,
                                                                      **kwargs).with_count(),
-            }
+                }
 
             if d['attuazione']['count'] == 0:
                 continue
@@ -406,6 +406,9 @@ class Progetto(models.Model):
     data_inizio = models.DateField(blank=True, null=True)
     data_fine = models.DateField(blank=True, null=True)
 
+    def __unicode__(self):
+        return u"{} - {}".format(self.intervento.intervento_piano.intervento_programma.denominazione, self.tipologia)
+
     class Meta:
         verbose_name_plural = u'Progetti'
 
@@ -422,11 +425,22 @@ class Variante(models.Model):
         (u'3', u'AMMESSA', u'Ammessa'),
         (u'4', u'RESPINTA', u'Respinta'),
     )
+    qe = models.ForeignKey('QuadroEconomicoIntervento', blank=True, null=True )
     tipologia = models.CharField(max_length=2, choices=TIPO_VARIANTE, blank=False, null=False, default='')
     stato = models.CharField(max_length=2, choices=STATO_VARIANTE, blank=False, null=False, default='')
     progetto = models.ForeignKey('Progetto', null=True, blank=True)
+    intervento = models.ForeignKey('Intervento', null=False, blank=False)
     data_deposito = models.DateField(blank=True, null=True)
     data_fine = models.DateField(blank=True, null=True)
+
+    objects = VariantiManager()
+
+    def __unicode__(self):
+        return u"{} - {}".format(self.progetto, self.tipologia)
+
+    class Meta:
+        verbose_name_plural = u'Varianti'
+
 
 ##
 # Donazioni
@@ -475,7 +489,6 @@ class Donazione(models.Model):
             }
 
         return Donazione.objects.filter(**kwargs).aggregate(**aggregation_struct)
-
 
     def __unicode__(self):
         return u"{} - {}".format(self.denominazione, self.territorio)
