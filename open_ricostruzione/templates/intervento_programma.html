@@ -6,5 +6,45 @@
 
 
 {% block content %}
-    {{ object }}
+    <div class="row">
+        <div class="col-md-12"><h1>{{ object.denominazione }}</h1></div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {% if object.vari_territori %}
+                Intervento su vari territori
+            {% else %}
+                {{ object.territorio.nome_con_provincia }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">Programma: {{ object.programma }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">id fenice: {{ object.id_fenice }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">soggetto attuatore: {{ object.soggetto_attuatore.denominazione }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">Importo generale: {{ object.importo_generale }} euro</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">Importo a programma: {{ object.importo_a_programma }} euro</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">Tipo immobile:{{ object.tipo_immobile }}</div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {{ object.stato|default_if_none:"A programma" }}
+        </div>
+
+    </div>
+    {% if object.stato_attuazione %}
+        <div class="row">
+            <div class="col-md-12">Stato dell'attuazione: {{ object.stato_attuazione }}</div>
+        </div>
+    {% endif %}
 {% endblock %}
