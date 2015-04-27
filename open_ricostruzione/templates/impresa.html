@@ -9,12 +9,17 @@
     <h1>{{ impresa.ragione_sociale|title }}</h1>
 {% endblock %}
 
-{% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <h1>{{ impresa.ragione_sociale|title }}</h1>
-        </div>
+{% block status %}
+    <div class="row basic_spacer">
+        {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione status_filters="attuazione" %}
+        {% include 'aggregates/varianti_block.html' %}
     </div>
+
+    {#    execution status bar / status blocks #}
+    {% include "aggregates/execution_status.html" %}
+{% endblock %}
+
+{% block home-map %}
     <div class="row basic_spacer">
         <div class="col-md-12">
             <h1>Dove si interviene?</h1>
@@ -23,15 +28,12 @@
 
     {% include 'modules/thematic_maps.html' with impresa=True  %}
 
-
-
 {% endblock %}
 
-{% block donazioni %}
-{% endblock %}
 
-{% block soggetto-attuatore %}
-{% endblock %}
+{% block donazioni %}{% endblock %}
+
+{% block soggetto-attuatore %}{% endblock %}
 
 
 {% block extra-css %}

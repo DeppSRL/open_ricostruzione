@@ -108,6 +108,7 @@ class AggregatePageMixin(object):
     TIPO_IMMOBILE = 2
     SOGG_ATT = 3
     HOME = 4
+    IMPRESA = 5
 
     def __init__(self, tipologia, programmazione_filters, sogg_att_filters):
         ##
@@ -202,6 +203,8 @@ class AggregatePageMixin(object):
             return 'soggetto_attuatore__slug={}'.format(self.programmazione_filters['soggetto_attuatore'].slug)
         elif self.tipologia == self.TIPO_IMMOBILE:
             return 'tipo_immobile__slug={}'.format(self.programmazione_filters['tipo_immobile'].slug)
+        elif self.tipologia == self.IMPRESA:
+            return 'interventopiano__intervento__imprese__slug={}'.format(self.programmazione_filters['interventopiano__intervento__imprese'].slug)
 
     def get_aggregates(self):
         ##
@@ -226,7 +229,7 @@ class AggregatePageMixin(object):
         agg_dict['status']['attuazione']['percentage'] = 0.0
         agg_dict['status']['varianti']['percentage'] = 0.0
 
-        if agg_dict['status']['programmazione']['sum'] > 0:
+        if agg_dict['status']['programmazione']['sum'] > 0 and agg_dict['status']['pianificazione']['sum'] > 0:
             agg_dict['status']['pianificazione']['percentage'] = Decimal(100.0) * (
                 agg_dict['status']['pianificazione']['sum'] /
                     agg_dict['status']['programmazione']['sum'])
@@ -249,9 +252,11 @@ class AggregatePageMixin(object):
             agg_dict['tipo_immobile_aggregates'] = InterventoProgramma.get_tipo_immobile_aggregates(
                 **self.programmazione_filters)
 
-        agg_dict['imprese_top'] = self.fetch_imprese()
+        if self.tipologia != self.IMPRESA:
+            agg_dict['imprese_top'] = self.fetch_imprese()
+
         # Get tipo sogg.att data
-        if self.tipologia != self.SOGG_ATT:
+        if self.tipologia != self.SOGG_ATT and self.tipologia != self.IMPRESA:
             agg_dict['sogg_att_aggregates'] = InterventoProgramma.get_sogg_attuatore_aggregates(
                 **self.programmazione_filters)
             agg_dict['sogg_att_top'] = self.fetch_sogg_att()
@@ -432,7 +437,7 @@ class MapMixin(object):
         return MapMixin._create_map_values(attuazione_values)
 
 
-class TipoImmobileView(TemplateView, AggregatePageMixin, MapMixin):
+class TipoImmobileView(TemplateView, AggregatePageMixin):
     template_name = 'tipo_immobile.html'
     tipo_immobile = None
 
@@ -465,7 +470,7 @@ class TipoImmobileView(TemplateView, AggregatePageMixin, MapMixin):
         return context
 
 
-class SoggettoAttuatoreView(TemplateView, AggregatePageMixin, MapMixin):
+class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
     template_name = 'sogg_att.html'
     sogg_att = None
 
@@ -574,7 +579,7 @@ class InterventoProgrammaView(DetailView):
     template_name = 'intervento_programma.html'
 
 
-class ImpresaDetailView(DetailView):
+class ImpresaDetailView(DetailView, AggregatePageMixin):
     model = Impresa
     template_name = 'impresa.html'
     impresa = None
@@ -591,6 +596,13 @@ class ImpresaDetailView(DetailView):
         context = super(ImpresaDetailView, self).get_context_data(**kwargs)
         context['impresa'] = self.impresa
 
+        apm = AggregatePageMixin(
+            tipologia=AggregatePageMixin.IMPRESA,
+            programmazione_filters={"interventopiano__intervento__imprese": self.impresa},
+            sogg_att_filters={}
+        )
+        context.update(apm.get_aggregates())
+        context['base_filters'] = apm.get_base_filters()
         # gets maps bounds and center
         context['map_bounds'] = settings.THEMATIC_MAP_BOUNDS
         context['map_center'] = settings.THEMATIC_MAP_CENTER

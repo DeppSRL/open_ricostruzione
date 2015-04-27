@@ -8,15 +8,17 @@
         </div>
     </div>
 
-    <div class="row basic_spacer">
-        {% include 'aggregates/data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}
-        {% include 'aggregates/data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' status_filters="piano" %}
-        {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' status_filters="attuazione" %}
-        {% include 'aggregates/varianti_block.html' %}
-    </div>
+    {% block status %}
+        <div class="row basic_spacer">
+            {% include 'aggregates/data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}
+            {% include 'aggregates/data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' status_filters="piano" %}
+            {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' status_filters="attuazione" %}
+            {% include 'aggregates/varianti_block.html' %}
+        </div>
 
-    {#    execution status bar / status blocks #}
-    {% include "aggregates/execution_status.html" %}
+        {#    execution status bar / status blocks #}
+        {% include "aggregates/execution_status.html" %}
+    {% endblock %}
 
     {# fetch progetti #}
     {% if interventi_top_importo %}
@@ -49,41 +51,44 @@
 
     {# aggregazione tipo immobile    #}
     {% block tipo-immobile %}
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Per cosa si interviene?</h1>
+        {% if tipo_immobile_aggregates %}
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Per cosa si interviene?</h1>
+                </div>
             </div>
-        </div>
-        <div class="row" style="font-size: 11px;">
-            <div class="col-md-12">
-                <table>
-                    <tr>
-                        <th rowspan="2"> tipo immobile</th>
-                        <th colspan="2"> programma</th>
-                        <th colspan="2"> piano</th>
-                        <th colspan="2"> attuazione</th>
-                    </tr>
-                    <tr>
-                        <th>numero</th>
-                        <th>ammontare</th>
-                        <th>numero</th>
-                        <th>ammontare</th>
-                        <th>numero</th>
-                        <th>ammontare</th>
-                    </tr>
+            <div class="row" style="font-size: 11px;">
+                <div class="col-md-12">
+                    <table>
+                        <tr>
+                            <th rowspan="2"> tipo immobile</th>
+                            <th colspan="2"> programma</th>
+                            <th colspan="2"> piano</th>
+                            <th colspan="2"> attuazione</th>
+                        </tr>
+                        <tr>
+                            <th>numero</th>
+                            <th>ammontare</th>
+                            <th>numero</th>
+                            <th>ammontare</th>
+                            <th>numero</th>
+                            <th>ammontare</th>
+                        </tr>
 
-                        {% for tipo_immobile in tipo_immobile_aggregates %}
-                            <tr>
-                                <td><strong>{{ tipo_immobile.name }}</strong></td>
-                                <td>{{ tipo_immobile.programmazione.count }}</td><td>{{ tipo_immobile.programmazione.sum }} euro </td>
-                                <td>{{ tipo_immobile.pianificazione.count }}</td><td>{{ tipo_immobile.pianificazione.sum }} euro</td>
-                                <td>{{ tipo_immobile.attuazione.count }}</td><td>{{ tipo_immobile.attuazione.sum }} euro</td>
-                            </tr>
-                        {% endfor %}
-                </table>
+                            {% for tipo_immobile in tipo_immobile_aggregates %}
+                                <tr>
+                                    <td><strong>{{ tipo_immobile.name }}</strong></td>
+                                    <td>{{ tipo_immobile.programmazione.count }}</td><td>{{ tipo_immobile.programmazione.sum }} euro </td>
+                                    <td>{{ tipo_immobile.pianificazione.count }}</td><td>{{ tipo_immobile.pianificazione.sum }} euro</td>
+                                    <td>{{ tipo_immobile.attuazione.count }}</td><td>{{ tipo_immobile.attuazione.sum }} euro</td>
+                                </tr>
+                            {% endfor %}
+                    </table>
+                </div>
             </div>
-        </div>
-        {% include 'modules/tipo_immobile_bars.html' %}
+            {% include 'modules/tipo_immobile_bars.html' %}
+        {% endif %}
+
     {% endblock %}
 
     {# aggregazione tipo sogg. att #}
