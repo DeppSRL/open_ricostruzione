@@ -44,7 +44,7 @@
     {% for obj in object_list %}
         <div class="row">
             <div class="col-md-12">
-                <a href="{% url 'intervento-programma' slug=obj.slug %}">{{ obj.denominazione|title }}</a> - {{ obj.territorio.nome_con_provincia }}- {{ obj.importo_generale}} euro <br />
+                <a href="{% url 'intervento-programma' slug=obj.slug %}">{{ obj.denominazione|title }}</a> - {{ obj.territorio.nome_con_provincia }}- {{ obj.importo_generale|italianize}} euro <br />
             </div>
         </div>
     {% endfor %}

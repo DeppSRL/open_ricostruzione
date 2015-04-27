@@ -94,3 +94,8 @@ body {
   margin-right: 8px;
   opacity: 0.7;
 }
+table.debug_table td,
+table.debug_table th {
+  border: 1px solid grey;
+  text-align: center;
+}
