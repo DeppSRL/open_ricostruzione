@@ -23,8 +23,18 @@
             {% if stato_attuazione_filter %}
                 <strong>Per Stato di attuazione: {{ stato_attuazione_filter|title }}</strong><br/>
             {% endif %}
+            {% if impresa_filter%}
+                <strong>Per l'impresa: {{ impresa_filter|title }}</strong><br/>
+            {% endif %}
 
-            Trovati {{ filter.qs|length }} interventi a programma<br/>
+            {% if filter.qs|length > 0 %}
+                Trovati {{ filter.qs|length }} interventi a programma<br/>
+                {% else %}
+                <h3>
+                    Non sono stati trovati Interventi per i filtri selezionati.<br/> <a href="{% url 'home' %}">Torna alla home</a>
+                </h3>
+            {% endif %}
+
 
         </div>
     </div>
@@ -39,7 +49,9 @@
         </div>
     {% endfor %}
 
-    {% bootstrap_paginate page_obj range=10 show_first_last='true' %}
+    {% if object_list %}
+        {% bootstrap_paginate page_obj range=10 show_first_last='true' %}
+    {% endif %}
 
 {#    <hr>#}
 {#    <small>#}
