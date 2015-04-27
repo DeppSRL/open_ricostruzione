@@ -1,6 +1,6 @@
 {% load italianize %}
 <div class="col-md-3 data_block_border">
-    <strong>{{ title|title }}</strong><br/>
+    <strong>Varianti</strong><br/>
     n.varianti: {{ status.varianti.count|default_if_none:0|italianize:0 }}<br/>
     importo: {{ status.varianti.sum|italianize|default_if_none:0 }} E<br/>
     {{ status.varianti.percentage|floatformat:2 }}% {{ perc_label }}
