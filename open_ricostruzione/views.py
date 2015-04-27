@@ -234,9 +234,10 @@ class AggregatePageMixin(object):
                 agg_dict['status']['pianificazione']['sum'] /
                     agg_dict['status']['programmazione']['sum'])
 
-            agg_dict['status']['attuazione']['percentage'] = Decimal(100.0) * (
-                agg_dict['status']['attuazione']['sum'] /
-                    agg_dict['status']['programmazione']['sum'])
+            if agg_dict['status']['attuazione']['sum']:
+                agg_dict['status']['attuazione']['percentage'] = Decimal(100.0) * (
+                    agg_dict['status']['attuazione']['sum'] /
+                        agg_dict['status']['programmazione']['sum'])
 
         # calculates % in varianti compared to attuazione importo
         if agg_dict['status']['attuazione']['sum'] > 0 and agg_dict['status']['varianti']['sum']:
