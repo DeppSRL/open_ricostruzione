@@ -9,16 +9,31 @@
     </div>
     {% block home-intro %}{% endblock %}
 
-    {% block status %}
-        <div class="row basic_spacer">
-            {% include 'aggregates/data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}
-            {% include 'aggregates/data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' status_filters="piano" %}
-            {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' status_filters="attuazione" %}
-            {% include 'aggregates/varianti_block.html' %}
+    <section class="cifre top-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1 text-center">
+                    <h1>
+                        LA RICOSTRUZIONE IN CIFRE
+                    </h1>
+                    <p>Ultimo aggiornamento: 17 febbraio 2014 - 41 comuni monitorati su 42</p>
+                </div>
+            </div>
         </div>
+    </section>
 
+    {% block status %}
+        {% include 'aggregates/status.html' %}
+
+{#        <div class="row basic_spacer">#}
+{#            {% include 'aggregates/data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}#}
+{#            {% include 'aggregates/data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' status_filters="piano" %}#}
+{#            {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' status_filters="attuazione" %}#}
+{#            {% include 'aggregates/varianti_block.html' %}#}
+{#        </div>#}
+{##}
         {#    execution status bar / status blocks #}
-        {% include "aggregates/execution_status.html" %}
+{#        {% include "aggregates/execution_status.html" %}#}
     {% endblock %}
 
     {# fetch progetti #}
