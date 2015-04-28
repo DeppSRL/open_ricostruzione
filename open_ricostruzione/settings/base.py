@@ -168,6 +168,13 @@ INSTALLED_APPS = (
     'django_filters',
 )
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 30000,
+    }
+}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

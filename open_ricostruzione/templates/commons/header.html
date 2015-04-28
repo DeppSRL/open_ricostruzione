@@ -1,0 +1,93 @@
+<header id="header">
+    <div class="container">
+        <div class="col-md-6 logo">
+            <h1><a href="#"><span class="green">open</span><span class="gray">ricostruzione</span></a></h1>
+            <span class="description green">Monitora gli <span class="gray">interventi</span> per la ricostruzione in Emilia Romagna</span>
+        </div>
+
+        <div class="col-md-6 text-right">
+            <div class="form-group">
+                <form role="search" class="pull-left autosubmit form-inline" action="{% url 'intervento-search' %}" method="get">
+                    {{ interventi_search_form }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">DOVE SI INTERVIENE? <span class="caret"></span></a>
+                        <ul class="dropdown-menu multi-level">
+                            {% regroup territori_cratere by prov as group %}
+                            {% for g in group %}
+                                <li class="dropdown-submenu">
+
+                                    <a class="dropdown-toggle" data-toggle="dropdown" >
+                                        {{ g.list.0.provincia_name|title }}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        {% for item in g.list %}
+                                            <li><a href="{% url 'localita' slug=item.slug %}">{{ item.denominazione }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            <li class="divider"></li>
+                            <li><a href="{% url 'localita' slug='vari-territori' %}">Vari territori</a></li>
+                        </ul>
+                    </li>
+                    <li class="active"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false">PER COSA? <span class="caret"></span></a>
+
+                        <ul class="dropdown-menu" role="menu">
+                            {% for tipologia in tipologie_immobile %}
+                                <li><a href="{% url 'tipo-immobile' tipologia.slug  %}">{{ tipologia.denominazione }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">CHI È IL RESPONSABILE? <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            {% for t in tipologie_sogg_att %}
+                                <li>
+                                    <a href="{% url 'tipo-sogg-attuatore' t.1|lower %}">{{ t.2 }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                    </li>
+                    <li>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">QUALI SONO LE IMPRESE COINVOLTE? <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <form role="search" class="pull-left autosubmit" action="{% url 'impresa-search' %}" method="get">
+                                    {{ impresa_search_form }}
+                                </form>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="{% url 'lista-imprese' %}" >Tutte le imprese</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+
+</header>
