@@ -479,8 +479,8 @@ class TipoImmobileView(TemplateView, AggregatePageMixin):
         context['map_center'] = settings.THEMATIC_MAP_CENTER
         # get maps data
         mapm = MapMixin(map_filters={'interventoprogramma__tipo_immobile': self.tipo_immobile})
-        context['map_danno_values'] = mapm.get_danno_values()
-        context['map_attuazione_values'] = mapm.get_attuazione_values()
+        context['map_danno_values'] = mapm.get_danno_values('tipo_immobile')
+        context['map_attuazione_values'] = mapm.get_attuazione_values('tipo_immobile')
 
         return context
 
@@ -513,8 +513,8 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
         context['map_center'] = settings.THEMATIC_MAP_CENTER
         # get maps data
         mapm = MapMixin(map_filters={'interventoprogramma__soggetto_attuatore': self.sogg_att})
-        context['map_danno_values'] = mapm.get_danno_values()
-        context['map_attuazione_values'] = mapm.get_attuazione_values()
+        context['map_danno_values'] = mapm.get_danno_values('soggetto_attuatore')
+        context['map_attuazione_values'] = mapm.get_attuazione_values('soggetto_attuatore')
 
         return context
 
@@ -624,7 +624,7 @@ class ImpresaDetailView(DetailView, AggregatePageMixin):
         context['map_center'] = settings.THEMATIC_MAP_CENTER
         # get maps data
         mapm = MapMixin(map_filters={'interventoprogramma__interventopiano__intervento__imprese': self.impresa})
-        context['map_attuazione_values'] = mapm.get_attuazione_values()
+        context['map_attuazione_values'] = mapm.get_attuazione_values('impresa')
 
         return context
 
