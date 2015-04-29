@@ -95,9 +95,9 @@ a:hover {
   margin-top: 10px;
 }
 .show {
-  top: 25px;
-  right: 0px;
-  position: absolute;
+  /*top: 25px;*/
+  /*right: 0px;*/
+  /*position: absolute;*/
 }
 .show a {
   font-size: 11px;
