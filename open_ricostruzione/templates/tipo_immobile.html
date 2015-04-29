@@ -20,14 +20,3 @@
     <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/emilia.json' %}"></script>
 {% endblock %}
-
-{% block home-map %}
-    <div class="row basic_spacer">
-        <div class="col-md-12">
-            <h1>Dove si interviene?</h1>
-        </div>
-    </div>
-
-    {% include 'modules/thematic_maps.html'  %}
-
-{% endblock %}

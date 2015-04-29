@@ -16,7 +16,7 @@
                     <h1>
                         LA RICOSTRUZIONE IN CIFRE
                     </h1>
-                    <p>Ultimo aggiornamento: 17 febbraio 2014 - 41 comuni monitorati su 42</p>
+                    <p>Ultimo aggiornamento: {{ ultimo_aggiornamento|date }} - {{ n_comuni_monitorati }} comuni monitorati su {{ n_comuni_cratere }}</p>
                 </div>
             </div>
         </div>
@@ -37,33 +37,96 @@
     {% endblock %}
 
     {# fetch progetti #}
-    {% if interventi_top_importo %}
-        <div class="row basic_spacer" style="margin-bottom: 5px;">
-            <div class="col-md-12">
-                <h1>Interventi con maggiore importo</h1>
-            </div>
 
-        </div>
-        <div class="row basic_spacer">
-            <div class="col-md-6">
-                {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.0 %}
+    {% if interventi_top_importo %}
+        <section class="latest">
+            <div class="container">
+
+                <div class="row text-center">
+                    <h1>
+                        GLI INTERVENTI CON MAGGIORI IMPORTI
+                    </h1>
+                </div>
+
+                <div class="row lists">
+                    <div class="col-md-6 list-item">
+                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.0 %}
+                    </div>
+                    <div class="col-md-6 list-item">
+                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.2 %}
+                    </div>
+                    <div class="col-md-6 list-item">
+                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.1 %}
+                    </div>
+                    <div class="col-md-6 list-item">
+                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.3 %}
+                    </div>
+                    <a href="#" class="pull-right alls">VEDI TUTTI</a>
+                </div>
             </div>
-            <div class="col-md-6">
-                {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.2 %}
-            </div>
-        </div>
-        <div class="row basic_spacer">
-            <div class="col-md-6">
-                {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.1 %}
-            </div>
-            <div class="col-md-6">
-                {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.3 %}
-            </div>
-        </div>
+        </section>
     {% endif %}
 
+    {% block thematic-map %}
+        <section class="dove top-bottom">
+            <div class="row basic_spacer">
+                <div class="col-md-12">
+                    <h1>DOVE SI INTERVIENE</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% if impresa %}
+                        <div id="mappa_attuazione" class="map"></div>
+                    {% else %}
+                        <div role="tabpanel">
 
-    {% block home-map %}
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active">
+                                    <a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab" id="handle_danno" class="btn btn-show active">Mappa Danno</a>
+
+                                </li>
+                                <li role="presentation">
+                                    <a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab" id="handle_attuazione" class="btn btn-show">Mappa Attuazione</a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade in active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
+                                <div role="tabpanel" class="tab-pane fade" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% include 'modules/thematic_maps.html'  %}
+
+{#    <section class="dove top-bottom">#}
+{#        <div class="container">#}
+{#            <div class="row">#}
+{#                <div class="col-md-12 text-center">#}
+{#                    <div class="show">#}
+{#                        <a href="" class="btn btn-show active">MOSTRA PROGRAMMAZIONE</a>#}
+{#                        <a href="" class="btn btn-show">MOSTRA STEP ATTUAZIONE</a>#}
+{#                    </div>#}
+{#                    <h1>#}
+{#                        DOVE SI INTERVIENE#}
+{#                    </h1>#}
+{#                    <div id="map"></div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
+
     {% endblock %}
 
     {# aggregazione tipo immobile    #}

@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.contrib import admin
-from django.views.decorators.cache import cache_page
 from django.views.generic.base import TemplateView
 from rest_framework import routers
 from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, HomeView, \
@@ -56,13 +55,10 @@ urlpatterns = patterns('',
                        url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
                        url(r'^lista_interventi/$', ListaInterventiView.as_view(), name='lista-interventi'),
                        url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='donazioni'),
-
 )
 
 if settings.INSTANCE_TYPE == 'development':
     urlpatterns += patterns('',
                             url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
                                 {'document_root': settings.MEDIA_ROOT, }),
-                            # todo: remove following url
-                            url(r'^venn_test/$', TemplateView.as_view(template_name='venn_test.html')),
     )

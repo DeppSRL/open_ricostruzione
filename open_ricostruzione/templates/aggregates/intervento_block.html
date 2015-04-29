@@ -1,8 +1,13 @@
 {% load italianize %}
-<div class="row" style="border-bottom: 1px solid #cccccc;margin-left: 2px;margin-right: 2px;">
-    {% if intprog %}
-        <div class="col-md-6"><a href="{% url 'intervento-programma' slug=intprog.slug %}">{{ intprog.denominazione|title }}</a></div>
-        <div class="col-md-3">{{ intprog.importo_generale|italianize }} E</div>
-        <div class="col-md-3">{{ intprog.territorio.denominazione }}</div>
-    {% endif %}
-</div>
+{% if intprog %}
+    <h2>
+        <a href="{% url 'intervento-programma' slug=intprog.slug %}">
+            <i class="ico-settori green chiese"></i> {{ intprog.denominazione|title }}
+        </a>
+    </h2>
+    <span class="euros">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
+
+    <a href="" class="comune">
+        Comune di {{ intprog.territorio.nome_con_provincia }}
+    </a>
+{% endif %}
