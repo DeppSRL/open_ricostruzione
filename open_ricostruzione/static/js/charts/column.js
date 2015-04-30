@@ -82,7 +82,7 @@ $(function () {
         yAxis: {
             min: 0,
             title: {
-                text: 'Y'
+                text: 'Euro'
             }
         },
         tooltip: { // QUI QUELLO CHE APPARE NEL TOOLTIP

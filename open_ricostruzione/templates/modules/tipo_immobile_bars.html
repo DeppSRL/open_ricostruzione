@@ -1,111 +1,30 @@
 {% load l10n %}
-<div class="row">
-    <div class="col-md-12">
-        <div id="bar-chart"></div>
+
+<section class="cosa bor-bottom">
+    <div class="container">
+        <div class="row">
+            <div id="columns"></div>
+        </div>
     </div>
-</div>
+</section>
 
 
-<script>
-    $(function () {
-    $('#bar-chart').highcharts({
-        credits:{
-            enabled: false
-        },
-        chart: {
-            type: 'column'
-        },
-        colors: ['#990000', '#FF9900', '#009933'],
-        title: {
-            text: ''
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: [
+<script type='text/javascript' >
+
+		var data_array_programmazione =[
+            {% localize off %}
                 {% for tipo_immobile in tipo_immobile_aggregates %}
-                    "{{ tipo_immobile.name }}" {% if forloop.last %}{% else %},{% endif %}
-                {% endfor %}
-            ],
-            crosshair: true
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Euro'
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:10px;font-weight:bold;">{point.key}</span><img height="20px" width="20px" src="http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/simple-red-square-icons-signs/129506-simple-red-square-icon-signs-test-tube.png"><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} Euro; {point.count} interventi</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-
-            },
-            series: {
-                cursor: 'pointer',
-                point: {
-                    events: {
-                        click: function () {
-                            window.location.href = '{% url 'lista-interventi' %}?{{ base_filters }}&tipo_immobile__slug='+this.slug;
-                        }
+                    {label: "Infrastrutture e bonifiche",
+                     classe: "infrastrutture",
+                     programmati: {{ tipo_immobile.programmazione.sum|default_if_none:0 }},
+                     pianificati: {{ tipo_immobile.pianificazione.sum|default_if_none:0 }},
+                     attuali: {{ tipo_immobile.attuazione.sum|default_if_none:0 }},
+                     interventi_programmati: {{ tipo_immobile.programmazione.count|default_if_none:0 }},
+                     interventi_pianificati: {{ tipo_immobile.pianificazione.count|default_if_none:0 }},
+                     interventi_attuali: {{ tipo_immobile.attuazione.count|default_if_none:0 }}
                     }
-                }
-            }
-        },
-
-        {% localize off %}
-            series: [
-            {
-                name: 'Programmazione',
-                data: [
-                {% for tipo_immobile in tipo_immobile_aggregates %}
-                    {
-                        y:{{ tipo_immobile.programmazione.sum|default_if_none:0 }},
-                        count: {{ tipo_immobile.programmazione.count|default_if_none:0 }},
-                        slug: "{{ tipo_immobile.slug }}"
-
-                    }{% if forloop.last %}{% else %},{% endif %}
+                    {% if forloop.last %}{% else %},{% endif %}
                 {% endfor %}
-                ]
-
-            },
-             {
-                name: 'Pianificazione',
-                data: [
-                {% for tipo_immobile in tipo_immobile_aggregates %}
-                    {
-                        y:{{ tipo_immobile.pianificazione.sum|default_if_none:0 }},
-                        count: {{ tipo_immobile.pianificazione.count|default_if_none:0 }},
-                        slug: "{{ tipo_immobile.slug }}"
-
-                    }{% if forloop.last %}{% else %},{% endif %}
-                {% endfor %}
-                ]
-
-            },
-            {
-                name: 'Attuazione',
-                data: [
-                {% for tipo_immobile in tipo_immobile_aggregates %}
-                    {
-                        y:{{ tipo_immobile.attuazione.sum|default_if_none:0 }},
-                        count: {{ tipo_immobile.attuazione.count|default_if_none:0 }},
-                        slug: "{{ tipo_immobile.slug }}"
-
-                    }{% if forloop.last %}{% else %},{% endif %}
-                {% endfor %}
-                ]
-            }]
-        {% endlocalize %}
-    });
-});
+            {% endlocalize %}
+        ];
 </script>
