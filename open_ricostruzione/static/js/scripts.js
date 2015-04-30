@@ -134,82 +134,82 @@ function getTooltip(element, x, id) {
     
 
 $( document ).ready(function() {
-//    var page = $("body").attr('id');
-//    console.log("page", page);
-//
-//    switch (page) {
-//        case "index":
-//            gestione_cerchi_top();
-//            grafico_cerchi_soggetti_attuatori();
-//            gestione_grafico_barre();
-//            grafico_pie_soggetti_attuatori();
-//            grafico_pie_donazioni();
-//
-//var interventi = data_array_bar[0].y;
-//var lavori_corso = data_array_bar[1].y;
-//var lavori_conclusi = data_array_bar[2].y;
-//var somma_bar = interventi + lavori_corso + lavori_conclusi;
-//
-//$(".div-bar .interventi").css("width", (interventi * 100) / somma_bar + '%');
-//$(".div-bar .lavori-in-corso").css("width", (lavori_corso * 100) / somma_bar + '%');
-//$(".div-bar .lavori-conclusi").css("width", (lavori_conclusi * 100) / somma_bar +'%');
-//
-//$(".div-bar .interventi p span").html(interventi);
-//$(".div-bar .lavori-in-corso p span").html(lavori_corso);
-//$(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
-//
-//            break
-//        case "territorio":
-//            gestione_cerchi_top();
-//            grafico_cerchi_soggetti_attuatori();
-//            gestione_grafico_barre();
-//            grafico_pie_soggetti_attuatori();
-//            grafico_pie_donazioni();
-//
-//            chartPieTerr("pie-territorio-programmati",data_array_pie_territorio_programmati,'#ED450A');
-//            chartPieTerr("pie-territorio-pianificati",data_array_pie_territorio_pianificati,'#F4E73D');
-//            chartPieTerr("pie-territorio-attuati",data_array_pie_territorio_attuati,'#059e1e');
-//
-//            $(".percentuale-programmati").html(percentuale_comune_programmati);
-//            $(".percentuale-pianificati").html(percentuale_comune_pianificati);
-//            $(".percentuale-attuati").html(percentuale_comune_attuati);
-//
-//            break
-//        case "tipologia":
-//            gestione_cerchi_top();
-//            grafico_cerchi_soggetti_attuatori();
-//            grafico_pie_soggetti_attuatori();
-//            grafico_pie_donazioni();
-//
-//            chartPieTerr("pie-tipologia-programmati",data_array_pie_tipologia_programmati,'#ED450A');
-//            chartPieTerr("pie-tipologia-pianificati",data_array_pie_tipologia_pianificati,'#F4E73D');
-//            chartPieTerr("pie-tipologia-attuati",data_array_pie_tipologia_attuati,'#059e1e');
-//
-//            $(".percentuale-programmati").html(percentuale_tipo_programmati);
-//            $(".percentuale-pianificati").html(percentuale_tipo_pianificati);
-//            $(".percentuale-attuati").html(percentuale_tipo_attuati);
-//
-//            break
-//    }
-//
-//
-//    $( ".tip" ).tooltip({html:true});
-//
-//	$(".btn-more").on("click", function(e) {
-//		e.preventDefault();
-//		$(".btn-more").find('i').toggleClass('glyphicon-minus-sign', 'glyphicon-plus-sign');
-//	});
-//
-//    //gestione tooltip hover PIE
-//    var number_li_pie = 0;
-//    $(".lista-pie a").each(function() {
-//        getTooltip($(this), number_li_pie, "pie");
-//        number_li_pie++;
-//    });
-//    var number_li_pie_donazioni = 0;
-//    $(".lista-pie-donazioni a").each(function() {
-//        getTooltip($(this), number_li_pie_donazioni, "pie-donazioni");
-//        number_li_pie_donazioni++;
-//    });
+    var page = $("body").attr('id');
+    console.log("page", page);
+    
+    switch (page) {
+        case "index":
+            gestione_cerchi_top();
+            grafico_cerchi_soggetti_attuatori();
+            gestione_grafico_barre();
+            grafico_pie_soggetti_attuatori();
+            grafico_pie_donazioni();
+            
+var interventi = data_array_bar[0].y;
+var lavori_corso = data_array_bar[1].y;
+var lavori_conclusi = data_array_bar[2].y;
+var somma_bar = interventi + lavori_corso + lavori_conclusi;
+
+$(".div-bar .interventi").css("width", (interventi * 100) / somma_bar + '%');
+$(".div-bar .lavori-in-corso").css("width", (lavori_corso * 100) / somma_bar + '%');
+$(".div-bar .lavori-conclusi").css("width", (lavori_conclusi * 100) / somma_bar +'%');
+            
+$(".div-bar .interventi p span").html(interventi);
+$(".div-bar .lavori-in-corso p span").html(lavori_corso);    
+$(".div-bar .lavori-conclusi p span").html(lavori_conclusi);    
+
+            break
+        case "territorio":
+            gestione_cerchi_top();
+            grafico_cerchi_soggetti_attuatori();
+            gestione_grafico_barre();
+            grafico_pie_soggetti_attuatori();
+            grafico_pie_donazioni();
+
+            chartPieTerr("pie-territorio-programmati",data_array_pie_territorio_programmati,'#ED450A');
+            chartPieTerr("pie-territorio-pianificati",data_array_pie_territorio_pianificati,'#F4E73D');
+            chartPieTerr("pie-territorio-attuati",data_array_pie_territorio_attuati,'#059e1e');
+    
+            $(".percentuale-programmati").html(percentuale_comune_programmati);
+            $(".percentuale-pianificati").html(percentuale_comune_pianificati);
+            $(".percentuale-attuati").html(percentuale_comune_attuati);
+
+            break
+        case "tipologia":
+            gestione_cerchi_top();
+            grafico_cerchi_soggetti_attuatori();
+            grafico_pie_soggetti_attuatori();
+            grafico_pie_donazioni();
+
+            chartPieTerr("pie-tipologia-programmati",data_array_pie_tipologia_programmati,'#ED450A');
+            chartPieTerr("pie-tipologia-pianificati",data_array_pie_tipologia_pianificati,'#F4E73D');
+            chartPieTerr("pie-tipologia-attuati",data_array_pie_tipologia_attuati,'#059e1e');
+            
+            $(".percentuale-programmati").html(percentuale_tipo_programmati);
+            $(".percentuale-pianificati").html(percentuale_tipo_pianificati);
+            $(".percentuale-attuati").html(percentuale_tipo_attuati);
+
+            break
+    }
+    
+
+    $( ".tip" ).tooltip({html:true});
+	
+	$(".btn-more").on("click", function(e) {
+		e.preventDefault();
+		$(".btn-more").find('i').toggleClass('glyphicon-minus-sign', 'glyphicon-plus-sign');
+	});
+    
+    //gestione tooltip hover PIE
+    var number_li_pie = 0;
+    $(".lista-pie a").each(function() {
+        getTooltip($(this), number_li_pie, "pie");
+        number_li_pie++;
+    });
+    var number_li_pie_donazioni = 0;
+    $(".lista-pie-donazioni a").each(function() {
+        getTooltip($(this), number_li_pie_donazioni, "pie-donazioni");
+        number_li_pie_donazioni++;
+    });
 
 });

@@ -44,14 +44,7 @@
         <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js'%}"></script>
         <script src="{% static 'vendor/highcharts/js/highcharts.js'%}"></script>
 
-        {#  Giangiulio scripts       #}
-        <script src="{% static 'js/charts/venn.js'%}"></script>
-   	    <script src="{% static 'js/charts/chart-venn.js'%}"></script>
-        <script src="{% static 'js/charts/pie.js'%}"></script>
-        <script src="{% static 'js/charts/pie-donazioni.js'%}"></script>
-        <script src="{% static 'js/charts/pie-liquidati.js'%}"></script>
-        <script src="{% static 'js/charts/column.js'%}"></script>
-        <script src="{% static 'js/scripts.js'%}"></script>
+
 
         {% block extra-css %}
         {% endblock %}
@@ -94,6 +87,14 @@
 
 
         <script src="{% static 'js/select2_locale_it.js' %}"></script>
+        {#  Giangiulio scripts       #}
+        <script src="{% static 'js/charts/venn.js'%}"></script>
+   	    <script src="{% static 'js/charts/chart-venn.js'%}"></script>
+        <script src="{% static 'js/charts/pie.js'%}"></script>
+        <script src="{% static 'js/charts/pie-donazioni.js'%}"></script>
+        <script src="{% static 'js/charts/pie-liquidati.js'%}"></script>
+        <script src="{% static 'js/charts/column.js'%}"></script>
+        <script src="{% static 'js/scripts.js'%}"></script>
 
         {% if INSTANCE_TYPE == 'production' %}
             {% include 'commons/g_analytics.html' %}
