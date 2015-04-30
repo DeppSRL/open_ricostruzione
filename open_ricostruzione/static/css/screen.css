@@ -723,7 +723,7 @@ ul.list li .euros {
   font-size: 44px;
 }
 .lists .list-item {
-  /*min-height: 160px;*/
+  min-height: 160px;
   font-size: 18px;
   padding-top: 15px;
   padding-bottom: 10px;
