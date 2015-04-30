@@ -14,14 +14,35 @@
 		var data_array_programmazione =[
             {% localize off %}
                 {% for tipo_immobile in tipo_immobile_aggregates %}
-                    {label: "Infrastrutture e bonifiche",
-                     classe: "infrastrutture",
-                     programmati: {{ tipo_immobile.programmazione.sum|default_if_none:0 }},
-                     pianificati: {{ tipo_immobile.pianificazione.sum|default_if_none:0 }},
-                     attuali: {{ tipo_immobile.attuazione.sum|default_if_none:0 }},
-                     interventi_programmati: {{ tipo_immobile.programmazione.count|default_if_none:0 }},
-                     interventi_pianificati: {{ tipo_immobile.pianificazione.count|default_if_none:0 }},
-                     interventi_attuali: {{ tipo_immobile.attuazione.count|default_if_none:0 }}
+                    {
+                        label: "{{ tipo_immobile.name }}",
+
+                        {% if tipo_immobile.slug == 'altro' %}
+                            classe: "altro",
+                        {% elif tipo_immobile.slug == 'chiese-e-beni-religiosi' %}
+                            classe: "chiese",
+                        {% elif tipo_immobile.slug == 'cimiteri' %}
+                            classe:"cimiteri",
+                        {% elif tipo_immobile.slug == 'edifici-pubblici' %}
+                            classe:"pubblici",
+                        {% elif tipo_immobile.slug == 'edifici-storici-e-culturali' %}
+                            classe:"storici",
+                        {% elif tipo_immobile.slug == 'impianti-sportivi-e-ricreativi' %}
+                            classe:"sportivi",
+                        {% elif tipo_immobile.slug == 'infrastrutture-e-bonifiche' %}
+                            classe: "infrastrutture",
+                        {% elif tipo_immobile.slug == 'ospedali' %}
+                            classe: "ospedali",
+                        {% elif tipo_immobile.slug == 'scuole-e-universita' %}
+                            classe:"scuole",
+                        {% endif %}
+
+                        programmati: {{ tipo_immobile.programmazione.sum|default_if_none:0 }},
+                        pianificati: {{ tipo_immobile.pianificazione.sum|default_if_none:0 }},
+                        attuali: {{ tipo_immobile.attuazione.sum|default_if_none:0 }},
+                        interventi_programmati: {{ tipo_immobile.programmazione.count|default_if_none:0 }},
+                        interventi_pianificati: {{ tipo_immobile.pianificazione.count|default_if_none:0 }},
+                        interventi_attuali: {{ tipo_immobile.attuazione.count|default_if_none:0 }}
                     }
                     {% if forloop.last %}{% else %},{% endif %}
                 {% endfor %}

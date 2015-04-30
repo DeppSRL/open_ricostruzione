@@ -1,36 +1,83 @@
-<div class="row">
-    <div class="col-md-12">
-        <h1>Chi &egrave; il responsabile?</h1>
-    </div>
-</div>
+{% load l10n %}
 
-<div class="row">
-    <div class="col-md-6" id="sogg_att_pie">
-    </div>
-    <div class="col-md-6">
-        {% for sa in sogg_att_top %}
-            <div class="row">
-                <div class="col-md-12">
-                    <strong><a href="{% url 'lista-interventi' %}?{{ query_string }}&soggetto_attuatore__slug={{ sa.slug }}">{{ sa.denominazione }}</a></strong> n.interventi: {{ sa.interventoprogramma__count }}
+<section class="chi bor-bottom">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class=" text-center">
+                    chi è il responsabile
+                </h1>
+                <div class="col-md-6">
+                    <h2>DISTRIBUZIONE DEI SOGGETTI ATTUATORI</h2>
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div id="pie"></div>
+                        </div>
+                        <div class="col-md-5">
+                            <ul class="lista-pie"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 lists lista-soggetti-attuatori">
+                    <h2>Soggetti attuatori con più interventi</h2>
+
+                    {% for sa in sogg_att_top %}
+                        <div class="row">
+                            <div class="col-md-12 list-item soggetti-attuatori-1" soggetto="1">
+                                <h2><a href="">{{ sa.denominazione }}</a></h2>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {{ sa.interventoprogramma__count }} interventi
+                                    </div>
+
+                                </div>
+                            </div>
+                    </div>
+                    {% endfor %}
+                    <a href="#" class="pull-right alls">VEDI TUTTI</a>
                 </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
-</div>
+</section>
 
 {% if sogg_att_aggregates %}
-    <script>
+    {% localize off %}
+        <script>
+            var data_array_pie =
+                [
+                    {% for item in sogg_att_aggregates %}
+                        {% if item.attuazione.sum  and item.attuazione.sum > 0 %}
+                            {name: "{{ item.name }}", y: {{ item.attuazione.sum }}, url: "http://www.google.it"},
+                        {% endif %}
+                    {% endfor %}
 
-        var sogg_att_data = [];
-        {% for item in sogg_att_aggregates %}
-            {% if item.attuazione.sum  and item.attuazione.sum > 0 %}
-                sogg_att_data.push(['{{ item.name }}',{{ item.attuazione.sum|floatformat:2 }}]);
-            {% endif %}
-        {% endfor %}
+                ];
 
-        if(sogg_att_data.length>0){
-            $(document).ready(paint_chart('{{ pie_title }}',"sogg_att_pie",sogg_att_data));
-        }
+                var data_array_pie_donazioni =
+                [
+                    {name: "Donatore 1", y: 75.0, url: "http://www.google.it"},
+                    {name: "Donatore 2", y: 65.0, url: "http://www.libero.it"},
+                    {name: "Donatore 3", y: 55.0, url: "http://www.libero.it"},
+                    {name: "Donatore 4", y: 45.0, url: "http://www.repubblica.it"},
+                    {name: "Donatore 5", y: 35.0, url: "http://www.repubblica.it"},
+                    {name: "Donatore 6", y: 25.0, url: "http://www.repubblica.it"},
+                    {name: "Donatore 7", y: 15.0, url: "http://www.repubblica.it"},
+                    {name: "Donatore 8", y: 15.0, url: "http://www.repubblica.it"},
+                    {name: "Donatore 9", y: 15.0, url: "http://www.repubblica.it"}
+                ];
 
-    </script>
+
+
+            var data_array_bar =
+                [
+                    {name: "Interventi in Progettazione", y: 15.0},
+                    {name: "Lavori in Corso", y: 7.0},
+                    {name: "Lavori", y: 3.0}
+                ];
+
+        </script>
+    {% endlocalize %}
+
 {% endif %}
