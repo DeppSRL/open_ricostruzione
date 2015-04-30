@@ -1,7 +1,8 @@
-{% load italianize %}
-<div class="row" style="border-bottom: 1px solid #cccccc;margin-left: 2px;margin-right: 2px;">
-    {% if impresa %}
-        <div class="col-md-6"><a href="{% url 'impresa' slug=impresa.slug %}">{{ impresa.ragione_sociale|title }}</a></div>
-        <div class="col-md-6"><a href="{% url 'lista-interventi' %}?{{ base_filters }}&interventopiano__intervento__imprese__slug={{ impresa.slug }}">N.interventi: {{ impresa.count }}</a></div>
-    {% endif %}
+<div class="col-md-12 list-item">
+    <h2><a href="{% url 'impresa' slug=impresa.slug %}">{{ impresa.ragione_sociale|title }}</a></h2>
+
+    <div class="row">
+        <div class="col-md-6 lab"><a href="{% url 'lista-interventi' %}?{{ base_filters }}&interventopiano__intervento__imprese__slug={{ impresa.slug }}">{{ impresa.count }} INTERVENTI ATTUATI***</a></div>
+    </div>
+
 </div>

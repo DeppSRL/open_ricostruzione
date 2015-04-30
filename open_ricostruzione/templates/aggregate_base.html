@@ -115,39 +115,44 @@
     </script>
 
     {% block imprese %}
-        {# fetch imprese #}
         {% if imprese_top %}
-            <div class="row basic_spacer" style="margin-bottom: 5px;">
-                <div class="col-md-12">
-                    <h1>LE IMPRESE CON PIÙ INTERVENTI</h1>
-                </div>
+            <section class="imprese">
+                <div class="container">
 
-            </div>
-            <div class="row basic_spacer">
-                <div class="col-md-6">
-                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.0 %}
-                </div>
-                <div class="col-md-6">
-                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.3 %}
-                </div>
-            </div>
-            <div class="row basic_spacer">
-                <div class="col-md-6">
-                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.1 %}
-                </div>
-                <div class="col-md-6">
-                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.4 %}
-                </div>
-            </div>
-            <div class="row basic_spacer">
-                <div class="col-md-6">
-                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.2 %}
-                </div>
-                <div class="col-md-6">
-                    {% include 'aggregates/impresa_block.html' with impresa=imprese_top.5 %}
-                </div>
-            </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h1>
+                                le imprese con più interventi
+                            </h1>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                 </div>
+
+                 <div class="bgs">
+                     <div class="container">
+                        <div class="row lists">
+
+                            <div class="col-md-6">
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.0 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.1 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.2 %}
+                            </div>
+
+                            <div class="col-md-6">
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.3 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.4 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.5 %}
+
+                            </div>
+                        </div>
+                        <br>
+                        <a href="#" class="pull-right">VEDI TUTTE</a>
+                    </div>
+                 </div>
+            </section>
         {% endif %}
+
     {% endblock %}
 
     {# aggregazione tipologia cedente #}
