@@ -399,7 +399,7 @@ class Progetto(models.Model):
         (u'6', u'AMMESSO', u'Ammesso'),
     )
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0, unique=True)
-    intervento = models.ForeignKey('Intervento', null=False, blank=False)
+    intervento = models.ForeignKey('Intervento', null=True, blank=True, default=None)
     tipologia = models.CharField(max_length=2, choices=TIPO_PROGETTO, blank=False, null=False, default='')
     stato = models.CharField(max_length=2, choices=STATO_PROGETTO, blank=False, null=False, default='')
     data_deposito = models.DateField(blank=True, null=True)
