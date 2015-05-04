@@ -45,18 +45,11 @@
         <script src="{% static 'vendor/highcharts/js/highcharts.js'%}"></script>
         <script src="{% static 'vendor/highcharts/js/highcharts-more.js'%}"></script>
 
-        <script>        var data_array_bar =
-            [
-                {name: "Interventi in Progettazione", y: 15.0},
-                {name: "Lavori in Corso", y: 7.0},
-                {name: "Lavori", y: 3.0}
-            ];
-</script>
-
-
         {% block extra-css %}
         {% endblock %}
-        {% block extra-js-head %}
+        {% block extra_js_head %}
+        {% endblock %}
+        {% block execution_bar_data %}
         {% endblock %}
 
         <script src="{% static 'js/project.js'%}"></script>

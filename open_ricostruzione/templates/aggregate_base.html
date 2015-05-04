@@ -1,5 +1,19 @@
 {% extends 'base.html' %}
 
+{% block execution_bar_data %}
+    <script>
+
+        var data_array_bar =
+            [
+                {name: "Interventi in Progettazione", y: {{ status.progettazione.count }} },
+                {name: "Lavori in Corso", y: {{ status.in_corso.count }} },
+                {name: "Lavori", y: {{ status.conclusi.count }} }
+            ];
+    </script>
+
+{% endblock %}
+
+
 {% block content %}
 
     <div class="row">
