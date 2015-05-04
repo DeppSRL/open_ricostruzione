@@ -223,9 +223,25 @@ class AggregatePageMixin(object):
                 'progettazione': self._get_progettazione_status(),
                 'in_corso': self._get_in_corso_status(),
                 'conclusi': self._get_conclusi_status(),
-            }
+            },
+            'total_percentage':{
+                'programmazione': 0,
+                'pianificazione': 0,
+                'attuazione': 0,
+                }
         }
 
+        # calculates percentages of programmazione / pianificazione / attuazione compared to the whole of projects
+        agg_dict['total_percentage']['programmazione'] = (agg_dict['status']['programmazione']['sum']/InterventoProgramma.programmati.all().with_count()['sum'])*Decimal(100.0)
+        agg_dict['total_percentage']['pianificazione'] = (agg_dict['status']['pianificazione']['sum']/InterventoProgramma.pianificati.all().with_count()['sum'])*Decimal(100.0)
+        agg_dict['total_percentage']['attuazione'] = (agg_dict['status']['attuazione']['sum']/InterventoProgramma.attuazione.all().with_count()['sum'])*Decimal(100.0)
+
+        agg_dict['total_percentage']['programmazione'] = "{0:.2f}".format(agg_dict['total_percentage']['programmazione'])
+        agg_dict['total_percentage']['pianificazione'] = "{0:.2f}".format(agg_dict['total_percentage']['pianificazione'])
+        agg_dict['total_percentage']['attuazione'] = "{0:.2f}".format(agg_dict['total_percentage']['attuazione'])
+
+
+        # calculate percentages of pianificazione / attuazione / varianti based on current filters
         agg_dict['status']['pianificazione']['percentage'] = 0.0
         agg_dict['status']['attuazione']['percentage'] = 0.0
         agg_dict['status']['varianti']['percentage'] = 0.0
@@ -313,6 +329,8 @@ class LocalitaView(TemplateView, AggregatePageMixin):
             )
 
         context.update(apm.get_aggregates())
+
+
 
         if self.vari_territori is False:
             # calculate the map bounds for the territorio

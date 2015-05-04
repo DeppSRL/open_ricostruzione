@@ -1,5 +1,5 @@
 {% extends 'aggregate_base.html' %}
-{% load static %}
+{% load static l10n %}
 
 
 {% block head-title %}
@@ -56,17 +56,19 @@
     <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
     <script>
 
-        var totale_comuni_programmati = 200;
-        var totale_comuni_pianificati = 200;
-        var totale_comuni_attuati = 200;
+        var totale_comuni_programmati = 100;
+        var totale_comuni_pianificati = 100;
+        var totale_comuni_attuati = 100;
 
-        var comune_programmati = 10.3;
-        var comune_pianificati = 20.2;
-        var comune_attuati = 30.1;
+        {% localize off %}
+            var comune_programmati = {{ total_percentage.programmazione }};
+            var comune_pianificati = {{ total_percentage.pianificazione }};
+            var comune_attuati = {{ total_percentage.attuazione }};
+        {% endlocalize %}
 
-        var percentuale_comune_programmati = (comune_programmati * totale_comuni_programmati) / 100 + "%";
-        var percentuale_comune_pianificati = (comune_pianificati * totale_comuni_pianificati) / 100 + "%";
-        var percentuale_comune_attuati = (comune_attuati * totale_comuni_attuati) / 100 + "%";
+        var percentuale_comune_programmati =  comune_programmati+ "%";
+        var percentuale_comune_pianificati = comune_pianificati + "%";
+        var percentuale_comune_attuati = comune_attuati + "%";
 
 
 
