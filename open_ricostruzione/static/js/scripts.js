@@ -166,10 +166,10 @@ $(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
             grafico_pie_soggetti_attuatori();
             grafico_pie_donazioni();
 
-            chartPieTerr("pie-territorio-programmati",data_array_pie_territorio_programmati,'#ED450A');
-            chartPieTerr("pie-territorio-pianificati",data_array_pie_territorio_pianificati,'#F4E73D');
-            chartPieTerr("pie-territorio-attuati",data_array_pie_territorio_attuati,'#059e1e');
-    
+//            chartPieTerr("pie-territorio-programmati",data_array_pie_territorio_programmati,'#ED450A');
+//            chartPieTerr("pie-territorio-pianificati",data_array_pie_territorio_pianificati,'#F4E73D');
+//            chartPieTerr("pie-territorio-attuati",data_array_pie_territorio_attuati,'#059e1e');
+//
             $(".percentuale-programmati").html(percentuale_comune_programmati);
             $(".percentuale-pianificati").html(percentuale_comune_pianificati);
             $(".percentuale-attuati").html(percentuale_comune_attuati);

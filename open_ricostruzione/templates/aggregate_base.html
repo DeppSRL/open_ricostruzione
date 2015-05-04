@@ -17,6 +17,10 @@
 
 {% block content %}
 
+    {% block localita_header %}
+
+    {% endblock %}
+
     <div class="row">
         <div class="col-md-12">
             {% block page-title %}{% endblock %}
@@ -38,10 +42,9 @@
     </section>
 
     {% block status %}
+        {#    execution status bar / status blocks #}
         {% include 'aggregates/status.html' %}
 
-        {#    execution status bar / status blocks #}
-{#        {% include "aggregates/execution_status.html" %}#}
     {% endblock %}
 
     {# fetch progetti #}
@@ -144,11 +147,8 @@
 
     {# aggregazione tipologia cedente #}
     {% block donazioni %}
-        {% if donazioni_totale.sum > 0 %}
-            {% include 'aggregates/donazioni_block.html' %}
-        {% else %}
-            Non sono state ricevute donazioni
-        {% endif %}
+
+        {% include 'aggregates/donazioni_block.html' %}
 
     {% endblock %}
 

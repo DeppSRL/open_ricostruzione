@@ -62,7 +62,7 @@
 
     </head>
 
-    <body id="index">
+    <body id="{% block body_id %}{% endblock %}">
 
 
             <!-- HEADER -->
@@ -89,6 +89,7 @@
         <script src="{% static 'js/charts/pie.js'%}"></script>
         <script src="{% static 'js/charts/pie-donazioni.js'%}"></script>
         <script src="{% static 'js/charts/pie-liquidati.js'%}"></script>
+        <script src="{% static 'js/charts/pie-territorio.js'%}"></script>
         <script src="{% static 'js/charts/column.js'%}"></script>
         <script src="{% static 'js/charts/venn.js'%}"></script>
    	    <script src="{% static 'js/charts/chart-venn.js'%}"></script>

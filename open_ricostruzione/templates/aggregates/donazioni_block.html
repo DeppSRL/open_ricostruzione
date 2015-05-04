@@ -1,12 +1,13 @@
 {% load italianize l10n %}
-<section class="donazioni">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="text-center">
-                    le donazioni
-                </h1>
-                {% if donazioni_aggregates %}
+{% if donazioni_totale.count > 0 %}
+
+    <section class="donazioni">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="text-center">
+                        le donazioni
+                    </h1>
                     <div class="row">
                         <div class="col-md-3">
                             <p class="donate">
@@ -22,19 +23,11 @@
                             <ul class="lista-pie-donazioni"></ul>
                         </div>
                     </div>
-                {% else %}
-                    <div class="row" >
-                        <div class="col-md-12">
-                            <strong>Non sono presenti donazioni</strong>
-                        </div>
-                    </div>
-                {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-{% if donazioni_aggregates %}
     <script>
         var data_array_pie_donazioni =
             [
@@ -47,4 +40,9 @@
             ];
 
     </script>
+{% else %}
+        <script>
+        var data_array_pie_donazioni =[];
+
+        </script>
 {% endif %}
