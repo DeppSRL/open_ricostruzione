@@ -1,3 +1,4 @@
+{% load italianize %}
 <section class="riepilogo">
     <div class="container">
         <div class="row">
@@ -9,25 +10,25 @@
                <div class="row">
                     <div class="col-md-4">
 
-                        <strong>155 INTERVENTI PROGRAMMATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                        <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI PROGRAMMATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
                         <div class="much programmati">
                             <div class="triangle">
-                                <span class="ico"></span> <span class="num">771.775.044,03</span> €
+                                <span class="ico"></span> <span class="num">{{ status.programmazione.sum|italianize }}</span> €
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <strong>75 INTERVENTI PIANIFICATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                        <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI PIANIFICATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
                         <div class="much pianificati">
                             <div class="triangle">
-                                <span class="ico"></span> <span class="num">350.775.044,03</span> €</div>
+                                <span class="ico"></span> <span class="num">{{ status.pianificazione.sum|italianize }}</span> €</div>
                             </div>
                     </div>
                     <div class="col-md-4">
-                        <strong>25 INTERVENTI ATTUATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                        <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI ATTUATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
                         <div class="much attuati">
                             <div class="triangle">
-                                <span class="ico"></span> <span class="num">200.775.044,03</span> €</div>
+                                <span class="ico"></span> <span class="num">{{ status.attuazione.sum|italianize }}</span> €</div>
                             </div>
                     </div>
                </div>
