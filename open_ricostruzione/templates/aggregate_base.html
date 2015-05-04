@@ -25,13 +25,6 @@
     {% block status %}
         {% include 'aggregates/status.html' %}
 
-{#        <div class="row basic_spacer">#}
-{#            {% include 'aggregates/data_block.html' with title='interventi a programma' data_dict=status.programmazione  %}#}
-{#            {% include 'aggregates/data_block.html' with title='interventi a piano' data_dict=status.pianificazione perc_label='a piano' status_filters="piano" %}#}
-{#            {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione perc_label='in attuazione' status_filters="attuazione" %}#}
-{#            {% include 'aggregates/varianti_block.html' %}#}
-{#        </div>#}
-{##}
         {#    execution status bar / status blocks #}
 {#        {% include "aggregates/execution_status.html" %}#}
     {% endblock %}
@@ -91,15 +84,7 @@
 
     {% endblock %}
 
-    <script>
 
-        var data_array_bar =
-            [
-                {name: "Interventi in Progettazione", y: 15.0},
-                {name: "Lavori in Corso", y: 7.0},
-                {name: "Lavori", y: 3.0}
-            ];
-    </script>
 
     {% block imprese %}
         {% if imprese_top %}

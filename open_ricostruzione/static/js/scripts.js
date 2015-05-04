@@ -61,43 +61,43 @@ function gestione_grafico_barre() {
 }
 
 function grafico_cerchi_soggetti_attuatori() {
-    $( ".lista-soggetti-attuatori .list-item" ).each(function() {
-        console.log($(this).attr("soggetto"));
-        var soggetto = $(this).attr("soggetto");
-        
-        var soggetti_programmati = parseFloat($(".soggetti-attuatori-"+soggetto+" .importo-soggetti-programmati").html().replace(",", "."));
-        var soggetti_pianificati = parseFloat($(".soggetti-attuatori-"+soggetto+" .importo-soggetti-pianificati").html().replace(",", "."));
-        var soggetti_attuali = parseFloat($(".soggetti-attuatori-"+soggetto+" .importo-soggetti-attuati").html().replace(",", "."));
-        var totale_soggetti = soggetti_programmati + soggetti_pianificati + soggetti_attuali;
-        var soggetti_programmati_percentuale = (soggetti_programmati * 100) / totale_soggetti;
-        var soggetti_pianificati_percentuale = (soggetti_pianificati * 100) / totale_soggetti;
-        var soggetti_attuali_percentuale = (soggetti_attuali * 100) / totale_soggetti; 
-        
-        //ordino in modo crescente in modo da settare correttamente gli z-index in qualunque caso
-        var list = [
-                    { name: 'programmati', value: soggetti_programmati_percentuale },
-                    { name: 'pianificati', value: soggetti_pianificati_percentuale },
-                    { name: 'attuali', value: soggetti_attuali_percentuale }
-                ];
-        masterList = list.sort(function (a, b) {
-            return a.value - b.value;
-        });
-        masterList.reverse();
-        var temp_riferimento = 0;
-        for (item in masterList) {
-            $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("z-index",item);
-            if (item == 0) {
-                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("height","100%");
-                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("width","100%");
-                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("top","0");
-                temp_riferimento = masterList[item].value;
-            } else {
-                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("height",(masterList[item].value * 100) / temp_riferimento +"%");
-                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("width",(masterList[item].value * 100) / temp_riferimento +"%");
-                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("top",(100 - (masterList[item].value * 100) / temp_riferimento) / 2 +"%");
-            }
-        }
-        });
+//    $( ".lista-soggetti-attuatori .list-item" ).each(function() {
+//        console.log($(this).attr("soggetto"));
+//        var soggetto = $(this).attr("soggetto");
+//
+//        var soggetti_programmati = parseFloat($(".soggetti-attuatori-"+soggetto+" .importo-soggetti-programmati").html().replace(",", "."));
+//        var soggetti_pianificati = parseFloat($(".soggetti-attuatori-"+soggetto+" .importo-soggetti-pianificati").html().replace(",", "."));
+//        var soggetti_attuali = parseFloat($(".soggetti-attuatori-"+soggetto+" .importo-soggetti-attuati").html().replace(",", "."));
+//        var totale_soggetti = soggetti_programmati + soggetti_pianificati + soggetti_attuali;
+//        var soggetti_programmati_percentuale = (soggetti_programmati * 100) / totale_soggetti;
+//        var soggetti_pianificati_percentuale = (soggetti_pianificati * 100) / totale_soggetti;
+//        var soggetti_attuali_percentuale = (soggetti_attuali * 100) / totale_soggetti;
+//
+//        //ordino in modo crescente in modo da settare correttamente gli z-index in qualunque caso
+//        var list = [
+//                    { name: 'programmati', value: soggetti_programmati_percentuale },
+//                    { name: 'pianificati', value: soggetti_pianificati_percentuale },
+//                    { name: 'attuali', value: soggetti_attuali_percentuale }
+//                ];
+//        masterList = list.sort(function (a, b) {
+//            return a.value - b.value;
+//        });
+//        masterList.reverse();
+//        var temp_riferimento = 0;
+//        for (item in masterList) {
+//            $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("z-index",item);
+//            if (item == 0) {
+//                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("height","100%");
+//                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("width","100%");
+//                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("top","0");
+//                temp_riferimento = masterList[item].value;
+//            } else {
+//                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("height",(masterList[item].value * 100) / temp_riferimento +"%");
+//                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("width",(masterList[item].value * 100) / temp_riferimento +"%");
+//                $(".soggetti-attuatori-"+soggetto+" ."+masterList[item].name).css("top",(100 - (masterList[item].value * 100) / temp_riferimento) / 2 +"%");
+//            }
+//        }
+//        });
 
 }
 

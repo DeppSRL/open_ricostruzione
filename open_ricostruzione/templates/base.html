@@ -43,7 +43,15 @@
         <script src="{% static 'js/jquery.js'%}"></script>
         <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js'%}"></script>
         <script src="{% static 'vendor/highcharts/js/highcharts.js'%}"></script>
+        <script src="{% static 'vendor/highcharts/js/highcharts-more.js'%}"></script>
 
+        <script>        var data_array_bar =
+            [
+                {name: "Interventi in Progettazione", y: 15.0},
+                {name: "Lavori in Corso", y: 7.0},
+                {name: "Lavori", y: 3.0}
+            ];
+</script>
 
 
         {% block extra-css %}
@@ -85,13 +93,14 @@
 
         <script src="{% static 'js/select2_locale_it.js' %}"></script>
         {#  Giangiulio scripts       #}
-        <script src="{% static 'js/charts/venn.js'%}"></script>
-   	    <script src="{% static 'js/charts/chart-venn.js'%}"></script>
         <script src="{% static 'js/charts/pie.js'%}"></script>
         <script src="{% static 'js/charts/pie-donazioni.js'%}"></script>
         <script src="{% static 'js/charts/pie-liquidati.js'%}"></script>
         <script src="{% static 'js/charts/column.js'%}"></script>
+        <script src="{% static 'js/charts/venn.js'%}"></script>
+   	    <script src="{% static 'js/charts/chart-venn.js'%}"></script>
         <script src="{% static 'js/scripts.js'%}"></script>
+
 
         {% if INSTANCE_TYPE == 'production' %}
             {% include 'commons/g_analytics.html' %}
