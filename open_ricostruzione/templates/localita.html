@@ -14,38 +14,33 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <h1>
-                        DOVE SI INTERVIENE
-                    </h1>
+                    <h1>DOVE SI INTERVIENE</h1>
 
-                    <h2>
-                        Comune di {{ territorio.nome_con_provincia }}
-                    </h2>
+                    <h2>Comune di {{ territorio.nome_con_provincia }}</h2>
 
-                    <div class="col-md-6 col-md-offset-0">
-{#                        <div id="map"></div>#}
+                    <div class="col-md-6">
                         {% include 'modules/localita_map.html' %}
                     </div>
 
                     <div class="col-md-6">
                         <h3>Sul totale dei comuni</h3><br>
-                            <div class="row">
-                                <div class="col-md-4 text-center">
-                                    <div id="pie-territorio-programmati" style="float: left"></div>
-                                    <div class="percentuale-programmati programmato"></div>
-                                    <span>titolo torta</span>
-                                </div>
-                                <div class="col-md-4 text-center">
-                                    <div id="pie-territorio-pianificati"  style="float: left"></div>
-                                    <div class="percentuale-pianificati pianificato"></div>
-                                    titolo torta
-                                </div>
-                                <div class="col-md-4 text-center">
-                                    <div id="pie-territorio-attuati"  style="float: left"></div>
-                                    <div class="percentuale-attuati attuato"></div>
-                                    titolo torta
-                                </div>
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <div id="pie-territorio-programmati" style="float: left"></div>
+                                <div class="percentuale-programmati programmato"></div>
+                                <span>titolo torta</span>
                             </div>
+                            <div class="col-md-4 text-center">
+                                <div id="pie-territorio-pianificati"  style="float: left"></div>
+                                <div class="percentuale-pianificati pianificato"></div>
+                                titolo torta
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div id="pie-territorio-attuati"  style="float: left"></div>
+                                <div class="percentuale-attuati attuato"></div>
+                                titolo torta
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,6 +55,7 @@
 {% block extra_js_head %}
     <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
     <script>
+
         var totale_comuni_programmati = 200;
         var totale_comuni_pianificati = 200;
         var totale_comuni_attuati = 200;
@@ -72,6 +68,23 @@
         var percentuale_comune_pianificati = (comune_pianificati * totale_comuni_pianificati) / 100 + "%";
         var percentuale_comune_attuati = (comune_attuati * totale_comuni_attuati) / 100 + "%";
 
+
+
+		var data_array_pie_territorio_programmati =
+            [
+                {name: "comune programmati", y: comune_programmati},
+                {name: "restante programmati", y: totale_comuni_programmati - comune_programmati}
+            ];
+		var data_array_pie_territorio_pianificati =
+            [
+                {name: "comune pianificati", y: comune_pianificati},
+                {name: "restante pianificati", y: totale_comuni_pianificati - comune_pianificati}
+            ];
+		var data_array_pie_territorio_attuati =
+            [
+                {name: "comune attuati", y: comune_attuati},
+                {name: "restante attuati", y: totale_comuni_attuati - comune_attuati}
+            ];
 
     </script>
 {% endblock %}
