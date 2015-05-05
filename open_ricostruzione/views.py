@@ -25,7 +25,7 @@ class StaticPageView(TemplateView, ):
 class ListaInterventiView(FilterView):
     template_name = 'interventi_list.html'
     model = InterventoProgramma
-    paginate_by = 100
+    paginate_by = 50
     ip_filter = None
     request = None
 
