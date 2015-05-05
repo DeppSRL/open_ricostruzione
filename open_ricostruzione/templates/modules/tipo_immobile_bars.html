@@ -1,4 +1,4 @@
-{% load l10n %}
+{% load l10n italianize %}
 
 <section class="cosa bor-bottom">
     <div class="container">
@@ -37,12 +37,17 @@
                         classe:"scuole",
                     {% endif %}
 
+                    {# values #}
                     programmati: {{ tipo_immobile.programmazione.sum|default_if_none:0 }},
                     pianificati: {{ tipo_immobile.pianificazione.sum|default_if_none:0 }},
                     attuali: {{ tipo_immobile.attuazione.sum|default_if_none:0 }},
-                    interventi_programmati: {{ tipo_immobile.programmazione.count|default_if_none:0 }},
-                    interventi_pianificati: {{ tipo_immobile.pianificazione.count|default_if_none:0 }},
-                    interventi_attuali: {{ tipo_immobile.attuazione.count|default_if_none:0 }}
+                    {# values for tooltip #}
+                    programmati_ita: "{{ tipo_immobile.programmazione.sum|default_if_none:0|italianize }}",
+                    pianificati_ita: "{{ tipo_immobile.pianificazione.sum|default_if_none:0|italianize }}",
+                    attuali_ita: "{{ tipo_immobile.attuazione.sum|default_if_none:0|italianize }}",
+                    interventi_programmati_ita: "{{ tipo_immobile.programmazione.count|default_if_none:0|italianize:0 }}",
+                    interventi_pianificati_ita: "{{ tipo_immobile.pianificazione.count|default_if_none:0|italianize:0 }}",
+                    interventi_attuali_ita: "{{ tipo_immobile.attuazione.count|default_if_none:0|italianize:0 }}"
                 }
                 {% if forloop.last %}{% else %},{% endif %}
             {% endfor %}

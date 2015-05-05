@@ -25,7 +25,7 @@ $(function () {
     //    }
     //});
     //
-    
+
     
     var array_etichetta_column = []; 
     var array_data_column = [];
@@ -40,31 +40,36 @@ $(function () {
             
             array_etichetta_column.push(obj.label); //etichette
             array_data_column.push({ y : parseFloat(obj.programmati),
-                                   interventi_programmati : obj.interventi_programmati,
-                                   interventi_pianificati : obj.interventi_pianificati,
-                                   interventi_attuali : obj.interventi_attuali,
+                                   programmati_ita: obj.programmati_ita,
+                                   pianificati_ita: obj.pianificati_ita,
+                                   attuali_ita: obj.attuali_ita,
+                                   interventi_programmati : obj.interventi_programmati_ita,
+                                   interventi_pianificati : obj.interventi_pianificati_ita,
+                                   interventi_attuali : obj.interventi_attuali_ita,
                                    classe: obj.classe
                                    });  //programmati
             
             array_data_column2.push({ y : parseFloat(obj.pianificati),
-                                   interventi_programmati : obj.interventi_programmati,
-                                   interventi_pianificati : obj.interventi_pianificati,
-                                   interventi_attuali : obj.interventi_attuali,
+                                   programmati_ita: obj.programmati_ita,
+                                   pianificati_ita: obj.pianificati_ita,
+                                   attuali_ita: obj.attuali_ita,
+                                   interventi_programmati : obj.interventi_programmati_ita,
+                                   interventi_pianificati : obj.interventi_pianificati_ita,
+                                   interventi_attuali : obj.interventi_attuali_ita,
                                    classe: obj.classe
                                    });  //pianificati
             
             array_data_column3.push({ y : parseFloat(obj.attuali),
-                                   interventi_programmati : obj.interventi_programmati,
-                                   interventi_pianificati : obj.interventi_pianificati,
-                                   interventi_attuali : obj.interventi_attuali,
+                                   programmati_ita: obj.programmati_ita,
+                                   pianificati_ita: obj.pianificati_ita,
+                                   attuali_ita: obj.attuali_ita,
+                                   interventi_programmati : obj.interventi_programmati_ita,
+                                   interventi_pianificati : obj.interventi_pianificati_ita,
+                                   interventi_attuali : obj.interventi_attuali_ita,
                                    classe: obj.classe
                                    });  //attuali
     }
-    //console.log("array_etichetta_column " + array_etichetta_column );
-    //console.log("array_data_column " + array_data_column );
 
-
-    
     $('#columns').highcharts({
         chart: {
             type: 'column',
@@ -100,9 +105,9 @@ $(function () {
                 //console.log("poinnnnttt", this.x);
                 return "<h3><i class='ico-settori green "+this.points[0].point.classe+"'></i> "+ this.x +" </h3>" +
                             "<table>"+
-                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_programmati + "</td><td>Interventi programmati</strong></td><td style='text-align:right'> <strong>"+this.points[0].point.y+" €</strong></td></tr>"+
-                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_pianificati +"</td><td>Interventi pianificati</strong></td><td style='text-align:right'> <strong>"+this.points[1].point.y+" €</strong></td></tr>"+
-                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_attuali +"</td><td>Interventi attuati***</strong></td><td style='text-align:right'> <strong>"+this.points[2].point.y+" €</strong></td></tr>"+
+                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_programmati + "</td><td>Interventi programmati</strong></td><td style='text-align:right'> <strong>"+this.points[0].point.programmati_ita+" €</strong></td></tr>"+
+                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_pianificati +"</td><td>Interventi pianificati</strong></td><td style='text-align:right'> <strong>"+this.points[1].point.pianificati_ita+" €</strong></td></tr>"+
+                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_attuali +"</td><td>Interventi attuati***</strong></td><td style='text-align:right'> <strong>"+this.points[2].point.attuali_ita+" €</strong></td></tr>"+
                             "<tr><td colspan='3'><a href='#' style='text-aligh:right'><strong>» Vedi tutti</strong></a></td></tr>"+
                             "</table>";
 							
