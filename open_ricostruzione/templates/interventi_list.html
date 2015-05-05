@@ -46,7 +46,11 @@
                                     <a href="{% url 'intervento-programma' slug=obj.slug %}"><i class="glyphicon glyphicon-menu-right"></i> {{ obj.denominazione|title }}</a>
                                 </div>
                                 <div class="col-md-5">
-                                    <a href="{% url 'localita' obj.territorio.slug %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> {{ obj.territorio.nome_con_provincia }}</a>
+                                    {% if obj.vari_territori %}
+                                        <a href="{% url 'localita' 'vari-territori' %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> Vari territori</a>
+                                    {% else %}
+                                        <a href="{% url 'localita' obj.territorio.slug %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> {{ obj.territorio.nome_con_provincia }}</a>
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-4">
                                     <a href=""><i class="ico-settori gray {{obj.tipo_immobile.slug|css_class_name }}"></i> {{ obj.tipo_immobile.denominazione|title }}</a></div>

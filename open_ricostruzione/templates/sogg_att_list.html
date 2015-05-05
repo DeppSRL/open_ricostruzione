@@ -3,17 +3,31 @@
 {% block head-title %}Soggetti attuatori - {{ tipologia_sogg_att }}{% endblock %}
 
 {% block content %}
-    <h1>Soggetti attuatori - {{ tipologia_sogg_att }}</h1>
-    {% for sogg_att in object_list %}
-        <div class="row" style="border-bottom: 1px solid gray;">
-            <div class="col-md-6">
-                <a href="{% url 'sogg-attuatore' sogg_att.slug %}">{{ sogg_att.denominazione }}</a>
-            </div>
-            <div class="col-md-6">
-                n.interventi:{{ sogg_att.count }}, importo:{{ sogg_att.sum|italianize }} euro
+
+    <section class="latest">
+        <div class="container">
+
+            <div class="row lists">
+
+                <div class="col-md-12">
+
+                    <h2>Soggetti attuatori - {{ tipologia_sogg_att }}</h2>
+                    <ul class="list">
+                        {% for sogg_att in object_list %}
+                                <li>
+                                    <div class="col-md-6"><a href="{% url 'sogg-attuatore' sogg_att.slug %}">
+                                        <i class="glyphicon glyphicon-menu-right"></i> {{ sogg_att.denominazione|title }}</a></div>
+                                    <div class="col-md-3"><span class="euros">{{ sogg_att.sum|default_if_none:0|italianize }}</span> € </div>
+                                    <div class="col-md-3"><span class="proj">{{ sogg_att.count }}<span> progetti</div>
+                                </li>
+
+                        {% endfor %}
+
+                    </ul>
+                </div>
             </div>
         </div>
-    {% endfor %}
+    </section>
 
 
 {% endblock %}
