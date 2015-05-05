@@ -2,14 +2,36 @@
 {% block head-title %}Lista Imprese{% endblock %}
 
 {% block content %}
-    <h1>Lista Imprese</h1>
-    {% for impresa in object_list %}
-        <div class="row" style="border-bottom: 1px solid gray;">
-            <div class="col-md-12">
-                <a href="{% url 'impresa' slug=impresa.slug %}">{{ impresa.ragione_sociale|title}}, Partita Iva:{{ impresa.partita_iva }}</a>
+
+    <section class="latest">
+        <div class="container">
+
+            <div class="row lists">
+
+                <div class="col-md-12">
+
+                	<h2>Imprese</h2>
+
+
+					<ul class="list">
+                        {% for impresa in object_list %}
+                        <li>
+                        	<div class="col-md-8">
+                                <a href="{% url 'impresa' slug=impresa.slug %}"><i class="glyphicon glyphicon-menu-right"></i> {{ impresa.ragione_sociale|title}}</a></div>
+                            <div class="col-md-4">PI <span class="proj">{{ impresa.partita_iva }}<span></div>
+                        </li>
+                        {% endfor %}
+
+
+                    </ul>
+
+                </div>
+
+
             </div>
+
         </div>
-    {% endfor %}
+    </section>
 
 
 {% endblock %}
