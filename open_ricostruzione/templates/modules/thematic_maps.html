@@ -1,37 +1,40 @@
 {% load l10n italianize %}
 
 <section class="dove top-bottom">
-    <div class="row basic_spacer">
-        <div class="col-md-12">
-            <h1>DOVE SI INTERVIENE</h1>
+    <div class="container">
+
+        <div class="row basic_spacer">
+            <div class="col-md-12">
+                <h1>DOVE SI INTERVIENE</h1>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12  text-center">
-            {% if impresa %}
-                <div id="mappa_attuazione" class="map"></div>
-            {% else %}
-                <div role="tabpanel">
-                    <ul class="nav nav-tabs show " role="tablist" id="map_switch">
-                        <li class="active">
-                            <a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab" id="handle_danno" class="btn btn-show ">Mappa Danno</a>
-                        </li>
-                        <li>
-                            <a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab" id="handle_attuazione" class="btn btn-show">Mappa Attuazione</a>
-                        </li>
-                    </ul>
+        <div class="row">
+            <div class="col-md-12  text-center">
+                {% if impresa %}
+                    <div id="mappa_attuazione" class="map"></div>
+                {% else %}
+                    <div role="tabpanel">
+                        <ul class="nav nav-tabs show " role="tablist" id="map_switch">
+                            <li class="active">
+                                <a href="#tab_danno" aria-controls="tab_danno" role="tab" data-toggle="tab" id="handle_danno" class="btn btn-show ">Mappa Danno</a>
+                            </li>
+                            <li>
+                                <a href="#tab_attuazione" aria-controls="tab_attuazione" role="tab" data-toggle="tab" id="handle_attuazione" class="btn btn-show">Mappa Attuazione</a>
+                            </li>
+                        </ul>
                         <!-- Tab panes -->
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane fade in active" id="tab_danno"><div id="mappa_danno" class="map"></div></div>
                             <div role="tabpanel" class="tab-pane fade" id="tab_attuazione"><div id="mappa_attuazione" class="map"></div></div>
                         </div>
 
-                </div>
+                    </div>
 
-            {% endif %}
+                {% endif %}
+
+            </div>
 
         </div>
-
     </div>
 
 </section>

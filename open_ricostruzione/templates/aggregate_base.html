@@ -85,9 +85,11 @@
     {# aggregazione tipo immobile    #}
     {% block tipo-immobile %}
         {% if tipo_immobile_aggregates %}
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Per cosa si interviene</h1>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>Per cosa si interviene</h1>
+                    </div>
                 </div>
             </div>
             {% include 'modules/tipo_immobile_bars.html' %}
