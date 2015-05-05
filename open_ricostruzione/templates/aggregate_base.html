@@ -72,7 +72,7 @@
                     <div class="col-md-6 list-item">
                         {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.3 %}
                     </div>
-                    <a href="#" class="pull-right alls">VEDI TUTTI</a>
+                    <a href="{% url 'lista-interventi' %}?{{ base_filters }}" class="pull-right alls">VEDI TUTTI</a>
                 </div>
             </div>
         </section>
