@@ -95,9 +95,9 @@ a:hover {
   margin-top: 10px;
 }
 .show {
-  /*top: 25px;*/
-  /*right: 0px;*/
-  /*position: absolute;*/
+  top: 25px;
+  right: 0px;
+  position: absolute;
 }
 .show a {
   font-size: 11px;
@@ -858,19 +858,6 @@ ul.list li .euros {
   color: #94e0d5;
   padding: 10px 0 2px 0;
   font-weight: 700;
-}
-.pagination {
-  text-align: center;
-}
-.pagination > li {
-  word-spacing: normal;
-  vertical-align: top;
-}
-.pagination > li > a {
-  color: #ffffff;
-}
-.pagination > li > a.active {
-  color: #94e0d5;
 }
 .div-bar p span {
   font-size: 24px;

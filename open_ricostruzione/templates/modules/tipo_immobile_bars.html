@@ -1,4 +1,4 @@
-{% load l10n italianize %}
+{% load l10n italianize css_class_name %}
 
 <section class="cosa bor-bottom">
     <div class="container">
@@ -17,25 +17,7 @@
                 {
                     label: "{{ tipo_immobile.name }}",
                     link: "{% url 'lista-interventi' %}?tipo_immobile__slug={{ tipo_immobile.slug }}&{{ base_filters }}",
-                    {% if tipo_immobile.slug == 'altro' %}
-                        classe: "altro",
-                    {% elif tipo_immobile.slug == 'chiese-e-beni-religiosi' %}
-                        classe: "chiese",
-                    {% elif tipo_immobile.slug == 'cimiteri' %}
-                        classe:"cimiteri",
-                    {% elif tipo_immobile.slug == 'edifici-pubblici' %}
-                        classe:"pubblici",
-                    {% elif tipo_immobile.slug == 'edifici-storici-e-culturali' %}
-                        classe:"storici",
-                    {% elif tipo_immobile.slug == 'impianti-sportivi-e-ricreativi' %}
-                        classe:"sportivi",
-                    {% elif tipo_immobile.slug == 'infrastrutture-e-bonifiche' %}
-                        classe: "infrastrutture",
-                    {% elif tipo_immobile.slug == 'ospedali' %}
-                        classe: "ospedali",
-                    {% elif tipo_immobile.slug == 'scuole-e-universita' %}
-                        classe:"scuole",
-                    {% endif %}
+                    classe: "{{ tipo_immobile.slug|css_class_name }}",
 
                     {# values #}
                     programmati: {{ tipo_immobile.programmazione.sum|default_if_none:0 }},
