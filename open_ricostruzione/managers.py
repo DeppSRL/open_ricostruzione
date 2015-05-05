@@ -9,7 +9,10 @@ class ProgrammatiQuerySet(models.QuerySet):
             "sum": Sum('importo_generale'),
             "count": Count('importo_generale')
         }
-        return self.aggregate(**aggregate_dict)
+        agg = self.aggregate(**aggregate_dict)
+        if agg['sum'] is None:
+            agg['sum'] = 0
+        return agg
 
 
 class ProgrammatiManager(models.Manager):
@@ -23,7 +26,10 @@ class PianificatiQuerySet(models.QuerySet):
             "sum": Sum('interventopiano__imp_a_piano'),
             "count": Count('interventopiano__imp_a_piano')
         }
-        return self.aggregate(**aggregate_dict)
+        agg = self.aggregate(**aggregate_dict)
+        if agg['sum'] is None:
+            agg['sum'] = 0
+        return agg
 
 
 class PianificatiManager(models.Manager):
@@ -37,7 +43,10 @@ class AttuazioneQuerySet(models.QuerySet):
             "sum": Sum('interventopiano__intervento__imp_congr_spesa'),
             "count": Count('interventopiano__intervento__imp_congr_spesa')
         }
-        return self.aggregate(**aggregate_dict)
+        agg = self.aggregate(**aggregate_dict)
+        if agg['sum'] is None:
+            agg['sum'] = 0
+        return agg
 
 
 class AttuazioneManager(models.Manager):
@@ -51,7 +60,10 @@ class ProgettazioneQuerySet(models.QuerySet):
             "sum": Sum('interventopiano__intervento__imp_congr_spesa'),
             "count": Count('interventopiano__intervento__imp_congr_spesa')
         }
-        return self.aggregate(**aggregate_dict)
+        agg = self.aggregate(**aggregate_dict)
+        if agg['sum'] is None:
+            agg['sum'] = 0
+        return agg
 
 
 class ProgettazioneManager(models.Manager):
@@ -64,10 +76,13 @@ class ProgettazioneManager(models.Manager):
 class InCorsoQuerySet(models.QuerySet):
     def with_count(self):
 
-        return {
+        agg= {
             'count':self.aggregate(count=Count('pk'))['count'],
             'sum':self.aggregate(sum=Sum('interventopiano__intervento__quadroeconomicointervento__importo'))['sum']
         }
+        if agg['sum'] is None:
+            agg['sum'] = 0
+        return agg
 
 
 class InCorsoManager(models.Manager):
@@ -82,7 +97,10 @@ class ConclusiQuerySet(models.QuerySet):
             "sum": Sum('interventopiano__intervento__imp_congr_spesa'),
             "count": Count('interventopiano__intervento__imp_congr_spesa')
         }
-        return self.aggregate(**aggregate_dict)
+        agg = self.aggregate(**aggregate_dict)
+        if agg['sum'] is None:
+            agg['sum'] = 0
+        return agg
 
 
 class ConclusiManager(models.Manager):
@@ -99,7 +117,10 @@ class VariantiQuerySet(models.QuerySet):
             "sum": Sum('qe__importo'),
             "count": Count('pk')
         }
-        return self.aggregate(**aggregate_dict)
+        agg = self.aggregate(**aggregate_dict)
+        if agg['sum'] is None:
+            agg['sum'] = 0
+        return agg
 
 
 class VariantiManager(models.Manager):
