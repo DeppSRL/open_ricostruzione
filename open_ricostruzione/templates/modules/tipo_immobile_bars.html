@@ -16,7 +16,7 @@
             {% for tipo_immobile in tipo_immobile_aggregates %}
                 {
                     label: "{{ tipo_immobile.name }}",
-
+                    link: "{% url 'lista-interventi' %}?tipo_immobile__slug={{ tipo_immobile.slug }}&{{ base_filters }}",
                     {% if tipo_immobile.slug == 'altro' %}
                         classe: "altro",
                     {% elif tipo_immobile.slug == 'chiese-e-beni-religiosi' %}

@@ -40,6 +40,7 @@ $(function () {
             
             array_etichetta_column.push(obj.label); //etichette
             array_data_column.push({ y : parseFloat(obj.programmati),
+                                   link: obj.link,
                                    programmati_ita: obj.programmati_ita,
                                    pianificati_ita: obj.pianificati_ita,
                                    attuali_ita: obj.attuali_ita,
@@ -50,6 +51,7 @@ $(function () {
                                    });  //programmati
             
             array_data_column2.push({ y : parseFloat(obj.pianificati),
+                                   link: obj.link,
                                    programmati_ita: obj.programmati_ita,
                                    pianificati_ita: obj.pianificati_ita,
                                    attuali_ita: obj.attuali_ita,
@@ -60,6 +62,7 @@ $(function () {
                                    });  //pianificati
             
             array_data_column3.push({ y : parseFloat(obj.attuali),
+                                   link: obj.link,
                                    programmati_ita: obj.programmati_ita,
                                    pianificati_ita: obj.pianificati_ita,
                                    attuali_ita: obj.attuali_ita,
@@ -108,7 +111,7 @@ $(function () {
                             "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_programmati + "</td><td>Interventi programmati</strong></td><td style='text-align:right'> <strong>"+this.points[0].point.programmati_ita+" €</strong></td></tr>"+
                             "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_pianificati +"</td><td>Interventi pianificati</strong></td><td style='text-align:right'> <strong>"+this.points[1].point.pianificati_ita+" €</strong></td></tr>"+
                             "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_attuali +"</td><td>Interventi attuati***</strong></td><td style='text-align:right'> <strong>"+this.points[2].point.attuali_ita+" €</strong></td></tr>"+
-                            "<tr><td colspan='3'><a href='#' style='text-aligh:right'><strong>» Vedi tutti</strong></a></td></tr>"+
+                            "<tr><td colspan='3'><a href='"+this.points[0].point.link+"' style='text-aligh:right'><strong>» Vedi tutti</strong></a></td></tr>"+
                             "</table>";
 							
                 },
