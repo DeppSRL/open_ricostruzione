@@ -8,66 +8,6 @@ var geojson_danno,geojson_attuazione;
 var map_info_danno, map_info_attuazione;
 var no_data_label = 'Nessun dato';
 
-function init_highcharts(){
-    // Radialize the colors
-    Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
-        return {
-            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-            stops: [
-                [0, color],
-                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-            ]
-        };
-    });
-    chart_initialization = true;
-}
-
-function paint_chart(pie_title, container_id, data) {
-
-    if(chart_initialization == false)
-        init_highcharts();
-
-
-    // Build the chart
-    $("#"+container_id).highcharts({
-        credits:{
-            enabled: false
-        },
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false
-        },
-        colors: ['#FEFCD7', '#A6CB45', '#71B238', '#6A8347','#787A40','#9FBF8C','#C8AB65', '#D4CBC3', '#DDDDDD'],
-        title: {
-            text: pie_title
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.2f} %',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    },
-                    connectorColor: 'silver'
-                }
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Percentuale',
-            data: data
-        }]
-    });
-}
-
-
 /* init_map
 *   sets bounds, zoom and center for Leaflet map
 *

@@ -95,3 +95,13 @@ table.debug_table th {
   border: 1px solid grey;
   text-align: center;
 }
+#map_switch li.active a {
+  font-size: 11px;
+}
+#map_switch li.active a.btn.btn-show {
+  border: 1px solid #000000;
+  border-radius: 3px;
+  padding: 3px 5px;
+  color: white;
+  background: #000000;
+}
