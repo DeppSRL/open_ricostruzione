@@ -158,8 +158,7 @@ function style_danno(feature) {
     return {
         weight: 2,
         opacity: 1,
-        color: 'white',
-        dashArray: '3',
+        color: '#aaa',
         fillOpacity: 0.7,
         fillColor: getColor_danno(feature.properties.value)
     };
@@ -169,8 +168,7 @@ function style_attuazione(feature) {
     return {
         weight: 2,
         opacity: 1,
-        color: 'white',
-        dashArray: '3',
+        color: '#aaa',
         fillOpacity: 0.7,
         fillColor: getColor_attuazione(feature.properties.value)
     };
