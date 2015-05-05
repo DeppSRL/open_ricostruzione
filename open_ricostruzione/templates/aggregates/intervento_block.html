@@ -27,7 +27,7 @@
     </h2>
     <span class="euros">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
 
-    <a href="" class="comune">
+    <a href="{% url 'localita' intprog.territorio.slug %}" class="comune">
         Comune di {{ intprog.territorio.nome_con_provincia }}
     </a>
 {% endif %}
