@@ -38,7 +38,7 @@ $(function () {
             //console.log(obj);
             //console.log(obj.programmati);
             
-            array_etichetta_column.push('"'+obj.label+'"'); //etichette
+            array_etichetta_column.push(obj.label); //etichette
             array_data_column.push({ y : parseFloat(obj.programmati),
                                    interventi_programmati : obj.interventi_programmati,
                                    interventi_pianificati : obj.interventi_pianificati,

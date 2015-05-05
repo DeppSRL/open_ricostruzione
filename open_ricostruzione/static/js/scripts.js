@@ -40,24 +40,24 @@ function gestione_cerchi_top() {
 function gestione_grafico_barre() {
     //########### GESTIONE "GRAFICO BARRE"
 
-    for (i in data_array_programmazione) {
-        //console.log("altezza",(data_array_programmazione[i].programmati * 100) / totale_interventi_progr);
-        var tot_row = data_array_programmazione[i].programmati + data_array_programmazione[i].pianificati + data_array_programmazione[i].attuali;
-        
-        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-programmati span").html(data_array_programmazione[i].programmati);
-        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-pianificati span").html(data_array_programmazione[i].pianificati);
-        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-attuali span").html(data_array_programmazione[i].attuali);
-        
-        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-programmati").css("height",(data_array_programmazione[i].programmati * 100) / tot_row +"%");
-        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-pianificati").css("height",(data_array_programmazione[i].pianificati * 100) / tot_row +"%");
-        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-attuali").css("height",(data_array_programmazione[i].attuali * 100) / tot_row +"%");
-
-    }
-    $( ".programmazione > div > div" ).animate({
-        height: "300px"
-    }, 1000, function() {
-      // Animation complete.
-    });
+//    for (i in data_array_programmazione) {
+//        //console.log("altezza",(data_array_programmazione[i].programmati * 100) / totale_interventi_progr);
+//        var tot_row = data_array_programmazione[i].programmati + data_array_programmazione[i].pianificati + data_array_programmazione[i].attuali;
+//
+//        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-programmati span").html(data_array_programmazione[i].programmati);
+//        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-pianificati span").html(data_array_programmazione[i].pianificati);
+//        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-attuali span").html(data_array_programmazione[i].attuali);
+//
+//        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-programmati").css("height",(data_array_programmazione[i].programmati * 100) / tot_row +"%");
+//        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-pianificati").css("height",(data_array_programmazione[i].pianificati * 100) / tot_row +"%");
+//        $(".programmazione ."+data_array_programmazione[i].classe + " .interventi-attuali").css("height",(data_array_programmazione[i].attuali * 100) / tot_row +"%");
+//
+//    }
+//    $( ".programmazione > div > div" ).animate({
+//        height: "300px"
+//    }, 1000, function() {
+//      // Animation complete.
+//    });
 }
 
 function grafico_cerchi_soggetti_attuatori() {
