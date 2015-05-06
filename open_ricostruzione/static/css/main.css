@@ -105,3 +105,6 @@ table.debug_table th {
   color: white;
   background: #000000;
 }
+.lists .list-item.soggetti-attuatori-1 {
+  min-height: 100px;
+}

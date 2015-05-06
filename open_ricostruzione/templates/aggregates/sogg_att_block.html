@@ -25,7 +25,7 @@
                     {% for sa in sogg_att_top %}
                         <div class="row">
                             <div class="col-md-12 list-item soggetti-attuatori-1" soggetto="1">
-                                <h2><a href="">{{ sa.denominazione }}</a></h2>
+                                <h2><a href="{% url 'sogg-attuatore' sa.slug %}">{{ sa.denominazione }}</a></h2>
                                 <div class="row">
                                     <div class="col-md-12">
                                         {{ sa.interventoprogramma__count }} interventi
