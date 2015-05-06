@@ -102,18 +102,28 @@ function grafico_cerchi_soggetti_attuatori() {
 }
 
 function grafico_pie_soggetti_attuatori() {
-    for (i = 0; i < data_array_pie.length; ++i) {
-        colore = $("#pie .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
+        //stefano fix
+    if (typeof data_array_pie !== 'undefined') {
 
-        $(".lista-pie").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie[i]['name']+'" href="'+data_array_pie[i]['url']+'">'+data_array_pie[i]['name']+'</a></li>');
+        for (i = 0; i < data_array_pie.length; ++i) {
+            colore = $("#pie .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
+
+            $(".lista-pie").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie[i]['name']+'" href="'+data_array_pie[i]['url']+'">'+data_array_pie[i]['name']+'</a></li>');
+        }
     }
+
 }
 
 function grafico_pie_donazioni() {
-    for (i = 0; i < data_array_pie_donazioni.length; ++i) {
-        colore = $("#pie-donazioni .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
 
-        $(".lista-pie-donazioni").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie_donazioni[i]['name']+'" href="'+data_array_pie_donazioni[i]['url']+'">'+data_array_pie_donazioni[i]['name']+'</a></li>');
+    //stefano fix
+    if (typeof data_array_pie_donazioni !== 'undefined') {
+
+        for (i = 0; i < data_array_pie_donazioni.length; ++i) {
+            colore = $("#pie-donazioni .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
+
+            $(".lista-pie-donazioni").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie_donazioni[i]['name']+'" href="'+data_array_pie_donazioni[i]['url']+'">'+data_array_pie_donazioni[i]['name']+'</a></li>');
+        }
     }
 }
 
