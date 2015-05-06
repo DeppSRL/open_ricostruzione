@@ -90,6 +90,9 @@ a:hover {
 .ico-settori.pubblici {
   background-position: -816px 0;
 }
+.ico-settori.altro {
+  background-position: -905px 0;
+}
 .programmazione .ico-settori {
   margin-left: -30px;
   margin-top: 10px;
