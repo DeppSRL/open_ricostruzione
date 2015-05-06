@@ -190,6 +190,7 @@ $(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
             $(".percentuale-attuati").html(percentuale_tipo_attuati);
 
             break
+
     }
     
 
