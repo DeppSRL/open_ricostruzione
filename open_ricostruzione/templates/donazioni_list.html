@@ -4,24 +4,45 @@
 {% block head-title %}Donazioni{% endblock %}
 
 {% block content %}
-    <h1>Donazioni</h1>
-    {% for donazione in object_list %}
-        <div class="row" style="border-bottom: 1px solid gray;">
-            <div class="col-md-12">{{ donazione.importo|italianize }} Euro -
-                {% if donazione.tipologia_cedente == '4' %}
-                    {{ donazione.get_tipologia_cedente_display|title }}
-                {% else %}
 
-                    {{ donazione.denominazione|title }}
-                {% endif %},
-                {{ donazione.territorio.nome_con_provincia|title }},
-                {{ donazione.data }},
-                {{ donazione.get_tipologia_donazione_display|title }}
+    <section class="latest">
+        <div class="container">
 
+            <div class="row lists">
+
+                <div class="col-md-12">
+                	<h2>Donazioni</h2>
+
+                    <ul class="list">
+                        {% for donazione in object_list %}
+                            <li>
+                                <div class="col-md-4">
+                                    {% if donazione.tipologia_cedente == '4' %}
+                                        {{ donazione.get_tipologia_cedente_display|title }}
+                                    {% else %}
+
+                                        {{ donazione.denominazione|title }}
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2"><span class="euros">{{ donazione.importo|italianize }} </span>€</div>
+                                <div class="col-md-2">{{ donazione.data }}</div>
+                                <div class="col-md-4">A favore del Comune di {{ donazione.territorio.nome_con_provincia|title }}</div>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
             </div>
         </div>
-    {% endfor %}
-
-{% bootstrap_paginate page_obj range=10 show_first_last='true' %}
+    </section>
+    {% if object_list %}
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-12">
+                    {% bootstrap_paginate page_obj range=10 show_first_last='true' %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
 {% endblock %}
