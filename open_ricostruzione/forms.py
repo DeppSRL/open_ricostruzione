@@ -11,7 +11,7 @@ class InterventoProgrammaSearchFormNavbar(forms.Form):
         widget=InterventoProgrammaChoices.widget(
             select2_options={
                 'placeholder': _(u"CERCA UN INTERVENTO"),
-                'width': '100%'
+                'width': '30em'
             }
         )
     )

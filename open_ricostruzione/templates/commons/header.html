@@ -5,9 +5,9 @@
             <span class="description green">Monitora gli <span class="gray">interventi</span> per la ricostruzione in Emilia Romagna</span>
         </div>
 
-        <div class="col-md-6 text-right">
+        <div class="col-md-6 ">
             <div class="form-group">
-                <form role="search" class="pull-left autosubmit form-inline" action="{% url 'intervento-search' %}" method="get">
+                <form id="interventi_search" role="search" class="pull-left autosubmit form-inline" action="{% url 'intervento-search' %}" method="get">
                     {{ interventi_search_form }}
                 </form>
             </div>

@@ -118,3 +118,6 @@ table.debug_table th {
 .navbar-nav > li > .dropdown-menu li form a:hover {
   background-color: white ;
 }
+#header form#interventi_search {
+  margin-top: 30px;
+}
