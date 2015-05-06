@@ -6,30 +6,38 @@
                     <div id="chart-venn" style="float:right; height: 130px; width: 130px; margin-top:0px; margin-bottom:0px;"></div>
             </div>
 
-            <div class="col-md-10" style="margin-top:20px;">
+            <div class="col-md-10" style="margin-top:20px;" id="status">
                <div class="row">
                     <div class="col-md-4">
+                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}">
 
-                        <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI PROGRAMMATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
-                        <div class="much programmati">
-                            <div class="triangle">
-                                <span class="ico"></span> <span class="num">{{ status.programmazione.sum|italianize }}</span> €
+                            <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI PROGRAMMATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                            <div class="much programmati">
+                                <div class="triangle">
+                                    <span class="ico"></span> <span class="num">{{ status.programmazione.sum|italianize }}</span> €
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <div class="col-md-4">
-                        <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI PIANIFICATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
-                        <div class="much pianificati">
-                            <div class="triangle">
-                                <span class="ico"></span> <span class="num">{{ status.pianificazione.sum|italianize }}</span> €</div>
+                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&stato=piano">
+                            <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI PIANIFICATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                            <div class="much pianificati">
+                                <div class="triangle">
+                                    <span class="ico"></span> <span class="num">{{ status.pianificazione.sum|italianize }}</span> €
+                                </div>
                             </div>
+                        </a>
                     </div>
                     <div class="col-md-4">
-                        <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI ATTUATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
-                        <div class="much attuati">
-                            <div class="triangle">
-                                <span class="ico"></span> <span class="num">{{ status.attuazione.sum|italianize }}</span> €</div>
+                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&stato=attuazione">
+                            <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI ATTUATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                            <div class="much attuati">
+                                <div class="triangle">
+                                    <span class="ico"></span> <span class="num">{{ status.attuazione.sum|italianize }}</span> €
+                                </div>
                             </div>
+                        </a>
                     </div>
                </div>
             </div>

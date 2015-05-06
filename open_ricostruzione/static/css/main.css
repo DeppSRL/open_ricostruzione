@@ -15,9 +15,6 @@ body {
   margin-bottom: 15px;
   margin-top: 15px;
 }
-.container .data_block_border {
-  border: 1px solid gray;
-}
 .ui-autocomplete {
   z-index: 1000!important;
 }
@@ -126,4 +123,12 @@ table.debug_table th {
 }
 .leaflet-top {
   z-index: 1!important;
+}
+#status a {
+  text-decoration: none;
+  color: black;
+}
+#status a:hover {
+  text-decoration: underline;
+  color: black;
 }
