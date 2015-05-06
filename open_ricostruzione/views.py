@@ -87,7 +87,7 @@ class DonazioniListView(ListView):
     template_name = 'donazioni_list.html'
 
     def get_queryset(self):
-        queryset = super(DonazioniListView, self).get_queryset()
+        queryset = super(DonazioniListView, self).get_queryset().order_by('-importo')
         return queryset.select_related('territorio')
 
 
