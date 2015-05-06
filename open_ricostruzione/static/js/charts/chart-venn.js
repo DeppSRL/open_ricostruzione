@@ -1,7 +1,7 @@
 $(function(){
-    var progr  = parseFloat($(".riepilogo .programmati .num").html());
-    var pianif = parseFloat($(".riepilogo .pianificati .num").html());
-    var attual = parseFloat($(".riepilogo .attuati .num").html());
+    var progr  = parseFloat($(".riepilogo .programmati .num").html().replace(/\./g,''));
+    var pianif = parseFloat($(".riepilogo .pianificati .num").html().replace(/\./g,''));
+    var attual = parseFloat($(".riepilogo .attuati .num").html().replace(/\./g,''));
 
     $('#chart-venn').highcharts({
       chart:{
