@@ -2,12 +2,18 @@
 {% if intprog %}
     <h2>
         <a href="{% url 'intervento-programma' slug=intprog.slug %}">
-            <i class="ico-settori green {{ intprog.tipo_immobile.slug|css_class_name }}"></i> {{ intprog.denominazione|title }}
+            <i class="ico-settori green {{ intprog.tipo_immobile.slug|css_class_name }}"></i>
+            {{ intprog.denominazione|title|truncatechars:80 }}
         </a>
     </h2>
     <span class="euros">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
 
-    <a href="{% url 'localita' intprog.territorio.slug %}" class="comune">
-        Comune di {{ intprog.territorio.nome_con_provincia }}
-    </a>
+    {% if intprog.vari_territori %}
+        <a href="{% url 'localita' 'vari-territori' %}" class="comune">Vari territori</a>
+    {% else %}
+
+        <a href="{% url 'localita' intprog.territorio.slug %}" class="comune">
+            Comune di {{ intprog.territorio.nome_con_provincia }}
+        </a>
+    {% endif %}
 {% endif %}
