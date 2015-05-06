@@ -111,3 +111,10 @@ table.debug_table th {
 .logo a {
   text-decoration: none;
 }
+#header .dropdown-menu form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.navbar-nav > li > .dropdown-menu li form a:hover {
+  background-color: white ;
+}
