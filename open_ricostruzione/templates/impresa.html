@@ -5,26 +5,24 @@
    {{ impresa.ragione_sociale|title }}
 {% endblock %}
 
-{% block page-title %}
-    <h1>{{ impresa.ragione_sociale|title }}</h1>
+
+{% block localita_header %}
+    <section class="dove inside bor-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1>QUALI SONO LE IMPRESE COINVOLTE?</h1>
+
+                    <h2>{{ impresa.ragione_sociale|title }}</h2>
+
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
 
-{% block status %}
-    <div class="row basic_spacer">
-        {% include 'aggregates/data_block.html' with title='interventi in attuazione' data_dict=status.attuazione status_filters="attuazione" %}
-        {% include 'aggregates/varianti_block.html' %}
-    </div>
-
-    {#    execution status bar / status blocks #}
-    {% include "aggregates/execution_status.html" %}
-{% endblock %}
 
 {% block thematic-map %}
-    <div class="row basic_spacer">
-        <div class="col-md-12">
-            <h1>Dove si interviene?</h1>
-        </div>
-    </div>
 
     {% include 'modules/thematic_maps.html' with impresa=True  %}
 

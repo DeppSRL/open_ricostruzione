@@ -60,15 +60,19 @@
                         {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.0 %}
                     </div>
                     <div class="col-md-6 list-item">
-                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.2 %}
-                    </div>
-                    <div class="col-md-6 list-item">
                         {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.1 %}
                     </div>
-                    <div class="col-md-6 list-item">
-                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.3 %}
-                    </div>
-                    <a href="{% url 'lista-interventi' %}?{{ base_filters }}" class="pull-right alls">VEDI TUTTI</a>
+                    {% if interventi_top_importo|length > 2 %}
+                        <div class="col-md-6 list-item">
+                            {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.2 %}
+                        </div>
+                        <div class="col-md-6 list-item">
+                            {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.3 %}
+                        </div>
+                    {% endif %}
+                    {% if interventi_top_importo|length > 4 %}
+                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}" class="pull-right alls">VEDI TUTTI</a>
+                    {% endif %}
                 </div>
             </div>
         </section>
