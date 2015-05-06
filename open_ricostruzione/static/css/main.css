@@ -108,3 +108,6 @@ table.debug_table th {
 .lists .list-item.soggetti-attuatori-1 {
   min-height: 100px;
 }
+.logo a {
+  text-decoration: none;
+}
