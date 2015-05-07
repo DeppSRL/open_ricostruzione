@@ -147,8 +147,8 @@ function initialize_status_bar(){
     var lavori_corso = data_array_bar[1].y;
     var lavori_conclusi = data_array_bar[2].y;
     var somma_bar = interventi + lavori_corso + lavori_conclusi;
-    var minimum = 5;
-    var base = 85;
+    var minimum = 1;
+    var base = 97;
 
     $(".div-bar .interventi").css("width", ((interventi * base) / somma_bar)+minimum + '%');
     $(".div-bar .lavori-in-corso").css("width", ((lavori_corso * base) / somma_bar)+minimum + '%');

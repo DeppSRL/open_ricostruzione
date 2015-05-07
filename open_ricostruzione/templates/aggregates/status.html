@@ -47,34 +47,36 @@
 {#                <h4>25,6%</h4>#}
 {#                importi liquidati#}
 {#            </div>#}
+            {% if status.attuazione.count > 0 %}
+                <div class="div-bar col-md-12  text-center">
+                    <h2>
+                        Lo stato di avanzamento dei {{ status.attuazione.count|italianize:0 }} interventi in attuazione
+                    </h2>
 
-            <div class="div-bar col-md-12  text-center">
-                <h2>
-                    Lo stato di avanzamento dei {{ status.attuazione.count|italianize:0 }} interventi in attuazione
-                </h2>
+                    <div class="interventi">
+                        <div class="color"></div>
+                        <p>
+                            <span></span><br>
+                            interventi in progettazione
+                        </p>
+                    </div>
+                    <div class="lavori-in-corso">
+                        <div class="color"></div>
+                        <p>
+                            <span></span><br>
+                            lavori in corso
+                        </p>
+                    </div>
+                    <div class="lavori-conclusi">
+                        <div class="color"></div>
+                        <p>
+                            <span></span><br>
+                            lavori conclusi
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
 
-                <div class="interventi">
-                    <div class="color"></div>
-                    <p>
-                        <span></span><br>
-                        interventi in progettazione
-                    </p>
-                </div>
-                <div class="lavori-in-corso">
-                    <div class="color"></div>
-                    <p>
-                        <span></span><br>
-                        lavori in corso
-                    </p>
-                </div>
-                <div class="lavori-conclusi">
-                    <div class="color"></div>
-                    <p>
-                        <span></span><br>
-                        lavori conclusi
-                    </p>
-                </div>
-            </div>
         </div>
     </div>
 </section>
