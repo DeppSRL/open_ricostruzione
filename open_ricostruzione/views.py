@@ -66,6 +66,10 @@ class ListaInterventiView(FilterView):
         self.filters['tipo_immobile_filter'] = self.get_parameter('tipo_immobile__slug', tipo_immobile_set,
                                                                   model=TipoImmobile)
 
+        # if filter vari territori is True, there cannot be territorio filter on specific territorio
+        if self.filters['vari_territori_filter'] == u'True' and self.filters['territorio_filter'] is not None:
+            self.validation = False
+
         sogg_attuatore_set = SoggettoAttuatore.objects.all().values_list('slug', flat=True)
         self.filters['sogg_attuatore_filter'] = self.get_parameter('soggetto_attuatore__slug', sogg_attuatore_set,
                                                                    model=SoggettoAttuatore)
