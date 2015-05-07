@@ -5,16 +5,16 @@ function chartPieTerr(id, arr, colore) {
         // Monocromo
         Highcharts.getOptions().plotOptions.pie.colors = (function () {
             var colors = [colore, '#666'],
-                base = '#b70404', // QUI VA DEFINITO IL COLORE MASTER 
+                base = '#b70404', // QUI VA DEFINITO IL COLORE MASTER
                 i;
-    
+
             for (i = 0; i < 10; i += 1) {
                 // Start out with a darkened base color (negative brighten), and end
                 // up with a much brighter color
                 colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
-            
-    
-            
+
+
+
             }
             return colors;
         }());
