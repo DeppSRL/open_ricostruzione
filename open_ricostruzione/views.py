@@ -342,7 +342,6 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         # get data from the request
         if kwargs['slug'] == 'vari-territori':
             self.vari_territori = True
-            self.template_name = 'vari_territori.html'
         else:
             try:
                 self.territorio = Territorio.objects.get(slug=kwargs['slug'])

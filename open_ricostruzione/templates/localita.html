@@ -2,7 +2,12 @@
 {% load static l10n %}
 
 {% block head-title %}
-    Comune di {{ territorio.nome_con_provincia }}
+    {% if vari_territori %}
+        Vari territori
+    {% else %}
+        Comune di {{ territorio.nome_con_provincia }}
+    {% endif %}
+
 {% endblock %}
 
 {% block body_id %}territorio{% endblock %}
@@ -15,10 +20,18 @@
                 <div class="col-md-12 text-center">
                     <h1>DOVE SI INTERVIENE</h1>
 
-                    <h2>Comune di {{ territorio.nome_con_provincia }}</h2>
+                    <h2>
+                        {% if vari_territori %}
+                            Vari Territori
+                        {% else %}
+                            Comune di {{ territorio.nome_con_provincia }}
+                        {% endif %}
+                    </h2>
 
                     <div class="col-md-6">
-                        {% include 'modules/localita_map.html' %}
+                        {% if not vari_territori %}
+                            {% include 'modules/localita_map.html' %}
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
@@ -90,6 +103,4 @@
     </script>
 {% endblock %}
 
-{% block thematic-map %}
-
-{% endblock %}
+{% block thematic-map %}{% endblock %}
