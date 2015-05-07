@@ -142,6 +142,23 @@ function getTooltip(element, x, id) {
     );
 }
     
+function initialize_status_bar(){
+    var interventi = data_array_bar[0].y;
+    var lavori_corso = data_array_bar[1].y;
+    var lavori_conclusi = data_array_bar[2].y;
+    var somma_bar = interventi + lavori_corso + lavori_conclusi;
+    var minimum = 5;
+    var base = 85;
+
+    $(".div-bar .interventi").css("width", ((interventi * base) / somma_bar)+minimum + '%');
+    $(".div-bar .lavori-in-corso").css("width", ((lavori_corso * base) / somma_bar)+minimum + '%');
+    $(".div-bar .lavori-conclusi").css("width", ((lavori_conclusi * base) / somma_bar)+minimum +'%');
+
+    $(".div-bar .interventi p span").html(interventi);
+    $(".div-bar .lavori-in-corso p span").html(lavori_corso);
+    $(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
+}
+
 
 $( document ).ready(function() {
     var page = $("body").attr('id');
@@ -155,20 +172,9 @@ $( document ).ready(function() {
             grafico_pie_soggetti_attuatori();
             grafico_pie_donazioni();
             
-var interventi = data_array_bar[0].y;
-var lavori_corso = data_array_bar[1].y;
-var lavori_conclusi = data_array_bar[2].y;
-var somma_bar = interventi + lavori_corso + lavori_conclusi;
+            initialize_status_bar();
 
-$(".div-bar .interventi").css("width", (interventi * 100) / somma_bar + '%');
-$(".div-bar .lavori-in-corso").css("width", (lavori_corso * 100) / somma_bar + '%');
-$(".div-bar .lavori-conclusi").css("width", (lavori_conclusi * 100) / somma_bar +'%');
-            
-$(".div-bar .interventi p span").html(interventi);
-$(".div-bar .lavori-in-corso p span").html(lavori_corso);    
-$(".div-bar .lavori-conclusi p span").html(lavori_conclusi);    
-
-            break
+            break;
         case "territorio":
             gestione_cerchi_top();
             grafico_cerchi_soggetti_attuatori();
@@ -183,8 +189,9 @@ $(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
             $(".percentuale-programmati").html(percentuale_comune_programmati);
             $(".percentuale-pianificati").html(percentuale_comune_pianificati);
             $(".percentuale-attuati").html(percentuale_comune_attuati);
+            initialize_status_bar();
 
-            break
+            break;
         case "tipologia":
             gestione_cerchi_top();
             grafico_cerchi_soggetti_attuatori();
@@ -198,8 +205,8 @@ $(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
             $(".percentuale-programmati").html(percentuale_tipo_programmati);
             $(".percentuale-pianificati").html(percentuale_tipo_pianificati);
             $(".percentuale-attuati").html(percentuale_tipo_attuati);
-
-            break
+            initialize_status_bar();
+            break;
 
     }
     
