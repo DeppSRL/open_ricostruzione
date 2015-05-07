@@ -58,6 +58,7 @@ class InterventoProgrammaFilter(django_filters.FilterSet):
         order_by = ['denominazione', 'tipo_immobile__slug', 'territorio','stato','stato_attuazione']
         fields = {
             'territorio__slug': ['exact'],
+            'vari_territori': ['exact'],
             'tipo_immobile__slug': ['exact'],
             'soggetto_attuatore__slug': ['exact'],
             'soggetto_attuatore__tipologia': ['exact'],

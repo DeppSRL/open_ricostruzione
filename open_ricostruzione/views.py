@@ -31,7 +31,7 @@ class ListaInterventiView(FilterView):
     filters = {}
     accepted_parameters = ['territorio__slug', 'tipo_immobile__slug', 'soggetto_attuatore__slug',
                            'soggetto_attuatore__tipologia', 'stato', 'stato_attuazione',
-                           'interventopiano__intervento__imprese__slug']
+                           'interventopiano__intervento__imprese__slug','vari_territori']
     validation = True
 
     def get(self, request, *args, **kwargs):
@@ -58,6 +58,9 @@ class ListaInterventiView(FilterView):
 
         territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
         self.filters['territorio_filter'] = self.get_parameter('territorio__slug', territori_set, model=Territorio)
+
+        vari_territori_set = ['False', 'True']
+        self.filters['vari_territori_filter'] = self.get_parameter('vari_territori', vari_territori_set,)
 
         tipo_immobile_set = TipoImmobile.objects.all().values_list('slug', flat=True)
         self.filters['tipo_immobile_filter'] = self.get_parameter('tipo_immobile__slug', tipo_immobile_set,
@@ -226,6 +229,8 @@ class AggregatePageMixin(object):
     def get_base_filters(self):
         if self.tipologia == self.TERRITORIO:
             return 'territorio__slug={}'.format(self.programmazione_filters['territorio'].slug)
+        if self.tipologia == self.VARI_TERRITORI:
+            return 'vari_territori=True'
         elif self.tipologia == self.SOGG_ATT:
             return 'soggetto_attuatore__slug={}'.format(self.programmazione_filters['soggetto_attuatore'].slug)
         elif self.tipologia == self.TIPO_IMMOBILE:
@@ -364,11 +369,12 @@ class LocalitaView(TemplateView, AggregatePageMixin):
             )
 
         context.update(apm.get_aggregates())
+        context['base_filters'] = apm.get_base_filters()
 
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
             bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
-            context['base_filters'] = apm.get_base_filters()
+
 
             context['map_bounds'] = \
                 {'sw':

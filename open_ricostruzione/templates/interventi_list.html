@@ -23,6 +23,9 @@
                      {% if territorio_filter %}
                         <strong>Per il Comune di {{ territorio_filter.nome_con_provincia }}</strong><br/>
                     {% endif %}
+                    {% if vari_territori_filter %}
+                        <strong>Per Vari territori</strong><br/>
+                    {% endif %}
                     {% if sogg_attuatore_filter %}
                         <strong>Per il Soggetto attuatore: {{ sogg_attuatore_filter.denominazione|title }}</strong><br/>
                     {% endif %}
