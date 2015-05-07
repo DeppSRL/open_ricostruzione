@@ -66,8 +66,8 @@ $(function () {
                     events: {
                         click: function(e) {
                             //this.slice();
-                            console.log(e.point);
-                            //location.href = e.point.url;
+//                            console.log(e.point);
+                            location.href = e.point.url;
                             e.preventDefault();
                         }
                     }

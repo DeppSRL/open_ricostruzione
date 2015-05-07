@@ -70,6 +70,11 @@ class ListaInterventiView(FilterView):
         context['sogg_attuatore_filter'] = self.get_parameter('soggetto_attuatore__slug', sogg_attuatore_set,
                                                               model=SoggettoAttuatore)
 
+        sogg_attuatore_tipologia_set = SoggettoAttuatore.TIPOLOGIA._db_values
+        sogg_att_tipologia_slug = self.get_parameter('soggetto_attuatore__tipologia', sogg_attuatore_tipologia_set)
+        if sogg_att_tipologia_slug is not None and sogg_att_tipologia_slug is not False:
+            context['sogg_attuatore_tipologia_filter'] = SoggettoAttuatore.TIPOLOGIA._display_map[sogg_att_tipologia_slug]
+
         stato_set = list(InterventoProgramma.STATO._db_values)
         context['stato_filter'] = self.get_parameter('stato', stato_set)
         stato_attuazione_set = list(InterventoProgramma.STATO_ATTUAZIONE._db_values)
@@ -78,6 +83,8 @@ class ListaInterventiView(FilterView):
         impresa_set = Impresa.objects.all().values_list('slug', flat=True)
         context['impresa_filter'] = self.get_parameter('interventopiano__intervento__imprese__slug', impresa_set,
                                                        model=Impresa)
+
+        # todo; if at least 1 filter is FALSE =-> redirect
         return context
 
 

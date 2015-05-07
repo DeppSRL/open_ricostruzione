@@ -26,6 +26,9 @@
                     {% if sogg_attuatore_filter %}
                         <strong>Per il Soggetto attuatore: {{ sogg_attuatore_filter.denominazione|title }}</strong><br/>
                     {% endif %}
+                    {% if sogg_attuatore_tipologia_filter %}
+                        <strong>Per la tipologia di Soggetto attuatore: {{ sogg_attuatore_tipologia_filter|title }}</strong><br/>
+                    {% endif %}
                     {% if tipo_immobile_filter %}
                         <strong>Per Tipo Immobile: {{ tipo_immobile_filter.denominazione|title }}</strong><br/>
                     {% endif %}
@@ -53,7 +56,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="col-md-4">
-                                    <a href=""><i class="ico-settori gray {{obj.tipo_immobile.slug|css_class_name }}"></i> {{ obj.tipo_immobile.denominazione|title }}</a></div>
+                                    <a href="{% url 'lista-interventi' %}?tipo_immobile__slug={{ obj.tipo_immobile.slug }}"><i class="ico-settori gray {{obj.tipo_immobile.slug|css_class_name }}"></i> {{ obj.tipo_immobile.denominazione|title }}</a></div>
                                 <div class="col-md-3 text-right"><span class="euros">{{ obj.importo_generale|italianize}} </span> €</div>
                             </li>
                         {% endfor %}

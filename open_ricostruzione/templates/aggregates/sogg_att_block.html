@@ -49,7 +49,7 @@
                 [
                     {% for item in sogg_att_aggregates %}
                         {% if item.attuazione.sum  and item.attuazione.sum > 0 %}
-                            {name: "{{ item.name }}", y: {{ item.attuazione.sum }}, url: "http://www.google.it"},
+                            {name: "{{ item.name }}", y: {{ item.attuazione.sum }}, url: "{% url 'lista-interventi' %}?{{ base_filters }}&soggetto_attuatore__tipologia={{ item.tipologia }}"},
                         {% endif %}
                     {% endfor %}
 

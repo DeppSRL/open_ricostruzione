@@ -108,8 +108,10 @@ class InterventoProgramma(models.Model):
         for tipologia_id, tipologia_shortname in SoggettoAttuatore.TIPOLOGIA:
             tipologia_name = SoggettoAttuatore.TIPOLOGIA.__getitem__(tipologia_id)
             # count and sum for programmazione
-            d = {'name': tipologia_name,
-                 'attuazione': InterventoProgramma.programmati.filter(soggetto_attuatore__tipologia=tipologia_id,
+            d = {
+                'name': tipologia_name,
+                'tipologia': tipologia_id,
+                'attuazione': InterventoProgramma.programmati.filter(soggetto_attuatore__tipologia=tipologia_id,
                                                                      **kwargs).with_count(),
                 }
 

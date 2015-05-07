@@ -33,7 +33,7 @@
             [
                 {% for item in donazioni_aggregates %}
                     {% localize off  %}
-                        {name: "{{ item.name }}", y: {{ item.sum|default_if_none:0 }}, url: "#"} {% if not forloop.last %},{% endif %}
+                        {name: "{{ item.name }}", y: {{ item.sum|default_if_none:0 }}, url: "{% url 'donazioni' %}"} {% if not forloop.last %},{% endif %}
                     {% endlocalize %}
                 {% endfor %}
 
