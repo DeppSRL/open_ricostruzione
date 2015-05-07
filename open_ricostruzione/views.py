@@ -28,15 +28,59 @@ class ListaInterventiView(FilterView):
     paginate_by = 50
     ip_filter = None
     request = None
+    filters = {}
+    accepted_parameters = ['territorio__slug', 'tipo_immobile__slug', 'soggetto_attuatore__slug',
+                           'soggetto_attuatore__tipologia', 'stato', 'stato_attuazione',
+                           'interventopiano__intervento__imprese__slug']
+    validation = True
 
     def get(self, request, *args, **kwargs):
         self.request = request
         self.ip_filter = InterventoProgrammaFilter(self.request.GET,
-                                                   queryset=InterventoProgramma.objects.all().select_related('territorio'))
+                                                   queryset=InterventoProgramma.objects.all().select_related(
+                                                       'territorio'))
 
         # in this way the objects coming out of the filter will be paginated
         self.queryset = self.ip_filter.qs
+
+        # check GET parameters
+        self.check_request_params()
+        # if validation fails => redirect
+        if self.validation is False:
+            return HttpResponseRedirect(reverse('404'))
         return super(ListaInterventiView, self).get(request, *args, **kwargs)
+
+    def check_request_params(self):
+
+        # check that GET parameters are ONLY the ones in the accepted_params variable. if NOT -> redirect 404
+        if not (set(self.ip_filter.form.data.keys()) <= set(self.accepted_parameters)):
+            self.validation = False
+
+        territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
+        self.filters['territorio_filter'] = self.get_parameter('territorio__slug', territori_set, model=Territorio)
+
+        tipo_immobile_set = TipoImmobile.objects.all().values_list('slug', flat=True)
+        self.filters['tipo_immobile_filter'] = self.get_parameter('tipo_immobile__slug', tipo_immobile_set,
+                                                                  model=TipoImmobile)
+
+        sogg_attuatore_set = SoggettoAttuatore.objects.all().values_list('slug', flat=True)
+        self.filters['sogg_attuatore_filter'] = self.get_parameter('soggetto_attuatore__slug', sogg_attuatore_set,
+                                                                   model=SoggettoAttuatore)
+
+        sogg_attuatore_tipologia_set = SoggettoAttuatore.TIPOLOGIA._db_values
+        sogg_att_tipologia_slug = self.get_parameter('soggetto_attuatore__tipologia', sogg_attuatore_tipologia_set)
+        if sogg_att_tipologia_slug is not None and sogg_att_tipologia_slug is not False:
+            self.filters['sogg_attuatore_tipologia_filter'] = SoggettoAttuatore.TIPOLOGIA._display_map[
+                sogg_att_tipologia_slug]
+
+        stato_set = list(InterventoProgramma.STATO._db_values)
+        self.filters['stato_filter'] = self.get_parameter('stato', stato_set)
+        stato_attuazione_set = list(InterventoProgramma.STATO_ATTUAZIONE._db_values)
+        self.filters['stato_attuazione_filter'] = self.get_parameter('stato_attuazione', stato_attuazione_set)
+
+        impresa_set = Impresa.objects.all().values_list('slug', flat=True)
+        self.filters['impresa_filter'] = self.get_parameter('interventopiano__intervento__imprese__slug', impresa_set,
+                                                            model=Impresa)
 
     def get_parameter(self, get_parameter, possible_values, **kwargs):
         model = kwargs.get('model', None)
@@ -48,6 +92,7 @@ class ListaInterventiView(FilterView):
         if slug_value is None:
             return slug_value
         elif slug_value not in possible_values:
+            self.validation = False
             return False
 
         if model:
@@ -58,33 +103,7 @@ class ListaInterventiView(FilterView):
     def get_context_data(self, **kwargs):
         context = super(ListaInterventiView, self).get_context_data(**kwargs)
         context['request'] = self.request
-
-        territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
-        context['territorio_filter'] = self.get_parameter('territorio__slug', territori_set, model=Territorio)
-
-        tipo_immobile_set = TipoImmobile.objects.all().values_list('slug', flat=True)
-        context['tipo_immobile_filter'] = self.get_parameter('tipo_immobile__slug', tipo_immobile_set,
-                                                             model=TipoImmobile)
-
-        sogg_attuatore_set = SoggettoAttuatore.objects.all().values_list('slug', flat=True)
-        context['sogg_attuatore_filter'] = self.get_parameter('soggetto_attuatore__slug', sogg_attuatore_set,
-                                                              model=SoggettoAttuatore)
-
-        sogg_attuatore_tipologia_set = SoggettoAttuatore.TIPOLOGIA._db_values
-        sogg_att_tipologia_slug = self.get_parameter('soggetto_attuatore__tipologia', sogg_attuatore_tipologia_set)
-        if sogg_att_tipologia_slug is not None and sogg_att_tipologia_slug is not False:
-            context['sogg_attuatore_tipologia_filter'] = SoggettoAttuatore.TIPOLOGIA._display_map[sogg_att_tipologia_slug]
-
-        stato_set = list(InterventoProgramma.STATO._db_values)
-        context['stato_filter'] = self.get_parameter('stato', stato_set)
-        stato_attuazione_set = list(InterventoProgramma.STATO_ATTUAZIONE._db_values)
-        context['stato_attuazione_filter'] = self.get_parameter('stato_attuazione', stato_attuazione_set)
-
-        impresa_set = Impresa.objects.all().values_list('slug', flat=True)
-        context['impresa_filter'] = self.get_parameter('interventopiano__intervento__imprese__slug', impresa_set,
-                                                       model=Impresa)
-
-        # todo; if at least 1 filter is FALSE =-> redirect
+        context.update(self.filters)
         return context
 
 
@@ -212,7 +231,8 @@ class AggregatePageMixin(object):
         elif self.tipologia == self.TIPO_IMMOBILE:
             return 'tipo_immobile__slug={}'.format(self.programmazione_filters['tipo_immobile'].slug)
         elif self.tipologia == self.IMPRESA:
-            return 'interventopiano__intervento__imprese__slug={}'.format(self.programmazione_filters['interventopiano__intervento__imprese'].slug)
+            return 'interventopiano__intervento__imprese__slug={}'.format(
+                self.programmazione_filters['interventopiano__intervento__imprese'].slug)
 
     def get_aggregates(self):
         ##
@@ -231,20 +251,28 @@ class AggregatePageMixin(object):
                 'in_corso': self._get_in_corso_status(),
                 'conclusi': self._get_conclusi_status(),
             },
-            'total_percentage':{
+            'total_percentage': {
                 'programmazione': 0,
                 'pianificazione': 0,
                 'attuazione': 0,
-                }
+            }
         }
 
         # calculates percentages of programmazione / pianificazione / attuazione compared to the whole of projects
-        agg_dict['total_percentage']['programmazione'] = (agg_dict['status']['programmazione']['sum']/InterventoProgramma.programmati.all().with_count()['sum'])*Decimal(100.0)
-        agg_dict['total_percentage']['pianificazione'] = (agg_dict['status']['pianificazione']['sum']/InterventoProgramma.pianificati.all().with_count()['sum'])*Decimal(100.0)
-        agg_dict['total_percentage']['attuazione'] = (agg_dict['status']['attuazione']['sum']/InterventoProgramma.attuazione.all().with_count()['sum'])*Decimal(100.0)
+        agg_dict['total_percentage']['programmazione'] = (agg_dict['status']['programmazione']['sum'] /
+                                                          InterventoProgramma.programmati.all().with_count()[
+                                                              'sum']) * Decimal(100.0)
+        agg_dict['total_percentage']['pianificazione'] = (agg_dict['status']['pianificazione']['sum'] /
+                                                          InterventoProgramma.pianificati.all().with_count()[
+                                                              'sum']) * Decimal(100.0)
+        agg_dict['total_percentage']['attuazione'] = (agg_dict['status']['attuazione']['sum'] /
+                                                      InterventoProgramma.attuazione.all().with_count()[
+                                                          'sum']) * Decimal(100.0)
 
-        agg_dict['total_percentage']['programmazione'] = "{0:.2f}".format(agg_dict['total_percentage']['programmazione'])
-        agg_dict['total_percentage']['pianificazione'] = "{0:.2f}".format(agg_dict['total_percentage']['pianificazione'])
+        agg_dict['total_percentage']['programmazione'] = "{0:.2f}".format(
+            agg_dict['total_percentage']['programmazione'])
+        agg_dict['total_percentage']['pianificazione'] = "{0:.2f}".format(
+            agg_dict['total_percentage']['pianificazione'])
         agg_dict['total_percentage']['attuazione'] = "{0:.2f}".format(agg_dict['total_percentage']['attuazione'])
 
 
@@ -256,18 +284,18 @@ class AggregatePageMixin(object):
         if agg_dict['status']['programmazione']['sum'] > 0 and agg_dict['status']['pianificazione']['sum'] > 0:
             agg_dict['status']['pianificazione']['percentage'] = Decimal(100.0) * (
                 agg_dict['status']['pianificazione']['sum'] /
-                    agg_dict['status']['programmazione']['sum'])
+                agg_dict['status']['programmazione']['sum'])
 
             if agg_dict['status']['attuazione']['sum']:
                 agg_dict['status']['attuazione']['percentage'] = Decimal(100.0) * (
                     agg_dict['status']['attuazione']['sum'] /
-                        agg_dict['status']['programmazione']['sum'])
+                    agg_dict['status']['programmazione']['sum'])
 
         # calculates % in varianti compared to attuazione importo
         if agg_dict['status']['attuazione']['sum'] > 0 and agg_dict['status']['varianti']['sum']:
             agg_dict['status']['varianti']['percentage'] = Decimal(100.0) * (
                 agg_dict['status']['varianti']['sum'] /
-                    agg_dict['status']['attuazione']['sum'])
+                agg_dict['status']['attuazione']['sum'])
 
         # top importo interventi fetch
         agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
@@ -336,8 +364,6 @@ class LocalitaView(TemplateView, AggregatePageMixin):
             )
 
         context.update(apm.get_aggregates())
-
-
 
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
@@ -429,7 +455,7 @@ class MapMixin(object):
                 item['count'] = item['interventoprogramma__importo_generale__count']
 
             danno_values = MapMixin._create_map_values(danno_values)
-            cache.set(cache_key, danno_values, 60*5)
+            cache.set(cache_key, danno_values, 60 * 5)
 
         return danno_values
 
@@ -472,7 +498,7 @@ class MapMixin(object):
                 if valore_progr and valore_progr != 0 and valore_attuaz:
                     item['value'] = 100.0 * float(valore_attuaz / valore_progr)
             attuazione_values = MapMixin._create_map_values(attuazione_values)
-            cache.set(cache_key, attuazione_values, 60*5)
+            cache.set(cache_key, attuazione_values, 60 * 5)
 
         return attuazione_values
 
@@ -543,6 +569,7 @@ class SoggettoAttuatoreView(TemplateView, AggregatePageMixin):
 
         return context
 
+
 class HomeView(TemplateView, AggregatePageMixin, MapMixin):
     template_name = "home.html"
 
@@ -550,10 +577,10 @@ class HomeView(TemplateView, AggregatePageMixin, MapMixin):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         apm = AggregatePageMixin(
-                tipologia=AggregatePageMixin.HOME,
-                programmazione_filters={},
-                sogg_att_filters={}
-            )
+            tipologia=AggregatePageMixin.HOME,
+            programmazione_filters={},
+            sogg_att_filters={}
+        )
         context.update(apm.get_aggregates())
 
 
