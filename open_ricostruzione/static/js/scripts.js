@@ -207,6 +207,9 @@ $( document ).ready(function() {
             $(".percentuale-attuati").html(percentuale_tipo_attuati);
             initialize_status_bar();
             break;
+        case "soggetto":
+            initialize_status_bar();
+            break;
 
     }
     
