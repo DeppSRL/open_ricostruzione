@@ -1,18 +1,55 @@
 {% extends 'aggregate_base.html' %}
-{% load static %}
+{% load static l10n %}
 
 {% block head-title %}
-    Tipo Immobile: {{ tipo_immobile.denominazione }}
+    Tipo Immobile: {{ tipo_immobile.denominazione|title }}
 {% endblock %}
 
-{% block  page-title %}
-    <h1>Tipo Immobile: {{ tipo_immobile.denominazione }}</h1>
+{% block localita_header %}
+
+    <section class="dove inside bor-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1>
+                        PER COSA SI INTERVIENE?
+                    </h1>
+
+                    <h2>
+                        {{ tipo_immobile.denominazione|title }}
+                    </h2>
+
+                    <div class="col-md-12">
+                    	<h3>Sul totale dei comuni</h3><br>
+                            <div class="row">
+                                <div class="col-md-2 col-md-offset-3 text-center">
+                                    <div id="pie-tipologia-programmati" style="float: left"></div>
+                                    <div class="percentuale-programmati programmato"></div>
+                    				<span>titolo torta</span>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <div id="pie-tipologia-pianificati"  style="float: left"></div>
+                                    <div class="percentuale-pianificati pianificato"></div>
+                                    titolo torta
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <div id="pie-tipologia-attuati"  style="float: left"></div>
+                                    <div class="percentuale-attuati attuato"></div>
+                                    titolo torta
+                                </div>
+                            </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
 
 {% block body_id %}tipologia{% endblock %}
 
-{% block tipo-immobile %}
-{% endblock %}
+{% block tipo-immobile %}{% endblock %}
 
 {% block extra-css %}
     <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}" />
@@ -21,4 +58,41 @@
 {% block extra_js_head %}
     <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/emilia.json' %}"></script>
+
+
+    <script>
+
+        var totale_tipo_programmati = 100;
+        var totale_tipo_pianificati = 100;
+        var totale_tipo_attuati = 100;
+
+        {% localize off %}
+            var tipo_programmati = {{ total_percentage.programmazione }};
+            var tipo_pianificati = {{ total_percentage.pianificazione }};
+            var tipo_attuati = {{ total_percentage.attuazione }};
+        {% endlocalize %}
+
+        var percentuale_tipo_programmati =  tipo_programmati+ "%";
+        var percentuale_tipo_pianificati = tipo_pianificati + "%";
+        var percentuale_tipo_attuati = tipo_attuati + "%";
+
+
+
+		var data_array_pie_tipologia_programmati =
+            [
+                {name: "comune programmati", y: tipo_programmati},
+                {name: "restante programmati", y: totale_tipo_programmati - tipo_programmati}
+            ];
+		var data_array_pie_tipologia_pianificati =
+            [
+                {name: "comune pianificati", y: tipo_pianificati},
+                {name: "restante pianificati", y: totale_tipo_pianificati - tipo_pianificati}
+            ];
+		var data_array_pie_tipologia_attuati =
+            [
+                {name: "comune attuati", y: tipo_attuati},
+                {name: "restante attuati", y: totale_tipo_attuati - tipo_attuati}
+            ];
+
+    </script>
 {% endblock %}
