@@ -132,3 +132,9 @@ table.debug_table th {
   text-decoration: underline;
   color: black;
 }
+ul.show {
+  position: relative;
+  top: 0;
+  float: right;
+  margin-bottom: 5px;
+}

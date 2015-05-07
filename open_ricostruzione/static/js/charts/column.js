@@ -31,6 +31,11 @@ $(function () {
     var array_data_column = [];
     var array_data_column2 = [];
     var array_data_column3 = [];
+        //stefano fix
+    if (typeof data_array_programmazione == 'undefined') {
+        return;
+
+    }
     
     for (var k in data_array_programmazione){
             var obj = data_array_programmazione[k];
