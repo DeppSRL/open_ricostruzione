@@ -24,6 +24,9 @@ $(function () {
 
         // Build the chart
         $('#pie').highcharts({
+            credits: {
+                enabled: false
+            },
             chart: {
                 backgroundColor: 'rgba(0,0,0,0)',
                 plotBorderWidth: 0,

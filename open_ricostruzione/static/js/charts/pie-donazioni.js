@@ -24,6 +24,9 @@ $(function () {
     if (typeof data_array_pie_donazioni !== 'undefined') {
          // Build the chart
         $('#pie-donazioni').highcharts({
+            credits: {
+                enabled: false
+            },
             chart: {
                 backgroundColor: 'rgba(0,0,0,0)',
                 plotBorderWidth: 0,

@@ -4,6 +4,9 @@ $(function(){
     var attual = parseFloat($(".riepilogo .attuati .num").html().replace(/\./g,''));
 
     $('#chart-venn').highcharts({
+        credits: {
+            enabled: false
+        },
       chart:{
         backgroundColor: "rgba(255, 255, 255, 0)",
         margin: 0,

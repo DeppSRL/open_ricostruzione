@@ -79,6 +79,9 @@ $(function () {
     }
 
     $('#columns').highcharts({
+        credits: {
+            enabled: false
+        },
         chart: {
             type: 'column',
             backgroundColor: 'transparent'

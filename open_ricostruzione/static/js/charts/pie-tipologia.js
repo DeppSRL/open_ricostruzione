@@ -26,6 +26,9 @@ function chartPieTerr(id, arr, colore) {
         // Build the chart
         $('#'+id).highcharts({
             chart: {
+                credits: {
+                    enabled: false
+                },
                 backgroundColor: 'rgba(0,0,0,0)',
                 plotBorderWidth: 0,
                 plotShadow: false,

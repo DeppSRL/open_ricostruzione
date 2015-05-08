@@ -48,6 +48,9 @@ function treemap_function(args) {
     
     
     $('#treemap-stanziati').highcharts({
+        credits: {
+            enabled: false
+        },
         series: [{
             levels: [{
                 level: 1,
