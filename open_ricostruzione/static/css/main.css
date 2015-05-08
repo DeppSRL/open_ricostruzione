@@ -138,3 +138,6 @@ ul.show {
   float: right;
   margin-bottom: 5px;
 }
+.leaflet-bottom {
+  z-index: 0!important;
+}
