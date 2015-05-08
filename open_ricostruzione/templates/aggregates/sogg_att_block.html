@@ -28,7 +28,9 @@
                                 <h2><a href="{% url 'sogg-attuatore' sa.slug %}">{{ sa.denominazione }}</a></h2>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        {{ sa.interventoprogramma__count }} interventi
+                                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&soggetto_attuatore__slug={{ sa.slug }}">
+                                            {{ sa.interventoprogramma__count }} interventi
+                                        </a>
                                     </div>
 
                                 </div>
