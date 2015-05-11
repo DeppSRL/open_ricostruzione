@@ -147,3 +147,9 @@ ul.list li a {
 ul.list li .secondrow a {
   font-size: 20px!important;
 }
+.lists .list-item h2#top_intervento {
+  font-size: 30px!important;
+}
+.lists .list-item .euros#top_intervento {
+  font-size: 25px;
+}

@@ -1,12 +1,12 @@
 {% load italianize css_class_name %}
 {% if intprog %}
-    <h2>
+    <h2 id="top_intervento">
         <a href="{% url 'intervento-programma' slug=intprog.slug %}">
             <i class="ico-settori green {{ intprog.tipo_immobile.slug|css_class_name }}"></i>
             {{ intprog.denominazione|title|truncatechars:80 }}
         </a>
     </h2>
-    <span class="euros">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
+    <span class="euros" id="top_intervento">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
 
     {% if intprog.vari_territori %}
         <a href="{% url 'localita' 'vari-territori' %}" class="comune">Vari territori</a>
