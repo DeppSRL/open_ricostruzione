@@ -154,6 +154,11 @@ class Command(BaseCommand):
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
 
+        # delete old data
+        SoggettoAttuatore.objects.all().delete()
+        RUP.objects.all().delete()
+        ProprietarioImmobile.objects.all().delete()
+
         self.codifiche = data['codifiche']
         self.anagrafiche = data['anagrafiche']
 
@@ -218,11 +223,16 @@ class Command(BaseCommand):
 
         self.logger.info("Import RUP")
         for rup_json in self.anagrafiche['rup']:
-            RUP.objects.update_or_create(
-                id_fenice=rup_json['id'],
-                nome=rup_json['nome'],
-                cognome=rup_json['cognome'],
-                cf=rup_json['cf'],
-            )
+            try:
+                RUP.objects.update_or_create(
+                    id_fenice=rup_json['id'],
+                    cf=rup_json['cf'],
+                    defaults={
+                        'nome':rup_json['nome'],
+                        'cognome':rup_json['cognome'],
+                        }
+                )
+            except IntegrityError:
+                self.logger.error("Could not import RUP with CF:'{}', id_fenice:'{}', integrity error.".format(rup_json['cf'], rup_json['id']))
 
         self.logger.info("Done")

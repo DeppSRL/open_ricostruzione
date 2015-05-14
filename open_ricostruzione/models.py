@@ -58,6 +58,7 @@ class InterventoProgramma(models.Model):
         (u'5', u'OPERE_BONIFICA', u'Opere di bonifica ed irrigazione'),
         (u'6', u'STRUTTURE_SANITARIE', u'Strutture Sanitarie'),
         (u'7', u'STRUTTURE_SCOLASTICHE', u'Strutture Scolastiche ed Universita'),
+        (u'8', u'PROPRIETA_MISTA', u'Proprieta mista / UMI'),
     )
 
     STATO = Choices(
@@ -299,7 +300,7 @@ class Liquidazione(models.Model):
 
     intervento = models.ForeignKey(u'Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=5, choices=TIPO_LIQUIDAZIONE, null=False, blank=False, default='')
-    data = models.DateField(blank=False, null=False)
+    data = models.DateField(blank=True, null=True)
     importo = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
 
     class Meta:
@@ -313,8 +314,9 @@ class EventoContrattuale(models.Model):
     TIPO_EVENTO = Choices(
         (u'1', u'STIPULA_CONTRATTO', u'Stipula contratto'),
         (u'2', u'INIZIO_LAVORI', u'Inizio lavori'),
-        (u'3', u'FINE_LAVORI', u'Fine lavori come da Capitolato'),
+        (u'3', u'FINE_LAVORI_CAPITOLATO', u'Fine lavori (capitolato)'),
         (u'4', u'VERBALE_CONSEGNA', u'Verbale di consegna lavori'),
+        (u'5', u'FINE_LAVORI_CERTIFICATO', u'Fine lavori (certificato ultimazione lavori)'),
     )
     intervento = models.ForeignKey('Intervento', null=False, blank=False)
     tipologia = models.CharField(max_length=2, choices=TIPO_EVENTO, null=False, blank=False, default='')

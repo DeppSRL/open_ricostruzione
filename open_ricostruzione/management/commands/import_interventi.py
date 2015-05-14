@@ -376,10 +376,13 @@ class Command(BaseCommand):
 
                     #  import liquidazioni
                     for liquidazione in intervento_json['liquidazioni']:
+                        data_ord  = None
+                        if liquidazione['data_ord']:
+                            data_ord = datetime.strptime(liquidazione['data_ord'], self.date_format)
                         Liquidazione(**{
                             'intervento': intervento,
                             'tipologia': liquidazione['id_tipo_liq'],
-                            'data': datetime.strptime(liquidazione['data_ord'], self.date_format),
+                            'data': data_ord,
                             'importo': Decimal(liquidazione['imp_ord'])
                         }).save()
 
