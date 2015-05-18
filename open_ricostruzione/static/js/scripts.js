@@ -157,13 +157,13 @@ function initialize_status_bar(){
     $(".div-bar .interventi p span").html(interventi);
     $(".div-bar .lavori-in-corso p span").html(lavori_corso);
     $(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
+
 }
 
 
 $( document ).ready(function() {
     var page = $("body").attr('id');
-    console.log("page", page);
-    
+
     switch (page) {
         case "index":
             gestione_cerchi_top();
@@ -208,6 +208,9 @@ $( document ).ready(function() {
             initialize_status_bar();
             break;
         case "soggetto":
+            initialize_status_bar();
+            break;
+        case "impresa":
             initialize_status_bar();
             break;
 
