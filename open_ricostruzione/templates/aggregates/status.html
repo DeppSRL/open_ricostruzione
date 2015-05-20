@@ -8,28 +8,33 @@
 
             <div class="col-md-12" style="margin-top:20px;" id="status">
                <div class="row">
-                    <div class="col-md-4">
-                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}">
+                   {% if not impresa  %}
+                       <div class="col-md-4">
+                           <a href="{% url 'lista-interventi' %}?{{ base_filters }}">
 
-                            <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI PROGRAMMATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
-                            <div class="much programmati">
-                                <div class="triangle">
-                                    <span class="ico"></span> <span class="num">{{ status.programmazione.sum|italianize }}</span> €
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
-                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}&a_piano=True">
-                            <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI PIANIFICATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
-                            <div class="much pianificati">
-                                <div class="triangle">
-                                    <span class="ico"></span> <span class="num">{{ status.pianificazione.sum|italianize }}</span> €
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-md-4">
+                               <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI PROGRAMMATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                               <div class="much programmati">
+                                   <div class="triangle">
+                                       <span class="ico"></span> <span class="num">{{ status.programmazione.sum|italianize }}</span> €
+                                   </div>
+                               </div>
+                           </a>
+                       </div>
+                       <div class="col-md-4">
+                           <a href="{% url 'lista-interventi' %}?{{ base_filters }}&a_piano=True">
+                               <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI PIANIFICATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                               <div class="much pianificati">
+                                   <div class="triangle">
+                                       <span class="ico"></span> <span class="num">{{ status.pianificazione.sum|italianize }}</span> €
+                                   </div>
+                               </div>
+                           </a>
+                       </div>
+                       <div class="col-md-4">
+                   {% else %}
+                        <div class="col-md-4 col-md-offset-4">
+                   {% endif %}
+
                         <a href="{% url 'lista-interventi' %}?{{ base_filters }}&in_attuazione=True">
                             <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI IN ATTUAZIONE</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
                             <div class="much attuati">

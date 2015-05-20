@@ -27,6 +27,13 @@
 {% endblock %}
 
 
+{% block status %}
+        {#    execution status bar / status blocks #}
+        {% include 'aggregates/status.html' with impresa=True %}
+
+    {% endblock %}
+
+
 {% block thematic-map %}
 
     {% include 'modules/thematic_maps.html' with impresa=True  %}
