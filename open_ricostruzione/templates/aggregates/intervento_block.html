@@ -3,7 +3,7 @@
     <h2 id="top_intervento">
         <a href="{% url 'intervento-programma' slug=intprog.slug %}">
             <i class="ico-settori green {{ intprog.tipo_immobile.slug|css_class_name }}"></i>
-            {{ intprog.denominazione|title|truncatechars:80 }}
+            {{ intprog.denominazione|title|truncatechars:60 }}
         </a>
     </h2>
     <span class="euros" id="top_intervento">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
