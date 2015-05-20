@@ -28,10 +28,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-10 col-md-offset-1 text-center">
-                    <h1>
-                        LA RICOSTRUZIONE IN CIFRE
-                    </h1>
-                    <p>Ultimo aggiornamento: {{ ultimo_aggiornamento|date }} - {{ n_comuni_monitorati }} comuni monitorati su {{ n_comuni_cratere }}</p>
+                    {% block intro-text %}
+                        <h1>
+                            LA RICOSTRUZIONE IN CIFRE
+                        </h1>
+                        <p>Ultimo aggiornamento: {{ ultimo_aggiornamento|date }} - {{ n_comuni_monitorati }} comuni monitorati su {{ n_comuni_cratere }}</p>
+                    {% endblock %}
                 </div>
             </div>
         </div>
