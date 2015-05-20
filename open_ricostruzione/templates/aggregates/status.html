@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-md-4">
                         <a href="{% url 'lista-interventi' %}?{{ base_filters }}&in_attuazione=True">
-                            <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI ATTUATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                            <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI IN ATTUAZIONE</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
                             <div class="much attuati">
                                 <div class="triangle">
                                     <span class="ico"></span> <span class="num">{{ status.attuazione.sum|italianize }}</span> €
