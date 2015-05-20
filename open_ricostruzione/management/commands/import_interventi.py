@@ -145,18 +145,18 @@ class Command(BaseCommand):
 
     def get_intervento_stato(self, intervento_programma):
         # determines the general status and attuazione status for the interv_programma based on its relationships
-        stato = None
+        a_piano = False
+        in_attuazione = False
         stato_attuazione = None
 
         interventi_piano = InterventoPiano.objects.filter(intervento_programma=intervento_programma)
         interventi = Intervento.objects.filter(intervento_piano__in=interventi_piano)
 
         if len(interventi_piano) > 0:
+            a_piano = True
 
-            if len(interventi) == 0:
-                stato = InterventoProgramma.STATO.PIANO
-            else:
-                stato = InterventoProgramma.STATO.ATTUAZIONE
+            if len(interventi) > 0:
+                in_attuazione = True
 
                 # todo: qua si considera lo stato del primo intervento, quando aggiorneremo la logica andra' cambiato questo passaggio
                 intervento_stato = interventi.values_list('stato', flat=True)[0]
@@ -169,7 +169,7 @@ class Command(BaseCommand):
                 else:
                     self.logger.error(u"Stato attuazione not accepted")
 
-        return stato, stato_attuazione
+        return a_piano, in_attuazione, stato_attuazione
 
     def handle(self, *args, **options):
 
@@ -437,8 +437,8 @@ class Command(BaseCommand):
                         }).save()
 
             # set state and attuazione state for the considered intervento_programma
-            intervento_programma.stato, intervento_programma.stato_attuazione = self.get_intervento_stato(
-                intervento_programma)
+            intervento_programma.a_piano, intervento_programma.in_attuazione, intervento_programma.stato_attuazione = \
+                self.get_intervento_stato(intervento_programma)
             intervento_programma.save()
 
         self.logger.info("Imported {} interventi, {} of which were on ALTRI TERRITORI".format(interventi_counter,

@@ -30,8 +30,8 @@ class ListaInterventiView(FilterView):
     request = None
     filters = {}
     accepted_parameters = ['territorio__slug', 'tipo_immobile__slug', 'soggetto_attuatore__slug',
-                           'soggetto_attuatore__tipologia', 'stato', 'stato_attuazione',
-                           'interventopiano__intervento__imprese__slug','vari_territori']
+                           'soggetto_attuatore__tipologia', 'a_piano', 'in_attuazione', 'stato_attuazione',
+                           'interventopiano__intervento__imprese__slug','vari_territori','page']
     validation = True
 
     def get(self, request, *args, **kwargs):
@@ -80,8 +80,11 @@ class ListaInterventiView(FilterView):
             self.filters['sogg_attuatore_tipologia_filter'] = SoggettoAttuatore.TIPOLOGIA._display_map[
                 sogg_att_tipologia_slug]
 
-        stato_set = list(InterventoProgramma.STATO._db_values)
-        self.filters['stato_filter'] = self.get_parameter('stato', stato_set)
+        #status filters
+        bool_set = [u'True', u'False']
+        self.filters['a_piano_filter'] = self.get_parameter('a_piano', bool_set)
+        self.filters['in_attuazione_filter'] = self.get_parameter('in_attuazione', bool_set)
+
         stato_attuazione_set = list(InterventoProgramma.STATO_ATTUAZIONE._db_values)
         self.filters['stato_attuazione_filter'] = self.get_parameter('stato_attuazione', stato_attuazione_set)
 

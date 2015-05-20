@@ -4,6 +4,7 @@ import django_filters
 from open_ricostruzione.models import InterventoProgramma
 from territori.models import Territorio
 
+
 class TerritorioHasObject(SimpleListFilter):
     title = _('Territorio')
     parameter_name = 'territorio_has_object'
@@ -19,7 +20,7 @@ class TerritorioHasObject(SimpleListFilter):
         t_list = self.get_interested_territori()
         territori_tuple = ()
         for t in t_list:
-            territori_tuple+= ((t['slug'],"{} ({})".format(t['denominazione'],t['prov'])),)
+            territori_tuple += ((t['slug'], "{} ({})".format(t['denominazione'], t['prov'])),)
         return territori_tuple
 
     def queryset(self, request, queryset):
@@ -40,7 +41,7 @@ class TerritorioWithDonazione(TerritorioHasObject):
 
     def get_interested_territori(self):
         return Territorio.objects.filter(donazione__isnull=False, tipologia="C").order_by(
-            'denominazione').distinct().values('denominazione','prov','slug')
+            'denominazione').distinct().values('denominazione', 'prov', 'slug')
 
 
 class TerritorioWithIntervento(TerritorioHasObject):
@@ -49,13 +50,14 @@ class TerritorioWithIntervento(TerritorioHasObject):
 
     def get_interested_territori(self):
         return Territorio.objects.filter(interventoprogramma__isnull=False, tipologia="C").order_by(
-            'denominazione').distinct().values('denominazione','prov','slug')
+            'denominazione').distinct().values('denominazione', 'prov', 'slug')
 
 
 class InterventoProgrammaFilter(django_filters.FilterSet):
     class Meta:
         model = InterventoProgramma
-        order_by = ['denominazione', 'tipo_immobile__slug', 'territorio','stato','stato_attuazione']
+        order_by = ['denominazione', 'tipo_immobile__slug', 'territorio', 'a_piano', 'in_attuazione',
+                    'stato_attuazione']
         fields = {
             'territorio__slug': ['exact'],
             'vari_territori': ['exact'],
@@ -63,6 +65,7 @@ class InterventoProgrammaFilter(django_filters.FilterSet):
             'soggetto_attuatore__slug': ['exact'],
             'soggetto_attuatore__tipologia': ['exact'],
             'interventopiano__intervento__imprese__slug': ['exact'],
-            'stato': ['exact'],
+            'a_piano': ['exact'],
+            'in_attuazione': ['exact'],
             'stato_attuazione': ['exact'],
-             }
+        }

@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.conf import settings
 
 
@@ -34,7 +34,7 @@ class PianificatiQuerySet(models.QuerySet):
 
 class PianificatiManager(models.Manager):
     def get_queryset(self):
-        return PianificatiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.PIANO)
+        return PianificatiQuerySet(self.model, using=self._db).filter(interventopiano__isnull=False)
 
 
 class AttuazioneQuerySet(models.QuerySet):
@@ -51,7 +51,7 @@ class AttuazioneQuerySet(models.QuerySet):
 
 class AttuazioneManager(models.Manager):
     def get_queryset(self):
-        return AttuazioneQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.ATTUAZIONE)
+        return AttuazioneQuerySet(self.model, using=self._db).filter(in_attuazione=True)
 
 
 class ProgettazioneQuerySet(models.QuerySet):
@@ -69,7 +69,7 @@ class ProgettazioneQuerySet(models.QuerySet):
 class ProgettazioneManager(models.Manager):
     def get_queryset(self):
         return ProgettazioneQuerySet(self.model, using=self._db). \
-            filter(stato=self.model.STATO.ATTUAZIONE,
+            filter(in_attuazione=True,
                    stato_attuazione=self.model.STATO_ATTUAZIONE.PROGETTAZIONE)
 
 
@@ -88,7 +88,7 @@ class InCorsoQuerySet(models.QuerySet):
 class InCorsoManager(models.Manager):
     def get_queryset(self):
         return InCorsoQuerySet(self.model, using=self._db).\
-            filter(stato=self.model.STATO.ATTUAZIONE,stato_attuazione=self.model.STATO_ATTUAZIONE.IN_CORSO)
+            filter(in_attuazione=True,stato_attuazione=self.model.STATO_ATTUAZIONE.IN_CORSO)
 
 
 class ConclusiQuerySet(models.QuerySet):
@@ -105,7 +105,7 @@ class ConclusiQuerySet(models.QuerySet):
 
 class ConclusiManager(models.Manager):
     def get_queryset(self):
-        return ConclusiQuerySet(self.model, using=self._db).filter(stato=self.model.STATO.ATTUAZIONE,
+        return ConclusiQuerySet(self.model, using=self._db).filter(in_attuazione=True,
                                                                    stato_attuazione=self.model.STATO_ATTUAZIONE.CONCLUSO)
 
 # VARIANTI
