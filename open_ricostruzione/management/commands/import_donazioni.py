@@ -3,6 +3,7 @@ from pprint import pprint
 from django.core.management.base import BaseCommand
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.db.models import Q
 from django.db.transaction import set_autocommit, commit
 from django.conf import settings
 from open_ricostruzione.models import Donazione, DonazioneInterventoProgramma, InterventoProgramma, UltimoAggiornamento
@@ -10,6 +11,7 @@ from open_ricostruzione.utils import UnicodeDictReader
 from territori.models import Territorio
 from optparse import make_option
 import logging
+import csv
 from datetime import datetime
 
 
@@ -25,6 +27,17 @@ class RowData(object):
     logger = logging.getLogger('csvimport')
     # define date format
     date_formats = ['%Y-%M-%d', '%d/%M/%Y', '%Y-%M-%d']
+
+    # COLUMNS
+    # 'Tipologia del Cedente (1)': u'SPA',
+    # 'Denominazione Cedente (2)': u'PAM PANORAMA S.P.A.',
+    #  'Comune Ricevent': u'Baricella',
+    # 'Data Comunicazione (3)': u'06/07/2012',
+    # 'Importo': u'\xe2\x82\xac 54.759,00',
+    # 'Ulteriori informazioni': u''
+    # 'Tipologia (1=diretta,2=tramite regione)': u'2',
+    # 'n_ordine': u'',
+
     tipologia_cedente_map = {
         '': Donazione.TIPO_CEDENTE.ALTRO,
         'ALTRO': Donazione.TIPO_CEDENTE.ALTRO,
@@ -45,15 +58,37 @@ class RowData(object):
         'PROVINCE': Donazione.TIPO_CEDENTE.PROVINCE,
     }
 
-    # COLUMNS
-    # 'Tipologia del Cedente (1)': u'SPA',
-    # 'Denominazione Cedente (2)': u'PAM PANORAMA S.P.A.',
-    #  'Comune Ricevent': u'Baricella',
-    # 'Data Comunicazione (3)': u'06/07/2012',
-    # 'Importo': u'\xe2\x82\xac 54.759,00',
-    # 'Ulteriori informazioni': u''
-    # 'Tipologia (1=diretta,2=tramite regione)': u'2',
-    # 'n_ordine': u'',
+    annoying_chars = [
+        u'\xc2\x82u',## u',u',        # High code comma
+        u'\xc2\x84u',## u',,u',       # High code double comma
+        u'\xc2\x85u',## u'...u',      # Tripple dot
+        u'\xc2\x88u',## u'^u',        # High carat
+        u'\xc2\x91u',## u'\x27u',     # Forward single quote
+        u'\xc2\x92u',## u'\x27u',     # Reverse single quote
+        u'\xc2\x93u',## u'\x22u',     # Forward double quote
+        u'\xc2\x94u',## u'\x22u',     # Reverse double quote
+        u'\xc2\x95u',## u' u',
+        u'\xc2\x96u',## u'-u',        # High hyphen
+        u'\xc2\x97u',## u'--u',       # Double hyphen
+        u'\xc2\x99u',## u' u',
+        u'\xc2\xa0u',## u' u',
+        u'\xc2\xa6u',## u'|u',        # Split vertical bar
+        u'\xc2\xabu',## u'<<u',       # Double less than
+        u'\xc2\xbbu',## u'>>u',       # Double greater than
+        u'\xc2\xbcu',## u'1/4u',      # one quarter
+        u'\xc2\xbdu',## u'1/2u',      # one half
+        u'\xc2\xbeu',## u'3/4u',      # three quarters
+        u'\xca\xbfu',## u'\x27u',     # c-single quote
+        u'\xcc\xa8u',## u'u',         # modifier - under curve
+        u'\xcc\xb1u',## u'u'          # modifier - under line
+        u'\xe2\x82\xac',##
+        u'\x85',##
+        u'\xc2\x99',##
+        u'\xc2\x85',##
+        u' ',##
+        u'\u20ac',##
+    ]
+
 
     def __init__(self, row):
 
@@ -61,16 +96,17 @@ class RowData(object):
         self.tipologia_cedente = self.tipologia_cedente_map[tipologia_cedente_string]
         self.denominazione = row['Denominazione Cedente (2)'].strip()
         self.territorio = row.get('Comune Ricevent', None)
-        self.info = row['Ulteriori informazioni'].strip()
+        self.info = row.get('Ulteriori informazioni','').strip()
         if self.territorio is None:
             self.logger.error("Territorio cell is empty! Quit")
+            pprint(row)
             exit()
         else:
             self.territorio = self.territorio.strip()
 
         self.n_ordine = row.get('n_ordine', None)
         # date conversion
-        data = ''
+        data = None
         if row['Data Comunicazione (3)'] != '':
             date_imported = False
             for date_format in self.date_formats:
@@ -95,9 +131,15 @@ class RowData(object):
 
         self.data = data
         if row['Importo']:
-            self.importo = row['Importo'].strip().replace(u'\xe2\x82\xac', '').replace(' ', '').replace('.',
-                                                                                                        '').replace(
-                ',', '.')
+            self.importo = row['Importo'].strip()
+
+            for c in self.annoying_chars:
+                self.importo = self.importo.replace(c, "")
+
+            self.importo = self.importo.\
+                replace('.','').\
+                replace(',', '.')
+
             self.importo = Decimal(self.importo)
         else:
             self.importo = Decimal(0)
@@ -128,7 +170,8 @@ class Command(BaseCommand):
 
     input_file = ''
     delete = ''
-    encoding = 'UTF-8'
+    # encoding = 'UTF-8'
+    encoding = 'latin-1'
     logger = logging.getLogger('csvimport')
     unicode_reader = None
     invalid_values_counter = 0
@@ -184,7 +227,7 @@ class Command(BaseCommand):
 
         # read file
         try:
-            udr = UnicodeDictReader(f=open(self.input_file), encoding=self.encoding)
+            udr = UnicodeDictReader(f=open(self.input_file),dialect=csv.excel_tab, encoding=self.encoding)
         except IOError:
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
@@ -203,6 +246,7 @@ class Command(BaseCommand):
             rowdata = RowData(row)
             self.logger.info(u"Import donazione (Line {}) {}".format(row_counter, rowdata.denominazione))
 
+
             if rowdata.importo == Decimal(0):
                 self.handle_error(rowdata, row_counter, "Donazione has importo=0, skip")
                 continue
@@ -212,18 +256,7 @@ class Command(BaseCommand):
                 self.handle_error(rowdata, row_counter, "Donazione has incorrect tipologia_donazione, skip")
                 continue
 
-            if type(rowdata.data) == str:
-                wrong_date_counter += 1
-                self.handle_error(rowdata, row_counter, "Donazione has wrong date, skip")
-
-                # adds wrong date to dict
-                if rowdata.data not in wrong_dates:
-                    wrong_dates[rowdata.data] = 1
-                else:
-                    wrong_dates[rowdata.data] += 1
-
-                continue
-            elif rowdata.data is None:
+            if rowdata.data is None:
                 missing_date_counter += 1
                 self.handle_error(rowdata, row_counter, "Donazione has no date, skip")
                 continue
@@ -240,10 +273,11 @@ class Command(BaseCommand):
                 continue
 
             if rowdata.n_ordine:
+                n_ordine_zeropad = rowdata.n_ordine.zfill(6)
                 try:
-                    ip = InterventoProgramma.objects.get(n_ordine=rowdata.n_ordine)
+                    ip = InterventoProgramma.objects.get(Q(n_ordine=rowdata.n_ordine)|Q(n_ordine=n_ordine_zeropad))
                 except ObjectDoesNotExist:
-                    self.handle_error(rowdata, row_counter, "Cannot find interv.programma for n_ordine")
+                    self.handle_error(rowdata, row_counter, "Cannot find interv.programma for n_ordine:{}".format(rowdata.n_ordine))
                     continue
                 else:
                     self.logger.info("Found intervento:{} associated with donazione".format(ip.slug))
@@ -285,7 +319,7 @@ class Command(BaseCommand):
 
         if self.invalid_values_counter > 0:
             self.logger.error("********** Invalid data ***********")
-            self.logger.error("Could not import {} donazioni for wrong data".format(self.invalid_values_counter))
+            self.logger.error("Could not import {} donazioni for errors in the data".format(self.invalid_values_counter))
 
         if len(territori_not_found.keys()):
             self.logger.error("********** Territori not found ***********")
