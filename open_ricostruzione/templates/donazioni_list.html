@@ -31,7 +31,7 @@
 
                                 {% for ip in donazione.interventi_programma.all %}
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-12">
                                             <a href="{% url 'intervento-programma' ip.slug %}" style="font-size: 18px!important;">
                                                 {{ ip.denominazione }}
                                             </a>
