@@ -124,7 +124,8 @@ class DonazioniListView(ListView):
 
     def get_queryset(self):
         queryset = super(DonazioniListView, self).get_queryset().order_by('-importo')
-        return queryset.select_related('territorio')
+        queryset = super(DonazioniListView, self).get_queryset().filter(donazioneinterventoprogramma__isnull=False).order_by('-importo')
+        return queryset.select_related('territorio','donazione_intervento')
 
 
 class AggregatePageMixin(object):

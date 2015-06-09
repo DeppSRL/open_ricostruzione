@@ -7,7 +7,6 @@
 
     <section class="latest">
         <div class="container">
-
             <div class="row lists">
 
                 <div class="col-md-12">
@@ -16,17 +15,30 @@
                     <ul class="list">
                         {% for donazione in object_list %}
                             <li>
-                                <div class="col-md-4">
-                                    {% if donazione.tipologia_cedente == '4' %}
-                                        {{ donazione.get_tipologia_cedente_display|title }}
-                                    {% else %}
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {% if donazione.tipologia_cedente == '4' %}
+                                            {{ donazione.get_tipologia_cedente_display|title }}
+                                        {% else %}
 
-                                        {{ donazione.denominazione|title }}
-                                    {% endif %}
+                                            {{ donazione.denominazione|title }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-2"><span class="euros">{{ donazione.importo|italianize }} </span>€</div>
+                                    <div class="col-md-2">{{ donazione.data }}</div>
+                                    <div class="col-md-4">A favore del <a href="{% url 'localita' donazione.territorio.slug %}" >Comune di {{ donazione.territorio.nome_con_provincia|title }}</a></div>
                                 </div>
-                                <div class="col-md-2"><span class="euros">{{ donazione.importo|italianize }} </span>€</div>
-                                <div class="col-md-2">{{ donazione.data }}</div>
-                                <div class="col-md-4">A favore del Comune di {{ donazione.territorio.nome_con_provincia|title }}</div>
+
+                                {% for ip in donazione.interventi_programma.all %}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <a href="{% url 'intervento-programma' ip.slug %}" style="font-size: 18px!important;">
+                                                {{ ip.denominazione }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
                             </li>
                         {% endfor %}
 
