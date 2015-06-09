@@ -51,19 +51,35 @@
                     <ul class="list">
                         {% for obj in object_list %}
                             <li>
-                                <div class="col-md-12">
-                                    <a href="{% url 'intervento-programma' slug=obj.slug %}"><i class="glyphicon glyphicon-menu-right"></i> {{ obj.denominazione|title }}</a>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="{% url 'intervento-programma' slug=obj.slug %}"><i class="glyphicon glyphicon-menu-right"></i> {{ obj.denominazione|title }}</a>
+                                    </div>
                                 </div>
-                                <div class="col-md-5 secondrow">
-                                    {% if obj.vari_territori %}
-                                        <a href="{% url 'localita' 'vari-territori' %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> Vari territori</a>
-                                    {% else %}
-                                        <a href="{% url 'localita' obj.territorio.slug %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> {{ obj.territorio.nome_con_provincia }}</a>
-                                    {% endif %}
+                                <div class="row">
+                                    <div class="col-md-5 secondrow">
+                                        {% if obj.vari_territori %}
+                                            <a href="{% url 'localita' 'vari-territori' %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> Vari territori</a>
+                                        {% else %}
+                                            <a href="{% url 'localita' obj.territorio.slug %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> {{ obj.territorio.nome_con_provincia }}</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-3 secondrow">
+                                        <a href="{% url 'lista-interventi' %}?tipo_immobile__slug={{ obj.tipo_immobile.slug }}"><i class="ico-settori gray {{obj.tipo_immobile.slug|css_class_name }}"></i> {{ obj.tipo_immobile.denominazione|title }}</a>
+                                    </div>
+                                    <div class="col-md-2">
+                                        {% if obj.in_attuazione %}
+                                            In attuazione
+                                        {% elif obj.a_piano %}
+                                            A piano
+                                        {% else %}
+                                            A programma
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-2 text-right">
+                                        <span class="euros">{{ obj.importo_generale|italianize}} </span> €
+                                    </div>
                                 </div>
-                                <div class="col-md-4 secondrow">
-                                    <a href="{% url 'lista-interventi' %}?tipo_immobile__slug={{ obj.tipo_immobile.slug }}"><i class="ico-settori gray {{obj.tipo_immobile.slug|css_class_name }}"></i> {{ obj.tipo_immobile.denominazione|title }}</a></div>
-                                <div class="col-md-3 text-right"><span class="euros">{{ obj.importo_generale|italianize}} </span> €</div>
                             </li>
                         {% endfor %}
                     </ul>
