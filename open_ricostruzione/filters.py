@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 import django_filters
-from open_ricostruzione.models import InterventoProgramma
+from open_ricostruzione.models import InterventoProgramma, Donazione
 from territori.models import Territorio
 
 
@@ -68,4 +68,15 @@ class InterventoProgrammaFilter(django_filters.FilterSet):
             'a_piano': ['exact'],
             'in_attuazione': ['exact'],
             'stato_attuazione': ['exact'],
+        }
+
+
+class DonazioneFilter(django_filters.FilterSet):
+    class Meta:
+        model = Donazione
+        order_by = ['-importo']
+        fields = {
+            'tipologia_cedente': ['exact'],
+            'territorio__slug': ['exact'],
+            'interventi_programma__tipo_immobile__slug': ['exact'],
         }

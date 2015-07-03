@@ -11,7 +11,7 @@ from django.conf import settings
 from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
-from open_ricostruzione.filters import InterventoProgrammaFilter
+from open_ricostruzione.filters import InterventoProgrammaFilter, DonazioneFilter
 
 
 class PageNotFoundTemplateView(TemplateView):
@@ -22,45 +22,124 @@ class StaticPageView(TemplateView, ):
     template_name = 'static_page.html'
 
 
-class ListaInterventiView(FilterView):
-    template_name = 'interventi_list.html'
-    model = InterventoProgramma
-    paginate_by = 50
-    ip_filter = None
+class FilterListView(FilterView):
+    template_name = None
+    model = None
+    paginate_by = 100
     request = None
+    _filterset = None
     filters = {}
-    accepted_parameters = ['territorio__slug', 'tipo_immobile__slug', 'soggetto_attuatore__slug',
-                           'soggetto_attuatore__tipologia', 'a_piano', 'in_attuazione', 'stato_attuazione',
-                           'interventopiano__intervento__imprese__slug','vari_territori','page']
+    accepted_parameters = []
     validation = True
+
+    def get_filter_set(self):
+        raise NotImplemented
+
+    def check_request_params(self):
+        raise NotImplemented
 
     def get(self, request, *args, **kwargs):
         self.request = request
-        self.ip_filter = InterventoProgrammaFilter(self.request.GET,
-                                                   queryset=InterventoProgramma.objects.all().select_related(
-                                                       'territorio'))
+        self._filterset = self.get_filter_set()
 
         # in this way the objects coming out of the filter will be paginated
-        self.queryset = self.ip_filter.qs
+        self.queryset = self._filterset.qs
 
         # check GET parameters
         self.check_request_params()
         # if validation fails => redirect
         if self.validation is False:
             return HttpResponseRedirect(reverse('404'))
-        return super(ListaInterventiView, self).get(request, *args, **kwargs)
+        return super(FilterListView, self).get(request, *args, **kwargs)
+
+
+    def get_parameter(self, get_parameter, possible_values, **kwargs):
+        model = kwargs.get('model', None)
+        # get the parameters from the filter
+        # if the value is not None
+        # and is one of the possible values -> returns the value
+        # else returns false
+        slug_value = self._filterset.form.data.get(get_parameter, None)
+        if slug_value is None:
+            return slug_value
+        elif slug_value not in possible_values:
+            self.validation = False
+            return False
+
+        if model:
+            return model.objects.get(slug=slug_value)
+
+        return slug_value
+
+    def get_context_data(self, **kwargs):
+        context = super(FilterListView, self).get_context_data(**kwargs)
+        context['request'] = self.request
+        context.update(self.filters)
+        return context
+
+
+class DonazioniListView(FilterListView):
+    template_name = 'donazioni_list.html'
+    model = Donazione
+    don_filter = None
+    accepted_parameters = ['tipologia_cedente', 'territorio__slug', 'interventi_programma__tipo_immobile__slug']
+
+    def get_filter_set(self):
+        return DonazioneFilter(self.request.GET,
+                               queryset=Donazione.objects.all().select_related('territorio', 'donazione_intervento'))
 
     def check_request_params(self):
 
         # check that GET parameters are ONLY the ones in the accepted_params variable. if NOT -> redirect 404
-        if not (set(self.ip_filter.form.data.keys()) <= set(self.accepted_parameters)):
+        if not (set(self._filterset.form.data.keys()) <= set(self.accepted_parameters)):
+            self.validation = False
+
+        territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
+        self.filters['territorio_filter'] = self.get_parameter('territorio__slug', territori_set, model=Territorio)
+
+        tipo_immobile_set = TipoImmobile.objects.all().values_list('slug', flat=True)
+        self.filters['tipo_immobile_filter'] = self.get_parameter('interventi_programma__tipo_immobile__slug', tipo_immobile_set,
+                                                                  model=TipoImmobile)
+
+        tipologia_cedente_set = Donazione.TIPO_CEDENTE
+        tc_val = self.get_parameter('tipologia_cedente', tipologia_cedente_set)
+        # translate numeric value to string for display
+        if tc_val:
+            self.filters['tipologia_cedente_filter'] = tipologia_cedente_set._display_map[tc_val]
+
+    def get_queryset(self):
+        queryset = super(DonazioniListView, self).get_queryset().order_by('-importo')
+        return queryset.select_related('territorio', 'donazione_intervento')
+
+
+class InterventiListView(FilterListView):
+    template_name = 'interventi_list.html'
+    model = InterventoProgramma
+    paginate_by = 50
+    request = None
+    filters = {}
+    accepted_parameters = ['territorio__slug', 'tipo_immobile__slug', 'soggetto_attuatore__slug',
+                           'soggetto_attuatore__tipologia', 'a_piano', 'in_attuazione', 'stato_attuazione',
+                           'interventopiano__intervento__imprese__slug', 'vari_territori', 'page']
+    validation = True
+
+    def get_filter_set(self):
+        return InterventoProgrammaFilter(
+            self.request.GET,
+            queryset=InterventoProgramma.objects.all().select_related('territorio')
+        )
+
+    def check_request_params(self):
+
+        # check that GET parameters are ONLY the ones in the accepted_params variable. if NOT -> redirect 404
+        if not (set(self._filterset.form.data.keys()) <= set(self.accepted_parameters)):
             self.validation = False
 
         territori_set = Territorio.get_territori_cratere().values_list('slug', flat=True)
         self.filters['territorio_filter'] = self.get_parameter('territorio__slug', territori_set, model=Territorio)
 
         vari_territori_set = ['False', 'True']
-        self.filters['vari_territori_filter'] = self.get_parameter('vari_territori', vari_territori_set,)
+        self.filters['vari_territori_filter'] = self.get_parameter('vari_territori', vari_territori_set, )
 
         tipo_immobile_set = TipoImmobile.objects.all().values_list('slug', flat=True)
         self.filters['tipo_immobile_filter'] = self.get_parameter('tipo_immobile__slug', tipo_immobile_set,
@@ -91,40 +170,6 @@ class ListaInterventiView(FilterView):
         impresa_set = Impresa.objects.all().values_list('slug', flat=True)
         self.filters['impresa_filter'] = self.get_parameter('interventopiano__intervento__imprese__slug', impresa_set,
                                                             model=Impresa)
-
-    def get_parameter(self, get_parameter, possible_values, **kwargs):
-        model = kwargs.get('model', None)
-        # get the parameters from the filter
-        # if the value is not None
-        # and is one of the possible values -> returns the value
-        # else returns false
-        slug_value = self.ip_filter.form.data.get(get_parameter, None)
-        if slug_value is None:
-            return slug_value
-        elif slug_value not in possible_values:
-            self.validation = False
-            return False
-
-        if model:
-            return model.objects.get(slug=slug_value)
-
-        return slug_value
-
-    def get_context_data(self, **kwargs):
-        context = super(ListaInterventiView, self).get_context_data(**kwargs)
-        context['request'] = self.request
-        context.update(self.filters)
-        return context
-
-
-class DonazioniListView(ListView):
-    paginate_by = 100
-    model = Donazione
-    template_name = 'donazioni_list.html'
-
-    def get_queryset(self):
-        queryset = super(DonazioniListView, self).get_queryset().order_by('-importo')
-        return queryset.select_related('territorio','donazione_intervento')
 
 
 class AggregatePageMixin(object):
@@ -186,8 +231,8 @@ class AggregatePageMixin(object):
 
         for tipologia in Donazione.TIPO_CEDENTE:
             d = {'name': tipologia[1]}
-            d.update(
-                DonazioneInterventoProgramma.get_aggregates(tipologia=tipologia, **self.donazione_intervento_filters))
+            d.update(DonazioneInterventoProgramma.get_aggregates(donazione__tipologia_cedente=tipologia[0],
+                                                                 **self.donazione_intervento_filters))
             values.append(d)
 
         return values
@@ -380,7 +425,6 @@ class LocalitaView(TemplateView, AggregatePageMixin):
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
             bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
-
 
             context['map_bounds'] = \
                 {'sw':
@@ -647,7 +691,7 @@ class TipoSoggettoAttuatoreView(ListView):
         return context
 
 
-class ListaImpreseView(ListView):
+class ImpreseListView(ListView):
     template_name = 'imprese_list.html'
 
     def get_queryset(self):

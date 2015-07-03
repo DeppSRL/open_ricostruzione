@@ -11,6 +11,22 @@
 
                 <div class="col-md-12">
                 	<h2>Donazioni</h2>
+                    {% if filter.qs|length > 0 %}
+                        Trovate {{ filter.qs|length }} donazioni<br/>
+                    {% else %}
+                        <h3>
+                            Non sono stati trovate donazioni
+                        </h3>
+                    {% endif %}
+                    {% if tipologia_cedente_filter %}
+                        <strong>Tipologia cedente: {{ tipologia_cedente_filter|title}}</strong><br/>
+                    {% endif %}
+                    {% if territorio_filter %}
+                        <strong>Per il Comune di {{ territorio_filter.nome_con_provincia }}</strong><br/>
+                    {% endif %}
+                    {% if tipo_immobile_filter %}
+                        <strong>Per Tipo Immobile: {{ tipo_immobile_filter.denominazione|title }}</strong><br/>
+                    {% endif %}
 
                     <ul class="list">
                         {% for donazione in object_list %}
