@@ -234,7 +234,7 @@ class InterventoPiano(models.Model):
 
     def __unicode__(self):
         return u"{},{},{},{}".format(self.piano, self.intervento_programma.pk, self.id_fenice,
-                                     self.imp_a_piano)
+                                     self.imp_consolidato)
 
     class Meta:
         verbose_name_plural = u'Interventi a piano'

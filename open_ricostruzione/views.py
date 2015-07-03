@@ -490,7 +490,8 @@ class MapMixin(object):
         return map_values
 
     def get_danno_values(self, page_type):
-
+        # creates data struct for danno map:
+        # for each territorio gathers: n. interventi and sum of interventi
         cache_key = "{}_map_danno_values".format(page_type)
         danno_values = cache.get(cache_key, None)
 
@@ -516,6 +517,8 @@ class MapMixin(object):
         return danno_values
 
     def get_attuazione_values(self, page_type):
+        # creates data struct for attuazione map:
+        # for each territorio gathers: n. interventi and sum of interventi
 
         cache_key = "{}_map_attuazione_values".format(page_type)
         attuazione_values = cache.get(cache_key, None)
@@ -524,10 +527,10 @@ class MapMixin(object):
             attuazione_values = list(
                 Territorio.objects.filter(tipologia="C", regione="Emilia Romagna"). \
                     filter(**self.map_filters). \
-                    annotate(Sum('interventoprogramma__interventopiano__intervento__imp_congr_spesa')). \
+                    annotate(Sum('interventoprogramma__interventopiano__intervento__imp_consolidato')). \
                     annotate(Sum('interventoprogramma__importo_generale')). \
                     values('slug',
-                           'interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum',
+                           'interventoprogramma__interventopiano__intervento__imp_consolidato__sum',
                            'interventoprogramma__importo_generale__sum'))
 
             attuazione_n_interventi = Territorio.objects. \
@@ -543,7 +546,7 @@ class MapMixin(object):
             for item in attuazione_values:
                 item['value'] = 0
                 item['count'] = 0
-                valore_attuaz = item['interventoprogramma__interventopiano__intervento__imp_congr_spesa__sum']
+                valore_attuaz = item['interventoprogramma__interventopiano__intervento__imp_consolidato__sum']
                 item['sum'] = valore_attuaz
                 valore_progr = item['interventoprogramma__importo_generale__sum']
 

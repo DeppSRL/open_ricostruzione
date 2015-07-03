@@ -23,8 +23,8 @@ class ProgrammatiManager(models.Manager):
 class PianificatiQuerySet(models.QuerySet):
     def with_count(self):
         aggregate_dict = {
-            "sum": Sum('interventopiano__imp_a_piano'),
-            "count": Count('interventopiano__imp_a_piano')
+            "sum": Sum('interventopiano__imp_consolidato'),
+            "count": Count('interventopiano__imp_consolidato')
         }
         agg = self.aggregate(**aggregate_dict)
         if agg['sum'] is None:
@@ -40,8 +40,8 @@ class PianificatiManager(models.Manager):
 class AttuazioneQuerySet(models.QuerySet):
     def with_count(self):
         aggregate_dict = {
-            "sum": Sum('interventopiano__intervento__imp_congr_spesa'),
-            "count": Count('interventopiano__intervento__imp_congr_spesa')
+            "sum": Sum('interventopiano__intervento__imp_consolidato'),
+            "count": Count('interventopiano__intervento__imp_consolidato')
         }
         agg = self.aggregate(**aggregate_dict)
         if agg['sum'] is None:
@@ -54,58 +54,22 @@ class AttuazioneManager(models.Manager):
         return AttuazioneQuerySet(self.model, using=self._db).filter(in_attuazione=True)
 
 
-class ProgettazioneQuerySet(models.QuerySet):
-    def with_count(self):
-        aggregate_dict = {
-            "sum": Sum('interventopiano__intervento__imp_congr_spesa'),
-            "count": Count('interventopiano__intervento__imp_congr_spesa')
-        }
-        agg = self.aggregate(**aggregate_dict)
-        if agg['sum'] is None:
-            agg['sum'] = 0
-        return agg
-
-
 class ProgettazioneManager(models.Manager):
     def get_queryset(self):
-        return ProgettazioneQuerySet(self.model, using=self._db). \
+        return AttuazioneQuerySet(self.model, using=self._db). \
             filter(in_attuazione=True,
                    stato_attuazione=self.model.STATO_ATTUAZIONE.PROGETTAZIONE)
 
 
-class InCorsoQuerySet(models.QuerySet):
-    def with_count(self):
-
-        agg= {
-            'count':self.aggregate(count=Count('pk'))['count'],
-            'sum':self.aggregate(sum=Sum('interventopiano__intervento__quadroeconomicointervento__importo'))['sum']
-        }
-        if agg['sum'] is None:
-            agg['sum'] = 0
-        return agg
-
-
 class InCorsoManager(models.Manager):
     def get_queryset(self):
-        return InCorsoQuerySet(self.model, using=self._db).\
+        return AttuazioneQuerySet(self.model, using=self._db).\
             filter(in_attuazione=True,stato_attuazione=self.model.STATO_ATTUAZIONE.IN_CORSO)
-
-
-class ConclusiQuerySet(models.QuerySet):
-    def with_count(self):
-        aggregate_dict = {
-            "sum": Sum('interventopiano__intervento__imp_congr_spesa'),
-            "count": Count('interventopiano__intervento__imp_congr_spesa')
-        }
-        agg = self.aggregate(**aggregate_dict)
-        if agg['sum'] is None:
-            agg['sum'] = 0
-        return agg
 
 
 class ConclusiManager(models.Manager):
     def get_queryset(self):
-        return ConclusiQuerySet(self.model, using=self._db).filter(in_attuazione=True,
+        return AttuazioneQuerySet(self.model, using=self._db).filter(in_attuazione=True,
                                                                    stato_attuazione=self.model.STATO_ATTUAZIONE.CONCLUSO)
 
 # VARIANTI
