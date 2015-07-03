@@ -292,6 +292,9 @@ class Command(BaseCommand):
             intervento_programma.save()
             self.logger.info(u"Import Interv.Programma:{}".format(intervento_programma.slug))
 
+            # calculate importo cofinanziamente as difference between imp. generale and imp.programma
+            importo_cofinanziamenti= intervento_programma.importo_generale - intervento_programma.importo_a_programma
+
             # save cofinanziamenti
             for cofinanziamento in list(
                     filter(lambda x: x['importo'] > 0, intervento_a_progr_json['cofinanziamenti'])):
@@ -307,6 +310,9 @@ class Command(BaseCommand):
                 intervento_piano.intervento_programma = intervento_programma
                 intervento_piano.id_fenice = intervento_piano_json['id_interv_a_piano']
                 intervento_piano.imp_a_piano = intervento_piano_json['imp_a_piano']
+                # NOTE: this works only if there is only ONE intervento piano
+                # and ONE intervento for intervento programma
+                intervento_piano.imp_consolidato = intervento_piano.imp_a_piano + importo_cofinanziamenti
                 # gets or create a Piano
                 piano, is_created = Piano.objects.get_or_create(
                     id_fenice=intervento_piano_json['piano']['id_piano'],
@@ -325,6 +331,9 @@ class Command(BaseCommand):
                     intervento.imp_congr_spesa = Decimal(0)
                     if intervento_json['imp_congr_spesa']:
                         intervento.imp_congr_spesa = Decimal(intervento_json['imp_congr_spesa'])
+                        # NOTE: this works only if there is only ONE intervento piano
+                        # and ONE intervento for intervento programma
+                        intervento.imp_consolidato = intervento.imp_congr_spesa + importo_cofinanziamenti
 
                     intervento.denominazione = intervento_json['denominazione']
                     intervento.tipologia = intervento_json['id_tipo_interv']
