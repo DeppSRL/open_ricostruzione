@@ -219,7 +219,7 @@ class Command(BaseCommand):
         Impresa.objects.all().delete()
         Variante.objects.all().delete()
         self.logger.info("Done")
-
+        set_autocommit(False)
         for intervento_a_progr_json in data['interventi_a_programma']:
 
             interventi_counter += 1
@@ -293,7 +293,7 @@ class Command(BaseCommand):
             self.logger.info(u"Import Interv.Programma:{}".format(intervento_programma.slug))
 
             # calculate importo cofinanziamente as difference between imp. generale and imp.programma
-            importo_cofinanziamenti= intervento_programma.importo_generale - intervento_programma.importo_a_programma
+            importo_cofinanziamenti = intervento_programma.importo_generale - intervento_programma.importo_a_programma
 
             # save cofinanziamenti
             for cofinanziamento in list(
@@ -312,7 +312,7 @@ class Command(BaseCommand):
                 intervento_piano.imp_a_piano = intervento_piano_json['imp_a_piano']
                 # NOTE: this works only if there is only ONE intervento piano
                 # and ONE intervento for intervento programma
-                intervento_piano.imp_consolidato = intervento_piano.imp_a_piano + importo_cofinanziamenti
+                intervento_piano.imp_consolidato = Decimal(intervento_piano.imp_a_piano) + importo_cofinanziamenti
                 # gets or create a Piano
                 piano, is_created = Piano.objects.get_or_create(
                     id_fenice=intervento_piano_json['piano']['id_piano'],
@@ -329,6 +329,7 @@ class Command(BaseCommand):
                     intervento.is_variante = intervento_json['variante']
 
                     intervento.imp_congr_spesa = Decimal(0)
+                    intervento.imp_consolidato = Decimal(0)
                     if intervento_json['imp_congr_spesa']:
                         intervento.imp_congr_spesa = Decimal(intervento_json['imp_congr_spesa'])
                         # NOTE: this works only if there is only ONE intervento piano
@@ -450,6 +451,8 @@ class Command(BaseCommand):
                 self.get_intervento_stato(intervento_programma)
             intervento_programma.save()
 
+        commit()
+        set_autocommit(True)
         self.logger.info("Imported {} interventi, {} of which were on ALTRI TERRITORI".format(interventi_counter,
                                                                                               vari_territori_counter))
         UltimoAggiornamento.objects.update_or_create(
