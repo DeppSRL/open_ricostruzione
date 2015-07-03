@@ -228,6 +228,8 @@ class InterventoPiano(models.Model):
     intervento_programma = models.ForeignKey('InterventoProgramma', null=False, blank=False)
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
     imp_a_piano = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+    # imp. consolidato = importo a piano comprensivo dei cofinanziamenti del progetto
+    imp_consolidato = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     piano = models.ForeignKey('Piano', null=True, blank=True, default=None)
 
     def __unicode__(self):
@@ -266,6 +268,8 @@ class Intervento(models.Model):
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
     is_variante = models.BooleanField(null=False, blank=False, default=False)
     imp_congr_spesa = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
+    # imp. consolidato = importo in attuazione comprensivo dei cofinanziamenti del progetto
+    imp_consolidato = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     denominazione = models.TextField(max_length=400)
     tipologia = models.CharField(max_length=2, choices=TIPO_INTERVENTO, null=False, blank=False, default='')
     stato = models.CharField(max_length=3, choices=STATO_INTERVENTO, null=False, blank=False, default='')
