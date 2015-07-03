@@ -12,7 +12,15 @@
                        <div class="col-md-4">
                            <a href="{% url 'lista-interventi' %}?{{ base_filters }}">
 
-                               <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI PROGRAMMATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                               <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI PROGRAMMATI</strong>
+                               <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Il Programma delle Opere Pubbliche e dei Beni Culturali rappresenta
+                                    un’analisi completa della situazione degli edifici pubblici o di uso
+                                    pubblico danneggiati e dei finanziamenti a disposizione degli enti
+                                    attuatori pubblici, privati (uso pubblico), ecclesiastici, nella fase
+                                    post-emergenziale.">
+
+                               </i>
+
                                <div class="much programmati">
                                    <div class="triangle">
                                        <span class="ico"></span> <span class="num">{{ status.programmazione.sum|italianize }}</span> €
@@ -22,7 +30,12 @@
                        </div>
                        <div class="col-md-4">
                            <a href="{% url 'lista-interventi' %}?{{ base_filters }}&a_piano=True">
-                               <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI PIANIFICATI</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                               <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI PIANIFICATI</strong>
+                               <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Degli interventi inseriti nel Programma delle Opere Pubbliche e dei
+                                    Beni Culturali, annualmente alcuni vengono inseriti e finanziati nei
+                                    Piani Annual">
+
+                               </i>
                                <div class="much pianificati">
                                    <div class="triangle">
                                        <span class="ico"></span> <span class="num">{{ status.pianificazione.sum|italianize }}</span> €
@@ -36,7 +49,12 @@
                    {% endif %}
 
                         <a href="{% url 'lista-interventi' %}?{{ base_filters }}&in_attuazione=True">
-                            <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI IN ATTUAZIONE</strong> <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Lorem ipsum"></i>
+                            <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI IN ATTUAZIONE</strong>
+                            <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Gli interventi inseriti nei Piani annuali entrano in fase di
+                                attuazione che comporta la progettazione, la pubblicazione e
+                                aggiudicazione delle gare, l'esecuzione dei lavori e la loro consegna">
+
+                            </i>
                             <div class="much attuati">
                                 <div class="triangle">
                                     <span class="ico"></span> <span class="num">{{ status.attuazione.sum|italianize }}</span> €
