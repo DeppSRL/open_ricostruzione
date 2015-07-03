@@ -90,9 +90,6 @@ a:hover {
 .ico-settori.pubblici {
   background-position: -816px 0;
 }
-.ico-settori.altro {
-  background-position: -905px 0;
-}
 .programmazione .ico-settori {
   margin-left: -30px;
   margin-top: 10px;
@@ -862,6 +859,19 @@ ul.list li .euros {
   padding: 10px 0 2px 0;
   font-weight: 700;
 }
+.pagination {
+  text-align: center;
+}
+.pagination > li {
+  word-spacing: normal;
+  vertical-align: top;
+}
+.pagination > li > a {
+  color: #ffffff;
+}
+.pagination > li > a.active {
+  color: #94e0d5;
+}
 .div-bar p span {
   font-size: 24px;
   border: 1px solid #059e1e;
@@ -888,6 +898,389 @@ ul.list li .euros {
   background: #0cad26;
   width: 100%;
   height: 50px;
+}
+.pianificato-schedaA {
+  background: #FFF;
+  padding: 40px;
+  font-size: 22px;
+  text-align: center;
+}
+.pianificato-schedaA .opere-pubbliche {
+  padding: 15px 0;
+  font-weight: bold;
+}
+.pianificato-schedaA .pianificati {
+  padding: 6px;
+  background: #f4e73e;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.pianificato-schedaA .mappa {
+  border: 1px solid #000;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  height: 240px;
+  background: url('../img/mappa.jpg') 0 0 no-repeat;
+  background-size: cover;
+}
+.pianificato-schedaA .testo-mappa {
+  height: 60px;
+  border: 1px solid #000;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 10px 0;
+  font-size: 26px;
+}
+.pianificato-schedaA .viabilita {
+  height: 194px;
+  border-radius: 4px;
+  background: #999999;
+  font-size: 25px;
+}
+.pianificato-schedaA .viabilita img {
+  padding: 25px 0 20px 0;
+}
+.pianificato-schedaA a {
+  color: #fff;
+  font-size: 20px;
+}
+.pianificato-schedaA .etichetta {
+  color: #fff;
+  font-size: 14px;
+}
+.pianificato-schedaA .nome-proprietario {
+  background: #999999;
+  border-radius: 4px;
+  padding: 6px;
+}
+.pianificato-schedaA .nome-attuatore {
+  background: #999999;
+  border-radius: 4px;
+  padding: 6px;
+}
+.pianificato-schedaA .nome-lavoro {
+  background: #999999;
+  border-radius: 4px;
+  padding: 21px 0 30px 0;
+  clear: both;
+  margin: 15px 0;
+}
+.pianificato-schedaA .nome-lavoro a {
+  font-size: 30px;
+  padding-bottom: 15px;
+}
+.importi-intervento1 {
+  border-top: 1px solid #000;
+}
+.importi-intervento1 h1 {
+  text-transform: none;
+  margin: 45px 0 85px 0;
+}
+.importi-intervento2 {
+  background: #e7f2e8;
+}
+.importi-intervento2 .importi {
+  background: #129e1e;
+  border-radius: 8px;
+  margin-top: -50px;
+}
+.importi-intervento2 .importi .label-importo {
+  color: #fff;
+  font-size: 24px;
+  padding-top: 10px;
+}
+.importi-intervento2 .importi .importo1 {
+  color: #fff;
+  font-size: 40px;
+}
+.importi-intervento2 .importi .importo2 {
+  color: #fff;
+  font-size: 30px;
+  position: relative;
+}
+.importi-intervento2 .importi .importo3 {
+  background: #188121;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.importi-intervento2 .importi .importo3 .label-importo {
+  padding: 0;
+}
+.importi-intervento2 .importi .importo3 .glyphicon {
+  font-size: 20px;
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  color: #94c598;
+}
+.importi-intervento2 .importi .importo4 {
+  background: #188121;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.importi-intervento2 .importi .importo4 .label-importo {
+  padding: 0;
+}
+.importi-intervento2 .importi .importo4 .glyphicon {
+  font-size: 20px;
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  color: #94c598;
+}
+.importi-intervento2 .importi .acconto {
+  background: #308e38;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  color: #fff;
+}
+.schedaB .importo3 {
+  padding: 12px 0;
+}
+.box-dati {
+  overflow: hidden;
+  height: 0;
+  margin-top: 30px;
+}
+.box-dati table {
+  float: right;
+}
+.box-dati table th {
+  width: 150px;
+  text-align: right;
+  font-size: 20px;
+  font-weight: normal;
+  position: relative;
+}
+.box-dati table th .glyphicon {
+  position: absolute;
+  right: -48px;
+  top: 5px;
+  display: block;
+  z-index: 999;
+}
+.box-dati-cofinanziati {
+  overflow: hidden;
+  height: 0;
+  background: #fff;
+}
+.box-dati-cofinanziati table {
+  float: right;
+}
+.box-dati-cofinanziati table th {
+  width: 150px;
+  text-align: right;
+  font-size: 20px;
+  font-weight: normal;
+}
+.box-dati-cofinanziati h3 {
+  background: #e7f2e8;
+  margin: 0;
+  padding: 25px 0 5px 0;
+}
+.box-dati-cofinanziati hr {
+  margin: 10px 0 5px 0;
+  border-color: #000;
+}
+.box-dati-cofinanziati span {
+  color: #00b200;
+  font-size: 16px;
+}
+.box-dati-liquidati {
+  overflow: hidden;
+  height: 0;
+  margin-top: 30px;
+}
+.box-dati-liquidati table {
+  float: right;
+}
+.box-dati-liquidati table th {
+  width: 150px;
+  text-align: right;
+  font-size: 20px;
+  font-weight: normal;
+}
+.box-dati-liquidati table .etichetta {
+  width: 350px !important;
+}
+.freccia-verde {
+  background: url('../img/freccia-verde.png') 0 0 no-repeat;
+  width: 63px;
+  height: 32px;
+  display: none;
+  position: absolute;
+  bottom: -18px;
+  left: calc(50% - 31px);
+}
+.freccia-verde-cofinanziati {
+  background: url('../img/freccia-verde.png') 0 0 no-repeat;
+  width: 63px;
+  height: 32px;
+  display: none;
+  position: absolute;
+  bottom: -18px;
+  left: calc(50% - 31px);
+}
+.freccia-verde-liquidati {
+  background: url('../img/freccia-verde.png') 0 0 no-repeat;
+  width: 63px;
+  height: 32px;
+  display: none;
+  position: absolute;
+  bottom: -19px;
+  left: calc(50% - 31px);
+}
+.box-quadro1 {
+  min-height: 100px;
+  display: flex;
+}
+.box-quadro1 .item-quadro1 {
+  width: 11%;
+  float: left;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 10px;
+  align-self: flex-end;
+}
+.box-quadro2 {
+  min-height: 100px;
+  display: flex;
+}
+.box-quadro2 .item-quadro2 {
+  width: 12.5%;
+  float: left;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 10px;
+  align-self: flex-end;
+}
+.box-quadro3 {
+  min-height: 100px;
+  display: flex;
+}
+.box-quadro3 .item-quadro3 {
+  width: 20%;
+  float: left;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 10px;
+  align-self: flex-end;
+}
+.avanzamento {
+  padding: 40px 0;
+}
+.avanzamento h1 {
+  text-transform: none;
+  margin-bottom: 40px;
+}
+.avanzamento .avanzamento-progetto {
+  margin: 0;
+  font-weight: 700;
+}
+.avanzamento .avanzamento-progetto .box {
+  padding: 0;
+  position: relative;
+  color: #fff;
+  font-size: 20px;
+  text-align: left;
+}
+.avanzamento .avanzamento-progetto .box .header {
+  background-color: #d0d0cf;
+  padding: 25px 10px 5px 35px;
+}
+.avanzamento .avanzamento-progetto .box .lista {
+  padding: 10px;
+  font-size: 12px;
+  color: #a0a0a0;
+  list-style-type: none;
+}
+.avanzamento .avanzamento-progetto .box.state1 .header,
+.avanzamento .avanzamento-progetto .box.state2 .header {
+  text-transform: uppercase;
+}
+.avanzamento .avanzamento-progetto .box.state1 .header:after,
+.avanzamento .avanzamento-progetto .box.state2 .header:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  margin-left: 0;
+  top: 0.5em;
+  right: -1em;
+  box-sizing: border-box;
+  border: 1em solid;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  z-index: 999;
+}
+.avanzamento .avanzamento-progetto .box.state1 .header {
+  border-radius: 10px 0 0 10px;
+  background-color: #49a150;
+}
+.avanzamento .avanzamento-progetto .box.state1 .header:after {
+  border-color: transparent #49a150 #49a150 transparent;
+}
+.avanzamento .avanzamento-progetto .box.state1 .lista .done {
+  color: #49a150;
+}
+.avanzamento .avanzamento-progetto .box.state2 .header {
+  background-color: #168820;
+}
+.avanzamento .avanzamento-progetto .box.state2 .header:after {
+  border-color: transparent #168820 #168820 transparent;
+}
+.avanzamento .avanzamento-progetto .box.state2 .lista .done {
+  color: #168820;
+}
+.avanzamento .avanzamento-progetto .box.state3 .header {
+  border-radius: 0 10px 10px 0;
+  text-align: right;
+  padding-top: 8px;
+  background-color: #188121;
+}
+.avanzamento .avanzamento-progetto .box.state3 .header small {
+  line-height: 17px;
+  font-size: 12px;
+  display: block;
+}
+.avanzamento .avanzamento-progetto .box.state3 .header:after {
+  border-color: transparent #188121 #188121 transparent;
+}
+.avanzamento .avanzamento-progetto .box.state3 .lista .done {
+  color: #188121;
+}
+.avanzamento .avanzamento-progetto .box.to-begin .header {
+  background-color: #d0d0cf;
+}
+.avanzamento .avanzamento-progetto .box.to-begin .header:after {
+  border-color: transparent #d0d0cf #d0d0cf transparent;
+}
+.varianti {
+  padding: 40px 0;
+}
+.varianti h1 {
+  text-transform: none;
+}
+.varianti table {
+  width: 100%;
+  margin: 50px 0 100px 0;
+}
+.varianti table .etichetta {
+  text-align: left;
+}
+.varianti table .carico {
+  text-align: left;
+}
+.varianti table th {
+  font-size: 18px;
+  text-align: center;
+  color: #6c6c6c;
+  font-weight: normal;
+  padding: 10px 0;
+}
+.varianti table tr {
+  border-bottom: 1px dashed #8e8e8e;
 }
 @media (max-width: 767px) {
   

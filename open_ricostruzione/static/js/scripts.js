@@ -39,7 +39,7 @@ function gestione_cerchi_top() {
 
 function gestione_grafico_barre() {
     //########### GESTIONE "GRAFICO BARRE"
-
+//
 //    for (i in data_array_programmazione) {
 //        //console.log("altezza",(data_array_programmazione[i].programmati * 100) / totale_interventi_progr);
 //        var tot_row = data_array_programmazione[i].programmati + data_array_programmazione[i].pianificati + data_array_programmazione[i].attuali;
@@ -102,28 +102,18 @@ function grafico_cerchi_soggetti_attuatori() {
 }
 
 function grafico_pie_soggetti_attuatori() {
-        //stefano fix
-    if (typeof data_array_pie !== 'undefined') {
+    for (i = 0; i < data_array_pie.length; ++i) {
+        colore = $("#pie .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
 
-        for (i = 0; i < data_array_pie.length; ++i) {
-            colore = $("#pie .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
-
-            $(".lista-pie").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie[i]['name']+'" href="'+data_array_pie[i]['url']+'">'+data_array_pie[i]['name']+'</a></li>');
-        }
+        $(".lista-pie").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie[i]['name']+'" href="'+data_array_pie[i]['url']+'">'+data_array_pie[i]['name']+'</a></li>');
     }
-
 }
 
 function grafico_pie_donazioni() {
+    for (i = 0; i < data_array_pie_donazioni.length; ++i) {
+        colore = $("#pie-donazioni .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
 
-    //stefano fix
-    if (typeof data_array_pie_donazioni !== 'undefined') {
-
-        for (i = 0; i < data_array_pie_donazioni.length; ++i) {
-            colore = $("#pie-donazioni .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
-
-            $(".lista-pie-donazioni").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie_donazioni[i]['name']+'" href="'+data_array_pie_donazioni[i]['url']+'">'+data_array_pie_donazioni[i]['name']+'</a></li>');
-        }
+        $(".lista-pie-donazioni").append('<li><span style="background:'+colore+'"> </span><a id="'+data_array_pie_donazioni[i]['name']+'" href="'+data_array_pie_donazioni[i]['url']+'">'+data_array_pie_donazioni[i]['name']+'</a></li>');
     }
 }
 
@@ -142,28 +132,125 @@ function getTooltip(element, x, id) {
     );
 }
     
-function initialize_status_bar(){
-    var interventi = data_array_bar[0].y;
-    var lavori_corso = data_array_bar[1].y;
-    var lavori_conclusi = data_array_bar[2].y;
-    var somma_bar = interventi + lavori_corso + lavori_conclusi;
-    var minimum = 1;
-    var base = 97;
-
-    $(".div-bar .interventi").css("width", ((interventi * base) / somma_bar)+minimum + '%');
-    $(".div-bar .lavori-in-corso").css("width", ((lavori_corso * base) / somma_bar)+minimum + '%');
-    $(".div-bar .lavori-conclusi").css("width", ((lavori_conclusi * base) / somma_bar)+minimum +'%');
-
-    $(".div-bar .interventi p span").html(interventi);
-    $(".div-bar .lavori-in-corso p span").html(lavori_corso);
-    $(".div-bar .lavori-conclusi p span").html(lavori_conclusi);
-
-}
-
 
 $( document ).ready(function() {
-    var page = $("body").attr('id');
 
+var click = 0;
+var click_cofinanziati = 0;
+var click_liquidati = 0;
+var altezza = "";
+var altezza_cofinanziati = "";
+var altezza_liquidati = "";
+
+$(".link-dati").on("click", function(e) {
+	e.preventDefault();
+
+    if (click == 0) {
+        altezza = "200px";
+        $( ".freccia-verde" ).css("display","block");
+        click = 1;
+        $(".link-dati").removeClass("glyphicon-plus-sign");
+        $(".link-dati").addClass("glyphicon-minus-sign");
+    } else {
+        altezza = "0";
+        $( ".freccia-verde" ).css("display","none");
+        click = 0;
+        $(".link-dati").removeClass("glyphicon-minus-sign");
+        $(".link-dati").addClass("glyphicon-plus-sign");
+    }
+    
+    
+    $( ".box-dati" ).animate({
+        height: ""+altezza
+    }, 300, function() {
+      // Animation complete.
+    });
+
+});
+
+    
+$(".link-dati-cofinanziati").on("click", function(e) {
+	e.preventDefault();
+
+    if (click_cofinanziati == 0) {
+        altezza_cofinanziati = "550px";
+        $( ".freccia-verde-cofinanziati" ).css("display","block");
+        click_cofinanziati = 1;
+        $(".link-dati-cofinanziati").removeClass("glyphicon-plus-sign");
+        $(".link-dati-cofinanziati").addClass("glyphicon-minus-sign");
+        $( ".box-dati-cofinanziati" ).css("overflow","visible");
+
+    } else {
+        altezza_cofinanziati = "0";
+        $( ".freccia-verde-cofinanziati" ).css("display","none");
+        click_cofinanziati = 0;
+        $(".link-dati-cofinanziati").removeClass("glyphicon-minus-sign");
+        $(".link-dati-cofinanziati").addClass("glyphicon-plus-sign");
+        $( ".box-dati-cofinanziati" ).css("overflow","hidden");
+    }
+    
+    
+    $( ".box-dati-cofinanziati" ).animate({
+        height: ""+altezza_cofinanziati
+    }, 300, function() {
+      // Animation complete.
+    });
+    
+    $( ".box-dati-liquidati" ).animate({
+        height: "0"
+    }, 300, function() {
+      // Animation complete.
+    });
+    click_liquidati = 0;
+    $(".link-dati-liquidati").removeClass("glyphicon-minus-sign");
+    $(".link-dati-liquidati").addClass("glyphicon-plus-sign");
+    $(".freccia-verde-liquidati" ).css("display","none");
+});
+
+
+$(".link-dati-liquidati").on("click", function(e) {
+	e.preventDefault();
+
+    if (click_liquidati == 0) {
+        altezza_liquidati = "200px";
+        $( ".freccia-verde-liquidati" ).css("display","block");
+        click_liquidati = 1;
+        $(".link-dati-liquidati").removeClass("glyphicon-plus-sign");
+        $(".link-dati-liquidati").addClass("glyphicon-minus-sign");
+            $( ".box-dati-cofinanziati" ).css("overflow","hidden");
+
+    } else {
+        altezza_liquidati = "0";
+        $( ".freccia-verde-liquidati" ).css("display","none");
+        click_liquidati = 0;
+        $(".link-dati-liquidati").removeClass("glyphicon-minus-sign");
+        $(".link-dati-liquidati").addClass("glyphicon-plus-sign");
+    }
+    
+    
+    $( ".box-dati-liquidati" ).animate({
+        height: ""+altezza_liquidati
+    }, 300, function() {
+      // Animation complete.
+    });
+    
+    $( ".box-dati-cofinanziati" ).animate({
+        height: "0"
+    }, 300, function() {
+      // Animation complete.
+    });
+    click_cofinanziati = 0;
+    $(".link-dati-cofinanziati").removeClass("glyphicon-minus-sign");
+    $(".link-dati-cofinanziati").addClass("glyphicon-plus-sign");
+    $( ".freccia-verde-cofinanziati" ).css("display","none");
+
+});
+    
+    
+    
+    var page = $("body").attr('id');
+    console.log("page", page);
+    
     switch (page) {
         case "index":
             gestione_cerchi_top();
@@ -172,9 +259,20 @@ $( document ).ready(function() {
             grafico_pie_soggetti_attuatori();
             grafico_pie_donazioni();
             
-            initialize_status_bar();
+var interventi = data_array_bar[0].y;
+var lavori_corso = data_array_bar[1].y;
+var lavori_conclusi = data_array_bar[2].y;
+var somma_bar = interventi + lavori_corso + lavori_conclusi;
 
-            break;
+$(".div-bar .interventi").css("width", (interventi * 100) / somma_bar + '%');
+$(".div-bar .lavori-in-corso").css("width", (lavori_corso * 100) / somma_bar + '%');
+$(".div-bar .lavori-conclusi").css("width", (lavori_conclusi * 100) / somma_bar +'%');
+            
+$(".div-bar .interventi p span").html(interventi);
+$(".div-bar .lavori-in-corso p span").html(lavori_corso);    
+$(".div-bar .lavori-conclusi p span").html(lavori_conclusi);    
+
+            break
         case "territorio":
             gestione_cerchi_top();
             grafico_cerchi_soggetti_attuatori();
@@ -185,13 +283,12 @@ $( document ).ready(function() {
             chartPieTerr("pie-territorio-programmati",data_array_pie_territorio_programmati,'#ED450A');
             chartPieTerr("pie-territorio-pianificati",data_array_pie_territorio_pianificati,'#F4E73D');
             chartPieTerr("pie-territorio-attuati",data_array_pie_territorio_attuati,'#059e1e');
-
+    
             $(".percentuale-programmati").html(percentuale_comune_programmati);
             $(".percentuale-pianificati").html(percentuale_comune_pianificati);
             $(".percentuale-attuati").html(percentuale_comune_attuati);
-            initialize_status_bar();
 
-            break;
+            break
         case "tipologia":
             gestione_cerchi_top();
             grafico_cerchi_soggetti_attuatori();
@@ -205,15 +302,8 @@ $( document ).ready(function() {
             $(".percentuale-programmati").html(percentuale_tipo_programmati);
             $(".percentuale-pianificati").html(percentuale_tipo_pianificati);
             $(".percentuale-attuati").html(percentuale_tipo_attuati);
-            initialize_status_bar();
-            break;
-        case "soggetto":
-            initialize_status_bar();
-            break;
-        case "impresa":
-            initialize_status_bar();
-            break;
 
+            break
     }
     
 
