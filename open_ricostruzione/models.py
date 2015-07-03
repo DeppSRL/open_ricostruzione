@@ -550,7 +550,7 @@ class SoggettoAttuatore(Anagrafica):
     TIPOLOGIA = Choices(
         (u'1', u'ALTRO', u'Altro'),
         (u'2', u'AZIENDE', u'Aziende'),
-        (u'3', u'CHIESA', u'Chiesa'),
+        (u'3', u'ENTI_RELIGIOSI', u'Enti religiosi'),
         (u'4', u'COMMISSARIO_DELEGATO', u'Commissario delegato'),
         (u'5', u'COMUNE', u'Comune'),
         (u'6', u'CONSORZIO_BONIFICA', u'Consorzio di Bonifica'),
