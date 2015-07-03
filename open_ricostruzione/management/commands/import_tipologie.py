@@ -196,8 +196,8 @@ class Command(BaseCommand):
             sa_slug = slugify(s_attuatori_json['nome'])
             sa_slug_alternative = u"{}_2".format(sa_slug)
             if tipologia == u'':
-                self.logger.error("Soggetto attuatore: cannot find tipologia ORIC for id_fenice:'{}'".
-                format(s_attuatori_json['id']))
+                self.logger.error(u"Soggetto attuatore: cannot find tipologia ORIC for id_fenice:'{}', denominazione:'{}'".
+                    format(s_attuatori_json['id'], s_attuatori_json['nome'],))
             try:
 
                 SoggettoAttuatore.objects.update_or_create(

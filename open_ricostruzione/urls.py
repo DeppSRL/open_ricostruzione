@@ -4,7 +4,7 @@ from django.contrib import admin
 from rest_framework import routers
 from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
-    ListaImpreseView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, ListaInterventiView
+    ImpreseListView, ImpresaDetailView, InterventoProgrammaView, InterventoRedirectView, ImpresaRedirectView, InterventiListView
 
 from open_ricostruzione.viewsets import DonazioneViewSet, InterventoProgrammaViewSet
 
@@ -51,8 +51,8 @@ urlpatterns = patterns('',
                        url(r'^intervento_programma/(?P<slug>[-\w]+)/$', InterventoProgrammaView.as_view(),
                            name='intervento-programma'),
                        url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaDetailView.as_view(), name='impresa'),
-                       url(r'^lista_imprese/$', ListaImpreseView.as_view(), name='lista-imprese'),
-                       url(r'^lista_interventi/$', ListaInterventiView.as_view(), name='lista-interventi'),
+                       url(r'^lista_imprese/$', ImpreseListView.as_view(), name='lista-imprese'),
+                       url(r'^lista_interventi/$', InterventiListView.as_view(), name='lista-interventi'),
                        url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='donazioni'),
 )
 
