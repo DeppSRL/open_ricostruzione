@@ -170,7 +170,7 @@ class TipoImmobile(models.Model):
         return list(TipoImmobile.objects.all().values('denominazione', 'slug'))
 
     def __unicode__(self):
-        return u"{} ({})".format(TipoImmobile.TIPOLOGIA[self.tipologia], self.slug, )
+        return u"{}".format(TipoImmobile.TIPOLOGIA[self.tipologia], )
 
     class Meta:
         verbose_name_plural = u'Tipo Immobile'

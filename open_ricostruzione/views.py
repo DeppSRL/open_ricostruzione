@@ -8,7 +8,7 @@ from django.views.generic import TemplateView, DetailView, ListView, RedirectVie
 from django.db.models.aggregates import Count, Sum
 from django_filters.views import FilterView
 from django.conf import settings
-from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano
+from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano, Intervento
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
 from open_ricostruzione.filters import InterventoProgrammaFilter, DonazioneFilter
@@ -92,7 +92,7 @@ class SimpleMapMixin(object):
                     {'lat': self.territorio.gps_lat + bounds_width,
                      'lon': self.territorio.gps_lon + bounds_width,
                     },
-            }
+        }
 
 
 class ThematicMapMixin(object):
@@ -713,6 +713,8 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
     template_name = 'intervento_programma.html'
     intervento_programma = None
     intervento_piano = None
+    intervento = None
+    imprese = None
     territorio = None
 
     def get(self, request, *args, **kwargs):
@@ -727,13 +729,22 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
                 self.intervento_piano = InterventoPiano.objects.get(intervento_programma=self.intervento_programma)
             except ObjectDoesNotExist:
                 pass
+            else:
+                try:
+                    self.intervento = Intervento.objects.get(intervento_piano=self.intervento_piano)
+                except ObjectDoesNotExist:
+                    pass
+                else:
+                    self.imprese = self.intervento.imprese.all()
 
         return super(InterventoProgrammaView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(InterventoProgrammaView, self).get_context_data(**kwargs)
-        context['intervento_programma']=self.intervento_programma
-        context['intervento_piano']=self.intervento_piano
+        context['intervento_programma'] = self.intervento_programma
+        context['intervento_piano'] = self.intervento_piano
+        context['intervento'] = self.intervento
+        context['imprese'] = self.imprese
 
         self.territorio = self.intervento_programma.territorio
         if self.intervento_programma.vari_territori is False:

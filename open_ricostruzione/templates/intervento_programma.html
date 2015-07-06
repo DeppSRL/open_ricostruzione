@@ -118,8 +118,10 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="nome-lavoro">
-                                        <div class="etichetta">Impresa</div>
-                                        <a href="#">Nome dell'impresa al lavoro</a>
+                                        <div class="etichetta">Imprese</div>
+                                        {% for impresa in imprese %}
+                                            <a href="{% url 'impresa' impresa.slug %}">{{ impresa.ragione_sociale }}</a><br/>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
