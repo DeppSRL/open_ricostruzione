@@ -128,7 +128,11 @@
                         <div class="col-md-6 text-center">
                             <div class="importo3">
                                 <div class="label-importo">di cui cofinanziati</div>
-                                <div class="importo2">€ {{ importo_cofinanziamento|italianize }} <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati">&nbsp;</span></a></div>
+                                <div class="importo2">€ {{ importo_cofinanziamento|italianize }}
+                                    {% if cofinanziamenti|length > 0 %}
+                                        <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati">&nbsp;</span></a>
+                                    {% endif %}
+                                </div>
                                 <div class="freccia-verde"></div>
                             </div>
                         </div>
