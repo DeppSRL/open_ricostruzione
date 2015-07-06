@@ -28,6 +28,7 @@
         {% endif %}
 
         <link href="{% static 'css/screen.css'%}" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'vendor/leaflet/leaflet.css' %}" />
 
 
         <!-- Le javascript
@@ -44,6 +45,7 @@
         <script src="{% static 'vendor/highcharts/js/highcharts2.js'%}"></script>
         <script src="{% static 'vendor/highcharts/js/highcharts-more.js'%}"></script>
         <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js'%}"></script>
+        <script src="{% static 'vendor/leaflet/leaflet.js' %}"></script>
 
         {% block extra-css %}
         {% endblock %}

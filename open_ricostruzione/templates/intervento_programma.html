@@ -4,49 +4,195 @@
     {{ object.denominazione }}
 {% endblock %}
 
+{#{% block content %}#}
+{#    <div class="container">#}
+{#        <div class="row">#}
+{#            <div class="col-md-12"><h1>{{ object.denominazione }}</h1></div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">#}
+{#                {% if object.vari_territori %}#}
+{#                    Intervento su vari territori#}
+{#                {% else %}#}
+{#                    {{ object.territorio.nome_con_provincia }}#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">Programma: {{ object.programma }}</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">id fenice: {{ object.id_fenice }}</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">soggetto attuatore: {{ object.soggetto_attuatore.denominazione }}</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">Importo generale: {{ object.importo_generale }} euro</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">Importo a programma: {{ object.importo_a_programma }} euro</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">Tipo immobile:{{ object.tipo_immobile }}</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">#}
+{#                {{ object.stato|default_if_none:"A programma" }}#}
+{#            </div>#}
+{##}
+{#        </div>#}
+{#        {% if object.stato_attuazione %}#}
+{#            <div class="row">#}
+{#                <div class="col-md-12">Stato dell'attuazione: {{ object.stato_attuazione }}</div>#}
+{#            </div>#}
+{#        {% endif %}#}
+{#    </div>#}
+{#{% endblock %}#}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12"><h1>{{ object.denominazione }}</h1></div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                {% if object.vari_territori %}
-                    Intervento su vari territori
-                {% else %}
-                    {{ object.territorio.nome_con_provincia }}
-                {% endif %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">Programma: {{ object.programma }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">id fenice: {{ object.id_fenice }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">soggetto attuatore: {{ object.soggetto_attuatore.denominazione }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">Importo generale: {{ object.importo_generale }} euro</div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">Importo a programma: {{ object.importo_a_programma }} euro</div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">Tipo immobile:{{ object.tipo_immobile }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                {{ object.stato|default_if_none:"A programma" }}
-            </div>
 
-        </div>
-        {% if object.stato_attuazione %}
-            <div class="row">
-                <div class="col-md-12">Stato dell'attuazione: {{ object.stato_attuazione }}</div>
+
+    <section class="container intro">
+     	<div class="row">
+        	<div class="col-md-10 col-md-offset-1 text-center">
+            	{{ object.denominazione }}
+				<div class="collapse" id="introCollapse">
+                	aa
+                </div>
+
             </div>
-        {% endif %}
-    </div>
+        </div>
+    </section>
+
+
+    <section class="pianificato-schedaA">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+
+                    <div class="mappa">
+                        {% if not vari_territori %}
+                            {% include 'modules/localita_map.html' %}
+                        {% endif %}
+                    </div>
+                    <div class="testo-mappa">
+                        {% if object.vari_territori %}
+                            Intervento su vari territori
+                        {% else %}
+                            {{ object.territorio.nome_con_provincia }}
+                        {% endif %}
+                    </div>
+				</div>
+
+                <div class="col-md-8">
+                    <div class="pianificati">
+                        <span>PIANIFICATO</span>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-12 opere-pubbliche">
+                            Piano annuale 2013-2014 opere pubbliche
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="viabilita">
+                                <img src="img/strada-cosa.png">
+                                Viabilità
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="nome-proprietario">
+                                        <div class="etichetta">Prorpietario</div>
+                                        <a href="#">Nome del proprietario</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="nome-attuatore">
+                                        <div class="etichetta">Soggetto Attuatore</div>
+                                        <a href="#">Nome del soggetto attuatore</a>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="nome-lavoro">
+                                        <div class="etichetta">Impresa</div>
+                                        <a href="#">Nome dell'impresa al lavoro</a>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="importi-intervento1">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h1>Gli importi dell'intervento</h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="importi-intervento2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 text-center importi">
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <div class="label-importo">Importo totale</div>
+                            <div class="importo1">€ 25.127.354,12</div>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <div class="importo3">
+                                <div class="label-importo">di cui cofinanziati</div>
+                                <div class="importo2">€ 25.127.354,12 <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati">&nbsp;</span></a></div>
+                                <div class="freccia-verde"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8 col-md-offset-2 text-right box-dati">
+                    <table>
+                        <tr>
+                            <th>Assicurazione</th>
+                            <th>€ 1.123.456,00</th>
+                        </tr>
+                        <tr>
+                            <th><a href="#">Donazioni <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a></th>
+                            <th>€ 1.123.456,00</th>
+                        </tr>
+                        <tr>
+                            <th>Opere provvisionali</th>
+                            <th>€ 1.123.456,00</th>
+                        </tr>
+                        <tr>
+                            <th>Messa in sicurezza</th>
+                            <th>€ 1.123.456,00</th>
+                        </tr>
+                        <tr>
+                            <th>Fondi propri</th>
+                            <th>€ 1.123.456,00</th>
+                        </tr>
+                        <tr>
+                            <th>Edilizia scolastica</th>
+                            <th>€ 1.123.456,00</th>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
