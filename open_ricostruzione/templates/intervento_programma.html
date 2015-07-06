@@ -71,11 +71,9 @@
             <div class="row">
                 <div class="col-md-4">
 
-                    <div class="mappa">
-                        {% if not vari_territori %}
-                            {% include 'modules/localita_map.html' %}
-                        {% endif %}
-                    </div>
+                    {% if not vari_territori %}
+                        {% include 'modules/simple_map.html' %}
+                    {% endif %}
                     <div class="testo-mappa">
                         {% if object.vari_territori %}
                             Intervento su vari territori

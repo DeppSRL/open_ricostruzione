@@ -272,7 +272,7 @@ STATI_CONCLUSI = [u'11',]
 
 # tipologia cedente in PRIVATE_TIPOLOGIA_CEDENTE are private citizens'ones so the Denominazione will be obscured
 PRIVATE_TIPOLOGIA_CEDENTE = [u'4', ]
-LOCALITA_MAP_BOUNDS_WIDTH = 0.1
+LOCALITA_MAP_BOUNDS_WIDTH = 0.02
 
 THEMATIC_MAP_BOUNDS = {
     'sw': {'lat': 43.714294, 'lon': 8.316650},
