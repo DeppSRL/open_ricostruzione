@@ -1,38 +1,10 @@
 {% extends 'base.html' %}
+{% load italianize %}
 
 {% block head-title %}
     {{ intervento_programma.denominazione }}
 {% endblock %}
 
-{#{% block content %}#}
-{#    <div class="container">#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Programma: {{ intervento_programma.programma }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">id fenice: {{ intervento_programma.id_fenice }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">soggetto attuatore: {{ intervento_programma.soggetto_attuatore.denominazione }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Importo generale: {{ intervento_programma.importo_generale }} euro</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Importo a programma: {{ intervento_programma.importo_a_programma }} euro</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Tipo immobile:{{ intervento_programma.tipo_immobile }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">#}
-{#                {{ intervento_programma.stato|default_if_none:"A programma" }}#}
-{#            </div>#}
-{##}
-{#        </div>#}
-
-{#    </div>#}
-{#{% endblock %}#}
 
 {% block content %}
 
@@ -149,12 +121,12 @@
                     <div class="row">
                         <div class="col-md-6 text-center">
                             <div class="label-importo">Importo totale</div>
-                            <div class="importo1">€ 25.127.354,12</div>
+                            <div class="importo1">€ {{ importo|italianize }}</div>
                         </div>
                         <div class="col-md-6 text-center">
                             <div class="importo3">
                                 <div class="label-importo">di cui cofinanziati</div>
-                                <div class="importo2">€ 25.127.354,12 <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati">&nbsp;</span></a></div>
+                                <div class="importo2">€ {{ importo_cofinanziamento|italianize }} <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati">&nbsp;</span></a></div>
                                 <div class="freccia-verde"></div>
                             </div>
                         </div>
@@ -163,30 +135,19 @@
 
                 <div class="col-md-8 col-md-offset-2 text-right box-dati">
                     <table>
-                        <tr>
-                            <th>Assicurazione</th>
-                            <th>€ 1.123.456,00</th>
-                        </tr>
-                        <tr>
-                            <th><a href="#">Donazioni <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a></th>
-                            <th>€ 1.123.456,00</th>
-                        </tr>
-                        <tr>
-                            <th>Opere provvisionali</th>
-                            <th>€ 1.123.456,00</th>
-                        </tr>
-                        <tr>
-                            <th>Messa in sicurezza</th>
-                            <th>€ 1.123.456,00</th>
-                        </tr>
-                        <tr>
-                            <th>Fondi propri</th>
-                            <th>€ 1.123.456,00</th>
-                        </tr>
-                        <tr>
-                            <th>Edilizia scolastica</th>
-                            <th>€ 1.123.456,00</th>
-                        </tr>
+                        {% for cof in cofinanziamenti %}
+                            <tr>
+                                <th>
+                                    {% if cof.tipologia == '2' %}
+                                        <a href="#">{{ cof.get_tipologia_display|title }} <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a>
+                                    {% else %}
+                                        {{ cof.get_tipologia_display|title }}
+                                    {% endif %}
+                                </th>
+                                <th>€ {{ cof.importo|italianize }}</th>
+                            </tr>
+                        {% endfor %}
+
                     </table>
 
                 </div>

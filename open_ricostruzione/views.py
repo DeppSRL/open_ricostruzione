@@ -8,7 +8,7 @@ from django.views.generic import TemplateView, DetailView, ListView, RedirectVie
 from django.db.models.aggregates import Count, Sum
 from django_filters.views import FilterView
 from django.conf import settings
-from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano, Intervento
+from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano, Intervento, Cofinanziamento
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
 from open_ricostruzione.filters import InterventoProgrammaFilter, DonazioneFilter
@@ -711,11 +711,12 @@ class ImpreseListView(ListView):
 class InterventoProgrammaView(DetailView, SimpleMapMixin):
     model = InterventoProgramma
     template_name = 'intervento_programma.html'
+    territorio = None
     intervento_programma = None
     intervento_piano = None
     intervento = None
     imprese = None
-    territorio = None
+    cofinanziamenti = None
 
     def get(self, request, *args, **kwargs):
         # get data from the request
@@ -725,6 +726,8 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
         except ObjectDoesNotExist:
             return HttpResponseRedirect(reverse('404'))
         else:
+
+            self.cofinanziamenti = Cofinanziamento.objects.filter(intervento_programma=self.intervento_programma)
             try:
                 self.intervento_piano = InterventoPiano.objects.get(intervento_programma=self.intervento_programma)
             except ObjectDoesNotExist:
@@ -745,6 +748,18 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
         context['intervento_piano'] = self.intervento_piano
         context['intervento'] = self.intervento
         context['imprese'] = self.imprese
+
+        importo = 0
+        if self.intervento_programma.stato == InterventoProgramma.STATO.PROGRAMMA:
+            importo = self.intervento_programma.importo_generale
+        elif self.intervento_programma.stato == InterventoProgramma.STATO.PIANO:
+            importo = self.intervento_piano.imp_consolidato
+        elif self.intervento_programma.stato == InterventoProgramma.STATO.ATTUAZIONE:
+            importo = self.intervento.imp_consolidato
+
+        context['importo']=importo
+        context['importo_cofinanziamento'] = self.intervento_programma.importo_generale-self.intervento_programma.importo_a_programma
+        context['cofinanziamenti'] = self.cofinanziamenti
 
         self.territorio = self.intervento_programma.territorio
         if self.intervento_programma.vari_territori is False:
