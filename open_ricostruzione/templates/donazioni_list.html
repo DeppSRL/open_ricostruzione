@@ -13,10 +13,6 @@
                 	<h2>Donazioni</h2>
                     {% if filter.qs|length > 0 %}
                         Trovate {{ filter.qs|length }} donazioni<br/>
-                    {% else %}
-                        <h3>
-                            Non sono stati trovate donazioni
-                        </h3>
                     {% endif %}
                     {% if tipologia_cedente_filter %}
                         <strong>Tipologia cedente: {{ tipologia_cedente_filter|title}}</strong><br/>
@@ -27,41 +23,53 @@
                     {% if tipo_immobile_filter %}
                         <strong>Per Tipo Immobile: {{ tipo_immobile_filter.denominazione|title }}</strong><br/>
                     {% endif %}
+                    {% if interventi_programma_filter %}
+                        <strong>Per Intervento a programma: {{ interventi_programma_filter.denominazione|title }}</strong><br/>
+                    {% endif %}
 
                     <ul class="list">
-                        {% for donazione in object_list %}
-                            <li>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        {% if donazione.tipologia_cedente == '4' %}
-                                            {{ donazione.get_tipologia_cedente_display|title }}
-                                        {% else %}
-
-                                            {{ donazione.denominazione|title }}
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-md-3">
-
-                                        {{ donazione.get_tipologia_cedente_display|title }}
-
-                                    </div>
-                                    <div class="col-md-2"><span class="euros">{{ donazione.importo|italianize }} </span>€</div>
-                                    <div class="col-md-2">{{ donazione.data }}</div>
-                                    <div class="col-md-4">A favore del <a href="{% url 'localita' donazione.territorio.slug %}" >Comune di {{ donazione.territorio.nome_con_provincia|title }}</a></div>
-                                </div>
-
-                                {% for ip in donazione.interventi_programma.all %}
+                        {% if filter.qs|length > 0 %}
+                            {% for donazione in object_list %}
+                                <li>
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <a href="{% url 'intervento-programma' ip.slug %}" style="font-size: 18px!important;">
-                                                {{ ip.denominazione }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+                                        <div class="col-md-4">
+                                            {% if donazione.tipologia_cedente == '4' %}
+                                                {{ donazione.get_tipologia_cedente_display|title }}
+                                            {% else %}
 
+                                                {{ donazione.denominazione|title }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-3">
+
+                                            {{ donazione.get_tipologia_cedente_display|title }}
+
+                                        </div>
+                                        <div class="col-md-2"><span class="euros">{{ donazione.importo|italianize }} </span>€</div>
+                                        <div class="col-md-2">{{ donazione.data }}</div>
+                                        <div class="col-md-4">A favore del <a href="{% url 'localita' donazione.territorio.slug %}" >Comune di {{ donazione.territorio.nome_con_provincia|title }}</a></div>
+                                    </div>
+
+                                    {% for ip in donazione.interventi_programma.all %}
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href="{% url 'intervento-programma' ip.slug %}" style="font-size: 18px!important;">
+                                                    {{ ip.denominazione }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li>
+                                <h3>
+                                    Non sono stati trovate donazioni
+                                </h3>
                             </li>
-                        {% endfor %}
+                        {% endif %}
+
 
                     </ul>
                 </div>

@@ -88,14 +88,16 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="nome-lavoro">
-                                        <div class="etichetta">Imprese</div>
-                                        {% for impresa in imprese %}
-                                            <a href="{% url 'impresa' impresa.slug %}">{{ impresa.ragione_sociale }}</a><br/>
-                                        {% endfor %}
+                                {% if imprese %}
+                                    <div class="col-md-12">
+                                        <div class="nome-lavoro">
+                                            <div class="etichetta">Imprese</div>
+                                            {% for impresa in imprese %}
+                                                <a href="{% url 'impresa' impresa.slug %}">{{ impresa.ragione_sociale }}</a><br/>
+                                            {% endfor %}
+                                        </div>
                                     </div>
-                                </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -139,7 +141,8 @@
                             <tr>
                                 <th>
                                     {% if cof.tipologia == '2' %}
-                                        <a href="#">{{ cof.get_tipologia_display|title }} <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a>
+                                        {#  tipologia donazioni has link to lista donazioni  #}
+                                        <a href="{% url 'lista-donazioni' %}?interventi_programma__slug={{ intervento_programma.slug }}">{{ cof.get_tipologia_display|title }} <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a>
                                     {% else %}
                                         {{ cof.get_tipologia_display|title }}
                                     {% endif %}

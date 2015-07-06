@@ -8,7 +8,7 @@ from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, H
 
 from open_ricostruzione.viewsets import DonazioneViewSet, InterventoProgrammaViewSet
 
-
+# API
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'interventi_programma', InterventoProgrammaViewSet)
@@ -53,7 +53,7 @@ urlpatterns = patterns('',
                        url(r'^impresa/(?P<slug>[-\w]+)/$', ImpresaDetailView.as_view(), name='impresa'),
                        url(r'^lista_imprese/$', ImpreseListView.as_view(), name='lista-imprese'),
                        url(r'^lista_interventi/$', InterventiListView.as_view(), name='lista-interventi'),
-                       url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='donazioni'),
+                       url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='lista-donazioni'),
 )
 
 if settings.INSTANCE_TYPE == 'development':

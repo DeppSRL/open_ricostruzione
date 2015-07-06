@@ -79,4 +79,5 @@ class DonazioneFilter(django_filters.FilterSet):
             'tipologia_cedente': ['exact'],
             'territorio__slug': ['exact'],
             'interventi_programma__tipo_immobile__slug': ['exact'],
+            'interventi_programma__slug': ['exact'],
         }

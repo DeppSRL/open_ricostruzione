@@ -221,7 +221,7 @@ class DonazioniListView(FilterListView):
     template_name = 'donazioni_list.html'
     model = Donazione
     don_filter = None
-    accepted_parameters = ['tipologia_cedente', 'territorio__slug', 'interventi_programma__tipo_immobile__slug']
+    accepted_parameters = ['tipologia_cedente', 'territorio__slug', 'interventi_programma__tipo_immobile__slug','interventi_programma__slug']
 
     def get_filter_set(self):
         return DonazioneFilter(self.request.GET,
@@ -240,6 +240,11 @@ class DonazioniListView(FilterListView):
         self.filters['tipo_immobile_filter'] = self.get_parameter('interventi_programma__tipo_immobile__slug',
                                                                   tipo_immobile_set,
                                                                   model=TipoImmobile)
+
+        interventi_programma_set = InterventoProgramma.objects.all().values_list('slug',flat=True)
+        self.filters['interventi_programma_filter'] = self.get_parameter('interventi_programma__slug',
+                                                                  interventi_programma_set,
+                                                                  model=InterventoProgramma)
 
         tipologia_cedente_set = Donazione.TIPO_CEDENTE
         tc_val = self.get_parameter('tipologia_cedente', tipologia_cedente_set)
@@ -727,7 +732,7 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
             return HttpResponseRedirect(reverse('404'))
         else:
 
-            self.cofinanziamenti = Cofinanziamento.objects.filter(intervento_programma=self.intervento_programma)
+            self.cofinanziamenti = Cofinanziamento.objects.filter(intervento_programma=self.intervento_programma).order_by('tipologia')
             try:
                 self.intervento_piano = InterventoPiano.objects.get(intervento_programma=self.intervento_programma)
             except ObjectDoesNotExist:

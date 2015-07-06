@@ -14,7 +14,7 @@
                                 <span class="small">sono state ricevute</span><br>
                                 <span class="green big">{{ donazioni_totale.count|italianize:0 }}</span> DONAZIONI <span class="small">PER</span><br>
                                 {{ donazioni_totale.sum|italianize }} €</p>
-                                <a href="{% url 'donazioni' %}?{{ base_filters }}">VEDI TUTTE</a>
+                                <a href="{% url 'lista-donazioni' %}?{{ base_filters }}">VEDI TUTTE</a>
                         </div>
                         <div class="col-md-2">
                             <div id="pie-donazioni"></div>
@@ -33,7 +33,7 @@
             [
                 {% for item in donazioni_aggregates %}
                     {% localize off  %}
-                        {name: "{{ item.name }}", y: {{ item.sum|default_if_none:0 }}, url: "{% url 'donazioni' %}"} {% if not forloop.last %},{% endif %}
+                        {name: "{{ item.name }}", y: {{ item.sum|default_if_none:0 }}, url: "{% url 'lista-donazioni' %}"} {% if not forloop.last %},{% endif %}
                     {% endlocalize %}
                 {% endfor %}
 
