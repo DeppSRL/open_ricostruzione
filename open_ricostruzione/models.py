@@ -61,6 +61,12 @@ class InterventoProgramma(models.Model):
         (u'8', u'PROPRIETA_MISTA', u'Proprieta mista / UMI'),
     )
 
+    STATO = Choices(
+        (u'programma', u'PROGRAMMA', u'A Programma'),
+        (u'piano', u'PIANO', u'A Piano'),
+        (u'attuazione', u'ATTUAZIONE', u'In Attuazione'),
+    )
+
     STATO_ATTUAZIONE = Choices(
         (u'progettazione', u'PROGETTAZIONE', u'Progettazione'),
         (u'in_corso', u'IN_CORSO', u'In corso'),
@@ -87,6 +93,7 @@ class InterventoProgramma(models.Model):
 
     a_piano = models.BooleanField(blank=False, null=False, default=False)
     in_attuazione = models.BooleanField(blank=False, null=False, default=False)
+    stato = models.CharField(max_length=13, choices=STATO, blank=True, null=True, default='programma')
     stato_attuazione = models.CharField(max_length=13, choices=STATO_ATTUAZIONE, blank=True, null=True, default='')
 
     objects = ProgrammatiManager()
@@ -96,7 +103,6 @@ class InterventoProgramma(models.Model):
     progettazione = ProgettazioneManager()
     in_corso = InCorsoManager()
     conclusi = ConclusiManager()
-
 
     @staticmethod
     def get_sogg_attuatore_aggregates(**kwargs):

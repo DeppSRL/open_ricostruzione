@@ -147,6 +147,7 @@ class Command(BaseCommand):
         # determines the general status and attuazione status for the interv_programma based on its relationships
         a_piano = False
         in_attuazione = False
+        stato = InterventoProgramma.STATO.PROGRAMMA
         stato_attuazione = None
 
         interventi_piano = InterventoPiano.objects.filter(intervento_programma=intervento_programma)
@@ -154,10 +155,11 @@ class Command(BaseCommand):
 
         if len(interventi_piano) > 0:
             a_piano = True
+            stato = InterventoProgramma.STATO.PIANO
 
             if len(interventi) > 0:
                 in_attuazione = True
-
+                stato = InterventoProgramma.STATO.ATTUAZIONE
                 # todo: qua si considera lo stato del primo intervento, quando aggiorneremo la logica andra' cambiato questo passaggio
                 intervento_stato = interventi.values_list('stato', flat=True)[0]
                 if intervento_stato in settings.STATI_PROGETTAZIONE:
@@ -169,7 +171,7 @@ class Command(BaseCommand):
                 else:
                     self.logger.error(u"Stato attuazione not accepted")
 
-        return a_piano, in_attuazione, stato_attuazione
+        return stato, a_piano, in_attuazione, stato_attuazione
 
     def handle(self, *args, **options):
 
@@ -386,7 +388,7 @@ class Command(BaseCommand):
 
                     #  import liquidazioni
                     for liquidazione in intervento_json['liquidazioni']:
-                        data_ord  = None
+                        data_ord = None
                         if liquidazione['data_ord']:
                             data_ord = datetime.strptime(liquidazione['data_ord'], self.date_format)
                         Liquidazione(**{
@@ -447,7 +449,7 @@ class Command(BaseCommand):
                         }).save()
 
             # set state and attuazione state for the considered intervento_programma
-            intervento_programma.a_piano, intervento_programma.in_attuazione, intervento_programma.stato_attuazione = \
+            intervento_programma.stato, intervento_programma.a_piano, intervento_programma.in_attuazione, intervento_programma.stato_attuazione = \
                 self.get_intervento_stato(intervento_programma)
             intervento_programma.save()
 

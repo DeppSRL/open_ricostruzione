@@ -82,16 +82,37 @@
                         {% endif %}
                     </div>
 				</div>
-
                 <div class="col-md-8">
-                    <div class="pianificati">
-                        <span>PIANIFICATO</span>
-                    </div>
+                    {% if object.stato == 'programma'  %}
+                        <div class="col-md-8">
+                            <div class="programmati">
+                                <span>
+                                    PROGRAMMATO
+                                </span>
+                            </div>
+                        </div>
+                    {% elif object.stato == 'piano'  %}
+                        <div class="col-md-8">
+                            <div class="pianificati">
+                                <span>
+                                    PIANIFICATO
+                                </span>
+                            </div>
+                        </div>
+                    {% elif object.stato == 'attuazione' %}
+                        <div class="col-md-8">
+                            <div class="attuali">
+                                <span>
+                                    IN ATTUAZIONE
+                                </span>
+                            </div>
+                        </div>
+                    {% endif %}
 
                     <div class="row">
 
                         <div class="col-md-12 opere-pubbliche">
-                            Piano annuale 2013-2014 opere pubbliche
+                            Piano annuale 2013-2014 opere pubbliche / {{ object.piano.denominazione }}
                         </div>
 
                         <div class="col-md-3">
