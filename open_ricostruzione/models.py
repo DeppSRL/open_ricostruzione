@@ -77,8 +77,7 @@ class InterventoProgramma(models.Model):
     # id fenice = id_interv_a_progr
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, unique=True)
     soggetto_attuatore = models.ForeignKey('SoggettoAttuatore', null=True, blank=False, default=None)
-    # id_propr_imm = id fenice per l'immobile
-    id_propr_imm = models.PositiveSmallIntegerField(null=False, blank=False)
+    propr_immobile = models.ForeignKey('ProprietarioImmobile', null=True)
     n_ordine = models.CharField(max_length=20, null=False, blank=False)
     importo_generale = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)
     importo_a_programma = models.DecimalField(max_digits=11, decimal_places=2, null=False, blank=False)

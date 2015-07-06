@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
     Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, \
-    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile, Variante, UltimoAggiornamento
+    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile, Variante, UltimoAggiornamento, ProprietarioImmobile
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -61,7 +61,7 @@ class Command(BaseCommand):
                 'intervento_programma__programma__id',
                 'intervento_programma__id_fenice',
                 'intervento_programma__soggetto_attuatore__id_fenice',
-                'intervento_programma__id_propr_imm',
+                'intervento_programma__propr_immobile__id_fenice',
                 'intervento_programma__n_ordine',
                 'intervento_programma__importo_generale',
                 'intervento_programma__importo_a_programma',
@@ -286,13 +286,19 @@ class Command(BaseCommand):
             intervento_programma.territorio = territorio
             intervento_programma.vari_territori = vari_territori
             intervento_programma.id_categ_imm = intervento_a_progr_json['id_categ_imm']
-            intervento_programma.id_propr_imm = intervento_a_progr_json['id_propr_imm']
+            try:
+                propr_immobile = ProprietarioImmobile.objects.get(id_fenice=intervento_a_progr_json['id_propr_imm'] )
+            except ObjectDoesNotExist:
+                self.logger.error("Int.Programma with id_fenice:{}, cannot find propr.immobile for id:{}".format(intervento_programma.id_fenice, intervento_a_progr_json['id_propr_imm']))
+            else:
+                intervento_programma.propr_immobile = propr_immobile
+
             intervento_programma.slug = slugify(
                 u"{}-{}".format(intervento_programma.denominazione[:45], str(intervento_programma.id_fenice)))
             intervento_programma.tipo_immobile_fenice = intervento_a_progr_json['id_tipo_imm']
             intervento_programma.tipo_immobile = self.translate_tipo_imm(intervento_a_progr_json['id_tipo_imm'])
             intervento_programma.save()
-            self.logger.info(u"Import Interv.Programma:{}".format(intervento_programma.slug))
+            self.logger.debug(u"Import Interv.Programma:{}".format(intervento_programma.slug))
 
             # calculate importo cofinanziamente as difference between imp. generale and imp.programma
             importo_cofinanziamenti = intervento_programma.importo_generale - intervento_programma.importo_a_programma

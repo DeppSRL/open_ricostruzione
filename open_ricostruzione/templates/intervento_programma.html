@@ -1,52 +1,36 @@
 {% extends 'base.html' %}
 
 {% block head-title %}
-    {{ object.denominazione }}
+    {{ intervento_programma.denominazione }}
 {% endblock %}
 
 {#{% block content %}#}
 {#    <div class="container">#}
 {#        <div class="row">#}
-{#            <div class="col-md-12"><h1>{{ object.denominazione }}</h1></div>#}
+{#            <div class="col-md-12">Programma: {{ intervento_programma.programma }}</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">id fenice: {{ intervento_programma.id_fenice }}</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">soggetto attuatore: {{ intervento_programma.soggetto_attuatore.denominazione }}</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">Importo generale: {{ intervento_programma.importo_generale }} euro</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">Importo a programma: {{ intervento_programma.importo_a_programma }} euro</div>#}
+{#        </div>#}
+{#        <div class="row">#}
+{#            <div class="col-md-12">Tipo immobile:{{ intervento_programma.tipo_immobile }}</div>#}
 {#        </div>#}
 {#        <div class="row">#}
 {#            <div class="col-md-12">#}
-{#                {% if object.vari_territori %}#}
-{#                    Intervento su vari territori#}
-{#                {% else %}#}
-{#                    {{ object.territorio.nome_con_provincia }}#}
-{#                {% endif %}#}
-{#            </div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Programma: {{ object.programma }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">id fenice: {{ object.id_fenice }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">soggetto attuatore: {{ object.soggetto_attuatore.denominazione }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Importo generale: {{ object.importo_generale }} euro</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Importo a programma: {{ object.importo_a_programma }} euro</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">Tipo immobile:{{ object.tipo_immobile }}</div>#}
-{#        </div>#}
-{#        <div class="row">#}
-{#            <div class="col-md-12">#}
-{#                {{ object.stato|default_if_none:"A programma" }}#}
+{#                {{ intervento_programma.stato|default_if_none:"A programma" }}#}
 {#            </div>#}
 {##}
 {#        </div>#}
-{#        {% if object.stato_attuazione %}#}
-{#            <div class="row">#}
-{#                <div class="col-md-12">Stato dell'attuazione: {{ object.stato_attuazione }}</div>#}
-{#            </div>#}
-{#        {% endif %}#}
+
 {#    </div>#}
 {#{% endblock %}#}
 
@@ -56,7 +40,7 @@
     <section class="container intro">
      	<div class="row">
         	<div class="col-md-10 col-md-offset-1 text-center">
-            	{{ object.denominazione }}
+            	{{ intervento_programma.denominazione }}
 				<div class="collapse" id="introCollapse">
                 	aa
                 </div>
@@ -75,64 +59,61 @@
                         {% include 'modules/simple_map.html' %}
                     {% endif %}
                     <div class="testo-mappa">
-                        {% if object.vari_territori %}
+                        {% if intervento_programma.vari_territori %}
                             Intervento su vari territori
                         {% else %}
-                            {{ object.territorio.nome_con_provincia }}
+                            {{ intervento_programma.territorio.nome_con_provincia }}
                         {% endif %}
                     </div>
 				</div>
                 <div class="col-md-8">
-                    {% if object.stato == 'programma'  %}
-                        <div class="col-md-8">
+                    {% if intervento_programma.stato == 'programma'  %}
                             <div class="programmati">
                                 <span>
                                     PROGRAMMATO
                                 </span>
                             </div>
-                        </div>
-                    {% elif object.stato == 'piano'  %}
-                        <div class="col-md-8">
+                    {% elif intervento_programma.stato == 'piano'  %}
                             <div class="pianificati">
                                 <span>
                                     PIANIFICATO
                                 </span>
                             </div>
-                        </div>
-                    {% elif object.stato == 'attuazione' %}
-                        <div class="col-md-8">
+                    {% elif intervento_programma.stato == 'attuazione' %}
                             <div class="attuali">
                                 <span>
                                     IN ATTUAZIONE
                                 </span>
                             </div>
-                        </div>
                     {% endif %}
 
                     <div class="row">
-
-                        <div class="col-md-12 opere-pubbliche">
-                            Piano annuale 2013-2014 opere pubbliche / {{ object.piano.denominazione }}
-                        </div>
+                        {% if intervento_programma.stato == 'piano' or intervento_programma.stato == 'attuazione' %}
+                            <div class="col-md-12 opere-pubbliche">
+                                {{ intervento_piano.piano.denominazione }}
+                            </div>
+                        {% endif %}
 
                         <div class="col-md-3">
                             <div class="viabilita">
-                                <img src="img/strada-cosa.png">
-                                Viabilità
+{#                                <img src="img/strada-cosa.png">#}
+                                {{ intervento_programma.tipo_immobile }}
                             </div>
                         </div>
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="nome-proprietario">
-                                        <div class="etichetta">Prorpietario</div>
-                                        <a href="#">Nome del proprietario</a>
+                                        <div class="etichetta">Proprietario</div>
+                                        {{ intervento_programma.propr_immobile.denominazione }}
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="nome-attuatore">
                                         <div class="etichetta">Soggetto Attuatore</div>
-                                        <a href="#">Nome del soggetto attuatore</a>
+                                        <a href="{% url 'sogg-attuatore' intervento_programma.soggetto_attuatore.slug  %}">
+                                            {{ intervento_programma.soggetto_attuatore.denominazione }}
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -141,13 +122,9 @@
                                         <a href="#">Nome dell'impresa al lavoro</a>
                                     </div>
                                 </div>
-
                             </div>
-
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

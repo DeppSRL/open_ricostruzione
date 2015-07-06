@@ -8,7 +8,7 @@ from django.views.generic import TemplateView, DetailView, ListView, RedirectVie
 from django.db.models.aggregates import Count, Sum
 from django_filters.views import FilterView
 from django.conf import settings
-from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante
+from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
 from open_ricostruzione.filters import InterventoProgrammaFilter, DonazioneFilter
@@ -711,26 +711,38 @@ class ImpreseListView(ListView):
 class InterventoProgrammaView(DetailView, SimpleMapMixin):
     model = InterventoProgramma
     template_name = 'intervento_programma.html'
-    intervento = None
+    intervento_programma = None
+    intervento_piano = None
     territorio = None
 
     def get(self, request, *args, **kwargs):
         # get data from the request
 
         try:
-            self.intervento = InterventoProgramma.objects.get(slug=kwargs['slug'])
+            self.intervento_programma = InterventoProgramma.objects.get(slug=kwargs['slug'])
         except ObjectDoesNotExist:
             return HttpResponseRedirect(reverse('404'))
+        else:
+            try:
+                self.intervento_piano = InterventoPiano.objects.get(intervento_programma=self.intervento_programma)
+            except ObjectDoesNotExist:
+                pass
+
         return super(InterventoProgrammaView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(InterventoProgrammaView, self).get_context_data(**kwargs)
-        self.territorio = self.intervento.territorio
-        if self.intervento.vari_territori is False:
+        context['intervento_programma']=self.intervento_programma
+        context['intervento_piano']=self.intervento_piano
+
+        self.territorio = self.intervento_programma.territorio
+        if self.intervento_programma.vari_territori is False:
             # calculate the map bounds for the territorio
             context['map_bounds'] = self.get_simple_map_bounds()
             context['territorio'] = self.territorio
+
         return context
+
 
 class ImpresaDetailView(DetailView, AggregatePageMixin):
     model = Impresa
