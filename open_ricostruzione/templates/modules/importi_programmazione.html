@@ -1,0 +1,46 @@
+{% load italianize %}
+<section class="importi-intervento2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 text-center importi">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div class="label-importo">Importo totale</div>
+                        <div class="importo1">€ {{ importo|italianize }}</div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <div class="importo3">
+                            <div class="label-importo">di cui cofinanziati</div>
+                            <div class="importo2">€ {{ importo_cofinanziamenti|italianize }}
+                                {% if cofinanziamenti|length > 0 %}
+                                    <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati">&nbsp;</span></a>
+                                {% endif %}
+                            </div>
+                            <div class="freccia-verde"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 col-md-offset-2 text-right box-dati">
+                <table>
+                    {% for cof in cofinanziamenti %}
+                        <tr>
+                            <th>
+                                {% if cof.tipologia == '2' %}
+                                    {#  tipologia donazioni has link to lista donazioni  #}
+                                    <a href="{% url 'lista-donazioni' %}?interventi_programma__slug={{ intervento_programma.slug }}">{{ cof.get_tipologia_display|title }} <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a>
+                                {% else %}
+                                    {{ cof.get_tipologia_display|title }}
+                                {% endif %}
+                            </th>
+                            <th>€ {{ cof.importo|italianize }}</th>
+                        </tr>
+                    {% endfor %}
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>

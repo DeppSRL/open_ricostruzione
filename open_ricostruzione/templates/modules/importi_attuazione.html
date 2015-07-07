@@ -1,0 +1,109 @@
+{% load italianize %}
+<section class="importi-intervento2 schedaB">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center importi">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div class="label-importo">Importo totale</div>
+                        <div class="importo1">€ {{ importo|italianize }}</div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="importo3">
+                            <div class="label-importo">di cui cofinanziati</div>
+                            <div class="importo2">€ {{ importo_cofinanziamenti|italianize }}
+                                {% if cofinanziamenti|length > 0 %}
+                                    <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati-cofinanziati">&nbsp;</span></a>
+                                {% endif %}
+
+                            </div>
+                            <div class="freccia-verde-cofinanziati"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="importo4">
+                            <div class="label-importo">di cui liquidati</div>
+                            <div class="importo2">€ {{ importo_liquidazioni|italianize }}
+                                {% if importo_liquidazioni > 0 %}
+                                    <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati-liquidati">&nbsp;</span></a>
+                                {% endif %}
+                            </div>
+                            <div class="acconto">
+                                {% if liquidazioni|length > 0 %}
+                                    {{ liquidazioni.0.get_tipologia_display|title }} {{ liquidazioni.0.data }}
+                                {% endif %}
+                            </div>
+                            <div class="freccia-verde-liquidati"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 text-right box-dati-liquidati">
+                <table>
+                    {% for l in liquidazioni %}
+                        <tr>
+                            <th class="etichetta">{{ l.get_tipologia_display|title }}</th>
+                            <th>{{ l.data }}</th>
+                            <th>€ {{ l.importo|italianize }}</th>
+                        </tr>
+                    {% endfor %}
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="text-center box-dati-cofinanziati">
+        <h3>titolo quadro</h3>
+        <div class="container">
+            <div class="row">
+                <div class="box-quadro1">
+                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario della spesa complessiva <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Rimborso assicurativo <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Donazioni <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Opere provvisionali <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Messe in sicurezza <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Fondi propri (e altro) <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro1">Quadro sommario generale riepilogativo <hr> <span>€ 12.123.123,00</span></div>
+                </div>
+            </div>
+        </div>
+
+
+        <h3>titolo quadro</h3>
+        <div class="container">
+            <div class="row">
+                <div class="box-quadro2">
+                    <div class="item-quadro2">Q.T.E. relativo al finanziamento del Commissario <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Rimborso assicurativo <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Donazioni <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Opere provvisionali <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Messe in sicurezza <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Fondi propri (e altro) <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro2">Q.T.E. generale riepilogativo <hr> <span>€ 12.123.123,00</span></div>
+                </div>
+            </div>
+        </div>
+
+        <h3>titolo quadro</h3>
+        <div class="container">
+            <div class="row">
+                <div class="box-quadro3">
+                    <div class="item-quadro3">Q.T.E. rimodulato relativo al finanziamento del Commissario <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro3">Q.T.E. relativo al finanziamento assegnato dal Commissario <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro3">Q.T.E. di variante senza modifica dei lavori <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro3">Q.T.E. di variante con modifica dei lavori <hr> <span>€ 12.123.123,00</span></div>
+                    <div class="item-quadro3">Q.T.E. di variante con modifica dei lavori <hr> <span>€ 12.123.123,00</span></div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</section>

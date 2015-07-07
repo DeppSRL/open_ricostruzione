@@ -399,7 +399,7 @@ class Command(BaseCommand):
                             data_ord = datetime.strptime(liquidazione['data_ord'], self.date_format)
                         Liquidazione(**{
                             'intervento': intervento,
-                            'tipologia': liquidazione['id_tipo_liq'],
+                            'tipologia': liquidazione['id_tipo_liq'].strip(),
                             'data': data_ord,
                             'importo': Decimal(liquidazione['imp_ord'])
                         }).save()

@@ -4,7 +4,7 @@ from open_ricostruzione.models import Donazione, InterventoProgramma, Intervento
     EventoContrattuale, Intervento, Liquidazione, Impresa, Progetto, Programma, Piano, \
     QuadroEconomicoProgetto, QuadroEconomicoIntervento, DonazioneInterventoProgramma,TipoImmobile,\
     RUP, ProprietarioImmobile, \
-    SoggettoAttuatore
+    SoggettoAttuatore, Variante
 
 from .filters import TerritorioWithDonazione, TerritorioWithIntervento
 
@@ -96,7 +96,11 @@ class RUPAdmin(admin.ModelAdmin):
 class ProprietarioImmobileAdmin(admin.ModelAdmin):
     model = ProprietarioImmobile
 
+class VarianteAdmin(admin.ModelAdmin):
+    model = Variante
 
+
+admin.site.register(Variante, VarianteAdmin)
 admin.site.register(TipoImmobile, TipoImmobileAdmin)
 admin.site.register(ProprietarioImmobile, ProprietarioImmobileAdmin)
 admin.site.register(RUP, RUPAdmin)

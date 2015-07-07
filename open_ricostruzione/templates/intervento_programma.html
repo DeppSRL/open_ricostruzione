@@ -106,6 +106,7 @@
         </div>
     </section>
 
+    {# importi / cofinanziamenti / liquidazioni   #}
     <section class="importi-intervento1">
         <div class="container">
             <div class="row">
@@ -116,49 +117,134 @@
         </div>
     </section>
 
-    <section class="importi-intervento2">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2 text-center importi">
-                    <div class="row">
-                        <div class="col-md-6 text-center">
-                            <div class="label-importo">Importo totale</div>
-                            <div class="importo1">€ {{ importo|italianize }}</div>
-                        </div>
-                        <div class="col-md-6 text-center">
-                            <div class="importo3">
-                                <div class="label-importo">di cui cofinanziati</div>
-                                <div class="importo2">€ {{ importo_cofinanziamento|italianize }}
-                                    {% if cofinanziamenti|length > 0 %}
-                                        <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati">&nbsp;</span></a>
-                                    {% endif %}
-                                </div>
-                                <div class="freccia-verde"></div>
-                            </div>
-                        </div>
+    {% if intervento_programma.stato == 'programma' or  intervento_programma.stato == 'piano' %}
+        {% include 'modules/importi_programmazione.html' %}
+    {% elif intervento_programma.stato == 'attuazione' %}
+        {% include 'modules/importi_attuazione.html' %}
+    {% endif %}
+
+
+
+    {# barra stato avanzamento   #}
+    {% if intervento_programma.stato == 'attuazione' %}
+        <section class="avanzamento">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h1>Stato di avanzamento</h1>
                     </div>
-                </div>
 
-                <div class="col-md-8 col-md-offset-2 text-right box-dati">
-                    <table>
-                        {% for cof in cofinanziamenti %}
-                            <tr>
-                                <th>
-                                    {% if cof.tipologia == '2' %}
-                                        {#  tipologia donazioni has link to lista donazioni  #}
-                                        <a href="{% url 'lista-donazioni' %}?interventi_programma__slug={{ intervento_programma.slug }}">{{ cof.get_tipologia_display|title }} <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a>
-                                    {% else %}
-                                        {{ cof.get_tipologia_display|title }}
-                                    {% endif %}
-                                </th>
-                                <th>€ {{ cof.importo|italianize }}</th>
-                            </tr>
-                        {% endfor %}
+                    <div class="row avanzamento-progetto">
 
-                    </table>
+                                <div class="col-sm-4 box state1">
+                                    <div class="header">
+
+                                            Progettazione
+
+                                    </div>
+
+                                    <ul class="lista">
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Studio di fattibilità</div>
+                                                <div class="col-xs-5 text-right">22 Agosto 2012</div>
+                                            </li>
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Progettazione Preliminare</div>
+                                                <div class="col-xs-5 text-right">22 Agosto 2012</div>
+                                            </li>
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Progettazione Definitiva</div>
+                                                <div class="col-xs-5 text-right">22 Agosto 2012</div>
+                                            </li>
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Progettazione Esecutiva</div>
+                                                <div class="col-xs-5 text-right">22 Novembre 2012</div>
+                                            </li>
+
+                                    </ul>
+                                </div>
+
+                                <div class="col-sm-4 box state2">
+                                    <div class="header">
+
+                                            Lavori in corso
+
+                                    </div>
+
+                                    <ul class="lista">
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Esecuzione Lavori</div>
+                                                <div class="col-xs-5 text-right">29 Marzo 2013</div>
+                                            </li>
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Collaudo</div>
+                                                <div class="col-xs-5 text-right">16 Settembre 2013</div>
+                                            </li>
+
+                                    </ul>
+                                </div>
+
+                                <div class="col-sm-4 box state3">
+                                    <div class="header">
+
+                                            <small>Data fine effettiva</small> 16 Settembre 2013
+
+                                    </div>
+
+                                    <ul class="lista">
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Chiusura intervento</div>
+                                                <div class="col-xs-5 text-right">16 Settembre 2013</div>
+                                            </li>
+
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Funzionalità</div>
+                                                <div class="col-xs-5 text-right">16 Settembre 2013</div>
+                                            </li>
+
+                                    </ul>
+                                </div>
+
+                        </div>
+
 
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+    {% endif %}
+
+    {#    varianti #}
+    {% if varianti %}
+        <section class="varianti">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3 text-center">
+                        <h1>Varianti</h1>
+
+                        <table>
+                            {% for v in varianti %}
+                                <tr>
+                                    <th class="etichetta">{{ v.get_tipologia_display|title }}</th>
+                                    <th class="carico">{{ v.get_stato_display }}</th>
+                                    <th class="data">{{ v.data_deposito }}</th>
+                                </tr>
+                            {% endfor %}
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+
 {% endblock %}

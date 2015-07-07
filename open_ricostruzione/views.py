@@ -8,7 +8,7 @@ from django.views.generic import TemplateView, DetailView, ListView, RedirectVie
 from django.db.models.aggregates import Count, Sum
 from django_filters.views import FilterView
 from django.conf import settings
-from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano, Intervento, Cofinanziamento
+from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano, Intervento, Cofinanziamento, Liquidazione
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
 from open_ricostruzione.filters import InterventoProgrammaFilter, DonazioneFilter
@@ -221,7 +221,8 @@ class DonazioniListView(FilterListView):
     template_name = 'donazioni_list.html'
     model = Donazione
     don_filter = None
-    accepted_parameters = ['tipologia_cedente', 'territorio__slug', 'interventi_programma__tipo_immobile__slug','interventi_programma__slug']
+    accepted_parameters = ['tipologia_cedente', 'territorio__slug', 'interventi_programma__tipo_immobile__slug',
+                           'interventi_programma__slug']
 
     def get_filter_set(self):
         return DonazioneFilter(self.request.GET,
@@ -241,10 +242,10 @@ class DonazioniListView(FilterListView):
                                                                   tipo_immobile_set,
                                                                   model=TipoImmobile)
 
-        interventi_programma_set = InterventoProgramma.objects.all().values_list('slug',flat=True)
+        interventi_programma_set = InterventoProgramma.objects.all().values_list('slug', flat=True)
         self.filters['interventi_programma_filter'] = self.get_parameter('interventi_programma__slug',
-                                                                  interventi_programma_set,
-                                                                  model=InterventoProgramma)
+                                                                         interventi_programma_set,
+                                                                         model=InterventoProgramma)
 
         tipologia_cedente_set = Donazione.TIPO_CEDENTE
         tc_val = self.get_parameter('tipologia_cedente', tipologia_cedente_set)
@@ -721,7 +722,9 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
     intervento_piano = None
     intervento = None
     imprese = None
+    varianti = None
     cofinanziamenti = None
+    liquidazioni = None
 
     def get(self, request, *args, **kwargs):
         # get data from the request
@@ -732,7 +735,8 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
             return HttpResponseRedirect(reverse('404'))
         else:
 
-            self.cofinanziamenti = Cofinanziamento.objects.filter(intervento_programma=self.intervento_programma).order_by('tipologia')
+            self.cofinanziamenti = Cofinanziamento.objects.filter(
+                intervento_programma=self.intervento_programma).order_by('tipologia')
             try:
                 self.intervento_piano = InterventoPiano.objects.get(intervento_programma=self.intervento_programma)
             except ObjectDoesNotExist:
@@ -744,6 +748,8 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
                     pass
                 else:
                     self.imprese = self.intervento.imprese.all()
+                    self.varianti = Variante.objects.filter(intervento=self.intervento)
+                    self.liquidazioni = Liquidazione.objects.filter(intervento=self.intervento).order_by('-data')
 
         return super(InterventoProgrammaView, self).get(request, *args, **kwargs)
 
@@ -752,6 +758,8 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
         context['intervento_programma'] = self.intervento_programma
         context['intervento_piano'] = self.intervento_piano
         context['intervento'] = self.intervento
+        context['varianti'] = self.varianti
+        context['liquidazioni'] = self.liquidazioni
         context['imprese'] = self.imprese
 
         importo = 0
@@ -762,8 +770,9 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
         elif self.intervento_programma.stato == InterventoProgramma.STATO.ATTUAZIONE:
             importo = self.intervento.imp_consolidato
 
-        context['importo']=importo
-        context['importo_cofinanziamento'] = self.intervento_programma.importo_generale-self.intervento_programma.importo_a_programma
+        context['importo'] = importo
+        context['importo_liquidazioni'] = self.liquidazioni.aggregate(s=Sum('importo'))['s']
+        context['importo_cofinanziamenti'] = self.intervento_programma.importo_generale - self.intervento_programma.importo_a_programma
         context['cofinanziamenti'] = self.cofinanziamenti
 
         self.territorio = self.intervento_programma.territorio
