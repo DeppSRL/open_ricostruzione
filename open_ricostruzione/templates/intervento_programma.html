@@ -127,81 +127,56 @@
 
                     <div class="row avanzamento-progetto">
 
-                                <div class="col-sm-4 box state1">
-                                    <div class="header">
-                                            Progettazione
-                                    </div>
+                        <div class="col-sm-4 box state1">
+                            <div class="header">
+                                Progettazione
+                            </div>
 
-                                    <ul class="lista">
+                            <ul class="lista">
 
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Studio di fattibilità</div>
-                                                <div class="col-xs-5 text-right">22 Agosto 2012</div>
-                                            </li>
+                                <li class="row done">
+                                    <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> lorem ipsum</div>
+                                    <div class="col-xs-5 text-right">22 Agosto 2012</div>
+                                </li>
 
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Progettazione Preliminare</div>
-                                                <div class="col-xs-5 text-right">22 Agosto 2012</div>
-                                            </li>
-
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Progettazione Definitiva</div>
-                                                <div class="col-xs-5 text-right">22 Agosto 2012</div>
-                                            </li>
-
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Progettazione Esecutiva</div>
-                                                <div class="col-xs-5 text-right">22 Novembre 2012</div>
-                                            </li>
-
-                                    </ul>
-                                </div>
-
-                                <div class="col-sm-4 box state2">
-                                    <div class="header">
-                                            Lavori in corso
-                                    </div>
-
-                                    <ul class="lista">
-
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Esecuzione Lavori</div>
-                                                <div class="col-xs-5 text-right">29 Marzo 2013</div>
-                                            </li>
-
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Collaudo</div>
-                                                <div class="col-xs-5 text-right">16 Settembre 2013</div>
-                                            </li>
-
-                                    </ul>
-                                </div>
-
-                                <div class="col-sm-4 box state3">
-                                    <div class="header">
-
-                                            <small>Data fine effettiva</small> 16 Settembre 2013
-
-                                    </div>
-
-                                    <ul class="lista">
-
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Chiusura intervento</div>
-                                                <div class="col-xs-5 text-right">16 Settembre 2013</div>
-                                            </li>
-
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Funzionalità</div>
-                                                <div class="col-xs-5 text-right">16 Settembre 2013</div>
-                                            </li>
-
-                                    </ul>
-                                </div>
-
+                            </ul>
                         </div>
 
+                        {% if intervento_programma.stato_attuazione == 'in_corso' or intervento_programma.stato_attuazione == 'concluso' %}
+                            <div class="col-sm-4 box state2">
+                                <div class="header">
+                                        Lavori in corso
+                                </div>
 
+                                <ul class="lista">
+
+                                    <li class="row done">
+                                        <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Lorem ipsum</div>
+                                        <div class="col-xs-5 text-right">29 Marzo 2013</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                        {% if intervento_programma.stato_attuazione == 'concluso' %}
+                            <div class="col-sm-4 box state3">
+                                <div class="header">
+
+                                    <small>Data fine effettiva</small> 16 Settembre 2013
+
+                                </div>
+
+                                <ul class="lista">
+
+                                    <li class="row done">
+                                        <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Lorem ipsum</div>
+                                        <div class="col-xs-5 text-right">16 Settembre 2013</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+
+                    </div>
                 </div>
             </div>
         </section>
