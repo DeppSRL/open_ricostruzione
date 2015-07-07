@@ -55,55 +55,23 @@
     </div>
 
 
-    <div class="text-center box-dati-cofinanziati">
-        <h3>titolo quadro</h3>
-        <div class="container">
-            <div class="row">
-                <div class="box-quadro1">
-                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario della spesa complessiva <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Rimborso assicurativo <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Donazioni <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Opere provvisionali <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Messe in sicurezza <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario del cofinanziamento da Fondi propri (e altro) <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro1">Quadro sommario generale riepilogativo <hr> <span>€ 12.123.123,00</span></div>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-7 text-right box-dati-cofinanziati">
+        <table>
+            {% for cof in cofinanziamenti %}
+                <tr>
+                    <th>
+                        {% if cof.tipologia == '2' %}
+                            {#  tipologia donazioni has link to lista donazioni  #}
+                            <a href="{% url 'lista-donazioni' %}?interventi_programma__slug={{ intervento_programma.slug }}">{{ cof.get_tipologia_display|title }} <span class="glyphicon glyphicon-play-circle">&nbsp;</span></a>
+                        {% else %}
+                            {{ cof.get_tipologia_display|title }}
+                        {% endif %}
+                    </th>
+                    <th>€ {{ cof.importo|italianize }}</th>
+                </tr>
+            {% endfor %}
 
-
-        <h3>titolo quadro</h3>
-        <div class="container">
-            <div class="row">
-                <div class="box-quadro2">
-                    <div class="item-quadro2">Q.T.E. relativo al finanziamento del Commissario <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Rimborso assicurativo <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Donazioni <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Opere provvisionali <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Messe in sicurezza <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro2">Q.T.E. riferito al cofinanziamento da Fondi propri (e altro) <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro2">Q.T.E. generale riepilogativo <hr> <span>€ 12.123.123,00</span></div>
-                </div>
-            </div>
-        </div>
-
-        <h3>titolo quadro</h3>
-        <div class="container">
-            <div class="row">
-                <div class="box-quadro3">
-                    <div class="item-quadro3">Q.T.E. rimodulato relativo al finanziamento del Commissario <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro3">Q.T.E. relativo al finanziamento assegnato dal Commissario <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro3">Q.T.E. di variante senza modifica dei lavori <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro3">Q.T.E. di variante con modifica dei lavori <hr> <span>€ 12.123.123,00</span></div>
-                    <div class="item-quadro3">Q.T.E. di variante con modifica dei lavori <hr> <span>€ 12.123.123,00</span></div>
-                </div>
-            </div>
-        </div>
-
+        </table>
 
     </div>
-
 </section>

@@ -203,7 +203,7 @@ $( document ).ready(function() {
         e.preventDefault();
 
         if (click_cofinanziati == 0) {
-            altezza_cofinanziati = "550px";
+            altezza_cofinanziati = "250px";
             $( ".freccia-verde-cofinanziati" ).css("display","block");
             click_cofinanziati = 1;
             $(".link-dati-cofinanziati").removeClass("glyphicon-plus-sign");
