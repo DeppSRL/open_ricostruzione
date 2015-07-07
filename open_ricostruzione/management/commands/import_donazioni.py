@@ -244,7 +244,7 @@ class Command(BaseCommand):
             ip = None
             row_counter += 1
             rowdata = RowData(row)
-            self.logger.info(u"Import donazione (Line {}) {}".format(row_counter, rowdata.denominazione))
+            self.logger.debug(u"Import donazione (Line {}) {}".format(row_counter, rowdata.denominazione))
 
 
             if rowdata.importo == Decimal(0):
@@ -280,7 +280,7 @@ class Command(BaseCommand):
                     self.handle_error(rowdata, row_counter, "Cannot find interv.programma for n_ordine:{}".format(rowdata.n_ordine))
                     continue
                 else:
-                    self.logger.info("Found intervento:{} associated with donazione".format(ip.slug))
+                    self.logger.debug("Found intervento:{} associated with donazione".format(ip.slug))
 
             don_dict = {
                 'territorio': territorio,
