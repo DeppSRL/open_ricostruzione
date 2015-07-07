@@ -222,7 +222,7 @@ class DonazioniListView(FilterListView):
     model = Donazione
     don_filter = None
     accepted_parameters = ['tipologia_cedente', 'territorio__slug', 'interventi_programma__tipo_immobile__slug',
-                           'interventi_programma__slug']
+                           'interventi_programma__slug','page']
 
     def get_filter_set(self):
         return DonazioneFilter(self.request.GET,
@@ -725,6 +725,7 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
     varianti = None
     cofinanziamenti = None
     liquidazioni = None
+    importo_liquidazioni = None
 
     def get(self, request, *args, **kwargs):
         # get data from the request
@@ -750,6 +751,8 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
                     self.imprese = self.intervento.imprese.all()
                     self.varianti = Variante.objects.filter(intervento=self.intervento)
                     self.liquidazioni = Liquidazione.objects.filter(intervento=self.intervento).order_by('-data')
+                    if self.liquidazioni:
+                        self.importo_liquidazioni = self.liquidazioni.aggregate(s=Sum('importo'))['s']
 
         return super(InterventoProgrammaView, self).get(request, *args, **kwargs)
 
@@ -771,7 +774,8 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
             importo = self.intervento.imp_consolidato
 
         context['importo'] = importo
-        context['importo_liquidazioni'] = self.liquidazioni.aggregate(s=Sum('importo'))['s']
+        context['importo_liquidazioni'] = self.importo_liquidazioni
+
         context['importo_cofinanziamenti'] = self.intervento_programma.importo_generale - self.intervento_programma.importo_a_programma
         context['cofinanziamenti'] = self.cofinanziamenti
 
