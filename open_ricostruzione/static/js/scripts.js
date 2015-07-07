@@ -102,6 +102,8 @@ function grafico_cerchi_soggetti_attuatori() {
 }
 
 function grafico_pie_soggetti_attuatori() {
+    if (typeof data_array_pie === 'undefined')
+        return;
     for (i = 0; i < data_array_pie.length; ++i) {
         colore = $("#pie .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
 
@@ -110,6 +112,9 @@ function grafico_pie_soggetti_attuatori() {
 }
 
 function grafico_pie_donazioni() {
+    if (typeof data_array_pie_donazioni === 'undefined')
+        return;
+
     for (i = 0; i < data_array_pie_donazioni.length; ++i) {
         colore = $("#pie-donazioni .highcharts-series path:nth-child("+ (i+1) +")").attr("fill");
 
