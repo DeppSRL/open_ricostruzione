@@ -1,5 +1,5 @@
 //javascript di open-ricostruzione
-//NOTE: THIS FILE IS FULL OF BUG FIX FROM STEFANO, DON'T REPLACE!!!
+//NOTE: THIS FILE IS FULL OF BUG FIX FROM STEFANO, DON'T REPLACE WITH GIANGIULIO FILE!!!
     
 function gestione_cerchi_top() {
     //########### GESTIONE CERCHI TOP
