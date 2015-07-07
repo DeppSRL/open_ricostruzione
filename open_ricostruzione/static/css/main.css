@@ -159,6 +159,12 @@ ul.list li .secondrow a {
 .lists .list-item .euros#top_intervento {
   font-size: 25px;
 }
+.pagination > li > a {
+  color: #337ab7 !important;
+}
+.pagination > li.active > a {
+  color: white!important;
+}
 .intervento-denominazione {
   font-size: 45px;
 }
