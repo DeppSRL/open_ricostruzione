@@ -9,7 +9,7 @@
     <span class="euros" id="top_intervento">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
 
     {% if intprog.vari_territori %}
-        <a href="{% url 'localita' 'vari-territori' %}" class="comune">Vari territori</a>
+        <a href="{% url 'localita' 'vari-territori' %}" class="comune">Intervento Sovracomunale</a>
     {% else %}
 
         <a href="{% url 'localita' intprog.territorio.slug %}" class="comune">

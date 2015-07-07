@@ -24,7 +24,7 @@
                         <strong>Per il Comune di {{ territorio_filter.nome_con_provincia }}</strong><br/>
                     {% endif %}
                     {% if vari_territori_filter %}
-                        <strong>Per Vari territori</strong><br/>
+                        <strong>Per Interventi Sovracomunali</strong><br/>
                     {% endif %}
                     {% if sogg_attuatore_filter %}
                         <strong>Per il Soggetto attuatore: {{ sogg_attuatore_filter.denominazione|title }}</strong><br/>
@@ -59,7 +59,7 @@
                                 <div class="row">
                                     <div class="col-md-5 secondrow">
                                         {% if obj.vari_territori %}
-                                            <a href="{% url 'localita' 'vari-territori' %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> Vari territori</a>
+                                            <a href="{% url 'localita' 'vari-territori' %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> Intervento Sovracomunale</a>
                                         {% else %}
                                             <a href="{% url 'localita' obj.territorio.slug %}" class="comune"><i class="glyphicon glyphicon-map-marker"></i> {{ obj.territorio.nome_con_provincia }}</a>
                                         {% endif %}
