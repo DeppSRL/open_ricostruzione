@@ -8,25 +8,18 @@
 
 {% block content %}
 
-
     <section class="container intro">
      	<div class="row">
-        	<div class="col-md-10 col-md-offset-1 text-center">
+        	<div class="col-md-10 col-md-offset-1 text-center intervento-denominazione">
             	{{ intervento_programma.denominazione }}
-				<div class="collapse" id="introCollapse">
-                	aa
-                </div>
-
             </div>
         </div>
     </section>
-
 
     <section class="pianificato-schedaA">
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-
                     {% if not vari_territori %}
                         {% include 'modules/simple_map.html' %}
                     {% endif %}
@@ -42,19 +35,19 @@
                     {% if intervento_programma.stato == 'programma'  %}
                             <div class="programmati">
                                 <span>
-                                    PROGRAMMATO
+                                    INTERVENTO A PROGRAMMA
                                 </span>
                             </div>
                     {% elif intervento_programma.stato == 'piano'  %}
                             <div class="pianificati">
                                 <span>
-                                    PIANIFICATO
+                                    INTERVENTO A PIANO
                                 </span>
                             </div>
                     {% elif intervento_programma.stato == 'attuazione' %}
                             <div class="attuali">
                                 <span>
-                                    IN ATTUAZIONE
+                                    INTERVENTO IN ATTUAZIONE
                                 </span>
                             </div>
                     {% endif %}
