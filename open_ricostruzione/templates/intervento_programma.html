@@ -132,14 +132,24 @@
                                 Progettazione
                             </div>
 
-                            <ul class="lista">
-
-                                <li class="row done">
-                                    <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> lorem ipsum</div>
-                                    <div class="col-xs-5 text-right">22 Agosto 2012</div>
-                                </li>
-
-                            </ul>
+                            {% if progetti|length > 0 %}
+                                <ul class="lista">
+                                    {% for p in progetti %}
+                                        <li class="row {% if p.data_fine %}done{% endif %}">
+                                            <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ p.get_tipologia_display }}</div>
+                                            <div class="col-xs-5 text-right">
+                                                {% if p.data_fine %}
+                                                    {{ p.data_fine }}
+                                                {% elif p.data_inizio %}
+                                                    {{ p.data_inizio }}
+                                                {% elif p.data_deposito %}
+                                                    {{ p.data_deposito }}
+                                                {% endif %}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         </div>
 
                         {% if intervento_programma.stato_attuazione == 'in_corso' or intervento_programma.stato_attuazione == 'concluso' %}

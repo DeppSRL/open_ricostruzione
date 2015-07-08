@@ -8,7 +8,7 @@ from django.views.generic import TemplateView, DetailView, ListView, RedirectVie
 from django.db.models.aggregates import Count, Sum
 from django_filters.views import FilterView
 from django.conf import settings
-from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano, Intervento, Cofinanziamento, Liquidazione
+from open_ricostruzione.models import InterventoProgramma, Donazione, TipoImmobile, SoggettoAttuatore, Impresa, DonazioneInterventoProgramma, Variante, InterventoPiano, Intervento, Cofinanziamento, Liquidazione, EventoContrattuale, Progetto
 from territori.models import Territorio
 from open_ricostruzione.utils import convert2dict
 from open_ricostruzione.filters import InterventoProgrammaFilter, DonazioneFilter
@@ -722,6 +722,9 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
     intervento_piano = None
     intervento = None
     imprese = None
+    progetti = None
+    eventi_in_corso = None
+    eventi_fine = None
     varianti = None
     cofinanziamenti = None
     liquidazioni = None
@@ -753,17 +756,24 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
                     self.liquidazioni = Liquidazione.objects.filter(intervento=self.intervento).order_by('-data')
                     if self.liquidazioni:
                         self.importo_liquidazioni = self.liquidazioni.aggregate(s=Sum('importo'))['s']
+                    self.progetti = Progetto.objects.filter(intervento=self.intervento)
+                    self.eventi_in_corso = EventoContrattuale.objects.filter(intervento=self.intervento).exclude(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)
+                    self.eventi_fine = EventoContrattuale.objects.filter(intervento=self.intervento).filter(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)
 
         return super(InterventoProgrammaView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(InterventoProgrammaView, self).get_context_data(**kwargs)
+        # transfer to context the context variables about the interv.programma
         context['intervento_programma'] = self.intervento_programma
         context['intervento_piano'] = self.intervento_piano
         context['intervento'] = self.intervento
         context['varianti'] = self.varianti
         context['liquidazioni'] = self.liquidazioni
         context['imprese'] = self.imprese
+        context['progetti'] = self.progetti
+        context['eventi_in_corso'] = self.eventi_in_corso
+        context['eventi_fine'] = self.eventi_fine
 
         importo = 0
         if self.intervento_programma.stato == InterventoProgramma.STATO.PROGRAMMA:
