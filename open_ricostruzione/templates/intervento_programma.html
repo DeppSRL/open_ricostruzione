@@ -61,7 +61,26 @@
 
                         <div class="col-md-3">
                             <div class="what">
-                                <span class="sector viabilita"> </span>
+                                {% if intervento_programma.tipo_immobile == '1'  %}
+                                    <span class="sector altro"> </span>
+                                {% elif intervento_programma.tipo_immobile == '2'  %}
+                                    <span class="sector infrastrutture"> </span>
+                                {% elif intervento_programma.tipo_immobile == '3'  %}
+                                    <span class="sector ospedali"> </span>
+                                {% elif intervento_programma.tipo_immobile == '4'  %}
+                                    <span class="sector cimiteri"> </span>
+                                {% elif intervento_programma.tipo_immobile == '5'  %}
+                                    <span class="sector edifici"> </span>
+                                {% elif intervento_programma.tipo_immobile == '6'  %}
+                                    <span class="sector sportivi"> </span>
+                                {% elif intervento_programma.tipo_immobile == '7'  %}
+                                    <span class="sector chiese"> </span>
+                                {% elif intervento_programma.tipo_immobile == '8'  %}
+                                    <span class="sector scuole"> </span>
+                                {% elif intervento_programma.tipo_immobile == '9'  %}
+                                    <span class="sector pubblici"> </span>
+                                {% endif %}
+
                                 {{ intervento_programma.tipo_immobile }}
                             </div>
                         </div>
@@ -166,6 +185,16 @@
                                             </li>
                                         {% endfor %}
                                     </ul>
+                                {% else %}
+                                    <ul class="lista">
+
+                                        <li class="row done">
+                                            <div class="col-xs-12"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ intervento.get_tipologia_display }}</div>
+
+                                        </li>
+
+                                    </ul>
+
                                 {% endif %}
                             </div>
                         {% endif %}
