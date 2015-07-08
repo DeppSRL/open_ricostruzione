@@ -2,7 +2,7 @@
 import os
 import environ
 
-root = environ.Path(__file__) - 2  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
+root = environ.Path(__file__) - 3  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
 
 # set default values and casting
 env = environ.Env(
@@ -268,7 +268,7 @@ SOGG_ATTUATORE_MAP_FILE_PATH = env.str('SOGG_ATTUATORE_MAP_FILE_PATH', '')
 # valori degli stati degli interventi che indicano lo stato di avanzamento
 STATI_PROGETTAZIONE = [u'1', u'2', u'3', u'4', u'5', u'7', ]
 STATI_IN_CORSO = [u'6', u'8', u'9', u'10', ]
-STATI_CONCLUSI = [u'11',]
+STATI_CONCLUSI = [u'11', ]
 
 # tipologia cedente in PRIVATE_TIPOLOGIA_CEDENTE are private citizens'ones so the Denominazione will be obscured
 PRIVATE_TIPOLOGIA_CEDENTE = [u'4', ]
@@ -280,9 +280,13 @@ THEMATIC_MAP_BOUNDS = {
 }
 
 THEMATIC_MAP_CENTER = {
-    'lat':44.6500,
-    'lon':10.9333
+    'lat': 44.6500,
+    'lon': 10.9333
 }
+
 N_PROGETTI_FETCH = 4
 N_IMPRESE_FETCH = 6
 N_SOGG_ATT_FETCH = 5
+
+OPENDATA_ROOT = root('scarico_dati')
+OPENDATA_URL = '/scarico_dati/'

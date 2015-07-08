@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.contrib import admin
+from django.conf.urls.static import static
 from rest_framework import routers
 from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, HomeView, \
     LocalitaView, DonazioniListView, TipoImmobileView, SoggettoAttuatoreView, TipoSoggettoAttuatoreView, \
@@ -54,7 +55,11 @@ urlpatterns = patterns('',
                        url(r'^lista_imprese/$', ImpreseListView.as_view(), name='lista-imprese'),
                        url(r'^lista_interventi/$', InterventiListView.as_view(), name='lista-interventi'),
                        url(r'^lista_donazioni/$', DonazioniListView.as_view(), name='lista-donazioni'),
-)
+
+
+) + static(settings.OPENDATA_URL, document_root=settings.OPENDATA_ROOT)
+
+print settings.OPENDATA_ROOT
 
 if settings.INSTANCE_TYPE == 'development':
     urlpatterns += patterns('',

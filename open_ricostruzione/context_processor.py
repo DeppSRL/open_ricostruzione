@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.sites.models import get_current_site
 from open_ricostruzione.forms import InterventoProgrammaSearchFormNavbar, ImpresaSearchFormNavbar
 from territori.models import Territorio
 from open_ricostruzione.models import TipoImmobile, SoggettoAttuatore, UltimoAggiornamento
@@ -6,6 +7,7 @@ from open_ricostruzione.models import TipoImmobile, SoggettoAttuatore, UltimoAgg
 
 def main_settings(request):
     return {
+        'site': get_current_site(request),
         "DEBUG": settings.DEBUG,
         "TEMPLATE_DEBUG": settings.TEMPLATE_DEBUG,
         "INSTANCE_TYPE": settings.INSTANCE_TYPE,

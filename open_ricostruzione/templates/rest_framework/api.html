@@ -1,21 +1,23 @@
 {% extends "rest_framework/base.html" %}
 
 {% block title %}Open Ricostruzione Rest API{% endblock %}
-{% block branding %}<a class='brand' href='http://www.openricostruzione.it'>Open Ricostruzione</a>{% endblock %}
+{% block branding %}<a class='brand navbar-brand' style="color:#eeeaea;" href='http://{{ site }}'>Open Ricostruzione</a>{% endblock %}
 {% block description %}
     <p>
         This is the root entry-point of the Open Ricostruzione APIs.
     </p>
     <p>
-        The APIs are read-only, freely accessible to all through HTTP requests at <a>http://www.openricostruzione.it/api</a>
+        The APIs are read-only, freely accessible to all through HTTP requests at <a href="#">http://www.openricostruzione.it/api</a>
     </p>
     <p>
-    Responses are emitted in both browseable-HTML and JSON formats (http://www.openricostruzione.it/api/.json)<br/>
+        Responses are emitted in both browseable-HTML and JSON formats<br/>
     </p>
     <p>
-    If for some reasons, you need to scrape all the Open Ricostruzione data, please consider a bulk CSV download:<br/>
-
-    <a>http://www.openricostruzione.it/scarica-dati/</a>
+        If for some reasons, you need to scrape all the Open Ricostruzione data, please consider a bulk JSON download:<br/>
+        <ul>
+            <li><a href='http://{{ site }}/FENICE_OR_Interventi.json'>Json data here</a></li>
+            <li><a href='http://{{ site }}/FENICE_OR_DatiBase.json'>Meta data here</a></li>
+        </ul>
     </p>
 {% endblock %}
 {% block footer %}{% endblock %}
