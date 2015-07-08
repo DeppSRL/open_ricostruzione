@@ -45,7 +45,7 @@
                                 </span>
                             </div>
                     {% elif intervento_programma.stato == 'attuazione' %}
-                            <div class="attuali">
+                            <div class="attuati">
                                 <span>
                                     INTERVENTO IN ATTUAZIONE
                                 </span>
@@ -60,8 +60,8 @@
                         {% endif %}
 
                         <div class="col-md-3">
-                            <div class="viabilita">
-{#                                <img src="img/strada-cosa.png">#}
+                            <div class="what">
+                                <span class="sector viabilita"> </span>
                                 {{ intervento_programma.tipo_immobile }}
                             </div>
                         </div>

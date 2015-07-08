@@ -1226,13 +1226,27 @@ ul.list {
         padding: 15px 0;
         font-weight: bold;
     }
-
-    .pianificati {
-        padding: 6px;
-        background: #f4e73e;
+	
+	.pianificati,
+	.programmati,
+	.attauti {
+		padding: 6px;
         border-radius: 4px;
         font-weight: bold;
+		
+	}
+
+    .pianificati {
+        background: #f4e73e;
     }
+	.programmati {
+        background: #ed450a;
+    }
+	.attuati {
+        background: #059e1e;
+    }
+	
+	
     
     .mappa {
         border: 1px solid #000;
@@ -1252,13 +1266,47 @@ ul.list {
         font-size: 26px;
     }
     
-    .viabilita {
+    .what {
         height: 194px;
         border-radius: 4px;
         background: #999999;
         font-size: 25px;
 
-        
+        .sector {
+			display:block;
+			width:180px;
+			height:150px;
+			margin:0 auto;
+			background:url('../img/settori.png') center 20px no-repeat;
+			
+			&.infrastrutture {
+				background-position:0px 20px;
+			}
+			&.ospedali {
+				background-position:-185px 20px;
+			}
+			&.cimiteri {
+				background-position:-350px 20px;
+			}
+			&.edifici {
+				background-position:-530px 20px;
+			}
+			&.sportivi {
+				background-position:-705px 20px;
+			}
+			&.chiese {
+				background-position:-875px 20px;
+			}
+			&.scuole {
+				background-position:-1060px 20px;
+			}
+			&.pubblici {
+				background-position:-1230px 20px;
+			}
+			
+		}
+		
+		
         img {
             padding: 25px 0 20px 0;
         }

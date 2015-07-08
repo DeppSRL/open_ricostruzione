@@ -909,18 +909,27 @@ ul.list li .euros {
   padding: 15px 0;
   font-weight: bold;
 }
-.pianificato-schedaA .pianificati {
+.pianificato-schedaA .pianificati,
+.pianificato-schedaA .programmati,
+.pianificato-schedaA .attauti {
   padding: 6px;
-  background: #f4e73e;
   border-radius: 4px;
   font-weight: bold;
+}
+.pianificato-schedaA .pianificati {
+  background: #f4e73e;
+}
+.pianificato-schedaA .programmati {
+  background: #ed450a;
+}
+.pianificato-schedaA .attuati {
+  background: #059e1e;
 }
 .pianificato-schedaA .mappa {
   border: 1px solid #000;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   height: 240px;
-  /*background: url('../img/mappa.jpg') 0 0 no-repeat;*/
   background-size: cover;
 }
 .pianificato-schedaA .testo-mappa {
@@ -932,13 +941,44 @@ ul.list li .euros {
   padding: 10px 0;
   font-size: 26px;
 }
-.pianificato-schedaA .viabilita {
+.pianificato-schedaA .what {
   height: 194px;
   border-radius: 4px;
   background: #999999;
   font-size: 25px;
 }
-.pianificato-schedaA .viabilita img {
+.pianificato-schedaA .what .sector {
+  display: block;
+  width: 180px;
+  height: 150px;
+  margin: 0 auto;
+  background: url('../img/settori.png') center 20px no-repeat;
+}
+.pianificato-schedaA .what .sector.infrastrutture {
+  background-position: 0px 20px;
+}
+.pianificato-schedaA .what .sector.ospedali {
+  background-position: -185px 20px;
+}
+.pianificato-schedaA .what .sector.cimiteri {
+  background-position: -350px 20px;
+}
+.pianificato-schedaA .what .sector.edifici {
+  background-position: -530px 20px;
+}
+.pianificato-schedaA .what .sector.sportivi {
+  background-position: -705px 20px;
+}
+.pianificato-schedaA .what .sector.chiese {
+  background-position: -875px 20px;
+}
+.pianificato-schedaA .what .sector.scuole {
+  background-position: -1060px 20px;
+}
+.pianificato-schedaA .what .sector.pubblici {
+  background-position: -1230px 20px;
+}
+.pianificato-schedaA .what img {
   padding: 25px 0 20px 0;
 }
 .pianificato-schedaA a {
