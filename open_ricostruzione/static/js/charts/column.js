@@ -116,8 +116,8 @@ $(function () {
                 //console.log("poinnnnttt", this.x);
                 return "<h3><i class='ico-settori green "+this.points[0].point.classe+"'></i> "+ this.x +" </h3>" +
                             "<table>"+
-                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_programmati + "</td><td>Interventi programmati</strong></td><td style='text-align:right'> <strong>"+this.points[0].point.programmati_ita+" €</strong></td></tr>"+
-                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_pianificati +"</td><td>Interventi pianificati</strong></td><td style='text-align:right'> <strong>"+this.points[1].point.pianificati_ita+" €</strong></td></tr>"+
+                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_programmati + "</td><td>Interventi a programma</strong></td><td style='text-align:right'> <strong>"+this.points[0].point.programmati_ita+" €</strong></td></tr>"+
+                            "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_pianificati +"</td><td>Interventi a piano</strong></td><td style='text-align:right'> <strong>"+this.points[1].point.pianificati_ita+" €</strong></td></tr>"+
                             "<tr><td stule='text-align:left; width:20%'><strong>" + this.points[0].point.interventi_attuali +"</td><td>Interventi in attuazione</strong></td><td style='text-align:right'> <strong>"+this.points[2].point.attuali_ita+" €</strong></td></tr>"+
                             "<tr><td colspan='3'><a href='"+this.points[0].point.link+"' style='text-aligh:right'><strong>» Vedi tutti</strong></a></td></tr>"+
                             "</table>";
@@ -165,17 +165,17 @@ $(function () {
 
         },
         series: [{
-            name: 'Programmati', // NOME COLONNA
+            name: 'Interventi a programma', // NOME COLONNA
             data: array_data_column,
             color: "#ED450A" // orange
         },
         {
-            name: 'Pianificati', // NOME COLONNA
+            name: 'Interventi a piano', // NOME COLONNA
             data: array_data_column2,
             color: '#F4E73D' // yellow
         },
         {
-            name: 'In attuazione', // NOME COLONNA
+            name: 'Interventi in attuazione', // NOME COLONNA
             data: array_data_column3,
             color: '#059e1e' // green
         }
