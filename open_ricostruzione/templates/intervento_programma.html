@@ -157,14 +157,16 @@
                                 <div class="header">
                                         Lavori in corso
                                 </div>
-
-                                <ul class="lista">
-
-                                    <li class="row done">
-                                        <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Lorem ipsum</div>
-                                        <div class="col-xs-5 text-right">29 Marzo 2013</div>
-                                    </li>
-                                </ul>
+                                {% if eventi_in_corso|length > 0  %}
+                                    <ul class="lista">
+                                        {% for eic in eventi_in_corso %}
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ eic.get_tipologia_display }}</div>
+                                                <div class="col-xs-5 text-right">{{ eic.data }}</div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </div>
                         {% endif %}
 
@@ -176,13 +178,16 @@
 
                                 </div>
 
-                                <ul class="lista">
-
-                                    <li class="row done">
-                                        <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Lorem ipsum</div>
-                                        <div class="col-xs-5 text-right">16 Settembre 2013</div>
-                                    </li>
-                                </ul>
+                                {% if eventi_fine|length > 0  %}
+                                    <ul class="lista">
+                                        {% for ef in eventi_fine %}
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ ef.get_tipologia_display }}</div>
+                                                <div class="col-xs-5 text-right">{{ ef.data }}</div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             </div>
                         {% endif %}
 

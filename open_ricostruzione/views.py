@@ -756,9 +756,9 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
                     self.liquidazioni = Liquidazione.objects.filter(intervento=self.intervento).order_by('-data')
                     if self.liquidazioni:
                         self.importo_liquidazioni = self.liquidazioni.aggregate(s=Sum('importo'))['s']
-                    self.progetti = Progetto.objects.filter(intervento=self.intervento)
-                    self.eventi_in_corso = EventoContrattuale.objects.filter(intervento=self.intervento).exclude(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)
-                    self.eventi_fine = EventoContrattuale.objects.filter(intervento=self.intervento).filter(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)
+                    self.progetti = Progetto.objects.filter(intervento=self.intervento).order_by('-data_inizio','-data_deposito','-data_fine')
+                    self.eventi_in_corso = EventoContrattuale.objects.filter(intervento=self.intervento).exclude(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('-data')
+                    self.eventi_fine = EventoContrattuale.objects.filter(intervento=self.intervento).filter(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('-data')
 
         return super(InterventoProgrammaView, self).get(request, *args, **kwargs)
 
