@@ -90,6 +90,9 @@ a:hover {
 .ico-settori.pubblici {
   background-position: -816px 0;
 }
+.ico-settori.altros {
+  background-position: -916px 0;
+}
 .programmazione .ico-settori {
   margin-left: -30px;
   margin-top: 10px;
@@ -977,6 +980,9 @@ ul.list li .euros {
 }
 .pianificato-schedaA .what .sector.pubblici {
   background-position: -1230px 20px;
+}
+.pianificato-schedaA .what .sector.altro {
+  background-position: -1375px 20px;
 }
 .pianificato-schedaA .what img {
   padding: 25px 0 20px 0;

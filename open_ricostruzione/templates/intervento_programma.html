@@ -61,23 +61,24 @@
 
                         <div class="col-md-3">
                             <div class="what">
-                                {% if intervento_programma.tipo_immobile == '1'  %}
+                            
+                                {% if intervento_programma.tipo_immobile.tipologia == '1'  %}
                                     <span class="sector altro"> </span>
-                                {% elif intervento_programma.tipo_immobile == '2'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '2'  %}
                                     <span class="sector infrastrutture"> </span>
-                                {% elif intervento_programma.tipo_immobile == '3'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '3'  %}
                                     <span class="sector ospedali"> </span>
-                                {% elif intervento_programma.tipo_immobile == '4'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '4'  %}
                                     <span class="sector cimiteri"> </span>
-                                {% elif intervento_programma.tipo_immobile == '5'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '5'  %}
                                     <span class="sector edifici"> </span>
-                                {% elif intervento_programma.tipo_immobile == '6'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '6'  %}
                                     <span class="sector sportivi"> </span>
-                                {% elif intervento_programma.tipo_immobile == '7'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '7'  %}
                                     <span class="sector chiese"> </span>
-                                {% elif intervento_programma.tipo_immobile == '8'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '8'  %}
                                     <span class="sector scuole"> </span>
-                                {% elif intervento_programma.tipo_immobile == '9'  %}
+                                {% elif intervento_programma.tipo_immobile.tipologia == '9'  %}
                                     <span class="sector pubblici"> </span>
                                 {% endif %}
 
