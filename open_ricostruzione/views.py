@@ -724,7 +724,7 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
     imprese = None
     progetti = None
     eventi_in_corso = None
-    eventi_fine = None
+    evento_fine = None
     varianti = None
     cofinanziamenti = None
     liquidazioni = None
@@ -758,7 +758,10 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
                         self.importo_liquidazioni = self.liquidazioni.aggregate(s=Sum('importo'))['s']
                     self.progetti = Progetto.objects.filter(intervento=self.intervento).order_by('-data_inizio','-data_deposito','-data_fine')
                     self.eventi_in_corso = EventoContrattuale.objects.filter(intervento=self.intervento).exclude(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('-data')
-                    self.eventi_fine = EventoContrattuale.objects.filter(intervento=self.intervento).filter(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('-data')
+                    try:
+                        self.evento_fine = EventoContrattuale.objects.get(intervento=self.intervento, tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)
+                    except ObjectDoesNotExist:
+                        pass
 
         return super(InterventoProgrammaView, self).get(request, *args, **kwargs)
 
@@ -773,7 +776,7 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
         context['imprese'] = self.imprese
         context['progetti'] = self.progetti
         context['eventi_in_corso'] = self.eventi_in_corso
-        context['eventi_fine'] = self.eventi_fine
+        context['evento_fine'] = self.evento_fine
 
         importo = 0
         if self.intervento_programma.stato == InterventoProgramma.STATO.PROGRAMMA:

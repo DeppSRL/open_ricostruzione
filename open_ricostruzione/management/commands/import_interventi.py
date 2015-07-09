@@ -158,6 +158,10 @@ class Command(BaseCommand):
             stato = InterventoProgramma.STATO.PIANO
 
             if len(interventi) > 0:
+
+                if len(interventi) > 1:
+                    self.logger.warning("Intervento programma:'{}' have {} interventi, only the 1st is considered!".format(intervento_programma.slug, len(interventi)))
+
                 in_attuazione = True
                 stato = InterventoProgramma.STATO.ATTUAZIONE
                 # todo: qua si considera lo stato del primo intervento, quando aggiorneremo la logica andra' cambiato questo passaggio

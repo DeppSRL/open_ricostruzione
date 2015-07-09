@@ -200,22 +200,21 @@
                             </div>
                         {% endif %}
 
-                        {% if intervento_programma.stato_attuazione == 'concluso' %}
+                        {% if intervento_programma.stato_attuazione == 'concluso' and evento_fine %}
                             <div class="col-sm-4 box state3">
                                 <div class="header">
-
-                                    <small>Data fine effettiva</small> 16 Settembre 2013
-
+                                    {% if evento_fine and evento_fine.data %}
+                                        <small>Data fine effettiva</small> {{ evento_fine.data }}
+                                    {% endif %}
+{##}
                                 </div>
 
-                                {% if eventi_fine|length > 0  %}
+                                {% if evento_fine  %}
                                     <ul class="lista">
-                                        {% for ef in eventi_fine %}
-                                            <li class="row done">
-                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ ef.get_tipologia_display }}</div>
-                                                <div class="col-xs-5 text-right">{{ ef.data }}</div>
-                                            </li>
-                                        {% endfor %}
+                                        <li class="row done">
+                                            <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ evento_fine.get_tipologia_display }}</div>
+                                            <div class="col-xs-5 text-right">{{ evento_fine.data }}</div>
+                                        </li>
                                     </ul>
                                 {% endif %}
                             </div>

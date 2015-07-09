@@ -34,6 +34,7 @@ class DonazioneInterventoProgrammaAdminInline(admin.TabularInline):
 
 class InterventoAdmin(admin.ModelAdmin):
     model = Intervento
+    raw_id_fields = ['intervento_piano']
 
 
 class ProgrammaAdmin(admin.ModelAdmin):
