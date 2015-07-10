@@ -2,23 +2,13 @@
 {% load l10n %}
 
 {% block execution_bar_data %}
-    <script>
-{##}
-{#        var data_array_bar =#}
-{#            [#}
-{#                {name: "Interventi in Progettazione", y: {{ status.progettazione.count }} },#}
-{#                {name: "Lavori in Corso", y: {{ status.in_corso.count }} },#}
-{#                {name: "Lavori conclusi", y: {{ status.conclusi.count }} }#}
-{#            ];#}
-
-    </script>
 
     <script>
         {% localize off %}
         var fasi_data_array = [
-            {"code": "1", "data":[{"url": "", "sum":{{ status.progettazione.sum }}, "y": {{ status.progettazione.count }} }], "name": "Interventi in Progettazione"},
-            {"code": "2", "data": [{"url": "", "sum": {{ status.in_corso.sum }}, "y": {{ status.in_corso.count }} }], "name": "Lavori in corso"},
-            {"code": "3", "data": [{"url": "", "sum": {{ status.conclusi.sum }}, "y": {{ status.conclusi.count }} }], "name": "Lavori conclusi"}
+            {"code": "1", "data":[{"url": "{% url 'lista-interventi' %}?{{ base_filters }}&stato_attuazione=progettazione", "sum":{{ status.progettazione.sum }}, "y": {{ status.progettazione.count }} }], "name": "Interventi in Progettazione"},
+            {"code": "2", "data": [{"url": "{% url 'lista-interventi' %}?{{ base_filters }}&stato_attuazione=in_corso", "sum": {{ status.in_corso.sum }}, "y": {{ status.in_corso.count }} }], "name": "Lavori in corso"},
+            {"code": "3", "data": [{"url": "{% url 'lista-interventi' %}?{{ base_filters }}&stato_attuazione=concluso", "sum": {{ status.conclusi.sum }}, "y": {{ status.conclusi.count }} }], "name": "Lavori conclusi"}
         ];
         {% endlocalize %}
 

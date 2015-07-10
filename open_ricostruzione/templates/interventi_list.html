@@ -42,7 +42,14 @@
                         <strong>In attuazione</strong><br/>
                     {% endif %}
                     {% if stato_attuazione_filter %}
-                        <strong>Per Stato di attuazione: {{ stato_attuazione_filter|title }}</strong><br/>
+                        <strong>Per Stato di attuazione:
+                            {% if stato_attuazione_filter == 'in_corso' %}
+                                In corso
+                            {% else %}
+                                {{ stato_attuazione_filter|title }}
+                            {% endif %}
+                        </strong>
+                        <br/>
                     {% endif %}
                     {% if impresa_filter%}
                         <strong>Per l'impresa: {{ impresa_filter|title }}</strong><br/>
