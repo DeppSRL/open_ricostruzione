@@ -448,14 +448,22 @@ class Command(BaseCommand):
                                     "Intervento with id_fenice:{}, Variante: id_qe:{} does not exist in db".format(
                                         intervento.id_fenice, variante['id_qe']))
 
+                        variante_data_deposito = None
+                        if variante['iter']['data_dep']:
+                            variante_data_deposito = datetime.strptime(variante['iter']['data_dep'], self.date_format)
+
+                        variante_data_fine = None
+                        if variante['iter']['data_fine']:
+                            variante_data_fine = datetime.strptime(variante['iter']['data_fine'], self.date_format)
+
                         Variante(**{
                             'qe': qev,
                             'tipologia': variante['id_tipo_var'],
                             'stato': variante['id_stato_var'],
                             'intervento': intervento,
                             'progetto': progetto_variante,
-                            'data_deposito': datetime.strptime(variante['iter']['data_dep'], self.date_format),
-                            'data_fine': datetime.strptime(variante['iter']['data_fine'], self.date_format),
+                            'data_deposito': variante_data_deposito,
+                            'data_fine': variante_data_fine
                         }).save()
 
             # set state and attuazione state for the considered intervento_programma
