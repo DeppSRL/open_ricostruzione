@@ -1,11 +1,3 @@
-function formatPercentage(percentage) {
-    if (percentage < 0.01) {
-        return 'minore di ' + Highcharts.numberFormat(0.01) + '%';
-    } else {
-        return Highcharts.numberFormat(percentage) + '%';
-    }
-}
-
 $(function () {
 
     if (typeof fasi_data_array === 'undefined' )

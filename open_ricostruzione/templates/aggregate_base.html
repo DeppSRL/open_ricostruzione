@@ -16,9 +16,9 @@
     <script>
         {% localize off %}
         var fasi_data_array = [
-            {"code": "1", "data":[{"url": "", "y":{{ status.progettazione.sum }}, "num": {{ status.progettazione.count }} }], "name": "Interventi in Progettazione"},
-            {"code": "2", "data": [{"url": "", "y": {{ status.in_corso.sum }}, "num": {{ status.in_corso.count }} }], "name": "Lavori in corso"},
-            {"code": "3", "data": [{"url": "", "y": {{ status.conclusi.sum }}, "num": {{ status.conclusi.count }} }], "name": "Lavori conclusi"}
+            {"code": "1", "data":[{"url": "", "sum":{{ status.progettazione.sum }}, "y": {{ status.progettazione.count }} }], "name": "Interventi in Progettazione"},
+            {"code": "2", "data": [{"url": "", "sum": {{ status.in_corso.sum }}, "y": {{ status.in_corso.count }} }], "name": "Lavori in corso"},
+            {"code": "3", "data": [{"url": "", "sum": {{ status.conclusi.sum }}, "y": {{ status.conclusi.count }} }], "name": "Lavori conclusi"}
         ];
         {% endlocalize %}
 
