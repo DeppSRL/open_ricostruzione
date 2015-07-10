@@ -34,6 +34,16 @@ function toDot (id){
 	return id.replace(/[-]+/g,'.');
 };
 
+function escapeHTML(html) {
+	if (typeof html === 'string') {
+		html = html
+			.replace('\u25CF', '\\u25CF')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+	}
+	return html;
+}
+
 function escapeSelector (name) {
 	return name.replace('<', '\\<').replace('>', '\\>');
 }
@@ -142,7 +152,7 @@ function addSectionOption(val){
 	$section = $('<div class="section" id="' + val.name + '" style="display:none;"></div>').appendTo('#details');
 	$('<h1>' + val.fullname.replace('<', '&lt;').replace('>', '&gt;') + '</h1>'
 	+ (val.description ? '<div class="section-description">' + val.description + '</div>': '')
-	+ (val.demo ? '<div class="demo">Try it: ' + val.demo + '</div>': '' )).appendTo($section);
+	+ (val.demo ? '<div class="demo"><h4>Try it:</h4> ' + val.demo + '</div>': '' )).appendTo($section);
 
 	activateInternalLinks($section);
 	$(document).triggerHandler({ type:"xtra.btn.section.event",id: optionDictionary[val.fullname], table: 'option' });
@@ -180,10 +190,10 @@ function loadOptionMemberInSection(obj, isParent){
 			+ (obj.deprecated ? '<div class="deprecated"><p>Deprecated</p></div>' : '' )
 			+ (obj.since ? '<div class="since">Since ' + obj.since + '</div>' : '' )
 			+ (obj.description ? '<div class="description">' + obj.description
-					+ (obj.defaults ? ' Defaults to <code>' + obj.defaults + '</code>.'  : '')
+					+ (obj.defaults ? ' Defaults to <code>' + escapeHTML(obj.defaults) + '</code>.'  : '')
 					+ '</div>' : '')
 			+ (obj.context ? '<div class="description' + contextClass + '">The <code>this</code> keyword refers to the '+ markupReturnType(obj.context) +' object.</div>' : '')
-			+ (obj.demo ? '<div class="demo">Try it: ' + obj.demo + '</div>': '' )
+			+ (obj.demo ? '<div class="demo"><h4>Try it:</h4> ' + obj.demo + '</div>': '' )
 			+ (obj.seeAlso ? '<div class="seeAlso">See also: ' + obj.seeAlso + '</div>': '' )
 			+ '</div>').appendTo($_section);
 
@@ -210,7 +220,7 @@ function loadObjectMemberInSection(obj) {
 					obj.paramsDescription.replace(/\|\|/g,'</li><li>') + '</li></ul>' : '')
 			+ (obj.returnType ? '<h4>Returns</h4><ul id="returns"><li>' + markupReturnType(obj.returnType) + '</li></ul>' : '')
 			+ '</div>'
-			+ (obj.demo ? '<div class="demo">Try it: ' + obj.demo + '</div>': '' )
+			+ (obj.demo ? '<div class="demo"><h4>Try it:</h4> ' + obj.demo + '</div>': '' )
 			+ '</div>').appendTo('div#object-' + obj.parent + '.section');
 
 	activateInternalLinks($memberDiv);
@@ -227,6 +237,11 @@ function loadChildren(name, silent, callback) {
 		type: "GET",
 		url: url,
 		dataType: "json",
+		error: function () {
+			var $menu;
+			$menu = $('div#' + escapeSelector(name) + '-menu');
+			$('.dots', $menu.parent()).removeClass('loading').addClass('error').html('Error');
+		},
 		success: function (data) {
 			var display = 'block',
 			display, $menu, $menuItem;
@@ -244,7 +259,8 @@ function loadChildren(name, silent, callback) {
 				tie, dottedName, internalName,
 				name,
 				title,
-				defaults;
+				defaults,
+				cls;
 
 				/*if (val.type === 'method') {
 					name = val.name.replace('--', '.') + '()';
@@ -297,11 +313,24 @@ function loadChildren(name, silent, callback) {
 						defaults = '[function]';
 					} else if (val.type === 'property') {
 						defaults = '[' + val.returnType + ']';
+					} else if (val.defaults === 'null' || val.defaults === 'undefined' || val.defaults === '' || val.defaults === undefined) {
+						defaults = val.defaults;
+					} else if (val.returnType === 'String' || val.returnType === 'Color') {
+						defaults = '"' + val.defaults + '"';
+
 					} else {
 						defaults = val.defaults;
 					}
 
-					$('<span class="value">: ' + defaults + '</span>').appendTo($div);
+					if (val.returnType) {
+						cls = val.returnType.toLowerCase();
+					} else {
+						cls = '';
+						console.warn('Missing returnType for ' + val.fullname);
+					}
+						
+
+					$('<span class="value value-' + cls + '">: ' + escapeHTML(defaults) + '</span>').appendTo($div);
 				}
 				if (isObject) {
 					loadObjectMemberInSection(val);
@@ -392,10 +421,10 @@ function gotoSection(anchor, hilighted) {
 			}
 
 			// For the last path item, show the section etc
+			if (/[A-Z]/.test(level[0])) {
+				level = 'object-' + level;
+			}
 			if ($('#details > div.section#' + level).length) {
-				if (/[A-Z]/.test(level[0])) {
-					level = 'object-' + level;
-				}
 				toggleSection(level);
 
 				// empty search
@@ -464,7 +493,7 @@ function addFirstLevelMenuItem(key, val, type) {
 	var $menuItem = $('<div class="menuitem collapsed"></div>').appendTo('#' + type + 's'),
 		$plus, anchor, $menu, levels, level, member, $menuLink,
 		sectionId = val.fullname || val.name,
-		title = val.title.replace('<', '&lt;').replace('>', '&gt;'),
+		title = escapeHTML(val.title),
 		mainSection,
 		name = val.name,
 		recurseToType = false,

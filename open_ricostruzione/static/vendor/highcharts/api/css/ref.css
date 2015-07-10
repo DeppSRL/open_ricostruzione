@@ -278,6 +278,12 @@ input#search {
 	position: absolute;
 	white-space: nowrap;
 }
+#nav .value-string, #nav .value-color {
+	color: #39A832;
+}
+#nav .value-number {
+	color: #297EA8;
+}
 
 a.hilighted {
 	background-color: #C5F7BE;
@@ -314,6 +320,10 @@ a.hilighted {
 
 #nav .dots.loading {
 	background: url(./../images/ajax-loader.gif) no-repeat center;
+}
+#nav .dots.error {
+	color: red;
+	font-weight: bold;
 }
 
 #nav .dots.loading span {
@@ -422,7 +432,6 @@ pre,code {
 	margin-top: 1.5em;
 	margin-bottom:0.5em;
 	margin-left: 1.5em;
-	font-weight: bold;
 }
 
 .section .member .demo {

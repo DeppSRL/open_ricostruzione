@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.3 (2015-02-27)
+ * @license Highcharts JS v4.1.7 (2015-06-26)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -60,11 +60,8 @@ extend(Pane.prototype, {
 		
 		pane.chart = chart;
 		
-		// Set options
-		if (chart.angular) { // gauges
-			defaultOptions.background = {}; // gets extended by this.defaultBackgroundOptions
-		}
-		pane.options = options = merge(defaultOptions, options);
+		// Set options. Angular charts have a default background (#3318)
+		pane.options = options = merge(defaultOptions, chart.angular ? { background: {} } : undefined, options);
 		
 		backgroundOption = options.background;
 		
@@ -832,6 +829,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
+			up,
 			inverted = this.chart.inverted;
 			
 		if (dataLabelOptions.enabled || this._hasPointLabels) {
@@ -840,26 +838,29 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				
-				// Set preliminary values
-				point.y = point.high;
-				point._plotY = point.plotY;
-				point.plotY = point.plotHigh;
-				
-				// Store original data labels and set preliminary label objects to be picked up 
-				// in the uber method
-				originalDataLabels[i] = point.dataLabel;
-				point.dataLabel = point.dataLabelUpper;
-				
-				// Set the default offset
-				point.below = false;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = 'left';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Set preliminary values
+					point.y = point.high;
+					point._plotY = point.plotY;
+					point.plotY = point.plotHigh;
+					
+					// Store original data labels and set preliminary label objects to be picked up 
+					// in the uber method
+					originalDataLabels[i] = point.dataLabel;
+					point.dataLabel = point.dataLabelUpper;
+					
+					// Set the default offset
+					point.below = up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'right' : 'left';
+						}
+						dataLabelOptions.x = dataLabelOptions.xHigh;								
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yHigh;
 					}
-					dataLabelOptions.x = dataLabelOptions.xHigh;								
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
 			
@@ -871,24 +872,27 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				
-				// Move the generated labels from step 1, and reassign the original data labels
-				point.dataLabelUpper = point.dataLabel;
-				point.dataLabel = originalDataLabels[i];
-				
-				// Reset values
-				point.y = point.low;
-				point.plotY = point._plotY;
-				
-				// Set the default offset
-				point.below = true;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = 'right';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Move the generated labels from step 1, and reassign the original data labels
+					point.dataLabelUpper = point.dataLabel;
+					point.dataLabel = originalDataLabels[i];
+					
+					// Reset values
+					point.y = point.low;
+					point.plotY = point._plotY;
+					
+					// Set the default offset
+					point.below = !up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'left' : 'right';
+						}
+						dataLabelOptions.x = dataLabelOptions.xLow;
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yLow;
 					}
-					dataLabelOptions.x = dataLabelOptions.xLow;
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
 			if (seriesProto.drawDataLabels) {
@@ -966,15 +970,23 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 				y = plotHigh;
 				height = point.plotY - plotHigh;
 
-				if (height < minPointLength) {
+				// Adjust for minPointLength
+				if (Math.abs(height) < minPointLength) {
 					heightDifference = (minPointLength - height);
 					height += heightDifference;
 					y -= heightDifference / 2;
+
+				// Adjust for negative ranges or reversed Y axis (#1457)
+				} else if (height < 0) {
+					height *= -1;
+					y -= height;
 				}
+
 				shapeArgs.height = height;
 				shapeArgs.y = y;
 			});
 		},
+		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		drawGraph: noop,
 		pointAttrToOptions: colProto.pointAttrToOptions,
@@ -1487,7 +1499,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			}
 		});
 
-	}
+	},
+	setStackedPoints: noop // #3890
 
 
 });
@@ -1561,8 +1574,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 	upColorProp: 'fill',
 
-	pointArrayMap: ['low', 'y'],
-
 	pointValKey: 'y',
 
 	/**
@@ -1620,11 +1631,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// sum points
 			if (point.isSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = yAxis.translate(range[0], 0, 1) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
 
 			} else if (point.isIntermediateSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get 
@@ -1636,6 +1647,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 						yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
 				}
 				previousY += yValue;
+			}
+			// #3952 Negative sum or intermediate sum not rendered correctly
+			if (shapeArgs.height < 0) {
+				shapeArgs.y += shapeArgs.height;
+				shapeArgs.height *= -1;
 			}
 
 			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
@@ -2139,7 +2155,10 @@ Axis.prototype.beforePadding = function () {
 		pointerProto = Pointer.prototype,
 		colProto;
 
-	seriesProto.searchPolarPoint = function (e) {
+	/**
+	 * Search a k-d tree by the point angle, used for shared tooltips in polar charts
+	 */
+	seriesProto.searchPointByAngle = function (e) {
 		var series = this,
 			chart = series.chart,
 			xAxis = series.xAxis,
@@ -2147,28 +2166,27 @@ Axis.prototype.beforePadding = function () {
 			plotX = e.chartX - center[0] - chart.plotLeft,
 			plotY = e.chartY - center[1] - chart.plotTop;
 
-		this.kdAxisArray = ['clientX'];
-		e = {
+		return this.searchKDTree({
 			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
-		};
-		return this.searchKDTree(e);
+		});
 
 	};
 	
+	/**
+	 * Wrap the buildKDTree function so that it searches by angle (clientX) in case of shared tooltip,
+	 * and by two dimensional distance in case of non-shared.
+	 */
 	wrap(seriesProto, 'buildKDTree', function (proceed) {
 		if (this.chart.polar) {
-			this.kdAxisArray = ['clientX'];
+			if (this.kdByAngle) {
+				this.searchPoint = this.searchPointByAngle;
+			} else {
+				this.kdDimensions = 2;
+			}
 		}
 		proceed.apply(this);
 	});
-	
-	wrap(seriesProto, 'searchPoint', function (proceed, e) {
-		if (this.chart.polar) {
-			return this.searchPolarPoint(e);
-		} else {
-			return proceed.call(this, e);
-		}
-	});
+
 	/**
 	 * Translate a point's plotX and plotY from the internal angle and radius measures to 
 	 * true plotX, plotY coordinates
@@ -2184,18 +2202,22 @@ Axis.prototype.beforePadding = function () {
 		point.rectPlotX = plotX;
 		point.rectPlotY = plotY;
 	
-		// Record the angle in degrees for use in tooltip
-		clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
-		if (clientX < 0) { // #2665
-			clientX += 360;
-		}
-		point.clientX = clientX;
-
-	
 		// Find the polar plotX and plotY
 		xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
 		point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
 		point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+
+		// If shared tooltip, record the angle in degrees in order to align X points. Otherwise,
+		// use a standard k-d tree to get the nearest point in two dimensions.
+		if (this.kdByAngle) {
+			clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+			if (clientX < 0) { // #2665
+				clientX += 360;
+			}
+			point.clientX = clientX;
+		} else {
+			point.clientX = point.plotX;
+		}
 	};
 
 	/**
@@ -2343,17 +2365,25 @@ Axis.prototype.beforePadding = function () {
 	 * center. 
 	 */
 	wrap(seriesProto, 'translate', function (proceed) {
-		
+		var chart = this.chart,
+			points,
+			i;
+
 		// Run uber method
 		proceed.call(this);
 	
 		// Postprocess plot coordinates
-		if (this.chart.polar && !this.preventPostTranslate) {
-			var points = this.points,
+		if (chart.polar) {
+			this.kdByAngle = chart.tooltip && chart.tooltip.shared;
+	
+			if (!this.preventPostTranslate) {
+				points = this.points;
 				i = points.length;
-			while (i--) {
-				// Translate plotX, plotY from angle and radius to true plot coordinates
-				this.toXY(points[i]);
+
+				while (i--) {
+					// Translate plotX, plotY from angle and radius to true plot coordinates
+					this.toXY(points[i]);
+				}
 			}
 		}
 	});
