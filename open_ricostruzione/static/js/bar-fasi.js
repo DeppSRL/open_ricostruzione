@@ -6,10 +6,9 @@ $(function () {
     var hasTouch = !!('ontouchstart' in window);
 
     var color_array = {
-        '1': '#5eb3e4',
-        '2': '#1f8fcf',
-        '3': '#149350',
-        '4': '#d2312c'
+        '1': '#0ee832',
+        '2': '#0cbe2a',
+        '3': '#09ae24'
     };
 
     for (var color, i = 0; i < fasi_data_array.length; i++) {
@@ -27,8 +26,9 @@ $(function () {
         },
         tooltip: {
             useHTML: true,
-            backgroundColor: 'rgb(255, 255, 255)',
-            borderColor: 'rgb(255, 0, 0)',
+            backgroundColor: 'rgb(0, 0, 0)',
+            borderColor: '#000',
+            color: '#ffffff',
             borderWidth: 1,
             borderRadius: 4,
             shadow:false,
@@ -36,18 +36,19 @@ $(function () {
                 zIndex: '999999 !important',
                 overflow: 'visible',
                 padding: 10
+            },
+
+            formatter: function() {
+                var txt = '';
+
+                txt += '<div style="color:#fff">';
+                txt += '<div style="font-size: 18px">' + this.series.name + ': ' + formatPercentage(this.percentage) + '</div>';
+                txt += '<div>Importi impegnati: € ' + Highcharts.numberFormat(this.point.sum) + '</div>';
+                txt += '<div>Totale progetti: ' + Highcharts.numberFormat(this.point.y, 0) + '</div>';
+                txt += '<div><a  style="color:#fff" href="' + this.point.url + '">» Vedi tutti</a></div>';
+                txt += '</div>';
+                return txt;
             }
-//            formatter: function() {
-//                var txt = '';
-//
-////                txt += '<div style="color: ' + this.series.color + '">';
-////                txt += '<div style="font-size: 18px">' + this.series.name + ': ' + formatPercentage(this.percentage) + '</div>';
-////                txt += '<div>Importi impegnati: € ' + Highcharts.numberFormat(this.y) + '</div>';
-////                txt += '<div>Totale progetti: ' + Highcharts.numberFormat(this.point.num, 0) + '</div>';
-////                txt += '<div><a href="' + this.point.url + '">» Vedi tutti</a></div>';
-////                txt += '</div>';
-//                return txt;
-//            }
         },
         xAxis: {
             title: null,

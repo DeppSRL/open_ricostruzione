@@ -3,13 +3,13 @@
 
 {% block execution_bar_data %}
     <script>
-
-        var data_array_bar =
-            [
-                {name: "Interventi in Progettazione", y: {{ status.progettazione.count }} },
-                {name: "Lavori in Corso", y: {{ status.in_corso.count }} },
-                {name: "Lavori conclusi", y: {{ status.conclusi.count }} }
-            ];
+{##}
+{#        var data_array_bar =#}
+{#            [#}
+{#                {name: "Interventi in Progettazione", y: {{ status.progettazione.count }} },#}
+{#                {name: "Lavori in Corso", y: {{ status.in_corso.count }} },#}
+{#                {name: "Lavori conclusi", y: {{ status.conclusi.count }} }#}
+{#            ];#}
 
     </script>
 
@@ -61,17 +61,6 @@
     {% block status %}
         {#    execution status bar / status blocks #}
         {% include 'aggregates/status.html' %}
-        <section class="riepilogo">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div id="bars">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     {% endblock %}
 
     {# fetch progetti #}
