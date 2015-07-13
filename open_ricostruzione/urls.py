@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.contrib import admin
+from .sitemap import sitemaps
 from django.conf.urls.static import static
 from rest_framework import routers
 from open_ricostruzione.views import StaticPageView, PageNotFoundTemplateView, HomeView, \
@@ -65,4 +66,12 @@ if settings.INSTANCE_TYPE == 'development':
     urlpatterns += patterns('',
                             url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
                                 {'document_root': settings.MEDIA_ROOT, }),
+    )
+
+# Sitemap: disabled in staging
+if settings.INSTANCE_TYPE != 'staging':
+
+    urlpatterns += patterns('django.contrib.sitemaps.views',
+        (r'^sitemap\.xml$', 'index', {'sitemaps': sitemaps}),
+        (r'^sitemap-(?P<section>.+)\.xml$', 'sitemap', {'sitemaps': sitemaps}),
     )
