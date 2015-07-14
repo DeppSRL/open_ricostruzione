@@ -6,7 +6,7 @@
             {{ intprog.denominazione|title|truncatechars:60 }}
         </a>
     </h2>
-    <span class="euros" id="top_intervento">{{ intprog.importo_generale|italianize }} € <span>programmati</span></span>
+    <span class="euros" id="top_intervento">{{ intprog.get_importo|italianize }} €</span>
 
     {% if intprog.vari_territori %}
         <a href="{% url 'localita' 'vari-territori' %}" class="comune">Intervento Sovracomunale</a>

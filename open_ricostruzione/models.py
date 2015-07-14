@@ -103,6 +103,16 @@ class InterventoProgramma(models.Model):
     in_corso = InCorsoManager()
     conclusi = ConclusiManager()
 
+    def get_importo(self):
+        # returns intervento importo depending on the state of attuazione/programmazione/piano
+        if self.stato == InterventoProgramma.STATO.PROGRAMMA:
+            return self.importo_generale
+        elif self.stato == InterventoProgramma.STATO.PIANO:
+            return self.interventopiano_set.all()[0].imp_consolidato
+        elif self.stato == InterventoProgramma.STATO.ATTUAZIONE:
+            return self.interventopiano_set.all()[0].intervento_set.all()[0].imp_consolidato
+        return
+
     @staticmethod
     def get_sogg_attuatore_aggregates(**kwargs):
         data = []

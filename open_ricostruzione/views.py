@@ -383,9 +383,10 @@ class AggregatePageMixin(object):
 
         return values
 
-    def fetch_interventi_programma(self, order_by, ):
+    def fetch_top_interventi_attuazione(self, ):
         n_objects = settings.N_PROGETTI_FETCH
-        return list(InterventoProgramma.objects.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
+        order_by='-interventopiano__intervento__imp_consolidato'
+        return list(InterventoProgramma.attuazione.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
 
     def fetch_imprese(self, ):
         n_objects = settings.N_IMPRESE_FETCH
@@ -501,7 +502,7 @@ class AggregatePageMixin(object):
                 agg_dict['status']['attuazione']['sum'])
 
         # top importo interventi fetch
-        agg_dict['interventi_top_importo'] = self.fetch_interventi_programma(order_by='-importo_generale')
+        agg_dict['interventi_top_importo'] = self.fetch_top_interventi_attuazione()
 
         # Get tipo immobile pie data
         if self.tipologia != self.TIPO_IMMOBILE:
