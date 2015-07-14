@@ -360,7 +360,7 @@ class AggregatePageMixin(object):
         # territorio page: only territorio filters
 
         for tipologia in Donazione.TIPO_CEDENTE:
-            d = {'name': tipologia[1]}
+            d = {'name': tipologia[1],'tipologia':tipologia}
             d.update(Donazione.get_aggregates(tipologia=tipologia, **self.programmazione_filters))
             values.append(d)
 
