@@ -25,7 +25,7 @@ class DonazioneInterventoProgrammaAdmin(ForeignKeyAutocompleteAdmin):
         'intervento_programma': ('n_ordine', 'denominazione'),
         'donazione': ('denominazione', 'territorio__denominazione'),
     }
-    fields = ('donazione', 'intervento_programma', 'importo', )
+    fields = ('donazione', 'intervento_programma', )
 
 
 class DonazioneInterventoProgrammaAdminInline(admin.TabularInline):
