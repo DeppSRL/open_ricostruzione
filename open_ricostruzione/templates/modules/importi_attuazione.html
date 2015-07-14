@@ -23,7 +23,7 @@
                     <div class="col-md-4 text-center">
                         <div class="importo4">
                             <div class="label-importo">di cui liquidati</div>
-                            <div class="importo2">€ {{ importo_liquidazioni|italianize }}
+                            <div class="importo2">€ {% if importo_liquidazioni %}{{ importo_liquidazioni|italianize }}{% else %}0,00{% endif %}
                                 {% if importo_liquidazioni > 0 %}
                                     <a href="#"><span class="glyphicon glyphicon-plus-sign link-dati-liquidati">&nbsp;</span></a>
                                 {% endif %}
