@@ -185,6 +185,85 @@ h1 {
   margin-left: 10px;
   text-align: right;
 }
+section.cosa .highcharts-tooltip span {
+  height: auto;
+  width: 300px;
+  overflow: auto;
+  white-space: normal !important;
+  padding: 10px;
+  display: none;
+}
+section.cosa .highcharts-tooltip span h2 {
+  padding: 0 10px 10px 10px;
+  font-size: 20px;
+}
+section.cosa .highcharts-tooltip span h3 {
+  padding: 0px;
+  margin: 0px;
+  font-size: 16px;
+}
+section.cosa .highcharts-tooltip span a {
+  font-size: 12px;
+  padding: 0px;
+  float: right;
+}
+section.cosa .highcharts-tooltip span table {
+  margin-top: 10px;
+  width: 100%;
+}
+section.cosa .highcharts-tooltip span table td {
+  padding: 8px;
+}
+section.cosa .highcharts-tooltip span p {
+  font-size: 14px;
+}
+section.cosa .highcharts-tooltip span span {
+  width: 115px;
+}
+section.cosa .tooltip-inner {
+  background-color: #ffffff !important;
+  color: #000000;
+  border-radius: 4px;
+  border: 1px solid #000000;
+  padding: 8px 8px 8px 40px;
+  min-width: 400px;
+  text-align: left;
+}
+section.cosa .tooltip-inner h2 {
+  font-size: 14px;
+  color: #059e1e;
+  padding: 0px;
+  margin: 0 0 15px;
+}
+section.cosa .tooltip-inner p {
+  margin-left: -25px;
+  font-size: 12px !important;
+}
+section.cosa .tooltip-inner .ico-small {
+  display: inline-block;
+  width: 16px !important;
+  height: 16px !important;
+  background: url('../img/ico-money-colored.png') 0 0 no-repeat;
+}
+section.cosa .tooltip-inner .ico-small.cyan {
+  background-position: -16px 0;
+}
+section.cosa .tooltip-inner .ico-small.orange {
+  background-position: -32px 0;
+}
+section.cosa .tooltip.top .tooltip-arrow {
+  display: none;
+}
+section.cosa .highcharts-container {
+  overflow: visible !important;
+}
+section.cosa .highcharts-tooltip span {
+  background-color: white;
+  border: 1px solid #000;
+  opacity: 1;
+  z-index: 9999 !important;
+  border-radius: 4px;
+}
 .grafico-soggetti,
 .grafico-soggetti,
 .grafico-soggetti {
