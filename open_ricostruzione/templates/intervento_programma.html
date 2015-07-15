@@ -175,26 +175,30 @@
                             <div class="header">
                                     Lavori in corso
                             </div>
-                            {% if eventi_in_corso|length > 0  %}
-                                <ul class="lista">
-                                    {% for eic in eventi_in_corso %}
+                            {% if intervento_programma.stato_attuazione == 'in_corso' or intervento_programma.stato_attuazione == 'concluso' %}
+                                {#    if the interv. is not in corso/concluso, dont print events for the state   #}
+                                {% if eventi_in_corso|length > 0  %}
+                                    <ul class="lista">
+                                        {% for eic in eventi_in_corso %}
+                                            <li class="row done">
+                                                <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ eic.get_tipologia_display }}</div>
+                                                <div class="col-xs-5 text-right">{{ eic.data }}</div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <ul class="lista">
+
                                         <li class="row done">
-                                            <div class="col-xs-7"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ eic.get_tipologia_display }}</div>
-                                            <div class="col-xs-5 text-right">{{ eic.data }}</div>
+                                            <div class="col-xs-12"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ intervento.get_tipologia_display }}</div>
+
                                         </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <ul class="lista">
 
-                                    <li class="row done">
-                                        <div class="col-xs-12"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> {{ intervento.get_tipologia_display }}</div>
+                                    </ul>
 
-                                    </li>
-
-                                </ul>
-
+                                {% endif %}
                             {% endif %}
+
                         </div>
                         <div class="col-sm-4 box {% if intervento_programma.stato_attuazione == 'concluso' and evento_fine %}state3{% else %}to-begin{% endif %}">
                             <div class="header">
