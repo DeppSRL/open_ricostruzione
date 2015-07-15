@@ -61,7 +61,7 @@
 
                         <div class="col-md-3">
                             <div class="what">
-                            
+                                <a href="{% url 'tipo-immobile' intervento_programma.tipo_immobile.slug %}">
                                 {% if intervento_programma.tipo_immobile.tipologia == '1'  %}
                                     <span class="sector altro"> </span>
                                 {% elif intervento_programma.tipo_immobile.tipologia == '2'  %}
@@ -81,8 +81,7 @@
                                 {% elif intervento_programma.tipo_immobile.tipologia == '9'  %}
                                     <span class="sector pubblici"> </span>
                                 {% endif %}
-
-                                {{ intervento_programma.tipo_immobile }}
+                               {{ intervento_programma.tipo_immobile }}</a>
                             </div>
                         </div>
                         <div class="col-md-9">
