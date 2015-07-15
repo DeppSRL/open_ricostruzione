@@ -298,9 +298,9 @@ $( document ).ready(function() {
             chartPieTerr("pie-tipologia-pianificati",data_array_pie_tipologia_pianificati,'#F4E73D');
             chartPieTerr("pie-tipologia-attuati",data_array_pie_tipologia_attuati,'#059e1e');
             
-            $(".percentuale-programmati").html(percentuale_comune_programmati.replace(".", ","));
-            $(".percentuale-pianificati").html(percentuale_comune_pianificati.replace(".", ","));
-            $(".percentuale-attuati").html(percentuale_comune_attuati.replace(".", ","));
+            $(".percentuale-programmati").html(percentuale_tipo_programmati.replace(".", ","));
+            $(".percentuale-pianificati").html(percentuale_tipo_pianificati.replace(".", ","));
+            $(".percentuale-attuati").html(percentuale_tipo_attuati.replace(".", ","));
             
             break;
         case "soggetto":
