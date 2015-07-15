@@ -29,6 +29,7 @@ urlpatterns = patterns('',
                        url(r'^front-edit/', include('front.urls')),
                        url(r'^pages/chi-siamo', StaticPageView.as_view(), name='chi-siamo'),
                        url(r'^pages/faq', StaticPageView.as_view(), name='faq'),
+                       url(r'^pages/privacy', StaticPageView.as_view(), name='privacy'),
 
                        # Django REST FRAMEWORK API urls
                        url(r'^api/', include(router.urls)),
