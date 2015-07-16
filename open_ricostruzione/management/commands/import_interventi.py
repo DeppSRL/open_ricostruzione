@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from open_ricostruzione.models import InterventoProgramma, Cofinanziamento, Programma, InterventoPiano, \
     Piano, Intervento, QuadroEconomicoIntervento, QuadroEconomicoProgetto, Progetto, Liquidazione, EventoContrattuale, \
-    Impresa, DonazioneInterventoProgramma, Donazione, SoggettoAttuatore, TipoImmobile, Variante, UltimoAggiornamento, ProprietarioImmobile
+    Impresa, SoggettoAttuatore, TipoImmobile, Variante, UltimoAggiornamento, ProprietarioImmobile
 from territori.models import Territorio
 from optparse import make_option
 import logging
@@ -18,7 +18,7 @@ from datetime import datetime
 
 
 class Command(BaseCommand):
-    help = 'Import interventi data from JSON file'
+    help = 'Import interventi data from JSON file: delete all data and import'
 
     option_list = BaseCommand.option_list + (
 
@@ -35,66 +35,8 @@ class Command(BaseCommand):
     # => intervento su vari territori bool is set to true
     istat_code_vari_territori = '999999'
     date_format = '%d/%M/%Y'
-    error_logfile = None
-    temp_logfile = None
-    donazioni_intervento_programma = None
     tipo_imm_not_found = []
     not_found_territori = {}
-
-    def dump_don_json(self, logfile_name):
-        with open(logfile_name, 'w') as outfile:
-            json.dump(self.donazioni_intervento_programma, outfile, indent=4, cls=DjangoJSONEncoder)
-        return
-
-    def store_don_progr(self):
-        ##
-        # extract all donazioni intervento programma and stores the in memory
-        ##
-
-        self.donazioni_intervento_programma = list(
-            DonazioneInterventoProgramma. \
-                objects.all().order_by('intervento_programma__programma__id'). \
-                values(
-                'donazione__importo',
-                'donazione__pk',
-                'donazione__denominazione',
-                'intervento_programma__programma__id',
-                'intervento_programma__id_fenice',
-                'intervento_programma__soggetto_attuatore__id_fenice',
-                'intervento_programma__propr_immobile__id_fenice',
-                'intervento_programma__n_ordine',
-                'intervento_programma__importo_generale',
-                'intervento_programma__importo_a_programma',
-                'intervento_programma__denominazione',
-                'intervento_programma__territorio__slug',
-                'intervento_programma__tipo_immobile',
-                'intervento_programma__tipo_immobile_fenice',
-                'intervento_programma__slug',
-            )
-        )
-
-    def associate_don_progr(self):
-        ##
-        # associates back intervento programma and donazioni to Intervento programma
-        ##
-
-        for idx, dip_dict in enumerate(self.donazioni_intervento_programma):
-            iap = None
-            try:
-                iap = InterventoProgramma.objects.get(
-                    id_fenice=dip_dict['intervento_programma__id_fenice'])
-            except ObjectDoesNotExist:
-                self.logger.error(
-                    u"Cannot find Intervento a programma id_fenice:{} to associate with Donazione {}({})".format(
-                        dip_dict['intervento_programma__id_fenice'], dip_dict['donazione__denominazione'],
-                        dip_dict['donazione__pk']))
-                continue
-            else:
-                dip = DonazioneInterventoProgramma()
-                dip.donazione = Donazione.objects.get(pk=dip_dict['donazione__pk'])
-                dip.intervento_programma = iap
-                dip.save()
-                self.donazioni_intervento_programma.pop(idx)
 
     def translate_tipo_imm(self, id_tipo_imm):
         ##
@@ -190,9 +132,6 @@ class Command(BaseCommand):
             self.logger.setLevel(logging.DEBUG)
 
         self.input_file = options['file']
-        today_str = datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M")
-        self.error_logfile = "{}/log/import_{}_err.json".format(settings.PROJECT_ROOT, today_str)
-        self.temp_logfile = "{}/log/import_{}_temp.json".format(settings.PROJECT_ROOT, today_str)
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
         interventi_counter = 0
@@ -205,20 +144,6 @@ class Command(BaseCommand):
         except IOError:
             self.logger.error("It was impossible to open file '{}'".format(self.input_file))
             exit(1)
-
-        ##
-        # dumps all DonazioneProgramma that link Donazione to InterventoProgramma so this obj are not
-        # lost when the script will delete all InterventoProgramma objs.
-        ##
-
-        self.logger.info("Checking Donazioni Programma before import...")
-        self.store_don_progr()
-        if len(self.donazioni_intervento_programma) > 0:
-            self.dump_don_json(self.temp_logfile)
-            self.logger.info("Saved {} Donazioni Programma".format(len(self.donazioni_intervento_programma)))
-            self.logger.info("Dumped ALL Donazioni Programma in temp file:{}".format(self.temp_logfile))
-        else:
-            self.logger.info("No Donazioni Programma found")
 
         self.logger.info("Deleting all previous InterventoProgramma and Impresa...")
         InterventoProgramma.objects.all().delete()
@@ -250,7 +175,6 @@ class Command(BaseCommand):
 
                     continue
                 else:
-                    self.logger.debug(u"Territorio found:{}".format(territorio.denominazione))
 
                     got_gps_data = False
                     if territorio.gps_lon is None:
@@ -490,18 +414,6 @@ class Command(BaseCommand):
         if len(self.not_found_territori.keys()):
             for t, counter in self.not_found_territori.iteritems():
                 self.logger.error(u"Cannot find territorio with istat_id:'{}' {} times".format(t, counter))
-
-        self.logger.info("Recovering Donazioni Programma if present...")
-        total_donazioni_intervento = len(self.donazioni_intervento_programma)
-        self.associate_don_progr()
-        not_associated_donazioni_intervento = len(self.donazioni_intervento_programma)
-        associated_donazioni_intervento = total_donazioni_intervento - not_associated_donazioni_intervento
-        if associated_donazioni_intervento > 0:
-            self.logger.info("Correctly associated {} Donazioni Programma".format(associated_donazioni_intervento, ))
-        if not_associated_donazioni_intervento > 0:
-            self.logger.error(u"Could NOT ASSOCIATE {} Donazioni Programma. Dumped ONLY ERROR DATA in file {}".
-            format(not_associated_donazioni_intervento, self.error_logfile))
-            self.dump_don_json(self.error_logfile)
 
         if len(self.tipo_imm_not_found) > 0:
             for id_not_found in self.tipo_imm_not_found:

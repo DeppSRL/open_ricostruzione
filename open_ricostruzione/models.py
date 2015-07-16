@@ -523,7 +523,7 @@ class Donazione(models.Model):
 
 class DonazioneInterventoProgramma(models.Model):
     donazione = models.ForeignKey('Donazione', blank=False, null=False)
-    intervento_programma = models.ForeignKey('InterventoProgramma', blank=False, null=False)
+    intervento_programma = models.ForeignKey('InterventoProgramma', blank=False, null=True, on_delete=models.SET_NULL)
 
 
     @staticmethod
