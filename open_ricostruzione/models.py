@@ -481,6 +481,7 @@ class Donazione(models.Model):
         (u'5', u'AZIENDE', u'AZIENDE'),
         (u'6', u'REGIONI', u'REGIONI'),
         (u'7', u'PROVINCE', u'PROVINCE'),
+        (u'8', u'SMS_SOLIDALE', u'SMS SOLIDALE'),
     )
 
     territorio = models.ForeignKey('territori.Territorio')

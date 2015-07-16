@@ -48,7 +48,7 @@ class PianoAdmin(admin.ModelAdmin):
 
 class DonazioneAdmin(admin.ModelAdmin):
     model = Donazione
-    search_fields = ['^denominazione', ]
+    search_fields = ['denominazione', ]
     list_filter = [TerritorioWithDonazione, 'tipologia_cedente']
     ordering = ['denominazione', 'territorio__slug']
 
