@@ -8,7 +8,7 @@ from django.core.management import BaseCommand
 from django.db import IntegrityError
 from django.utils.text import slugify
 from open_ricostruzione.models import Programma, Piano, RUP, ProprietarioImmobile, SoggettoAttuatore, \
-    InterventoProgramma, Progetto, Intervento, Cofinanziamento, EventoContrattuale, Liquidazione, QuadroEconomico, Variante
+    InterventoProgramma, Progetto, Intervento, Cofinanziamento, EventoContrattuale, Liquidazione, QuadroEconomico, Variante, DonazioneInterventoProgramma
 
 
 class Command(BaseCommand):
