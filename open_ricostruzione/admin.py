@@ -13,11 +13,18 @@ class InterventoProgrammaAdmin(admin.ModelAdmin):
     model = InterventoProgramma
     ordering = ['n_ordine']
     list_filter = ['programma', TerritorioWithIntervento, 'tipo_immobile', ]
-    search_fields = ['^denominazione', 'id_fenice']
+    search_fields = ['denominazione', 'id_fenice']
 
 
 class TipoImmobileAdmin(admin.ModelAdmin):
     model = TipoImmobile
+
+
+class DonazioneAdmin(admin.ModelAdmin):
+    model = Donazione
+    search_fields = ['denominazione', ]
+    list_filter = [TerritorioWithDonazione, 'tipologia_cedente']
+    ordering = ['denominazione', 'territorio__slug']
 
 
 class DonazioneInterventoProgrammaAdmin(ForeignKeyAutocompleteAdmin):
@@ -26,6 +33,7 @@ class DonazioneInterventoProgrammaAdmin(ForeignKeyAutocompleteAdmin):
         'donazione': ('denominazione', 'territorio__denominazione'),
     }
     fields = ('donazione', 'intervento_programma', )
+    search_fields = ['donazione__denominazione', 'intervento_programma__denominazione' ]
 
 
 class DonazioneInterventoProgrammaAdminInline(admin.TabularInline):
@@ -44,13 +52,6 @@ class ProgrammaAdmin(admin.ModelAdmin):
 class PianoAdmin(admin.ModelAdmin):
     model = Piano
     ordering = ['id_fenice']
-
-
-class DonazioneAdmin(admin.ModelAdmin):
-    model = Donazione
-    search_fields = ['denominazione', ]
-    list_filter = [TerritorioWithDonazione, 'tipologia_cedente']
-    ordering = ['denominazione', 'territorio__slug']
 
 
 class LiquidazioneAdmin(admin.ModelAdmin):
