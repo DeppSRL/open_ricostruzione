@@ -8,7 +8,8 @@ In Open Ricostruzione there are two sources of data:
 - Donazioni
 
 
-
+Interventi a programma
+----------------------
 
 To load new Interventi a programma data just launch
 
@@ -17,6 +18,10 @@ To load new Interventi a programma data just launch
   python manage.py import_data --path=/PATH/TO/DATA/ -v2
 
 **Note:** the folder MUST contain 2 files, one for tipologie and one for interventi data.
+
+
+Donazioni
+---------
 
 To load new Interventi a programma data just launch
 
