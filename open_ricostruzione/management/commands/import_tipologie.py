@@ -191,13 +191,14 @@ class Command(BaseCommand):
         self.logger.info("Import sogg.attuatori")
 
         for s_attuatori_json in self.anagrafiche['soggetti_attuatori']:
-
+            tipologia_default = SoggettoAttuatore.TIPOLOGIA.ALTRO
             tipologia = self.sogg_att_map.get(s_attuatori_json['id'], u'')
             sa_slug = slugify(s_attuatori_json['nome'])
             sa_slug_alternative = u"{}_2".format(sa_slug)
             if tipologia == u'':
-                self.logger.error(u"Soggetto attuatore: cannot find tipologia ORIC for id_fenice:'{}', denominazione:'{}'".
+                self.logger.error(u"Soggetto attuatore: cannot find tipologia ORIC for id_fenice:'{}', denominazione:'{}', assigning tipologia ALTRO".
                     format(s_attuatori_json['id'], s_attuatori_json['nome'],))
+                tipologia = tipologia_default
             try:
 
                 SoggettoAttuatore.objects.update_or_create(
