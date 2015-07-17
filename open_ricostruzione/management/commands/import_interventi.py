@@ -272,7 +272,7 @@ class Command(BaseCommand):
                         # and ONE intervento for intervento programma
                         intervento.imp_consolidato = intervento.imp_congr_spesa + importo_cofinanziamenti
                     else:
-                        self.logger.warning(u"Intervento programma:{} is in ATTUAZIONE but Intervento['imp_congr_spesa'] is NULL, use importo a piano".format(intervento_programma.slug))
+                        self.logger.warning(u"Intervento programma:'{}' in ATTUAZIONE but Intervento['imp_congr_spesa'] = NULL, use Importo a piano".format(intervento_programma.slug))
                         intervento.imp_consolidato = intervento_piano.imp_consolidato
 
                     intervento.denominazione = intervento_json['denominazione']

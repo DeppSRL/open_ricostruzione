@@ -81,7 +81,7 @@ class Command(BaseCommand):
         # associates back intervento programma and donazioni to Intervento programma
         ##
         ids_to_pop = []
-        for idx, dip_dict in enumerate(self.donazioni_intervento_programma):
+        for dip_dict in list(self.donazioni_intervento_programma):
             iap = None
             dip = None
             try:
@@ -107,12 +107,9 @@ class Command(BaseCommand):
 
             dip.intervento_programma = iap
             dip.save()
-            ids_to_pop.append(idx)
-
-        #     actually removes donazioni intervento from list
-        for id in ids_to_pop:
-            self.donazioni_intervento_programma.pop(id)
-
+            # if the donazione intervento was restored, remove it from the list,
+            # so in the list we will have all the donazioni intervento that it was not possibile to re-associate
+            self.donazioni_intervento_programma.remove(dip_dict)
 
     def handle(self, *args, **options):
 
