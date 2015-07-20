@@ -130,6 +130,7 @@ class Command(BaseCommand):
         # 3. call import_tipologie
         # 4. call import_interventi
         # 5. re-associate interventi and donazioni based on the dump file
+        # 6. update data for user download
         ##
 
         path = options['path']
@@ -137,8 +138,8 @@ class Command(BaseCommand):
         tipologia_filename ="FENICE_OR_DatiBase.json"
         interventi_filename ="FENICE_OR_Interventi.json"
 
-        tipologie_file = u"{}{}".format(path, tipologia_filename )
-        interventi_file = u"{}{}".format(path, interventi_filename )
+        tipologie_file_input = u"{}{}".format(path, tipologia_filename )
+        interventi_file_input = u"{}{}".format(path, interventi_filename )
 
         ##
         # dump donazioni/intervento
@@ -149,14 +150,14 @@ class Command(BaseCommand):
         ##
 
         self.logger.info(u"Import tipologie")
-        call_command('import_tipologie', verbosity=1, file=tipologie_file, interactive=False)
+        call_command('import_tipologie', verbosity=1, file=tipologie_file_input, interactive=False)
 
         ##
         # Import interventi
         ##
 
         self.logger.info(u"Import interventi")
-        call_command('import_interventi', verbosity=1, file=interventi_file, interactive=False)
+        call_command('import_interventi', verbosity=1, file=interventi_file_input, interactive=False)
 
         ##
         # re-associate interventi and donazioni based on the dump file
@@ -176,5 +177,16 @@ class Command(BaseCommand):
                 # dump json error file
                 with open(self.error_logfile, 'w') as outfile:
                     json.dump(self.donazioni_intervento_programma, outfile, indent=4, cls=DjangoJSONEncoder)
+
+        # update data for user download
+        import shutil
+        self.logger.info("Copy input file to folder {} for user download".format(settings.OPENDATA_ROOT))
+        tipologie_file_scarico = u"{}/{}".format(settings.OPENDATA_ROOT, tipologia_filename )
+        interventi_file_scarico = u"{}/{}".format(settings.OPENDATA_ROOT, interventi_filename )
+
+        self.logger.info("scr:{},dest:{}".format(tipologie_file_input,tipologie_file_scarico))
+        self.logger.info("scr:{},dest:{}".format(interventi_file_input,interventi_file_scarico))
+        shutil.copyfile(tipologie_file_input, tipologie_file_scarico)
+        shutil.copyfile(interventi_file_input, interventi_file_scarico)
 
         self.logger.info("Done")
