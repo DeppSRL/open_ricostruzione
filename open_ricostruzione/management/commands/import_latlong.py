@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
         # read file
         try:
-            udr = UnicodeDictReader(f=open(self.input_file),dialect=csv.excel, encoding=self.encoding)
+            udr = UnicodeDictReader(f=open(self.input_file),dialect=csv.excel_tab, encoding=self.encoding)
         except IOError:
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
@@ -54,6 +54,8 @@ class Command(BaseCommand):
         for row in udr:
             ip = None
             row_counter+=1
+            from pprint import pprint
+            pprint(row)
             idfenice = row['PROG']
             lat = row['lat']
             long = row['long']
@@ -66,6 +68,6 @@ class Command(BaseCommand):
                 continue
 
             else:
-                ip.lat = float(lat)
-                ip.long = float(long)
+                ip.gps_lat = float(lat)
+                ip.gps_lon = float(long)
                 ip.save()

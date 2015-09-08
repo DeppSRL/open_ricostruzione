@@ -1,6 +1,6 @@
 {% load l10n %}
 
-<div id="localita_map" class="map mappa" style="height: 280px;"></div>
+<div id="simple_map" class="map mappa" style="height: 280px;"></div>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -10,8 +10,8 @@
             'ne': {'lat':{{ map_bounds.ne.lat|unlocalize }} ,'lon':{{ map_bounds.ne.lon|unlocalize }} }
         };
 
-        var center = {'lat': {{ territorio.gps_lat|unlocalize }},'lon':{{ territorio.gps_lon|unlocalize }}};
-        localita_map(bounds, center, '{{ territorio.nome_con_provincia }}');
+        var center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }}};
+        simple_map(bounds, center, '{{ map_tooltip_text }}');
 
     });
 </script>

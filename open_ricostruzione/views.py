@@ -78,21 +78,55 @@ class FilterListView(FilterView):
         return context
 
 
-class SimpleMapMixin(object):
+class InterventoProgrammaMapMixin(object):
     # sets the bounds for simple map display (POI map)
 
     def get_simple_map_bounds(self):
         bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
 
-        return {'sw':
+        gps_lat = self.territorio.gps_lat
+        gps_lon = self.territorio.gps_lon
+
+        if self.intervento_programma.gps_lat:
+            gps_lat = self.intervento_programma.gps_lat
+        if self.intervento_programma.gps_lon:
+            gps_lon = self.intervento_programma.gps_lon
+
+        data = {}
+        data['map_bounds'] = {'sw':
+                    {'lat': gps_lat - bounds_width,
+                     'lon': gps_lon - bounds_width,
+                    },
+                'ne':
+                    {'lat': gps_lat + bounds_width,
+                     'lon': gps_lon + bounds_width,
+                    },
+        }
+
+        data['map_center'] = {'lat': gps_lat, 'lon': gps_lon}
+
+        return data
+
+
+class LocalitaMapMixin(object):
+    # sets the bounds for simple map display (POI map)
+
+    def get_simple_map_bounds(self):
+        bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
+        data = {}
+        data['map_bounds'] ={
+            'sw':
                     {'lat': self.territorio.gps_lat - bounds_width,
                      'lon': self.territorio.gps_lon - bounds_width,
                     },
-                'ne':
+            'ne':
                     {'lat': self.territorio.gps_lat + bounds_width,
                      'lon': self.territorio.gps_lon + bounds_width,
                     },
-        }
+                }
+        data['map_center'] = {'lat': self.territorio.gps_lat, 'lon': self.territorio.gps_lon}
+
+        return data
 
 
 class ThematicMapMixin(object):
@@ -222,7 +256,7 @@ class DonazioniListView(FilterListView):
     model = Donazione
     don_filter = None
     accepted_parameters = ['tipologia_cedente', 'territorio__slug', 'interventi_programma__tipo_immobile__slug',
-                           'interventi_programma__slug','page']
+                           'interventi_programma__slug', 'page']
 
     def get_filter_set(self):
         return DonazioneFilter(self.request.GET,
@@ -360,7 +394,7 @@ class AggregatePageMixin(object):
         # territorio page: only territorio filters
 
         for tipologia in Donazione.TIPO_CEDENTE:
-            d = {'name': tipologia[1],'tipologia':tipologia}
+            d = {'name': tipologia[1], 'tipologia': tipologia}
             d.update(Donazione.get_aggregates(tipologia=tipologia, **self.programmazione_filters))
             values.append(d)
 
@@ -385,8 +419,9 @@ class AggregatePageMixin(object):
 
     def fetch_top_interventi_attuazione(self, ):
         n_objects = settings.N_PROGETTI_FETCH
-        order_by='-interventopiano__intervento__imp_consolidato'
-        return list(InterventoProgramma.attuazione.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
+        order_by = '-interventopiano__intervento__imp_consolidato'
+        return list(
+            InterventoProgramma.attuazione.filter(**self.programmazione_filters).order_by(order_by)[0:n_objects])
 
     def fetch_imprese(self, ):
         n_objects = settings.N_IMPRESE_FETCH
@@ -532,7 +567,7 @@ class AggregatePageMixin(object):
         return agg_dict
 
 
-class LocalitaView(TemplateView, AggregatePageMixin, SimpleMapMixin):
+class LocalitaView(TemplateView, AggregatePageMixin, LocalitaMapMixin):
     template_name = 'localita.html'
     territorio = None
     vari_territori = False
@@ -571,7 +606,10 @@ class LocalitaView(TemplateView, AggregatePageMixin, SimpleMapMixin):
 
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
-            context['map_bounds'] = self.get_simple_map_bounds()
+            map_data = self.get_simple_map_bounds()
+            context['map_bounds'] = map_data['map_bounds']
+            context['map_center'] = map_data['map_center']
+            context['map_tooltip_text'] = "Comune di "+self.territorio.nome_con_provincia
 
         return context
 
@@ -715,7 +753,7 @@ class ImpreseListView(ListView):
         return Impresa.objects.all().order_by('ragione_sociale')
 
 
-class InterventoProgrammaView(DetailView, SimpleMapMixin):
+class InterventoProgrammaView(DetailView, InterventoProgrammaMapMixin):
     model = InterventoProgramma
     template_name = 'intervento_programma.html'
     territorio = None
@@ -757,10 +795,14 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
                     self.liquidazioni = Liquidazione.objects.filter(intervento=self.intervento).order_by('-data')
                     if self.liquidazioni:
                         self.importo_liquidazioni = self.liquidazioni.aggregate(s=Sum('importo'))['s']
-                    self.progetti = Progetto.objects.filter(intervento=self.intervento).order_by('-data_inizio','-data_deposito','-data_fine')
-                    self.eventi_in_corso = EventoContrattuale.objects.filter(intervento=self.intervento).exclude(tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('-data')
+                    self.progetti = Progetto.objects.filter(intervento=self.intervento).order_by('-data_inizio',
+                                                                                                 '-data_deposito',
+                                                                                                 '-data_fine')
+                    self.eventi_in_corso = EventoContrattuale.objects.filter(intervento=self.intervento).exclude(
+                        tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('-data')
                     try:
-                        self.evento_fine = EventoContrattuale.objects.get(intervento=self.intervento, tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)
+                        self.evento_fine = EventoContrattuale.objects.get(intervento=self.intervento,
+                                                                          tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)
                     except ObjectDoesNotExist:
                         pass
 
@@ -790,13 +832,17 @@ class InterventoProgrammaView(DetailView, SimpleMapMixin):
         context['importo'] = importo
         context['importo_liquidazioni'] = self.importo_liquidazioni
 
-        context['importo_cofinanziamenti'] = self.intervento_programma.importo_generale - self.intervento_programma.importo_a_programma
+        context[
+            'importo_cofinanziamenti'] = self.intervento_programma.importo_generale - self.intervento_programma.importo_a_programma
         context['cofinanziamenti'] = self.cofinanziamenti
 
         self.territorio = self.intervento_programma.territorio
         if self.intervento_programma.vari_territori is False:
             # calculate the map bounds for the territorio
-            context['map_bounds'] = self.get_simple_map_bounds()
+            data_map = self.get_simple_map_bounds()
+            context['map_bounds'] = data_map['map_bounds']
+            context['map_center'] = data_map['map_center']
+            context['map_tooltip_text'] = self.intervento_programma.denominazione
             context['territorio'] = self.territorio
 
         return context

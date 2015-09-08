@@ -36,16 +36,16 @@ function init_map(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
 
 }
 
-/*localita_map
+/*simple_map
 * create simple localita map. sets bounds and center, adds marker on center
 * */
 
-function localita_map(bounds, center, territorio_label){
-    var map = init_map('localita_map',bounds, center, 13, 11, 18);
+function simple_map(bounds, center, map_tooltip_text){
+    var map = init_map('simple_map',bounds, center, 13, 11, 18);
 
 
     L.marker([center.lat,center.lon]).addTo(map)
-        .bindPopup('Comune di '+territorio_label+'<br>')
+        .bindPopup(map_tooltip_text+'<br>')
         .openPopup();
 }
 
