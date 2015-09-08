@@ -29,7 +29,8 @@ function init_map(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
     map.scrollWheelZoom.disable();
 
     // start the map on the Territorio lat/lon
-    map.setView(new L.LatLng(center.lat,center.lon),default_zoom);
+//    map.setView(new L.LatLng(center.lat,center.lon),default_zoom);
+    map.fitBounds(leaf_bounds,  {maxZoom: max_zoom});
     // add map attribution
     map.addLayer(osm);
     return map;
@@ -55,13 +56,13 @@ function interventoprogramma_map(bounds, center, map_tooltip_text){
 * */
 
 function localita_map(bounds, center, pois, map_tooltip_text){
-    var map = init_map('localita_map',bounds, center, 13, 11, 18);
+    var map = init_map('localita_map',bounds, center, 11, 10, 18);
 
-    i=0;
+    var i=0;
     while (i < pois.length) {
-        center = pois[i]
+        center = pois[i];
         L.marker([center.lat,center.lon]).addTo(map)
-        .bindPopup(map_tooltip_text+'<br>');
+        .bindPopup(center.tooltip_text+'<br>');
         i++;
     }
 

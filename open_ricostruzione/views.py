@@ -111,24 +111,61 @@ class InterventoProgrammaMapMixin(object):
 class LocalitaMapMixin(object):
     # sets the bounds for simple map display (POI map)
 
+    @property
     def get_map_data(self):
         bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
-        data = {}
-        data['map_bounds'] ={
+        data = {'map_pois': []}
+
+        class MyObj(object):
+            gps_lat=gps_lon=None
+
+            def __init__(self, ip):
+                self.gps_lat = ip.gps_lat
+                self.gps_lon = ip.gps_lon
+
+        sw = MyObj(self.territorio)
+        ne = MyObj(self.territorio)
+        # calculates map center, map N-east and S-west bounds
+
+        for ip in self.interventi_programma:
+            tooltip_text = ip.denominazione.title()
+            if len(tooltip_text) > 60:
+                tooltip_text = tooltip_text[:60]+"..."
+
+            if ip.gps_lat is not None:
+                if ip.gps_lat < sw.gps_lat:
+                    sw.gps_lat = ip.gps_lat
+                if ip.gps_lat > ne.gps_lat:
+                    ne.gps_lat = ip.gps_lat
+            else:
+                ip.gps_lat = self.territorio.gps_lat
+
+            if ip.gps_lon is not None:
+                if ip.gps_lon < sw.gps_lon:
+                    sw.gps_lon = ip.gps_lon
+
+                if ip.gps_lon > ne.gps_lon:
+                    ne.gps_lon = ip.gps_lon
+            else:
+                ip.gps_lon = self.territorio.gps_lon
+
+            data['map_pois'].append({'lat': ip.gps_lat, 'lon': ip.gps_lon, 'tooltip_text': tooltip_text})
+
+        data['map_bounds'] = {
             'sw':
-                    {'lat': self.territorio.gps_lat - bounds_width,
-                     'lon': self.territorio.gps_lon - bounds_width,
+                    {'lat': sw.gps_lat - bounds_width,
+                     'lon': sw.gps_lon - bounds_width,
                     },
             'ne':
-                    {'lat': self.territorio.gps_lat + bounds_width,
-                     'lon': self.territorio.gps_lon + bounds_width,
+                    {'lat': ne.gps_lat + bounds_width,
+                     'lon': ne.gps_lon + bounds_width,
                     },
                 }
 
-        data['map_center'] = {'lat': self.territorio.gps_lat, 'lon': self.territorio.gps_lon}
-        data['map_pois']=[]
-        for ip in self.interventi_programma:
-            data['map_pois'].append({'lat': ip.gps_lat, 'lon': ip.gps_lon})
+        data['map_center'] = {
+            'lat': (data['map_bounds']['sw']['lat']+data['map_bounds']['ne']['lat'])/2,
+            'lon': (data['map_bounds']['sw']['lon']+data['map_bounds']['ne']['lon'])/2
+        }
 
         return data
 
@@ -612,11 +649,10 @@ class LocalitaView(TemplateView, AggregatePageMixin, LocalitaMapMixin):
 
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
-            map_data = self.get_map_data()
+            map_data = self.get_map_data
             context['map_bounds'] = map_data['map_bounds']
             context['map_center'] = map_data['map_center']
             context['map_pois'] = map_data['map_pois']
-            context['map_tooltip_text'] = "Comune di "+self.territorio.nome_con_provincia
 
         return context
 
