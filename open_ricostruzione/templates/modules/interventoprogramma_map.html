@@ -1,6 +1,6 @@
 {% load l10n %}
 
-<div id="simple_map" class="map mappa" style="height: 280px;"></div>
+<div id="interventoprogramma_map" class="map mappa" style="height: 280px;"></div>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -11,7 +11,7 @@
         };
 
         var center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }}};
-        simple_map(bounds, center, '{{ map_tooltip_text }}');
+        interventoprogramma_map(bounds, center, '{{ map_tooltip_text }}');
 
     });
 </script>

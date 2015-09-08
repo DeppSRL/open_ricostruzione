@@ -81,7 +81,7 @@ class FilterListView(FilterView):
 class InterventoProgrammaMapMixin(object):
     # sets the bounds for simple map display (POI map)
 
-    def get_simple_map_bounds(self):
+    def get_map_data(self):
         bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
 
         gps_lat = self.territorio.gps_lat
@@ -111,7 +111,7 @@ class InterventoProgrammaMapMixin(object):
 class LocalitaMapMixin(object):
     # sets the bounds for simple map display (POI map)
 
-    def get_simple_map_bounds(self):
+    def get_map_data(self):
         bounds_width = settings.LOCALITA_MAP_BOUNDS_WIDTH
         data = {}
         data['map_bounds'] ={
@@ -124,7 +124,11 @@ class LocalitaMapMixin(object):
                      'lon': self.territorio.gps_lon + bounds_width,
                     },
                 }
+
         data['map_center'] = {'lat': self.territorio.gps_lat, 'lon': self.territorio.gps_lon}
+        data['map_pois']=[]
+        for ip in self.interventi_programma:
+            data['map_pois'].append({'lat': ip.gps_lat, 'lon': ip.gps_lon})
 
         return data
 
@@ -571,6 +575,7 @@ class LocalitaView(TemplateView, AggregatePageMixin, LocalitaMapMixin):
     template_name = 'localita.html'
     territorio = None
     vari_territori = False
+    interventi_programma = None
 
     def get(self, request, *args, **kwargs):
         # get data from the request
@@ -600,15 +605,17 @@ class LocalitaView(TemplateView, AggregatePageMixin, LocalitaMapMixin):
                 programmazione_filters={'territorio': self.territorio},
                 sogg_att_filters={'interventoprogramma__territorio__slug': self.territorio.slug}
             )
+            self.interventi_programma = InterventoProgramma.objects.filter(territorio=self.territorio)
 
         context.update(apm.get_aggregates())
         context['base_filters'] = apm.get_base_filters()
 
         if self.vari_territori is False:
             # calculate the map bounds for the territorio
-            map_data = self.get_simple_map_bounds()
+            map_data = self.get_map_data()
             context['map_bounds'] = map_data['map_bounds']
             context['map_center'] = map_data['map_center']
+            context['map_pois'] = map_data['map_pois']
             context['map_tooltip_text'] = "Comune di "+self.territorio.nome_con_provincia
 
         return context
@@ -839,7 +846,7 @@ class InterventoProgrammaView(DetailView, InterventoProgrammaMapMixin):
         self.territorio = self.intervento_programma.territorio
         if self.intervento_programma.vari_territori is False:
             # calculate the map bounds for the territorio
-            data_map = self.get_simple_map_bounds()
+            data_map = self.get_map_data()
             context['map_bounds'] = data_map['map_bounds']
             context['map_center'] = data_map['map_center']
             context['map_tooltip_text'] = self.intervento_programma.denominazione
