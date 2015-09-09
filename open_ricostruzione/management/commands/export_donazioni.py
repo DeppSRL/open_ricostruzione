@@ -64,8 +64,10 @@ class Command(BaseCommand):
                                                      'importo')
         for d in donazioni:
 
+            n_ordine = ''
             try:
                 dip = DonazioneInterventoProgramma.objects.get(donazione=d)
+                n_ordine = dip.intervento_programma.n_ordine
             except ObjectDoesNotExist:
                 pass
             except MultipleObjectsReturned:
@@ -74,7 +76,6 @@ class Command(BaseCommand):
                 for single_dip in dip_list:
                     self.write_donazione(d, single_dip.intervento_programma.n_ordine)
 
-            else:
-                self.write_donazione(d, dip.intervento_programma.n_ordine)
+            self.write_donazione(d, n_ordine)
 
         self.logger.info('Finished writing {} donazioni'.format(donazioni.count()))
