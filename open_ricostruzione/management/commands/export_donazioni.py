@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pprint import pprint
 from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from open_ricostruzione.models import Donazione, DonazioneInterventoProgramma
 from open_ricostruzione.utils import UnicodeDictWriter
 from optparse import make_option
@@ -25,6 +25,19 @@ class Command(BaseCommand):
     encoding = "UTF-8"
     logger = logging.getLogger('csvimport')
 
+    def write_donazione(self, donazione, n_ordine):
+        D = {
+                'id': str(d.pk),
+                'Tipologia del Cedente (1)': Donazione.TIPO_CEDENTE[d.tipologia_cedente],
+                'Denominazione Cedente (2)': d.denominazione,
+                'Comune Ricevente': d.territorio.denominazione,
+                'Data Comunicazione (3)': datetime.strftime(d.data, date_format),
+                'Importo': str(d.importo),
+                'Tipologia (1=diretta,2=tramite regione)': d.tipologia_donazione,
+                'n_ordine': n_ordine
+            }
+        self.udw.writerow(D)
+
     def handle(self, *args, **options):
 
         verbosity = options['verbosity']
@@ -43,34 +56,25 @@ class Command(BaseCommand):
         f = open(self.output_file, "w")
         fieldnames = ['id', 'Tipologia del Cedente (1)', 'Denominazione Cedente (2)', 'Comune Ricevente',
                       'Data Comunicazione (3)', 'Importo', 'Tipologia (1=diretta,2=tramite regione)', 'n_ordine']
-        udw = UnicodeDictWriter(f, fieldnames=fieldnames, dialect=csv.excel, encoding=self.encoding)
-        udw.writer.writeheader()
+        self.udw = UnicodeDictWriter(f, fieldnames=fieldnames, dialect=csv.excel, encoding=self.encoding)
+        self.udw.writer.writeheader()
         self.logger.info('Open output file:{}'.format(self.output_file))
         donazioni = Donazione.objects.all().order_by('territorio', 'denominazione',
                                                      'donazioneinterventoprogramma__intervento_programma__n_ordine',
                                                      'importo')
         for d in donazioni:
 
-            n_ordine = ''
             try:
                 dip = DonazioneInterventoProgramma.objects.get(donazione=d)
             except ObjectDoesNotExist:
                 pass
+            except MultipleObjectsReturned:
+                dip_list = DonazioneInterventoProgramma.objects.filter(donazione=d)
+                self.logger.error(u"Donazione:{} has {} DonazioneInterventoProgramma, this should NOT HAPPEN and will generate double lines in CSV".format(d.pk, len(dip_list)))
+                for single_dip in dip_list:
+                    self.write_donazione(d, single_dip.intervento_programma.n_ordine)
+
             else:
-                n_ordine = dip.intervento_programma.n_ordine
-
-            data = datetime.strftime(d.data, date_format)
-
-            D = {
-                'id': str(d.pk),
-                'Tipologia del Cedente (1)': Donazione.TIPO_CEDENTE[d.tipologia_cedente],
-                'Denominazione Cedente (2)': d.denominazione,
-                'Comune Ricevente': d.territorio.denominazione,
-                'Data Comunicazione (3)': data,
-                'Importo': str(d.importo),
-                'Tipologia (1=diretta,2=tramite regione)': d.tipologia_donazione,
-                'n_ordine': n_ordine
-            }
-            udw.writerow(D)
+                self.write_donazione(d, dip.intervento_programma.n_ordine)
 
         self.logger.info('Finished writing {} donazioni'.format(donazioni.count()))
