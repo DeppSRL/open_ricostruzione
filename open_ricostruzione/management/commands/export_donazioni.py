@@ -59,9 +59,7 @@ class Command(BaseCommand):
         self.udw = UnicodeDictWriter(f, fieldnames=fieldnames, dialect=csv.excel, encoding=self.encoding)
         self.udw.writer.writeheader()
         self.logger.info('Open output file:{}'.format(self.output_file))
-        donazioni = Donazione.objects.all().order_by('territorio', 'denominazione',
-                                                     'donazioneinterventoprogramma__intervento_programma__n_ordine',
-                                                     'importo')
+        donazioni = Donazione.objects.all().order_by('territorio', 'denominazione','importo')
         for donazione in donazioni:
 
             n_ordine = ''
