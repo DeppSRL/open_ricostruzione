@@ -75,6 +75,7 @@ class Command(BaseCommand):
                 self.logger.error(u"Donazione:{} has {} DonazioneInterventoProgramma, this should NOT HAPPEN and will generate double lines in CSV".format(d.pk, len(dip_list)))
                 for single_dip in dip_list:
                     self.write_donazione(d, single_dip.intervento_programma.n_ordine)
+                continue
 
             self.write_donazione(d, n_ordine)
 
