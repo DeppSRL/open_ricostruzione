@@ -65,6 +65,7 @@ class Command(BaseCommand):
         for d in donazioni:
 
             n_ordine = ''
+            self.logger.debug(u"Donazione:{} ".format(d.pk, ))
             try:
                 dip = DonazioneInterventoProgramma.objects.get(donazione=d)
                 n_ordine = dip.intervento_programma.n_ordine
