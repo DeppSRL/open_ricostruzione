@@ -61,7 +61,6 @@ urlpatterns = patterns('',
 
 ) + static(settings.OPENDATA_URL, document_root=settings.OPENDATA_ROOT)
 
-print settings.OPENDATA_ROOT
 
 if settings.INSTANCE_TYPE == 'development':
     urlpatterns += patterns('',
