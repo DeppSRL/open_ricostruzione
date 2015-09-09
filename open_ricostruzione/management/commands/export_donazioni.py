@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
             n_ordine = ''
             self.logger.debug(u"Donazione:{} ".format(donazione.pk, ))
-            count_dip = DonazioneInterventoProgramma.objects.get(donazione=donazione).count()
+            count_dip = DonazioneInterventoProgramma.objects.filter(donazione=donazione).count()
             if count_dip == 1:
                 dip = DonazioneInterventoProgramma.objects.get(donazione=donazione)
                 n_ordine = dip.intervento_programma.n_ordine
