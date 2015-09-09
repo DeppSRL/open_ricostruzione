@@ -12,7 +12,7 @@ var no_data_label = 'Nessun dato';
 *   sets bounds, zoom and center for Leaflet map
 *
 * */
-function init_map(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
+function init_map(div_id, bounds, min_zoom, max_zoom) {
 
     // create the tile layer with correct attribution
     var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -42,7 +42,7 @@ function init_map(div_id, bounds, center, default_zoom, min_zoom, max_zoom) {
 * */
 
 function interventoprogramma_map(bounds, center, map_tooltip_text){
-    var map = init_map('interventoprogramma_map',bounds, center, 13, 11, 18);
+    var map = init_map('interventoprogramma_map',bounds, 11, 18);
 
 
     L.marker([center.lat,center.lon]).addTo(map)
@@ -55,14 +55,14 @@ function interventoprogramma_map(bounds, center, map_tooltip_text){
 * create simple localita map. sets bounds and center, adds marker on each intervento programma
 * */
 
-function localita_map(bounds, center, pois, map_tooltip_text){
-    var map = init_map('localita_map',bounds, center, 11, 10, 18);
+function localita_map(bounds, pois){
+    var map = init_map('localita_map',bounds, 10, 18);
 
     var i=0;
     while (i < pois.length) {
-        center = pois[i];
-        L.marker([center.lat,center.lon]).addTo(map)
-        .bindPopup(center.tooltip_text+'<br>');
+        poi = pois[i];
+        L.marker([poi.lat,poi.lon]).addTo(map)
+        .bindPopup('<a href="'+poi.tooltip_url+'">'+poi.tooltip_text+'</a><br>');
         i++;
     }
 

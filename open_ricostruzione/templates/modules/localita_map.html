@@ -12,12 +12,12 @@
 
         var pois = [
             {% for poi in map_pois %}
-                {'lat': {{ poi.lat|unlocalize }},'lon':{{ poi.lon|unlocalize }}, 'tooltip_text':'{{ poi.tooltip_text }}'},
+                {'lat': {{ poi.lat|unlocalize }},'lon':{{ poi.lon|unlocalize }}, 'tooltip_text':'{{ poi.tooltip_text }}', 'tooltip_url': '{{poi.tooltip_url}}'},
             {% endfor %}
         ];
 
         var center = {'lat': {{ map_center.lat|unlocalize }},'lon':{{ map_center.lon|unlocalize }}};
-        localita_map(bounds,center,  pois);
+        localita_map(bounds, pois);
 
     });
 </script>

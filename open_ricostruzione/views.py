@@ -149,7 +149,7 @@ class LocalitaMapMixin(object):
             else:
                 ip.gps_lon = self.territorio.gps_lon
 
-            data['map_pois'].append({'lat': ip.gps_lat, 'lon': ip.gps_lon, 'tooltip_text': tooltip_text})
+            data['map_pois'].append({'lat': ip.gps_lat, 'lon': ip.gps_lon, 'tooltip_text': tooltip_text, 'tooltip_url': reverse('intervento-programma', args=(ip.slug,))})
 
         data['map_bounds'] = {
             'sw':
