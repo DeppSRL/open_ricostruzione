@@ -62,22 +62,21 @@ class Command(BaseCommand):
         donazioni = Donazione.objects.all().order_by('territorio', 'denominazione',
                                                      'donazioneinterventoprogramma__intervento_programma__n_ordine',
                                                      'importo')
-        for d in donazioni:
+        for donazione in donazioni:
 
             n_ordine = ''
-            self.logger.debug(u"Donazione:{} ".format(d.pk, ))
-            try:
-                dip = DonazioneInterventoProgramma.objects.get(donazione=d)
+            self.logger.debug(u"Donazione:{} ".format(donazione.pk, ))
+            count_dip = DonazioneInterventoProgramma.objects.get(donazione=donazione).count()
+            if count_dip == 1:
+                dip = DonazioneInterventoProgramma.objects.get(donazione=donazione)
                 n_ordine = dip.intervento_programma.n_ordine
-            except ObjectDoesNotExist:
-                pass
-            except MultipleObjectsReturned:
-                dip_list = DonazioneInterventoProgramma.objects.filter(donazione=d)
-                self.logger.error(u"Donazione:{} has {} DonazioneInterventoProgramma, this should NOT HAPPEN and will generate double lines in CSV".format(d.pk, len(dip_list)))
+                self.write_donazione(donazione, n_ordine)
+            elif count_dip == 0:
+                self.write_donazione(donazione, n_ordine)
+            elif count_dip > 1:
+                dip_list = DonazioneInterventoProgramma.objects.filter(donazione=donazione)
+                self.logger.error(u"Donazione:{} has {} DonazioneInterventoProgramma, this should NOT HAPPEN and will generate double lines in CSV".format(donazione.pk, len(dip_list)))
                 for single_dip in dip_list:
-                    self.write_donazione(d, single_dip.intervento_programma.n_ordine)
-                continue
-
-            self.write_donazione(d, n_ordine)
+                    self.write_donazione(donazione, single_dip.intervento_programma.n_ordine)
 
         self.logger.info('Finished writing {} donazioni'.format(donazioni.count()))
