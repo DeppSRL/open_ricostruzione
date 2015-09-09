@@ -26,14 +26,15 @@ class Command(BaseCommand):
     logger = logging.getLogger('csvimport')
 
     def write_donazione(self, donazione, n_ordine):
+        date_format = '%d/%m/%Y'
         D = {
-                'id': str(d.pk),
-                'Tipologia del Cedente (1)': Donazione.TIPO_CEDENTE[d.tipologia_cedente],
-                'Denominazione Cedente (2)': d.denominazione,
-                'Comune Ricevente': d.territorio.denominazione,
-                'Data Comunicazione (3)': datetime.strftime(d.data, date_format),
-                'Importo': str(d.importo),
-                'Tipologia (1=diretta,2=tramite regione)': d.tipologia_donazione,
+                'id': str(donazione.pk),
+                'Tipologia del Cedente (1)': Donazione.TIPO_CEDENTE[donazione.tipologia_cedente],
+                'Denominazione Cedente (2)': donazione.denominazione,
+                'Comune Ricevente': donazione.territorio.denominazione,
+                'Data Comunicazione (3)': datetime.strftime(donazione.data, date_format),
+                'Importo': str(donazione.importo),
+                'Tipologia (1=diretta,2=tramite regione)': donazione.tipologia_donazione,
                 'n_ordine': n_ordine
             }
         self.udw.writerow(D)
@@ -51,7 +52,6 @@ class Command(BaseCommand):
             self.logger.setLevel(logging.DEBUG)
 
         self.output_file = options['file']
-        date_format = '%d/%m/%Y'
 
         f = open(self.output_file, "w")
         fieldnames = ['id', 'Tipologia del Cedente (1)', 'Denominazione Cedente (2)', 'Comune Ricevente',
