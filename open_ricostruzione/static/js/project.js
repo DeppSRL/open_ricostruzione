@@ -78,7 +78,8 @@ function localita_map(bounds, pois){
 
 
 function navigateToFeatureURL(e) {
-    window.location = e.target.feature.properties.url;
+    if(e.target.feature.properties.url!='')
+        window.location = e.target.feature.properties.url;
 }
 
 function resetHighlight(e, geojson, map_info, map) {
