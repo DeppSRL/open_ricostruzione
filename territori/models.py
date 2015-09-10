@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.conf import settings
 from model_utils import Choices
 from django.contrib.gis.db import models
@@ -152,6 +152,15 @@ class Territorio(models.Model):
     @staticmethod
     def get_territori_cratere():
         return Territorio.objects.filter(tipologia=Territorio.TERRITORIO.C, istat_id__in=settings.COMUNI_CRATERE).order_by('prov', 'denominazione')
+
+    @staticmethod
+    def get_territori_monitorati():
+        # returns territori with at least one interv.programma in the cratere provinces ordered by prov/denominazione
+        return Territorio.objects.filter(tipologia="C").\
+                filter(Q(prov="BO") | Q(prov="FE") | Q(prov="MO") | Q(prov="RE")).\
+                annotate(c=Count('interventoprogramma')).\
+                filter(c__gte=1).\
+                order_by('prov', 'denominazione')
 
     def __unicode__(self):
         return unicode(self.denominazione)
