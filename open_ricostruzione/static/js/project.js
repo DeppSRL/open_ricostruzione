@@ -12,7 +12,7 @@ var no_data_label = 'Nessun dato';
 *   sets bounds, zoom and center for Leaflet map
 *
 * */
-function init_map(div_id, bounds, min_zoom, max_zoom) {
+function init_map(div_id, bounds, min_zoom, max_zoom, center) {
 
     // create the tile layer with correct attribution
     var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -29,8 +29,13 @@ function init_map(div_id, bounds, min_zoom, max_zoom) {
     map.scrollWheelZoom.disable();
 
     // start the map on the Territorio lat/lon
-//    map.setView(new L.LatLng(center.lat,center.lon),default_zoom);
-    map.fitBounds(leaf_bounds,  {maxZoom: max_zoom});
+    if(typeof center === 'undefined'){
+        map.fitBounds(leaf_bounds,  {maxZoom: max_zoom});
+    }
+    else{
+        map.setView(new L.LatLng(center.lat,center.lon),9);
+    }
+
     // add map attribution
     map.addLayer(osm);
     return map;
@@ -169,7 +174,7 @@ function thematic_map(map_type, bounds, center, geojson_data){
     }
 
     
-    var map = init_map(div_id, bounds, center, 9, 8, 11);
+    var map = init_map(div_id, bounds, 8, 11, center);
     // control that shows state map_info on hover
 
 
