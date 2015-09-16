@@ -835,14 +835,14 @@ class InterventoProgrammaView(DetailView, InterventoProgrammaMapMixin):
                 else:
                     self.imprese = self.intervento.imprese.all()
                     self.varianti = Variante.objects.filter(intervento=self.intervento)
-                    self.liquidazioni = Liquidazione.objects.filter(intervento=self.intervento).order_by('-data')
+                    self.liquidazioni = Liquidazione.objects.filter(intervento=self.intervento).order_by('data')
                     if self.liquidazioni:
                         self.importo_liquidazioni = self.liquidazioni.aggregate(s=Sum('importo'))['s']
-                    self.progetti = Progetto.objects.filter(intervento=self.intervento).order_by('-data_inizio',
-                                                                                                 '-data_deposito',
-                                                                                                 '-data_fine')
+                    self.progetti = Progetto.objects.filter(intervento=self.intervento).order_by('data_inizio',
+                                                                                                 'data_deposito',
+                                                                                                 'data_fine')
                     self.eventi_in_corso = EventoContrattuale.objects.filter(intervento=self.intervento).exclude(
-                        tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('-data')
+                        tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO).order_by('data')
                     try:
                         self.evento_fine = EventoContrattuale.objects.get(intervento=self.intervento,
                                                                           tipologia=EventoContrattuale.TIPO_EVENTO.FINE_LAVORI_CERTIFICATO)

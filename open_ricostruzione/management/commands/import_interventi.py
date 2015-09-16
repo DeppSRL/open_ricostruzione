@@ -34,7 +34,7 @@ class Command(BaseCommand):
     # istat_code_vari_territori = if an Intervento has this code in istat_code
     # => intervento su vari territori bool is set to true
     istat_code_vari_territori = '999999'
-    date_format = '%d/%M/%Y'
+    date_format = '%d/%m/%Y'
     tipo_imm_not_found = []
     not_found_territori = {}
 

@@ -26,7 +26,7 @@ class RowData(object):
     tipologia_donazione = None
     logger = logging.getLogger('csvimport')
     # define date format
-    date_formats = ['%Y-%M-%d', '%d/%M/%Y', '%Y-%M-%d']
+    date_formats = ['%Y-%m-%d', '%d/%m/%Y', '%Y-%m-%d']
 
     # COLUMNS
     # 'Tipologia del Cedente (1)': u'SPA',
@@ -175,7 +175,7 @@ class Command(BaseCommand):
     logger = logging.getLogger('csvimport')
     unicode_reader = None
     invalid_values_counter = 0
-    default_date = datetime.strptime("2012-09-01", "%Y-%M-%d")
+    default_date = datetime.strptime("2012-09-01", "%Y-%m-%d")
 
     def print_wrong_line(self, rowdata, row_counter):
         self.logger.error(u"Row {}:'{}'".format(row_counter, rowdata))

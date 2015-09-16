@@ -54,8 +54,6 @@ class Command(BaseCommand):
         for row in udr:
             ip = None
             row_counter+=1
-            from pprint import pprint
-            pprint(row)
             idfenice = row['PROG']
             lat = row['lat']
             long = row['long']
