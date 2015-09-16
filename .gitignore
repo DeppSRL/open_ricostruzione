@@ -12,3 +12,4 @@ requirements/local.txt
 open_ricostruzione/media
 open_ricostruzione/migrations/
 territori/migrations/
+resources

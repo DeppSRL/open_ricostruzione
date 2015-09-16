@@ -1,24 +1,30 @@
 # Django settings for open_ricostruzione project.
 import os
-import environ
+from os.path import abspath, basename, dirname, join, normpath
+from sys import path
+from environ import Env
 
-root = environ.Path(__file__) - 3  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
+######### PATH CONFIGURATION
+PACKAGE_PATH = dirname(dirname(abspath(__file__)))
+PACKAGE_NAME = basename(PACKAGE_PATH)
+PROJECT_PATH = REPO_PATH = dirname(PACKAGE_PATH)
 
-# set default values and casting
-env = environ.Env(
-    DEBUG=(bool, True),
-)
-env.read_env(root('.env'))
+RESOURCE_DIR = 'resources'
+RESOURCES_PATH = join(REPO_PATH, RESOURCE_DIR)
 
+# Add our project to our pythonpath, this way we don't need to type our project
+# name in our dotted import paths:
+path.append(PROJECT_PATH)
 
-########## DEBUG CONFIGURATION
+# load environment variables
+Env.read_env(normpath(join(REPO_PATH, '.env')))
+env = Env()
+######### END PATH CONFIGURATION
+
+########## OPEN_RICOSTRUZIONE CONFIGURATION
 DEBUG = env.bool('DEBUG', False)
 TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', False)
-########## END DEBUG CONFIGURATION
 INSTANCE_TYPE = env.str('INSTANCE_TYPE', '')
-
-PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-REPO_ROOT = os.path.abspath(os.path.dirname(PROJECT_ROOT))
 
 ADMINS = (
     ('Guglielmo Celata', 'guglielmo@depp.it'),
@@ -28,15 +34,8 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '', # Or path to database file if using sqlite3.
-        'USER': '', # Not used with sqlite3.
-        'PASSWORD': '', # Not used with sqlite3.
-        'HOST': '', # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '', # Set to empty string for default. Not used with sqlite3.
-    }
-}
+    'default': env.db('DB_DEFAULT_URL', default='sqlite:///{0}'.format(normpath(join(RESOURCES_PATH, 'db', 'default.db')))),
+}       
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -65,7 +64,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = normpath(join(RESOURCES_PATH, 'media'))
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -76,7 +75,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = normpath(join(RESOURCES_PATH, 'static'))
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -84,9 +83,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-# Put strings here, like "/home/html/static" or "C:/www/django/static".
-# Always use forward slashes, even on Windows.
-# Don't forget to use absolute paths, not relative paths.
+    normpath(join(PACKAGE_PATH, 'static')),
 )
 
 # List of finder classes that know how to find static files in
@@ -98,7 +95,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = None
+SECRET_KEY = env.str('SECRET_KEY', None)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -126,7 +123,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_ROOT, 'templates'),
+    normpath(join(PACKAGE_PATH, 'templates')),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -189,9 +186,12 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'standard': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt': "%d/%b/%Y %H:%M:%S"
+        'verbose': {
+            'format': "[%(asctime)s.%(msecs).03d] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
         },
     },
     'filters': {
@@ -203,15 +203,20 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'standard'
+            'formatter': 'verbose'
         },
-        'logfile': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': normpath(join(RESOURCES_PATH, 'logs', 'openricostruzione.log')),
+            'formatter': 'verbose'
+        },
+        'management_logfile': {
             'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': PROJECT_ROOT + "/log/logfile",
-            'maxBytes': 1000000,
-            'backupCount': 10,
-            'formatter': 'standard',
+            'class': 'logging.FileHandler',
+            'filename': normpath(join(RESOURCES_PATH, 'logs', 'management.log')),
+            'mode': 'w',
+            'formatter': 'verbose',
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -225,13 +230,20 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
+        'openricostruzione': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True
+        },  
         'csvimport': {
-            'handlers': ['console', 'logfile'],
+            'handlers': ['console', 'management_logfile'],
             'level': 'DEBUG',
             'propagate': True,
         }
     }
 }
+
+WSGI_APPLICATION = '%s.wsgi.application' % PACKAGE_NAME
 
 PROVINCE_CRATERE = [u'Bologna', u'Ferrara', u'Modena', u"Reggio nell'Emilia"]
 
@@ -288,5 +300,5 @@ N_PROGETTI_FETCH = 4
 N_IMPRESE_FETCH = 6
 N_SOGG_ATT_FETCH = 5
 
-OPENDATA_ROOT = root('scarico_dati')
+OPENDATA_ROOT = normpath(join(REPO_PATH, 'scarico_dati'))
 OPENDATA_URL = '/scarico_dati/'
