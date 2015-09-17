@@ -1,23 +1,18 @@
 # -*-coding: UTF-8 -*-
 from base import *
 
-root = environ.Path(__file__) - 2  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
-
-# set default values and casting
-env = environ.Env(
-    DEBUG=(bool, True),
-)
-env.read_env(root('.env'))
+# root = environ.Path(__file__) - 2  # (/open_ricostruzione/open_ricostruzione/settings/ - 4 = /)
+#
+# # set default values and casting
+# env = environ.Env(
+#     DEBUG=(bool, True),
+# )
+# env.read_env(root('.env'))
 
 ########## DEBUG CONFIGURATION
-DEBUG = env.bool('DEBUG', False)
-TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', False)
+DEBUG = env.bool('DEBUG', True)
+TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', True)
 ########## END DEBUG CONFIGURATION
-
-DATABASES = {
-    'default': env.db('DB_DEFAULT_URL'),
-}
-
 
 ########## TOOLBAR CONFIGURATION
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
@@ -40,13 +35,14 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 ########## END TOOLBAR CONFIGURATION
 
+LOGGING['handlers']['file']['filename'] = "{}/logfile".format(os.path.join(PROJECT_PATH,'open_ricostruzione', 'log'))
+LOGGING['handlers']['management_logfile']['filename'] = "{}/mnglogfile".format(os.path.join(PROJECT_PATH,'open_ricostruzione', 'log'))
 
-
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 MEDIA_URL = '/media/'
 SOCIABLE_IMAGE_PATH ="sociable"
 
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'sitestatic')
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'sitestatic')
 STATIC_URL = '/static/'
 
 
