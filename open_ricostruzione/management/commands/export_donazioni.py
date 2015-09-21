@@ -52,14 +52,18 @@ class Command(BaseCommand):
 
 
         workbook = Workbook(csv_filename.replace(".csv",".xlsx"))
-        worksheet = workbook.add_worksheet()
+        worksheet_link = workbook.add_worksheet("LINK_DONAZIONI_PROGETTI")
+        worksheet_nuove = workbook.add_worksheet("NUOVE DONAZIONI")
         with open(csv_filename, 'rb') as f:
             reader = csv.reader(f)
             for r, row in enumerate(reader):
                 for c, col in enumerate(row):
-                    worksheet.write(r, c, col)
+                    worksheet_link.write(r, c, col)
+                    # writes the 1st row also in the second worsheet
+                    if r == 0:
+                        worksheet_nuove.write(r, c, col)
 
-        workbook.add_worksheet("test")
+
         workbook.close()
 
     def handle(self, *args, **options):
