@@ -26,18 +26,45 @@ class Command(BaseCommand):
     logger = logging.getLogger('csvimport')
 
     def write_donazione(self, donazione, n_ordine):
+        denominazione_cedente=''
+        try:
+            denominazione_cedente = donazione.denominazione.replace('"',"'").replace("&","").decode('utf-8')
+        except UnicodeEncodeError:
+            pass
         date_format = '%d/%m/%Y'
+
+
         D = {
                 'id': str(donazione.pk),
                 'Tipologia del Cedente (1)': Donazione.TIPO_CEDENTE[donazione.tipologia_cedente],
-                'Denominazione Cedente (2)': donazione.denominazione,
-                'Comune Ricevente': donazione.territorio.denominazione,
+                'Denominazione Cedente (2)': denominazione_cedente,
+                'Comune Ricevente': u"{}".format(donazione.territorio.denominazione),
                 'Data Comunicazione (3)': datetime.strftime(donazione.data, date_format),
-                'Importo': str(donazione.importo),
+                'Importo': str(donazione.importo).replace(".",","),
                 'Tipologia (1=diretta,2=tramite regione)': donazione.tipologia_donazione,
                 'n_ordine': n_ordine
             }
         self.udw.writerow(D)
+
+    def create_excel_file(self, csv_filename):
+        import csv
+        from xlsxwriter.workbook import Workbook
+
+
+        workbook = Workbook(csv_filename.replace(".csv",".xlsx"))
+        worksheet_link = workbook.add_worksheet("LINK_DONAZIONI_PROGETTI")
+        worksheet_nuove = workbook.add_worksheet("NUOVE DONAZIONI")
+        with open(csv_filename, 'rb') as f:
+            reader = csv.reader(f)
+            for r, row in enumerate(reader):
+                for c, col in enumerate(row):
+                    worksheet_link.write(r, c, col)
+                    # writes the 1st row also in the second worsheet
+                    if r == 0:
+                        worksheet_nuove.write(r, c, col)
+
+
+        workbook.close()
 
     def handle(self, *args, **options):
 
@@ -77,4 +104,6 @@ class Command(BaseCommand):
                 for single_dip in dip_list:
                     self.write_donazione(donazione, single_dip.intervento_programma.n_ordine)
 
+        f.close()
+        self.create_excel_file(csv_filename=self.output_file)
         self.logger.info('Finished writing {} donazioni'.format(donazioni.count()))
