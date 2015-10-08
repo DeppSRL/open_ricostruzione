@@ -371,6 +371,12 @@ class QuadroEconomico(models.Model):
         (u'19', u'QTE_VARIANTE_SENZA_MODIFICA', u'Q.T.E. di variante senza modifica dei lavori'),
         (u'20', u'QTE_VARIANTE_CON_MODIFICA', u'Q.T.E. di variante con modifica dei lavori'),
         (u'21', u'QTE_FINALE', u'Q.T.E. finale'),
+
+        (u'22', u'QTE_RIEPILOGO', u'Q.T.E. di riepilogo'),
+        (u'23', u'QTE_VARIANTE_SOMME_COMMISSARIO', u'Q.T.E. di variante delle somme a disposizione autorizzata dal Commissario'),
+        (u'24', u'QTE_VARIANTE_LAVORI_COMMISSARIO', u'Q.T.E. di variante con modifica dei lavori autorizzata dal Commissario'),
+
+
     )
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0, unique=True)
     tipologia = models.CharField(max_length=2, choices=TIPO_QUADRO_ECONOMICO, blank=False, null=False, default='')
@@ -446,6 +452,7 @@ class Variante(models.Model):
         (u'2', u'PRESA_IN_CARICO', u'Presa in carico'),
         (u'3', u'AMMESSA', u'Ammessa'),
         (u'4', u'RESPINTA', u'Respinta'),
+        (u'5', u'ISTRUTTORIA', u'In Istruttoria'),
     )
     qe = models.ForeignKey('QuadroEconomicoIntervento', blank=True, null=True )
     tipologia = models.CharField(max_length=2, choices=TIPO_VARIANTE, blank=False, null=False, default='')

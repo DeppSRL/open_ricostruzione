@@ -30,35 +30,67 @@ class Command(BaseCommand):
 
     def check_tipologia(self, t):
         ##
-        # controlla che il numero di elementi presenti in una tipologia T sia uguale
+        # controlla
+        # 1) che il numero di elementi presenti in una tipologia T sia uguale
         # al n. di tuple nell'oggetto Choice presente nel modello.
+        # 2) che i nomi delle categorie del DB corrispondano ai nomi nel file
+        #
         # Se non e' cosi: logga errore e stoppa lo script
         ##
+        
+        json_tipologia = t[0]
+        db_tipologia = t[1]
+        db_display_map = db_tipologia._display_map
         check_passed = True
-        if t[0] is not 'tipi_liquidazione':
-            codifiche_file = set(unicode(d['id']) for d in self.codifiche[t[0]])
+        if json_tipologia is not 'tipi_liquidazione':
+            codifiche_file = set(unicode(c['id']) for c in self.codifiche[json_tipologia])
         else:
-            codifiche_file = set(unicode(d) for d in self.codifiche[t[0]].keys())
+            codifiche_file = set(unicode(c) for c in self.codifiche[json_tipologia].keys())
 
-        codifiche_db = set(t[1]._db_values)
+        codifiche_db = set(db_tipologia._db_values)
         n_tipi_piano_json = len(codifiche_file)
-        n_tipi_piano_model = len(t[1])
+        n_tipi_piano_model = len(db_tipologia)
         # gets data file ids and compares them with ids in the db
         diff_file = set(codifiche_db)-set(codifiche_file)
         diff_db = set(codifiche_file)-set(codifiche_db)
         if len(diff_file):
             diff_file_str = ",".join(str(e) for e in diff_file)
-            self.logger.error("{} Id:{} in DB SETTINGS but not in FILE".format(t[0].upper(),diff_file_str))
+            self.logger.error(u"{} ID:{} in DB SETTINGS but not in FILE".format(json_tipologia.upper(),diff_file_str))
             check_passed = False
         if len(diff_db):
             diff_db_str = ",".join(str(e) for e in diff_db)
-            self.logger.error("{} Id:{} in FILE but not in DB SETTINGS ".format(t[0].upper(), diff_db_str))
+            self.logger.error(u"{} ID:{} in FILE but not in DB SETTINGS ".format(json_tipologia.upper(), diff_db_str))
             check_passed = False
         if n_tipi_piano_json != n_tipi_piano_model:
-            self.logger.error("Found {} '{}' in Json file, {} '{}' present in DB Model".format(
-                n_tipi_piano_json, t[0], n_tipi_piano_model, t[0],
-            ))
+            self.logger.error(u"{} Found {} in Json file, {} present in DB Model".format(
+                json_tipologia.upper(), n_tipi_piano_json, n_tipi_piano_model, ))
             check_passed = False
+
+        if json_tipologia != 'tipi_liquidazione':
+            for c in self.codifiche[json_tipologia]:
+                c['id'] = str(c['id'])
+                try:
+                    nome_db = db_display_map[c['id']]
+                except KeyError:
+                    self.logger.error(u"{} Can't check name for value '{}', not found in DB values".format(json_tipologia.upper(), c['id']))
+                    check_passed = False
+                    continue
+                else:
+                    if nome_db != c['nome']:
+                        self.logger.warning(u"{} for id:{} Name in db:'{}', in Json file:'{}'".format(json_tipologia.upper(), c['id'],nome_db, c['nome']))
+        else:
+            for json_id, json_nome in self.codifiche[json_tipologia].iteritems():
+                try:
+                    nome_db = db_display_map[json_id]
+                except KeyError:
+                    self.logger.error(u"{} Can't check name for value '{}', not found in DB values".format(json_tipologia.upper(), json_id))
+                    check_passed = False
+                    continue
+                else:
+                    if nome_db != json_nome:
+                        self.logger.warning(u"{} for id:{} Name in db:'{}', in Json file:'{}'".format(json_tipologia.upper(), json_id,nome_db, json_nome))
+
+
         return check_passed
 
     def check_tipologie(self):
@@ -82,9 +114,11 @@ class Command(BaseCommand):
 
         stop_import = False
         for t in tipologie_map:
-
+            self.logger.info('******************** START CHECKING "{}" ***************'.format(t[0].upper()))
             if not self.check_tipologia(t):
                 stop_import = True
+            else:
+                self.logger.info('******************** "{}" CHECK OK ***************'.format(t[0].upper()))
 
         if stop_import:
             self.logger.critical("Stopping import because tipologie check failed")
@@ -96,7 +130,7 @@ class Command(BaseCommand):
             try:
                 programma_piano = Programma.objects.get(id_fenice=piano_json['id_progr'])
             except ObjectDoesNotExist:
-                self.logger.error("Programma not found for Piano with id:{}".format(piano_json['id']))
+                self.logger.error(u"Programma not found for Piano with id:{}".format(piano_json['id']))
                 exit()
 
             Piano.objects.update_or_create(
@@ -151,7 +185,7 @@ class Command(BaseCommand):
             json_file = open(self.input_file)
             data = json.load(json_file, encoding=self.encoding)
         except IOError:
-            self.logger.error("It was impossible to open file {}".format(self.input_file))
+            self.logger.error(u"It was impossible to open file {}".format(self.input_file))
             exit(1)
 
         # delete old data
@@ -234,6 +268,6 @@ class Command(BaseCommand):
                         }
                 )
             except IntegrityError:
-                self.logger.error("Could not import RUP with CF:'{}', id_fenice:'{}', integrity error.".format(rup_json['cf'], rup_json['id']))
+                self.logger.error(u"Could not import RUP with CF:'{}', id_fenice:'{}', integrity error.".format(rup_json['cf'], rup_json['id']))
 
         self.logger.info("Done")

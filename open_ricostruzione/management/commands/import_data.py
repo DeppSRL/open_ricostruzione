@@ -29,8 +29,8 @@ class Command(BaseCommand):
 
     logger = logging.getLogger('csvimport')
     today_str = datetime.strftime(datetime.today(), "%Y-%m-%d-%H%M")
-    dump_donazioni_intprog_file = "{}/log/import_{}_temp.json".format(settings.PROJECT_ROOT, today_str)
-    error_logfile = "{}/log/import_{}_err.json".format(settings.PROJECT_ROOT, today_str)
+    dump_donazioni_intprog_file = "{}/import_{}_temp.json".format(settings.LOG_PATH, today_str)
+    error_logfile = "{}/import_{}_err.json".format(settings.LOG_PATH, today_str)
 
     def dump_donazioni_intervento(self):
         ##
