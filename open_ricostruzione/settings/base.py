@@ -11,6 +11,7 @@ PROJECT_PATH = REPO_PATH = dirname(PACKAGE_PATH)
 
 RESOURCE_DIR = 'resources'
 RESOURCES_PATH = join(REPO_PATH, RESOURCE_DIR)
+LOG_PATH = join(RESOURCES_PATH,'logs')
 
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
@@ -117,7 +118,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'open_ricostruzione.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'open_ricostruzione.wsgi.application'
+WSGI_APPLICATION = '%s.wsgi.application' % PACKAGE_NAME
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -208,13 +209,13 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': normpath(join(RESOURCES_PATH, 'logs', 'openricostruzione.log')),
+            'filename': normpath(join(LOG_PATH, 'openricostruzione.log')),
             'formatter': 'verbose'
         },
         'management_logfile': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': normpath(join(RESOURCES_PATH, 'logs', 'management.log')),
+            'filename': normpath(join(LOG_PATH, 'management.log')),
             'mode': 'w',
             'formatter': 'verbose',
         },
@@ -242,8 +243,6 @@ LOGGING = {
         }
     }
 }
-
-WSGI_APPLICATION = '%s.wsgi.application' % PACKAGE_NAME
 
 PROVINCE_CRATERE = [u'Bologna', u'Ferrara', u'Modena', u"Reggio nell'Emilia"]
 

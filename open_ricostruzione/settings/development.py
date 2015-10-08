@@ -35,8 +35,10 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 ########## END TOOLBAR CONFIGURATION
 
-LOGGING['handlers']['file']['filename'] = "{}/logfile".format(os.path.join(PROJECT_PATH,'open_ricostruzione', 'log'))
-LOGGING['handlers']['management_logfile']['filename'] = "{}/mnglogfile".format(os.path.join(PROJECT_PATH,'open_ricostruzione', 'log'))
+LOG_PATH = os.path.join(PROJECT_PATH,'open_ricostruzione', 'log')
+
+LOGGING['handlers']['file']['filename'] = "{}/logfile".format(LOG_PATH)
+LOGGING['handlers']['management_logfile']['filename'] = "{}/mnglogfile".format(LOG_PATH)
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 MEDIA_URL = '/media/'
