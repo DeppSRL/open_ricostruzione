@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
         # read file
         try:
-            udr = UnicodeDictReader(f=open(self.input_file),dialect=csv.excel_tab, encoding=self.encoding)
+            udr = UnicodeDictReader(f=open(self.input_file),dialect=csv.excel, encoding=self.encoding)
         except IOError:
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
@@ -68,5 +68,5 @@ class Command(BaseCommand):
                 ip.gps_lat = float(lat)
                 ip.gps_lon = float(long)
                 ip.save()
-                
+
         self.logger.info("Done importing lat/long")
