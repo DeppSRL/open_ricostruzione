@@ -49,7 +49,6 @@ class Command(BaseCommand):
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
 
-        self.logger.info("Done")
         row_counter=0
         for row in udr:
             ip = None
@@ -69,3 +68,5 @@ class Command(BaseCommand):
                 ip.gps_lat = float(lat)
                 ip.gps_lon = float(long)
                 ip.save()
+                
+        self.logger.info("Done importing lat/long")

@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
+import shutil
+import logging
+import os
 from pprint import pprint
+from datetime import datetime
+from optparse import make_option
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from open_ricostruzione.models import Donazione, DonazioneInterventoProgramma, InterventoProgramma
-from optparse import make_option
-import logging
-from datetime import datetime
 
 
 class Command(BaseCommand):
@@ -185,8 +187,17 @@ class Command(BaseCommand):
                 with open(self.error_logfile, 'w') as outfile:
                     json.dump(self.donazioni_intervento_programma, outfile, indent=4, cls=DjangoJSONEncoder)
 
+        # re-import lat/long of interventi programma from fixture file
+        self.logger.info(u"Re-import lat/long for int.programma from fixture file")
+        latlong_filepath = "{}/{}".format(settings.FIXTURES_PATH,"interv_prog_lat_long.csv")
+
+        if os.path.isfile(latlong_filepath) is False:
+            self.logger.error("Cannot find latlong file:{}, interv.programma will NOT have lat long, import later is compulsory!".format(latlong_filepath))
+        else:
+            call_command('import_latlong', verbosity=1, file=latlong_filepath, interactive=False)
+
         # update data for user download
-        import shutil
+
         self.logger.info("Copy input file to folder {} for user download".format(settings.OPENDATA_ROOT))
         tipologie_file_scarico = u"{}/{}".format(settings.OPENDATA_ROOT, tipologia_filename )
         interventi_file_scarico = u"{}/{}".format(settings.OPENDATA_ROOT, interventi_filename )

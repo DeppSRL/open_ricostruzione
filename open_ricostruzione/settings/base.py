@@ -11,7 +11,11 @@ PROJECT_PATH = REPO_PATH = dirname(PACKAGE_PATH)
 
 RESOURCE_DIR = 'resources'
 RESOURCES_PATH = join(REPO_PATH, RESOURCE_DIR)
+
 LOG_PATH = join(RESOURCES_PATH,'logs')
+
+FIXTURES_DIR = 'fixtures'
+FIXTURES_PATH = join(REPO_PATH, FIXTURES_DIR)
 
 # Add our project to our pythonpath, this way we don't need to type our project
 # name in our dotted import paths:
