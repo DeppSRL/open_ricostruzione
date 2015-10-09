@@ -3,18 +3,8 @@ $(function () {
     
     // Monocromo
     Highcharts.getOptions().plotOptions.pie.colors = (function () {
-        var colors = ['#a1c22d', '#cecbbe','#663300', '#00cc00','#00ff00','#339900','#999900','#999999','#669999','#99ff33','#99cc66','#6666ff','#33ffcc','#339933','#336600'],
-            base = '#b70404', // QUI VA DEFINITO IL COLORE MASTER
-            i;
+        var colors = ['#75910c', '#7faa0b', '#a1c22d', '#89876D', '#cdcd95', '#007A00', '#ccdd66', '#666666', '#cecbbe', '#99ff33','#99cc66','#99FF99','#009933','#339933','#336600'];
 
-//        for (i = 0; i < 10; i += 1) {
-//            // Start out with a darkened base color (negative brighten), and end
-//            // up with a much brighter color
-//            colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
-//
-//
-//
-//        }
         return colors;
     }());
 

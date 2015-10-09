@@ -11,9 +11,7 @@ $(function () {
             // Start out with a darkened base color (negative brighten), and end
             // up with a much brighter color
             colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
-        
 
-        
         }
         return colors;
     }());
