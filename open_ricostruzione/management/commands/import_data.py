@@ -25,6 +25,11 @@ class Command(BaseCommand):
                     dest='path',
                     default='',
                     help='Path to folder with tipologia and interventi (with trailing slash)'),
+        make_option('--force',
+                    dest='force',
+                    action='store_true',
+                    default=False,
+                    help='Force import, ignore tipologie differences'),
     )
 
     logger = logging.getLogger('csvimport')
@@ -114,6 +119,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         verbosity = options['verbosity']
+        force = options['force']
         if verbosity == '0':
             self.logger.setLevel(logging.ERROR)
         elif verbosity == '1':
@@ -150,7 +156,7 @@ class Command(BaseCommand):
         ##
 
         self.logger.info(u"Import tipologie")
-        call_command('import_tipologie', verbosity=1, file=tipologie_file_input, interactive=False)
+        call_command('import_tipologie', verbosity=1, file=tipologie_file_input, force=force, interactive=False)
 
         ##
         # Import interventi

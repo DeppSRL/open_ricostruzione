@@ -19,6 +19,11 @@ class Command(BaseCommand):
                     dest='file',
                     default='',
                     help='Path to file'),
+        make_option('--force',
+                    dest='force',
+                    action='store_true',
+                    default=False,
+                    help='Force import, ignore tipologie differences'),
     )
 
     input_file = None
@@ -120,7 +125,7 @@ class Command(BaseCommand):
             else:
                 self.logger.info('******************** "{}" CHECK OK ***************'.format(t[0].upper()))
 
-        if stop_import:
+        if stop_import is True and self.force is False:
             self.logger.critical("Stopping import because tipologie check failed")
             exit()
 
@@ -176,6 +181,7 @@ class Command(BaseCommand):
         elif verbosity == '3':
             self.logger.setLevel(logging.DEBUG)
 
+        self.force = options['force']
         self.input_file = options['file']
         self.logger.info('Input file:{}'.format(self.input_file))
         data = None
