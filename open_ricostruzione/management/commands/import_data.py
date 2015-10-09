@@ -66,6 +66,12 @@ class Command(BaseCommand):
             )
         )
 
+        dip_no_intervento = filter(lambda x: x['intervento_programma__id_fenice'] is None, self.donazioni_intervento_programma)
+
+        if len(dip_no_intervento)>0:
+            self.logger.critical("Cannot import data: DonazioneInterventoProgramma has {} objects that have no link with Intervento programma and it would be impossible to re-associate them after import".format(len(dip_no_intervento)))
+            exit()
+
         if len(self.donazioni_intervento_programma) > 0:
             # dump json file
             with open(self.dump_donazioni_intprog_file, 'w') as outfile:
