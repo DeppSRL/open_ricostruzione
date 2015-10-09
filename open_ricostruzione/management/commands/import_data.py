@@ -3,19 +3,14 @@ import json
 from pprint import pprint
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-from decimal import Decimal
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
-from django.db.transaction import set_autocommit, commit
 from django.conf import settings
-from open_ricostruzione.models import Donazione, DonazioneInterventoProgramma, InterventoProgramma, UltimoAggiornamento
-from open_ricostruzione.utils import UnicodeDictReader
-from territori.models import Territorio
+from open_ricostruzione.models import Donazione, DonazioneInterventoProgramma, InterventoProgramma
 from optparse import make_option
 import logging
-import csv
 from datetime import datetime
+
 
 class Command(BaseCommand):
     help = 'Import interventi, tipologie and donazioni from files'
