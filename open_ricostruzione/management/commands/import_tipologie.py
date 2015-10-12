@@ -27,7 +27,7 @@ class Command(BaseCommand):
     )
 
     input_file = None
-    encoding = 'latin-1'
+    encoding = 'utf-8'
     logger = logging.getLogger('csvimport')
     codifiche = None
     anagrafiche = None
