@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.contrib import admin
+from django.views.generic import TemplateView
 from .sitemap import sitemaps
 from django.conf.urls.static import static
 from rest_framework import routers
@@ -40,7 +41,7 @@ urlpatterns = patterns('',
                        url(r'^page-not-found$', PageNotFoundTemplateView.as_view(), name='404'),
 
                        # Work in progress url
-                       # url(r'^.*$', TemplateView.as_view(template_name='lavorincorso.html')),
+                       #url(r'^.*$', TemplateView.as_view(template_name='work_in_progress.html')),
 
                        url(r'^$', HomeView.as_view(), name='home'),
                        url(r'^intervento/search', InterventoRedirectView.as_view(), name='intervento-search'),
