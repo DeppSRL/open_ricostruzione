@@ -5,6 +5,7 @@
 .htdigest
 data
 log/*
+dumps
 config/
 static/
 open_ricostruzione/log/*

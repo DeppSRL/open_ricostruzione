@@ -371,8 +371,8 @@ class Command(BaseCommand):
                             try:
                                 qev = QuadroEconomicoIntervento.objects.get(id_fenice=variante['id_qe'])
                             except ObjectDoesNotExist:
-                                self.logger.error(
-                                    "Intervento with id_fenice:{}, Variante: id_qe:{} does not exist in db".format(
+                                self.logger.warning(
+                                    "Intervento with id_fenice:{}, Variante: id_qe:{} does not exist in db, cannot import QE for Variante".format(
                                         intervento.id_fenice, variante['id_qe']))
 
                         variante_data_deposito = None
