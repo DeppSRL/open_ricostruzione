@@ -70,7 +70,7 @@ class InterventoProgrammaSerializer(serializers.ModelSerializer):
             'programma',
             'id_fenice',
             'soggetto_attuatore',
-            'id_propr_imm',
+            'propr_immobile',
             'n_ordine',
             'importo_generale',
             'importo_a_programma',
