@@ -6,7 +6,6 @@ In Open Ricostruzione there are two sources of data:
 
 - Interventi a programma
 - Donazioni
-- Territori
 
 
 Interventi a programma
