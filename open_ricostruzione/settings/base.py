@@ -33,7 +33,6 @@ INSTANCE_TYPE = env.str('INSTANCE_TYPE', '')
 
 ADMINS = (
     ('Guglielmo Celata', 'guglielmo@depp.it'),
-    ('Stefano Vergani', 'stefano.vergani.it@gmail.com'),
 )
 
 MANAGERS = ADMINS
