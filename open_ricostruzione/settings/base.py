@@ -282,8 +282,8 @@ SOGG_ATTUATORE_MAP_FILE_PATH = env.str('SOGG_ATTUATORE_MAP_FILE_PATH', '')
 
 # valori degli stati degli interventi che indicano lo stato di avanzamento
 STATI_PROGETTAZIONE = [u'1', u'2', u'3', u'4', u'5', u'7', ]
-STATI_IN_CORSO = [u'6', u'8', u'9', u'10', ]
-STATI_CONCLUSI = [u'11', ]
+STATI_IN_CORSO = [u'6', u'8', u'9', u'12', ]
+STATI_CONCLUSI = [u'10', u'11', ]
 
 # tipologia cedente in PRIVATE_TIPOLOGIA_CEDENTE are private citizens'ones so the Denominazione will be obscured
 PRIVATE_TIPOLOGIA_CEDENTE = [u'4', ]

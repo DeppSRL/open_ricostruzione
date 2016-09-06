@@ -43,17 +43,23 @@ class RowData(object):
         'ALTRO': Donazione.TIPO_CEDENTE.ALTRO,
         'DONAZIONI ESTERO': Donazione.TIPO_CEDENTE.ALTRO,
         'ASSOCIAZIONE': Donazione.TIPO_CEDENTE.ASSOCIAZIONI,
+        'ASSOCIAZIONI': Donazione.TIPO_CEDENTE.ASSOCIAZIONI,
+        'ENTI PUBBLICI': Donazione.TIPO_CEDENTE.ENTI_PUBBLICI,
         'ALTRI ENTI PUBBLICI': Donazione.TIPO_CEDENTE.ENTI_PUBBLICI,
         'ALTRO ENTE PUBBLICO': Donazione.TIPO_CEDENTE.ENTI_PUBBLICI,
         'COMUNE': Donazione.TIPO_CEDENTE.COMUNI,
+        'COMUNI': Donazione.TIPO_CEDENTE.COMUNI,
         'CITTADINO/PUBBLICO': Donazione.TIPO_CEDENTE.CITTADINI,
+        'CITTADINI': Donazione.TIPO_CEDENTE.CITTADINI,
+        'PRIVATO': Donazione.TIPO_CEDENTE.CITTADINI,
         'COMUNI': Donazione.TIPO_CEDENTE.COMUNI,
         'SRL': Donazione.TIPO_CEDENTE.AZIENDE,
-        'SPS': Donazione.TIPO_CEDENTE.AZIENDE,
-        'CITTADINO/PRIVATO': Donazione.TIPO_CEDENTE.CITTADINI,
         'SPA': Donazione.TIPO_CEDENTE.AZIENDE,
+        'SPS': Donazione.TIPO_CEDENTE.AZIENDE,
+        'AZIENDE': Donazione.TIPO_CEDENTE.AZIENDE,
+        'CITTADINO/PRIVATO': Donazione.TIPO_CEDENTE.CITTADINI,
         'REGIONE': Donazione.TIPO_CEDENTE.REGIONI,
-        'PRIVATO': Donazione.TIPO_CEDENTE.CITTADINI,
+        'REGIONI': Donazione.TIPO_CEDENTE.REGIONI,
         'ALTRE IMPR./SOC./COOP./SAS': Donazione.TIPO_CEDENTE.AZIENDE,
         'PROVINCE': Donazione.TIPO_CEDENTE.PROVINCE,
     }
@@ -95,7 +101,7 @@ class RowData(object):
         tipologia_cedente_string = row['Tipologia del Cedente (1)'].strip()
         self.tipologia_cedente = self.tipologia_cedente_map[tipologia_cedente_string]
         self.denominazione = row['Denominazione Cedente (2)'].strip()
-        self.territorio = row.get('Comune Ricevent', None)
+        self.territorio = row.get('Comune Ricevente', None)
         self.info = row.get('Ulteriori informazioni','').strip()
         if self.territorio is None:
             self.logger.error("Territorio cell is empty! Quit")
@@ -170,8 +176,7 @@ class Command(BaseCommand):
 
     input_file = ''
     delete = ''
-    # encoding = 'UTF-8'
-    encoding = 'latin-1'
+    encoding = 'utf-8'
     logger = logging.getLogger('csvimport')
     unicode_reader = None
     invalid_values_counter = 0
@@ -227,7 +232,7 @@ class Command(BaseCommand):
 
         # read file
         try:
-            udr = UnicodeDictReader(f=open(self.input_file),dialect=csv.excel_tab, encoding=self.encoding)
+            udr = UnicodeDictReader(f=open(self.input_file),dialect=csv.excel, delimiter=';', encoding=self.encoding)
         except IOError:
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)

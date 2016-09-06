@@ -22,7 +22,7 @@ class Command(BaseCommand):
     input_file = ''
     delete = ''
     # encoding = 'UTF-8'
-    encoding = 'latin-1'
+    encoding = 'utf-8'
     logger = logging.getLogger('csvimport')
     unicode_reader = None
 

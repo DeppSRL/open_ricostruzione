@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
     logger = logging.getLogger('csvimport')
     input_file = None
-    encoding = 'latin-1'
+    encoding = 'utf-8'
     # istat_code_vari_territori = if an Intervento has this code in istat_code
     # => intervento su vari territori bool is set to true
     istat_code_vari_territori = '999999'
@@ -284,12 +284,13 @@ class Command(BaseCommand):
 
                     # save quadro economico for Intervento
                     for qe_intervento in intervento_json['qe']:
-                        QuadroEconomicoIntervento(**{
+                        QuadroEconomicoIntervento.objects.create(**{
                             'id_fenice': qe_intervento['id_qe'],
                             'intervento': intervento,
                             'tipologia': qe_intervento['id_tipo_qe'],
                             'importo': Decimal(qe_intervento['imp_qe']),
-                        }).save()
+                        })
+
 
                     #     import progetti
                     for progetto_json in intervento_json['progetti']:
@@ -322,6 +323,7 @@ class Command(BaseCommand):
                                 'tipologia': qe_progetto_json['id_tipo_qe'],
                                 'importo': Decimal(qe_progetto_json['imp_qe']),
                             }).save()
+
 
                     #  import liquidazioni
                     for liquidazione in intervento_json['liquidazioni']:
@@ -370,28 +372,30 @@ class Command(BaseCommand):
                         if variante['id_qe']:
                             try:
                                 qev = QuadroEconomicoIntervento.objects.get(id_fenice=variante['id_qe'])
+
+                                variante_data_deposito = None
+                                if variante['iter']['data_dep']:
+                                    variante_data_deposito = datetime.strptime(variante['iter']['data_dep'], self.date_format)
+
+                                variante_data_fine = None
+                                if variante['iter']['data_fine']:
+                                    variante_data_fine = datetime.strptime(variante['iter']['data_fine'], self.date_format)
+
+                                Variante(**{
+                                    'qe': qev,
+                                    'tipologia': variante['id_tipo_var'],
+                                    'stato': variante['id_stato_var'],
+                                    'intervento': intervento,
+                                    'progetto': progetto_variante,
+                                    'data_deposito': variante_data_deposito,
+                                    'data_fine': variante_data_fine
+                                }).save()
+
+
                             except ObjectDoesNotExist:
                                 self.logger.warning(
                                     "Intervento with id_fenice:{}, Variante: id_qe:{} does not exist in db, cannot import QE for Variante".format(
                                         intervento.id_fenice, variante['id_qe']))
-
-                        variante_data_deposito = None
-                        if variante['iter']['data_dep']:
-                            variante_data_deposito = datetime.strptime(variante['iter']['data_dep'], self.date_format)
-
-                        variante_data_fine = None
-                        if variante['iter']['data_fine']:
-                            variante_data_fine = datetime.strptime(variante['iter']['data_fine'], self.date_format)
-
-                        Variante(**{
-                            'qe': qev,
-                            'tipologia': variante['id_tipo_var'],
-                            'stato': variante['id_stato_var'],
-                            'intervento': intervento,
-                            'progetto': progetto_variante,
-                            'data_deposito': variante_data_deposito,
-                            'data_fine': variante_data_fine
-                        }).save()
 
             # set state and attuazione state for the considered intervento_programma
             intervento_programma.stato, intervento_programma.a_piano, intervento_programma.in_attuazione, intervento_programma.stato_attuazione = \

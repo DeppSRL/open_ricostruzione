@@ -204,10 +204,10 @@ class Cofinanziamento(models.Model):
     TIPO_COFINANZIAMENTO = Choices(
         (u'1', u'ASSICURAZIONE', u'Assicurazione'),
         (u'2', u'DONAZIONI', u'Donazioni'),
-        (u'3', u'OPERE_PROVVISIONALI', u'Opere provvisionali'),
-        (u'4', u'MESSA_IN_SICUREZZA', u'Messa in sicurezza'),
+#        (u'3', u'OPERE_PROVVISIONALI', u'Opere provvisionali'),
+#        (u'4', u'MESSA_IN_SICUREZZA', u'Messa in sicurezza'),
         (u'5', u'FONDI_PROPRI', u'Fondi propri'),
-        (u'6', u'EDILIZIA_SCOLASTICA', u'Edilizia scolastica'),
+#        (u'6', u'EDILIZIA_SCOLASTICA', u'Edilizia scolastica'),
     )
 
     tipologia = models.CharField(max_length=2, choices=TIPO_COFINANZIAMENTO, blank=False, null=False, default='')
@@ -228,6 +228,7 @@ class Piano(models.Model):
         (u'2', u'BENI_CULTURALI', u'Piano beni culturali'),
         (u'3', u'EDILIZIA_SCOLASTICA', u'Piano edilizia scolastica ed universita'),
         (u'4', u'MISTI', u'Piano UMI - misti'),
+        (u'5', u'SCUOLE_FUORI_CRATERE', u'Piano edilizia scolastica ed università fuori cratere'),
     )
     # id fenice x il piano
     id_fenice = models.PositiveSmallIntegerField(null=False, blank=False, default=0, unique=True)
@@ -305,15 +306,15 @@ class Intervento(models.Model):
 class Liquidazione(models.Model):
     TIPO_LIQUIDAZIONE = Choices(
         (u'1000', u'PRIMO_ACCONTO', u'Primo acconto'),
-        (u'1100', u'BOZZA', u'In bozza'),
-        (u'1110', u'PRESENTATO', u'Presentato'),
-        (u'1111', u'AMMESSO', u'Ammesso'),
-        (u'0100', u'RESPINTO', u'Respinto'),
-        (u'0010', u'FONDI_ASSEGNATI', u'Fondi assegnati'),
-        (u'0001', u'RINUNCIATO', u'Rinunciato'),
-        (u'0110', u'2_ACCONTO', u'2 acconto'),
-        (u'0111', u'3_ACCONTO', u'3 acconto'),
-        (u'0011', u'SALDO', u'Saldo'),
+        (u'1100', u'PRIMO_E_SECONDO_ACCONTO', u'Primo e secondo acconto'),
+        (u'1110', u'PRIMO_SECONDO_TERZO_ACCONTO', u'Primo, secondo e terzo acconto'),
+        (u'1111', u'PRIMO_SECONDO_TERZO_ACCONTO_E_SALDO', u'Primo, secondo, terzo acconto e saldo'),
+        (u'0100', u'SECONDO_ACCONTO', u'Secondo acconto'),
+        (u'0010', u'TERZO_ACCONTO', u'Terzo acconto'),
+        (u'0001', u'SALDO', u'Saldo'),
+        (u'0110', u'SECONDO_E_TERZO_ACCONTO', u'Secondo e terzo acconto'),
+        (u'0111', u'SECONDO_TERZO_ACCONTO_E_SALDO', u'Secondo, terzo acconto e saldo'),
+        (u'0011', u'TERZO_ACCONTO_E_SALDO', u'Terzo acconto e saldo'),
     )
 
     intervento = models.ForeignKey(u'Intervento', null=False, blank=False)
@@ -350,31 +351,34 @@ class EventoContrattuale(models.Model):
 class QuadroEconomico(models.Model):
     TIPO_QUADRO_ECONOMICO = Choices(
         (u'1', u'SPESA_COMPLESSIVA', u'Quadro sommario della spesa complessiva'),
-        (u'2', u'COFINANZIAMENTO_RIMBORSO', u'Quadro sommario del cofinanziamento da Rimborso assicurativo'),
-        (u'3', u'COFINANZIAMENTO_DONAZIONI', u'Quadro sommario del cofinanziamento da Donazioni'),
-        (u'4', u'COFINANZIAMENTO_OPERE', u'Quadro sommario del cofinanziamento da Opere provvisionali'),
-        (u'5', u'COFINANZIAMENTO_MESSE_SICUREZZA', u'Quadro sommario del cofinanziamento da Messe in sicurezza'),
-        (u'6', u'COFINANZIAMENTO_EDIFICI_SCOLASTICI',
-         u'Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici'),
-        (u'7', u'COFINANZIAMENTO_FONDI_PROPRI', u'Quadro sommario del cofinanziamento da Fondi propri (e altro)'),
-        (u'8', u'SOMMARIO_GENERALE', u'Quadro sommario generale riepilogativo'),
+#        (u'2', u'COFINANZIAMENTO_RIMBORSO', u'Quadro sommario del cofinanziamento da Rimborso assicurativo'),
+#        (u'3', u'COFINANZIAMENTO_DONAZIONI', u'Quadro sommario del cofinanziamento da Donazioni'),
+#        (u'4', u'COFINANZIAMENTO_OPERE', u'Quadro sommario del cofinanziamento da Opere provvisionali'),
+#        (u'5', u'COFINANZIAMENTO_MESSE_SICUREZZA', u'Quadro sommario del cofinanziamento da Messe in sicurezza'),
+#        (u'6', u'COFINANZIAMENTO_EDIFICI_SCOLASTICI',
+#         u'Quadro sommario del cofinanziamento da Ricostruzione edifici scolastici'),
+#        (u'7', u'COFINANZIAMENTO_FONDI_PROPRI', u'Quadro sommario del cofinanziamento da Fondi propri (e altro)'),
+#        (u'8', u'SOMMARIO_GENERALE', u'Quadro sommario generale riepilogativo'),
         (u'9', u'QTE_COMMISSARIO', u'Q.T.E. relativo al finanziamento del Commissario'),
-        (u'10', u'QTE_ASSICURATIVO', u'Q.T.E. riferito al cofinanziamento da Rimborso assicurativo'),
-        (u'11', u'QTE_DONAZIONI', u'Q.T.E. riferito al cofinanziamento da Donazioni'),
-        (u'12', u'QTE_OPERE', u'Q.T.E. riferito al cofinanziamento da Opere provvisionali'),
-        (u'13', u'QTE_MESSE_SICUREZZA', u'Q.T.E. riferito al cofinanziamento da Messe in sicurezza'),
-        (u'14', u'QTE_EDIFICI_SCOLASTICI', u'Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici'),
-        (u'15', u'QTE_FONDI_PROPRI', u'Q.T.E. riferito al cofinanziamento da Fondi propri (e altro)'),
-        (u'16', u'QTE_GENERALE', u'Q.T.E. generale riepilogativo'),
+#        (u'10', u'QTE_ASSICURATIVO', u'Q.T.E. riferito al cofinanziamento da Rimborso assicurativo'),
+#        (u'11', u'QTE_DONAZIONI', u'Q.T.E. riferito al cofinanziamento da Donazioni'),
+#        (u'12', u'QTE_OPERE', u'Q.T.E. riferito al cofinanziamento da Opere provvisionali'),
+#        (u'13', u'QTE_MESSE_SICUREZZA', u'Q.T.E. riferito al cofinanziamento da Messe in sicurezza'),
+#        (u'14', u'QTE_EDIFICI_SCOLASTICI', u'Q.T.E. riferito al cofinanziamento da Ricostruzione edifici scolastici'),
+#        (u'15', u'QTE_FONDI_PROPRI', u'Q.T.E. riferito al cofinanziamento da Fondi propri (e altro)'),
+#        (u'16', u'QTE_GENERALE', u'Q.T.E. generale riepilogativo'),
         (u'17', u'QTE_RIMODULATO_COMMISSARIO', u'Q.T.E. rimodulato relativo al finanziamento del Commissario'),
         (u'18', u'QTE_FINANZIAMENTO_COMMISSARIO', u'Q.T.E. relativo al finanziamento assegnato dal Commissario'),
-        (u'19', u'QTE_VARIANTE_SENZA_MODIFICA', u'Q.T.E. di variante senza modifica dei lavori'),
+        (u'19', u'QTE_VARIANTE_SENZA_MODIFICA', u'Q.T.E. di variante delle somme a disposizione'),
         (u'20', u'QTE_VARIANTE_CON_MODIFICA', u'Q.T.E. di variante con modifica dei lavori'),
         (u'21', u'QTE_FINALE', u'Q.T.E. finale'),
-
         (u'22', u'QTE_RIEPILOGO', u'Q.T.E. di riepilogo'),
         (u'23', u'QTE_VARIANTE_SOMME_COMMISSARIO', u'Q.T.E. di variante delle somme a disposizione autorizzata dal Commissario'),
         (u'24', u'QTE_VARIANTE_LAVORI_COMMISSARIO', u'Q.T.E. di variante con modifica dei lavori autorizzata dal Commissario'),
+        (u'30', u'QTE_GENERALE', u'Q.T.E. Generale'),
+        (u'31', u'QTE_COFIN_ASSICURAZIONE', u'Q.T.E. di cofinanziamento da Assicurazione'),
+        (u'32', u'QTE_COFIN_DONAZIONI', u'Q.T.E. di cofinanziamento da Donazioni'),
+        (u'33', u'QTE_COFIN_FONDI_PROPRI', u'Q.T.E. di cofinanziamento da Fondi propri'),
 
 
     )
@@ -443,7 +447,7 @@ class Progetto(models.Model):
 
 class Variante(models.Model):
     TIPO_VARIANTE = Choices(
-        (u'1', u'SENZA_MODIFICA', u'Variante senza modifica dei lavori'),
+        (u'1', u'SOMME_A_DISPOSIZIONE', u'Variante delle somme a disposizione'),
         (u'2', u'CON_MODIFICA', u'Variante con modifica dei lavori'),
     )
 
@@ -452,7 +456,7 @@ class Variante(models.Model):
         (u'2', u'PRESA_IN_CARICO', u'Presa in carico'),
         (u'3', u'AMMESSA', u'Ammessa'),
         (u'4', u'RESPINTA', u'Respinta'),
-        (u'5', u'ISTRUTTORIA', u'In Istruttoria'),
+        (u'5', u'ISTRUTTORIA', u'In istruttoria'),
     )
     qe = models.ForeignKey('QuadroEconomicoIntervento', blank=True, null=True )
     tipologia = models.CharField(max_length=2, choices=TIPO_VARIANTE, blank=False, null=False, default='')
