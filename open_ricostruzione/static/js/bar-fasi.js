@@ -8,7 +8,7 @@ $(function () {
     var color_array = {
         '1': '#0ee832',
         '2': '#0cbe2a',
-        '3': '#09ae24'
+        '3': '#134d00'
     };
 
     for (var color, i = 0; i < fasi_data_array.length; i++) {
