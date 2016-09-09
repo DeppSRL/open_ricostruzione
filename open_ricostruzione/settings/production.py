@@ -20,10 +20,10 @@ DATABASES = {
     'default': env.db('DB_DEFAULT_URL'),
 }
 
-MEDIA_ROOT = os.path.join(REPO_PATH, 'media')
+MEDIA_ROOT = os.path.join(REPO_PATH, 'resources', 'media')
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(REPO_PATH, 'static')
+STATIC_ROOT = os.path.join(REPO_PATH, 'resources', 'static')
 STATIC_URL = '/static/'
 
 ########## SECRET CONFIGURATION
