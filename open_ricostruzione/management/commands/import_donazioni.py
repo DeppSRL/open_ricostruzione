@@ -52,7 +52,6 @@ class RowData(object):
         'CITTADINO/PUBBLICO': Donazione.TIPO_CEDENTE.CITTADINI,
         'CITTADINI': Donazione.TIPO_CEDENTE.CITTADINI,
         'PRIVATO': Donazione.TIPO_CEDENTE.CITTADINI,
-        'COMUNI': Donazione.TIPO_CEDENTE.COMUNI,
         'SRL': Donazione.TIPO_CEDENTE.AZIENDE,
         'SPA': Donazione.TIPO_CEDENTE.AZIENDE,
         'SPS': Donazione.TIPO_CEDENTE.AZIENDE,
@@ -62,6 +61,7 @@ class RowData(object):
         'REGIONI': Donazione.TIPO_CEDENTE.REGIONI,
         'ALTRE IMPR./SOC./COOP./SAS': Donazione.TIPO_CEDENTE.AZIENDE,
         'PROVINCE': Donazione.TIPO_CEDENTE.PROVINCE,
+        'SMS SOLIDALE': Donazione.TIPO_CEDENTE.SMS_SOLIDALE,
     }
 
     annoying_chars = [
