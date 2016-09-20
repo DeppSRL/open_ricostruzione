@@ -17,7 +17,7 @@ TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', True)
 ########## TOOLBAR CONFIGURATION
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
 INSTALLED_APPS += (
-    'debug_toolbar',
+#    'debug_toolbar',
 )
 
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
@@ -25,7 +25,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
 MIDDLEWARE_CLASSES += (
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 # See: https://github.com/django-debug-toolbar/django-debug-toolbar#installation
@@ -35,7 +35,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 ########## END TOOLBAR CONFIGURATION
 
-LOG_PATH = os.path.join(PROJECT_PATH,'open_ricostruzione', 'log')
+LOG_PATH = os.path.join(PROJECT_PATH, 'logs')
 
 LOGGING['handlers']['file']['filename'] = "{}/logfile".format(LOG_PATH)
 LOGGING['handlers']['management_logfile']['filename'] = "{}/mnglogfile".format(LOG_PATH)
