@@ -4,7 +4,7 @@
 *.pyc
 .htdigest
 data
-log/*
+logs/*
 dumps
 config/
 static/
