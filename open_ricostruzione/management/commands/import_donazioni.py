@@ -237,6 +237,8 @@ class Command(BaseCommand):
             self.logger.error("It was impossible to open file {}".format(self.input_file))
             exit(1)
 
+        set_autocommit(False)
+
         self.logger.info("Deleting all previous records...")
         Donazione.objects.all().delete()
         DonazioneInterventoProgramma.objects.all().delete()
@@ -244,7 +246,6 @@ class Command(BaseCommand):
 
         donation_counter = 0
         row_counter = -1
-        set_autocommit(False)
         for row in udr:
             ip = None
             row_counter += 1
@@ -283,7 +284,7 @@ class Command(BaseCommand):
                     ip = InterventoProgramma.objects.get(Q(n_ordine=rowdata.n_ordine)|Q(n_ordine=n_ordine_zeropad))
                 except ObjectDoesNotExist:
                     self.handle_error(rowdata, row_counter, "Cannot find interv.programma for n_ordine:{}".format(rowdata.n_ordine))
-                    continue
+                    # continue
                 else:
                     self.logger.debug("Found intervento:{} associated with donazione".format(ip.slug))
 
@@ -301,7 +302,7 @@ class Command(BaseCommand):
             donazione = Donazione(**don_dict)
             donazione.save()
             if ip is not None:
-                commit()
+                # commit()
                 # if the donazione is linked to an InterventoProgramma, creates
                 # the DonazioneInterventoProgramma object
                 dip = DonazioneInterventoProgramma()
