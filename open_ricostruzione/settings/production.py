@@ -20,6 +20,7 @@ DATABASES = {
     'default': env.db('DB_DEFAULT_URL'),
 }
 
+ALLOWED_HOSTS = ['www.openricostruzione.it', 'openricostruzione.it']
 MEDIA_ROOT = os.path.join(REPO_PATH, 'resources', 'media')
 MEDIA_URL = '/media/'
 
