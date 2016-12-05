@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load l10n %}
+
+{% block execution_bar_data %}
+
+    <script>
+        {% localize off %}
+        var fasi_data_array = [
+            {"code": "1", "data":[{"url": "{% url 'lista-interventi' %}?{{ base_filters }}&stato_attuazione=progettazione", "sum":{{ status.progettazione.sum }}, "y": {{ status.progettazione.count }} }], "name": "Interventi in Progettazione"},
+            {"code": "2", "data": [{"url": "{% url 'lista-interventi' %}?{{ base_filters }}&stato_attuazione=in_corso", "sum": {{ status.in_corso.sum }}, "y": {{ status.in_corso.count }} }], "name": "Lavori in corso"},
+            {"code": "3", "data": [{"url": "{% url 'lista-interventi' %}?{{ base_filters }}&stato_attuazione=concluso", "sum": {{ status.conclusi.sum }}, "y": {{ status.conclusi.count }} }], "name": "Lavori conclusi"}
+        ];
+        {% endlocalize %}
+
+        var noinfo = parseInt($('.total strong').html());
+        for (var i = 0; i < fasi_data_array.length; i++) {
+            noinfo -= fasi_data_array[i]['data'][0]['num'];
+        }
+        if (noinfo > 0) {
+            $('#bars-info').append(' Per ' + noinfo + ' ' + (noinfo == 1 ? 'progetto' : 'progetti') + ' non si hanno attualmente informazioni sullo stato di avanzamento che verranno inserite al più presto.');
+        }
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+    {% block localita_header %}
+
+    {% endblock %}
+
+    {% block home-intro %}{% endblock %}
+
+    <section class="cifre top-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1 text-center">
+                    {% block intro-text %}
+                        <h1>
+                            LA RICOSTRUZIONE IN CIFRE
+                        </h1>
+                        <p>Ultimo aggiornamento: {{ ultimo_aggiornamento|date }} {#  - {{ n_comuni_monitorati }} comuni monitorati su {{ n_comuni_cratere }}#}</p>
+                        <p style="font-size: 12px;">I dati presenti su questo sito provengono dalla piattaforma Fenice e rispecchiano lo stato di aggiornamento della piattaforma da parte dei RUP, pertanto possono differire dai report periodici della Struttura Tecnica Del Commissario Delegato che si basano sulle istruttorie degli interventi.</p>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% block status %}
+        {#    execution status bar / status blocks #}
+        {% include 'aggregates/status.html' %}
+    {% endblock %}
+
+    {# fetch progetti #}
+
+    {% if interventi_top_importo %}
+        <section class="latest">
+            <div class="container">
+
+                <div class="row text-center">
+                    <h1>
+                        GLI INTERVENTI IN ATTUAZIONE CON MAGGIORI IMPORTI
+                    </h1>
+                </div>
+
+                <div class="row lists">
+                    <div class="col-md-6 list-item">
+                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.0 %}
+                    </div>
+                    <div class="col-md-6 list-item">
+                        {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.1 %}
+                    </div>
+                </div>
+                {% if interventi_top_importo|length > 2 %}
+                    <div class="row lists">
+
+                        <div class="col-md-6 list-item">
+                            {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.2 %}
+                        </div>
+                        <div class="col-md-6 list-item">
+                            {% include 'aggregates/intervento_block.html' with intprog=interventi_top_importo.3 %}
+                        </div>
+                    {% endif %}
+                    {% if interventi_top_importo|length > 4 %}
+                        <a href="{% url 'lista-interventi' %}?{{ base_filters }}" class="pull-right alls">VEDI TUTTI</a>
+
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% block thematic-map %}
+        {% include 'modules/thematic_maps.html' %}
+    {% endblock %}
+
+    {# aggregazione tipo immobile    #}
+    {% block tipo-immobile %}
+        {% if tipo_immobile_aggregates %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>Per cosa si interviene</h1>
+                    </div>
+                </div>
+            </div>
+            {% include 'modules/tipo_immobile_bars.html' %}
+        {% endif %}
+
+    {% endblock %}
+
+    {# aggregazione tipo sogg. att #}
+    {% block soggetto-attuatore %}
+
+        {% include 'aggregates/sogg_att_block.html' with pie_title="Aggregazione per tipo sogg.attuatore - ammontare" %}
+
+    {% endblock %}
+
+    {% block imprese %}
+        {% if imprese_top|length > 0 %}
+            <section class="imprese">
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h1>
+                                le imprese con più interventi
+                            </h1>
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                 </div>
+
+                <div class="bgs">
+                     <div class="container">
+                        <div class="row lists">
+
+                            <div class="col-md-6">
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.0 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.1 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.2 %}
+                            </div>
+
+                            <div class="col-md-6">
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.3 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.4 %}
+                                {% include 'aggregates/impresa_block.html' with impresa=imprese_top.5 %}
+
+                            </div>
+                        </div>
+                        <br>
+                        <a href="{% url 'lista-imprese' %}" class="pull-right">VEDI TUTTE</a>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+    {% endblock %}
+
+    {# aggregazione tipologia cedente #}
+    {% block donazioni %}
+
+        {% include 'aggregates/donazioni_block.html' %}
+
+    {% endblock %}
+
+{% endblock %}

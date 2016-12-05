@@ -4,8 +4,8 @@
 *.pyc
 .htdigest
 .DS_Store
-data
-logs/*
+resources/data
+resources/logs/*
 dumps
 config/
 static/
@@ -13,5 +13,5 @@ open_ricostruzione/log/*
 requirements/local.txt
 open_ricostruzione/media
 open_ricostruzione/migrations/
-territori/migrations/
+project/territori/migrations/
 resources

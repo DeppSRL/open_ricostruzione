@@ -1,2 +1,2 @@
 # Local development dependencies go here
--r base.txt
+-r common.txt
