@@ -3,6 +3,7 @@
 .env
 *.pyc
 .htdigest
+.DS_Store
 data
 logs/*
 dumps
