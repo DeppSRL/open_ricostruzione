@@ -1,0 +1,216 @@
+id_fenice	denominazione	tipologia__denominazione	tipologia__id
+23	Banca d'Italia	Altro	1
+24	CISA centro integrato servizi anziani	Altro	1
+82	Comunit\xe0 ebraica	Altro	1
+83	Conservatorio di Musica G. Frescobaldi	Altro	1
+88	Demanio dello Stato	Altro	1
+105	Opera Don Cipriano	Altro	1
+106	Opera Pia Storchi	Altro	1
+107	Partecipanza Agricola	Altro	1
+108	Patronato dei Figli del popolo	Altro	1
+128	Servizio Tecnico bacino del Reno	Altro	1
+130	Sezione Tiro a Segno Nazionale di Guastalla	Altro	1
+132	Trasporto Passeggero Emilia Romagna Tper	Altro	1
+157	"ONLUS ""Campi d\'Arte"	Altro	1
+160	Partecipanza Agraria	Altro	1
+172	Comunit\xe0 Ebraica di Ferrara	Altro	1
+3	AIMAG Spa	Aziende	2
+92	ENEL distribuzione S.p.A.	Aziende	2
+93	Enel Gas Spa	Aziende	2
+94	ENEL Servizi Srl	Aziende	2
+97	FER - Ferrovie Emilia Romagna s.r.l.	Aziende	2
+110	Poste italiane SpA	Aziende	2
+125	RFI - Gruppo Ferrovie dello Stato Italiane	Aziende	2
+129	SETA Spa	Aziende	2
+136	Virgilio Srl	Aziende	2
+168	Castello Pepoli s.r.l.	Aziende	2
+174	Ditta Reggiani \x96 Vincenzo Calzolari \x96 Reco s.r.l.	Aziende	2
+192	Sant'Andrea s.r.l.	Aziende	2
+193	societ\xe0 FINAMA di Amadei Irio	Aziende	2
+5	Arcidiocesi di Bologna	Chiesa	3
+6	Arcidiocesi di Ferrara - Comacchio	Chiesa	3
+7	Arcidiocesi di Modena-Nonantola	Chiesa	3
+8	Arcidiocesi di Ravenna-Cervia	Chiesa	3
+9	Arcidiocesi Modena-Nonantola	Chiesa	3
+89	Diocesi di Carpi	Chiesa	3
+90	Diocesi di Reggio Emilia - Guastalla	Chiesa	3
+131	suore Clarisse del Corpus Domini	Chiesa	3
+154	Diocesi di Reggio Emilia \x96 Guastalla	Chiesa	3
+158	Parrocchia della Beata Vergine delle Grazie	Chiesa	3
+159	Parrocchia di Santa Maria Nascente (e San Genesio)	Chiesa	3
+25	Commissario Delegato	Commissario delegato	4
+26	Comune di Argelato (BO)	Comune	5
+27	Comune di Argenta (FE)	Comune	5
+28	Comune di Baricella (BO)	Comune	5
+29	Comune di Bastiglia (MO)	Comune	5
+30	Comune di Bentivoglio (BO)	Comune	5
+31	Comune di Bologna (BO)	Comune	5
+32	Comune di Bomporto (MO)	Comune	5
+33	Comune di Bondeno (FE)	Comune	5
+34	Comune di Boretto (RE)	Comune	5
+35	Comune di Campagnola Emilia (RE)	Comune	5
+36	Comune di Campogalliano (MO)	Comune	5
+37	Comune di Camposanto (MO)	Comune	5
+38	Comune di Carpi (MO)	Comune	5
+39	Comune di Castel Maggiore (BO)	Comune	5
+40	Comune di Castelfranco Emilia (MO)	Comune	5
+41	Comune di Castello d'Argile (BO)	Comune	5
+42	Comune di Cavezzo (MO)	Comune	5
+43	Comune di Cento (FE)	Comune	5
+44	Comune di Concordia sulla Secchia (MO)	Comune	5
+45	Comune di Correggio (RE)	Comune	5
+46	Comune di Crevalcore (BO)	Comune	5
+47	Comune di Fabbrico (RE)	Comune	5
+48	Comune di Ferrara (FE)	Comune	5
+49	Comune di Finale Emilia (MO)	Comune	5
+50	Comune di Galliera (BO)	Comune	5
+51	Comune di Gualtieri (RE)	Comune	5
+52	Comune di Guastalla (RE)	Comune	5
+53	Comune di Luzzara (RE)	Comune	5
+54	Comune di Malalbergo (BO)	Comune	5
+55	Comune di Medolla (MO)	Comune	5
+56	Comune di Minerbio (BO)	Comune	5
+57	Comune di Mirabello (FE)	Comune	5
+58	Comune di Mirandola (MO)	Comune	5
+59	Comune di Modena (MO)	Comune	5
+60	Comune di Molinella (BO)	Comune	5
+61	Comune di Nonantola (MO)	Comune	5
+62	Comune di Novellara (RE)	Comune	5
+63	Comune di Novi di Modena (MO)	Comune	5
+64	Comune di Pieve di Cento (BO)	Comune	5
+65	Comune di Poggio Renatico (FE)	Comune	5
+66	Comune di Ravarino (MO)	Comune	5
+67	Comune di Reggio Emilia (RE)	Comune	5
+68	Comune di Reggiolo (RE)	Comune	5
+69	Comune di Rio Saliceto (RE)	Comune	5
+70	Comune di Rolo (RE)	Comune	5
+71	Comune di Sala Bolognese (BO)	Comune	5
+72	Comune di San Felice sul Panaro (MO)	Comune	5
+73	Comune di San Giorgio di Piano (BO)	Comune	5
+74	Comune di San Giovanni in Persiceto (BO)	Comune	5
+75	Comune di San Martino in Rio (RE)	Comune	5
+76	Comune di San Pietro in Casale (BO)	Comune	5
+77	Comune di San Possidonio (MO)	Comune	5
+78	Comune di San Prospero (MO)	Comune	5
+79	Comune di Sant'Agostino (FE)	Comune	5
+80	Comune di Soliera (MO)	Comune	5
+81	Comune di Vigarano Mainarda (FE)	Comune	5
+142	Comune di Bagnolo in Piano (RE)	Comune	5
+143	Comune di Brescello (RE)	Comune	5
+144	Comune di Budrio (BO)	Comune	5
+145	Comune di Cadelbosco di Sopra (RE)	Comune	5
+146	Comune di Castelnovo di Sotto (RE)	Comune	5
+147	Comune di Comacchio (FE)	Comune	5
+148	Comune di Copparo (FE)	Comune	5
+149	Comune di Formigine (MO)	Comune	5
+150	Comune di Imola (BO)	Comune	5
+151	Comune di Medicina (BO)	Comune	5
+152	Comune di Quattro Castella (RE)	Comune	5
+153	Comune di San Lazzaro di Savena (BO)	Comune	5
+85	consorzio di bonifica	Consorzio di Bonifica	6
+86	Consorzio di Bonifica dell'Emilia centrale	Consorzio di Bonifica	6
+87	Consorzio Gonzaga	Consorzio di Bonifica	6
+115	R.E.R. - CdB di Secondo Grado per il canale Emiliano Romagnolo	Consorzio di Bonifica	6
+116	R.E.R. - Consodio della Bonifica Renana	Consorzio di Bonifica	6
+117	R.E.R. - Consorzio della Bonifica Renana	Consorzio di Bonifica	6
+118	R.E.R. - Consorzio di Bonifica della Burana	Consorzio di Bonifica	6
+119	R.E.R. - Consorzio di Bonifica Emilia Centrale	Consorzio di Bonifica	6
+120	R.E.R. - Consorzio di Bonifica Pianura di Ferrara	Consorzio di Bonifica	6
+121	R.E.R. - Consorzio di Bonifica Terre di Gonzaga in Destra Po	Consorzio di Bonifica	6
+122	R.E.R. - Serv. Tecnico di Bacino Reno	Consorzio di Bonifica	6
+123	R.E.R. Servizio Tecnico di Bacino Po di Volano	Consorzio di Bonifica	6
+173	Consorzio di Bonifica Pianura di Ferrara	Consorzio di Bonifica	6
+1	Agenda Interregionale per il fiume Po	Enti e Agenzie	7
+2	Agenzia per la mobilit\xe0 di Modena	Enti e Agenzie	7
+4	AIPO	Enti e Agenzie	7
+84	Consiglio per la Ricerca e la Sperimentazione in Agricoltura (CRA)	Enti e Agenzie	7
+95	Ente Fiera (Ferrara)	Enti e Agenzie	7
+137	ACER di Modena	Enti e Agenzie	7
+155	Ente Parco del Delta del PO	Enti e Agenzie	7
+98	Fondazione dott. Carlo Fornasini	Fondazioni	8
+99	Fondazione Maldotti	Fondazioni	8
+100	Fondazione Patrimonio degli Studi	Fondazioni	8
+101	Fondazione per l'agricoltura Fratelli Navarra	Fondazioni	8
+102	Fondazione Santa Maria di Corporeno	Fondazioni	8
+109	Pia Fondazione Asilo Parrocchiale di Argelato	Fondazioni	8
+126	S.F.L. di Bologna	Fondazioni	8
+127	S.F.L. Fondazione Autonoma di Culto Santa Maria delle Grazie	Fondazioni	8
+176	Fondazione Autonoma di Culto \x93Santa Maria delle Grazie\x94	Fondazioni	8
+177	Fondazione Collegio Berti	Fondazioni	8
+91	Direzione MIBAC	Ministeri	9
+96	FEC (fondo edifici di culto - ministero dell\x92interno)	Ministeri	9
+103	Ministero dell'interno - dipartimento Vigili del Fuoco	Ministeri	9
+104	Ministero Infrastrutture e Trasporti OO.PP.	Ministeri	9
+156	MiBACT	Ministeri	9
+162	Alberti Alfredo / Alberti Anna	Privati	10
+163	Alberti Francesco	Privati	10
+164	Antonio Du\xf2	Privati	10
+165	Belpoggi Fiorella	Privati	10
+166	Bianchi Raffaele	Privati	10
+167	Bonora Francesco	Privati	10
+169	Cavazza Isolani	Privati	10
+170	Chiappini Alessandra e Laura	Privati	10
+171	Claudio Rangoni Machiavelli	Privati	10
+175	Emilio Ottolonghi	Privati	10
+178	Fontanesi Giorgia antonio anacleto e giorgio	Privati	10
+179	Giorgio e Federica Boicelli Gavioli Marco e Mangiolini Eamnuela Blo Elena e Grechi Sauro	Privati	10
+180	Guerra Gianni	Privati	10
+181	Guidetti Luigi	Privati	10
+182	Hercolani Anna Maria	Privati	10
+183	Imelde Poggi	Privati	10
+184	Manfrini Stefano Rossi Cristina e Bartolucci Galeazzo	Privati	10
+185	Minelli Alberto	Privati	10
+186	Miolato Nicola	Privati	10
+187	Nagliati Paolo	Privati	10
+188	Paltrinieri Maria Rosa Rossella	Privati	10
+189	Persi Antonino	Privati	10
+190	Rimondi Lucia e Anna Maria	Privati	10
+191	Roncarati Franco e Castaldo Maria	Privati	10
+194	Toschi Paola	Privati	10
+195	Zamorani Guglielmo e Maria Elvira	Privati	10
+196	Privato	Privati	10
+111	Provincia di Bologna	Province	11
+112	Provincia di Ferrara	Province	11
+113	Provincia di Modena	Province	11
+114	Provincia di Reggio Emilia	Province	11
+161	Provveditorato Interregionale OO.PP	Provveditorato Interregionale OO.PP	12
+124	Regione Emilia Romagna	Regione	13
+10	ASP Azienda Servizi alla Persona dell'Unione Terre d'Argine	Strutture socio-sanitarie	14
+11	ASP Ferrara	Strutture socio-sanitarie	14
+12	ASP Galuppi-Ramponi + privati	Strutture socio-sanitarie	14
+13	ASP IRIDES	Strutture socio-sanitarie	14
+14	ASP PROGETTO PERSONA	Strutture socio-sanitarie	14
+15	ASP TERRE D' ARGINE	Strutture socio-sanitarie	14
+16	ASP Terre d'Argine	Strutture socio-sanitarie	14
+17	AUSL di Bologna	Strutture socio-sanitarie	14
+18	AUSL di Ferrara	Strutture socio-sanitarie	14
+19	AUSL di Modena	Strutture socio-sanitarie	14
+20	Azienda Ospedaliera - Universitaria di Ferrara	Strutture socio-sanitarie	14
+21	Azienda Ospedaliera Univ. di Bologna - Pol. Sant'Orsola	Strutture socio-sanitarie	14
+22	Azienda Ospedaliera Univ. Di Modena - Policlinico	Strutture socio-sanitarie	14
+138	ASP area nord	Strutture socio-sanitarie	14
+139	AUSL di Reggio Emilia	Strutture socio-sanitarie	14
+140	Azienda ASL di Bologna	Strutture socio-sanitarie	14
+141	Azienda Ospedaliera di Reggio-Emilia	Strutture socio-sanitarie	14
+133	Universit\xe0 degli Studi di Bologna	Università	15
+134	Universit\xe0 degli Studi di Ferrara	Università	15
+135	Universit\xe0 degli Studi di Modena e Reggio Emilia	Università	15
+200	Ghini Costanza	Privati	10
+201	Umberto Salvatori	Privati	10
+197	Città Metropolitana di Bologna	Comune	5
+198	Istituto delle Orsoline (F.M.I.)	Chiesa	3
+199	Parrocchia di Santa Maria Assunta (RE)	Chiesa	3
+10000	Associazione Asilo Infantile Ing. A. Giordani	Altro	1
+10001	Giuseppe Goldoni	Privati	10
+10017	R.E.R. - Ag. Reg. per la sicurezza territoriale e la protezione civile- Servizio Area Po di Volano	Consorzio di Bonifica	6
+10018	Associazione "Un Aiuto Subito"	Altro	1
+10012	ASP azienda pubblica di servizi alla persona dei comuni modenesi area nord	Strutture socio-sanitarie	14
+10013	ASP Città di Bologna	Strutture socio-sanitarie	14
+10014	ASP pianura EST	Strutture socio-sanitarie	14
+10016	Istituto Ortopedico Rizzoli di Bologna I.R.C.C.S.	Strutture socio-sanitarie	14
+10002	Arcidocesi di Ferrara-Comacchio	Chiesa	3
+10003	Opera Pia dei Poveri Vergognosi	Chiesa	3
+10015	Istituto Zoni	Chiesa	3
+10011	Provincia Minoritica di Cristo Re dei Frati Minori dell\'Emilia + ERGO	Chiesa	3
+10004	Azienda Ospedaliera Univ. di Bologna - Pol. Sant'Orsola	Strutture socio-sanitarie	14
+10010	R.E.R. - Ag. Reg. per la sicurezza territoriale e la protezione civile- Servizio Area Reno	Consorzio di Bonifica	6

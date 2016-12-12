@@ -5,13 +5,4 @@
 .htdigest
 .DS_Store
 resources/data
-resources/logs/*
-dumps
-config/
-static/
-open_ricostruzione/log/*
-requirements/local.txt
-open_ricostruzione/media
-open_ricostruzione/migrations/
-project/territori/migrations/
-resources
+resources/logs

@@ -1,0 +1,239 @@
+@import "variables.less";
+@import url(http://fonts.googleapis.com/css?family=Abel);
+//Open Ricostruzione custom Css
+
+body{
+  font-family: 'Arial', sans-serif;
+  background-color: white;
+}
+
+.wrapper{
+  margin-top:10px;
+  margin-bottom: 10px;
+}
+
+.container{
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  .basic_spacer{
+    margin-bottom: 15px;
+    margin-top: 15px;
+  }
+
+}
+
+.ui-autocomplete{
+  z-index: 1000!important;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+
+//map styles
+
+.map {
+    width: 100%;
+    height: 500px;
+}
+
+.pianificato-schedaA .map a{ font-size: 11px;}
+.pianificato-schedaB .map a{ font-size: 11px;}
+
+.map_info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+  h4 {
+    margin: 0 0 5px;
+    color: #777;
+  }
+}
+
+.legend {
+    text-align: left;
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+//debug table
+table.debug_table{
+  td, th{
+    border:1px solid grey;
+    text-align: center;
+  }
+}
+
+//thematic map switch
+#map_switch li.active{
+  a {
+		font-size:11px;
+
+		&.btn {
+			&.btn-show {
+				border:1px solid @gray-base;
+				border-radius:3px;
+				padding:3px 5px;
+				color:white;
+                background:@gray-base;
+
+			}
+		}
+	}
+}
+
+//fix for sogg.attuatore
+
+.lists .list-item.soggetti-attuatori-1 {
+  min-height: 100px;
+}
+
+//fix logo underline remove
+.logo a{
+  text-decoration: none;
+}
+
+//fix search box for imprese
+#header .dropdown-menu form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.navbar-nav > li > .dropdown-menu li form a:hover{
+  background-color: white ;
+}
+
+//fix search box for interv
+#header form#interventi_search{
+  margin-top: 30px;
+}
+
+.nav{
+  z-index: 99999;
+}
+.leaflet-top{
+  z-index: 1!important;
+}
+
+// status bar links
+#status{
+  a{
+    text-decoration: none;
+    color:black;
+  }
+  a:hover{
+    text-decoration: underline;
+    color:black;
+  }
+}
+
+// fix thematic map switch
+ul.show{
+  position: relative;
+  top:0;
+  float: right;
+  margin-bottom: 5px;
+}
+
+.leaflet-bottom{
+  z-index: 0!important;
+}
+
+//fix lista interventi
+
+ul.list li a {
+  font-size: 23px!important;
+}
+ul.list li .secondrow a {
+  font-size: 20px!important;
+}
+
+// fix intervento block aggregate page
+.lists .list-item h2#top_intervento {
+  font-size: 30px!important;
+}
+.lists .list-item .euros#top_intervento {
+  font-size: 25px;
+}
+
+//fix pagination
+.pagination > li > a {
+  color: rgb(51, 122, 183)!important;
+}
+.pagination > li.active > a {
+  color: white!important;
+}
+
+//fix interv.programma
+.intervento-denominazione{
+  font-size: 45px;
+}
+
+.pianificato-schedaA {
+  padding: 20px!important;
+}
+
+.imprese {
+  padding-bottom: 0px!important;
+
+}
+
+//fix font size impresa
+.pianificato-schedaA .nome-lavoro a {
+  font-size: 20px!important;
+}
