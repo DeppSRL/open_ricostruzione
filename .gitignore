@@ -4,5 +4,3 @@
 *.pyc
 .htdigest
 .DS_Store
-resources/data
-resources/logs
