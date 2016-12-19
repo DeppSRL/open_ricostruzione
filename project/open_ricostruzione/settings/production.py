@@ -17,6 +17,7 @@ DEBUG = env.bool('DEBUG', False)
 TEMPLATE_DEBUG = env.bool('TEMPLATE_DEBUG', False)
 ########## END DEBUG CONFIGURATION
 
+POSTGIS_VERSION=( 2, 1 )
 DATABASES = {
     'default': env.db('DB_DEFAULT_URL'),
 }
