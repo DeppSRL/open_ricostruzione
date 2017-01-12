@@ -1,5 +1,6 @@
 # Django settings for open_ricostruzione project.
 import os
+import sys
 from os.path import abspath, basename, dirname, join, normpath
 from sys import path
 from environ import Env
@@ -206,7 +207,8 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
+            'formatter': 'verbose',
+            'strm': sys.stdout
         },
         'file': {
             'level': 'DEBUG',
