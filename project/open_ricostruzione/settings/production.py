@@ -22,12 +22,6 @@ DATABASES = {
     'default': env.db('DB_DEFAULT_URL'),
 }
 
-MEDIA_ROOT = os.path.join(REPO_PATH, 'public', 'media')
-MEDIA_URL = '/media/'
-
-STATIC_ROOT = os.path.join(REPO_PATH, 'public', 'static')
-STATIC_URL = '/static/'
-
 ########## SECRET CONFIGURATION
 SECRET_KEY = env('SECRET_KEY')  # Raises ImproperlyConfigured exception if SECRET_KEY not in os.environ
 ########## END SECRET CONFIGURATION
