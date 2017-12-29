@@ -6,8 +6,10 @@
 data
 logs/*
 dumps
-config/
-static/
+/config/
+/dati/
+/log/
+/static/
 open_ricostruzione/log/*
 requirements/local.txt
 open_ricostruzione/media
