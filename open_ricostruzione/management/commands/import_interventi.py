@@ -71,6 +71,12 @@ class Command(BaseCommand):
             '25': TipoImmobile.TIPOLOGIA.IMPIANTI_SPORTIVI,
             '26': TipoImmobile.TIPOLOGIA.CHIESE,
             '27': TipoImmobile.TIPOLOGIA.ALTRO,
+            '31': TipoImmobile.TIPOLOGIA.OSPEDALI,
+            '32': TipoImmobile.TIPOLOGIA.CHIESE,
+            '33': TipoImmobile.TIPOLOGIA.CHIESE,
+            '34': TipoImmobile.TIPOLOGIA.EDIFICI_PUBBLICI,
+            '35': TipoImmobile.TIPOLOGIA.SCUOLE,
+            '36': TipoImmobile.TIPOLOGIA.INFRASTRUTTURE_BONIFICHE,
         }
 
         try:
