@@ -9,11 +9,12 @@
                            <a href="{% url 'lista-interventi' %}?{{ base_filters }}">
 
                                <strong>{{ status.programmazione.count|italianize:0 }} INTERVENTI A PROGRAMMA</strong>
-                               <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Il Programma delle Opere Pubbliche e dei Beni Culturali rappresenta
-                                    un’analisi completa della situazione degli edifici pubblici o di uso
-                                    pubblico danneggiati e dei finanziamenti a disposizione degli enti
-                                    attuatori pubblici, privati (uso pubblico), ecclesiastici, nella fase
-                                    post-emergenziale.">
+                               <i class="glyphicon glyphicon-info-sign pull-right tip" 
+                                  data-toggle="tooltip" data-placement="top" 
+                                  title="Il Programma delle Opere Pubbliche e dei Beni Culturali elenca 
+                                     gli interventi previsti per gli edifici pubblici o di uso pubblico 
+                                     in conseguenza dei danni prodotti dal sisma 2012 e ne stima puntualmente 
+                                     il fabbisogno finanziario.">
 
                                </i>
 
@@ -27,9 +28,7 @@
                        <div class="col-md-4">
                            <a href="{% url 'lista-interventi' %}?{{ base_filters }}&a_piano=True">
                                <strong>{{ status.pianificazione.count|italianize:0 }} INTERVENTI A PIANO</strong>
-                               <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Degli interventi inseriti nel Programma delle Opere Pubbliche e dei
-                                    Beni Culturali, annualmente alcuni vengono inseriti e finanziati nei
-                                    Piani Annual">
+                               <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Parte degli interventi indicati nel Programma delle Opere Pubbliche e dei Beni Culturali viene inserita e finanziata nei Piani Annuali attuativi. L’importo riportato è pari alla somma degli importi a piano finanziati dal Commissario Delegato e degli eventuali relativi cofinanziamenti a carico di altri soggetti.">
 
                                </i>
                                <div class="much pianificati">
@@ -46,9 +45,7 @@
 
                         <a href="{% url 'lista-interventi' %}?{{ base_filters }}&in_attuazione=True">
                             <strong>{{ status.attuazione.count|italianize:0 }} INTERVENTI IN ATTUAZIONE</strong>
-                            <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Gli interventi inseriti nei Piani annuali entrano in fase di
-                                attuazione che comporta la progettazione, la pubblicazione e
-                                aggiudicazione delle gare, l'esecuzione dei lavori e la loro consegna">
+                            <i class="glyphicon glyphicon-info-sign pull-right tip" data-toggle="tooltip" data-placement="top" title="Gli interventi inseriti nei Piani annuali vengono attuati tramite le fasi di progettazione, gara d'appalto, esecuzione lavori e loro consegna al Soggetto Attuatore. L’importo riportato è pari alla somma degli importi liquidati o in liquidazione da parte del Commissario Delegato e dei relativi cofinanziamenti.">
 
                             </i>
                             <div class="much attuati">
